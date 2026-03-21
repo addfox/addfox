@@ -1,9 +1,9 @@
-﻿import { mkdirSync, writeFileSync, existsSync, cpSync } from "node:fs";
+import { mkdirSync, writeFileSync, existsSync, cpSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { gunzipSync } from "node:zlib";
 
-const GITHUB_REPO = "gxy5202/addfox";
+const GITHUB_REPO = "addfox/addfox";
 const TEMPLATE_BASE = "templates";
 
 /** Resolve addfox repo root (where templates/ lives) when running from packages/create-addfox-app. */

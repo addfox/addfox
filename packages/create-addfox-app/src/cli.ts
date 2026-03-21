@@ -55,6 +55,23 @@ import { applyStyleEngine } from "./styleSetup.ts";
 
 const SKILLS_REPO = "addfox/skills";
 
+/** Replaces prompts default "Return to submit" on select prompts. */
+const PROMPT_SELECT_HINT = "- Use arrow-keys. Enter to confirm";
+
+/**
+ * Same structure as prompts multiselect defaults, but "Enter to confirm"
+ * instead of "enter/return: Complete answer".
+ */
+function multiselectInstructions(showToggleAll: boolean): string {
+  return (
+    "\nInstructions:\n" +
+    "    ↑/↓: Highlight option\n" +
+    "    ←/→/[space]: Toggle selection\n" +
+    (showToggleAll ? "    a: Toggle all\n" : "") +
+    "    Enter to confirm"
+  );
+}
+
 const orange = trueColor(230, 138, 46);
 
 function getFrameworkChoicesColored(): { title: string; value: Framework }[] {
@@ -161,6 +178,7 @@ async function confirmOverwrite(dir: string): Promise<boolean> {
       { title: "Overwrite (replace contents)", value: "overwrite" },
     ],
     initial: 0,
+    hint: PROMPT_SELECT_HINT,
   });
   if (action === undefined) {
     return false;
@@ -181,24 +199,28 @@ async function promptOptions(): Promise<{
       name: "framework",
       message: "Select a framework",
       choices: getFrameworkChoicesColored(),
+      hint: PROMPT_SELECT_HINT,
     },
     {
       type: "select",
       name: "styleEngine",
       message: "Select a style engine",
       choices: getStyleEngineChoicesColored(),
+      hint: PROMPT_SELECT_HINT,
     },
     {
       type: "select",
       name: "language",
       message: "Select a language",
       choices: getLanguageChoicesColored(),
+      hint: PROMPT_SELECT_HINT,
     },
     {
       type: "select",
       name: "packageManager",
       message: "Select package manager",
       choices: getPackageManagerChoicesColored(),
+      hint: PROMPT_SELECT_HINT,
     },
     {
       type: "multiselect",
@@ -206,8 +228,8 @@ async function promptOptions(): Promise<{
       message: "Select extension entries",
       choices: ENTRY_CHOICES,
       min: 1,
-      initial: 0,
-      hint: "Space to toggle, Enter to confirm (○ unselected, ● selected)",
+      hint: "Space to toggle (○ unselected, ● selected)",
+      instructions: multiselectInstructions(true),
     },
   ]);
   if (
@@ -242,7 +264,8 @@ async function promptTestAndReport(): Promise<{
     message: "Initialize test config? (optional)",
     choices: TEST_KIND_CHOICES,
     min: 0,
-    hint: "Space toggles, Enter confirms — leave empty to skip",
+    hint: "Space toggles — leave empty to skip",
+    instructions: multiselectInstructions(true),
   });
   if (testRes.testKinds === undefined) {
     return null;
@@ -258,6 +281,7 @@ async function promptTestAndReport(): Promise<{
       { title: "No", value: false },
     ],
     initial: 0,
+    hint: PROMPT_SELECT_HINT,
   });
   if (docRes.installRsdoctor === undefined) {
     return null;
@@ -312,7 +336,7 @@ async function main(): Promise<void> {
   const cliFramework = argv.framework as Framework | undefined;
   const cliLanguage = argv.language as Language | undefined;
 
-  printAddfoxLogo(orange);
+  printAddfoxLogo();
   console.log(blue("\n  Create Addfox App\n"));
 
   const root = resolve(process.cwd(), targetDir);
@@ -393,6 +417,7 @@ async function main(): Promise<void> {
       { title: "No", value: false },
     ],
     initial: 0,
+    hint: PROMPT_SELECT_HINT,
   });
 
   if (installSkills === true) {

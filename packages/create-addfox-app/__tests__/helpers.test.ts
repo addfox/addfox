@@ -38,7 +38,8 @@ describe("create-addfox-app helpers", () => {
 
   it("entries exports are consistent", () => {
     expect(ENTRY_NAMES).toEqual(ENTRY_APP_DIRS);
-    expect(ENTRY_CHOICES[0]?.value).toBe("__all__");
+    expect(ENTRY_CHOICES[0]?.value).toBe("popup");
+    expect(ENTRY_CHOICES).toHaveLength(ENTRY_NAMES.length);
     expect(ENTRY_EXTRA_PERMISSIONS.bookmarks).toEqual(["bookmarks"]);
     expect(ENTRY_EXTRA_PERMISSIONS.history).toEqual(["history"]);
     expect(ENTRY_EXTRA_PERMISSIONS.sidepanel).toEqual(["sidePanel"]);
@@ -77,20 +78,18 @@ describe("create-addfox-app helpers", () => {
     expect(dirs).not.toContain("custom");
   });
 
-  it("printAddfoxLogo writes centered logo", () => {
+  it("printAddfoxLogo writes multiline block banner", () => {
     const logs: string[] = [];
     const oldLog = console.log;
     console.log = (msg: string) => {
       logs.push(msg);
     };
 
-    printAddfoxLogo((s) => s);
+    printAddfoxLogo();
     console.log = oldLog;
 
-    expect(logs.length).toBe(1);
-    expect(logs[0]).toContain("Addfox");
-    expect(logs[0]).toContain("┌");
-    expect(logs[0]).toContain("┘");
+    expect(logs.length).toBeGreaterThanOrEqual(6);
+    expect(logs.some((l) => /█|╗|═/.test(l))).toBe(true);
   });
 
   it("package manager exports are stable", () => {

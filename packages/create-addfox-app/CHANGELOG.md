@@ -1,5 +1,11 @@
 # create-addfox-app
 
+## 0.1.1-beta.4
+
+### Patch Changes
+
+- update cli output
+
 ## 0.1.1-beta.3
 
 ### Patch Changes

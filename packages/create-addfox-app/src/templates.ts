@@ -12,7 +12,7 @@ export type Language = "js" | "ts";
 export type StyleEngine = "none" | "tailwindcss" | "unocss" | "less" | "sass";
 
 export const STYLE_ENGINES: { title: string; value: StyleEngine }[] = [
-  { title: "无", value: "none" },
+  { title: "None", value: "none" },
   { title: "Tailwind CSS", value: "tailwindcss" },
   { title: "UnoCSS", value: "unocss" },
   { title: "Less", value: "less" },
