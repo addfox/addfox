@@ -4,7 +4,7 @@
 "@addfox/rsbuild-plugin-extension-entry": patch
 "@addfox/rsbuild-plugin-extension-hmr": patch
 "@addfox/rsbuild-plugin-vue": patch
-"@addfox/create-addfox-app": patch
+"create-addfox-app": patch
 "@addfox/pkg-manager": patch
 "addfox": patch
 "@addfox/common": patch

@@ -1,3 +1,7 @@
+<p align="center">
+  <img width="200" src="https://raw.githubusercontent.com/addfox/addfox/main/addfox.png" alt="Addfox">
+</p>
+
 # @addfox/rsbuild-plugin-extension-entry
 
 [中文](README-zh_CN.md) | English

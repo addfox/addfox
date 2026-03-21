@@ -1,7 +1,8 @@
 {
   "name": "addfox",
-  "version": "0.1.1-beta.2",
+  "version": "0.1.1-beta.3",
   "description": "Build tool for browser extensions — one install, addfox dev / build",
+  "license": "MIT",
   "type": "module",
   "bin": {
     "addfox": "./bin/addfox.mjs"
@@ -24,7 +25,8 @@
   "files": [
     "bin",
     "index.mjs",
-    "index.d.ts"
+    "index.d.ts",
+    "LICENSE"
   ],
   "scripts": {
     "build": "echo 'No build step'",

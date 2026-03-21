@@ -2,6 +2,7 @@
   "name": "@addfox/utils",
   "version": "0.1.1-beta.2",
   "description": "Extension utils: content UI (defineContentUI / mountContentUI) for content scripts",
+  "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
@@ -10,7 +11,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "scripts": {
     "build": "rslib build",

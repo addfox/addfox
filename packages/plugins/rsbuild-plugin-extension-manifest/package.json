@@ -2,6 +2,7 @@
   "name": "@addfox/rsbuild-plugin-extension-manifest",
   "version": "0.1.1-beta.2",
   "description": "Rsbuild plugin: write manifest.json and remove stray HTML (internal)",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -15,7 +16,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "scripts": {
     "build": "rslib build",

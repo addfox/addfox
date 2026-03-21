@@ -2,6 +2,7 @@
   "name": "@addfox/common",
   "version": "0.1.1-beta.2",
   "description": "Shared utilities for Addfox packages",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.js",
@@ -14,7 +15,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "scripts": {
     "build": "rslib build",

@@ -1,5 +1,11 @@
 ﻿# addfox
 
+## 0.1.1-beta.3
+
+### Patch Changes
+
+- update readme
+
 ## 0.1.1-beta.2
 
 ### Patch Changes

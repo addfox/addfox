@@ -1,13 +1,15 @@
 {
-  "name": "@addfox/create-addfox-app",
+  "name": "create-addfox-app",
   "version": "0.1.1-beta.2",
   "description": "Interactive scaffolder for addfox extension projects",
+  "license": "MIT",
   "type": "module",
   "bin": {
     "create-addfox-app": "./dist/cli.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "scripts": {
     "build": "rslib build",

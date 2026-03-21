@@ -1,4 +1,4 @@
-﻿# @addfox/create-addfox-app
+# create-addfox-app
 
 ## 0.1.1-beta.2
 

@@ -2,6 +2,7 @@
   "name": "@addfox/rsbuild-plugin-vue",
   "version": "0.1.1-beta.2",
   "description": "addfox plugin: enable Vue 3 (SFC, JSX via @rsbuild/plugin-vue-jsx) for the project",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -15,7 +16,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "scripts": {
     "build": "rslib build",

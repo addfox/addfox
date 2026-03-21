@@ -32,7 +32,7 @@
     "@addfox/cli": "0.1.1-beta.0",
     "@addfox/common": "0.1.1-beta.0",
     "@addfox/core": "0.1.1-beta.0",
-    "@addfox/create-addfox-app": "0.1.1-beta.0",
+    "create-addfox-app": "0.1.1-beta.0",
     "@addfox/pkg-manager": "0.1.1-beta.0",
     "@addfox/rsbuild-plugin-extension-entry": "0.1.1-beta.0",
     "@addfox/rsbuild-plugin-extension-hmr": "0.1.1-beta.0",
@@ -44,6 +44,7 @@
   },
   "changesets": [
     "loud-buttons-cough",
+    "pink-states-call",
     "spicy-oranges-design",
     "wacky-cups-cover"
   ]

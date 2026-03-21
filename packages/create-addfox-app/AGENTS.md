@@ -1,4 +1,4 @@
-# AI usage (@addfox/create-addfox-app)
+# AI usage (create-addfox-app)
 
 ## Purpose
 

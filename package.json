@@ -13,7 +13,7 @@
   "homepage": "https://addfox.dev",
   "scripts": {
     "dev": "pnpm --filter @addfox/cli dev",
-    "create": "pnpm --filter @addfox/create-addfox-app start",
+    "create": "pnpm --filter create-addfox-app start",
     "packages:build": "pnpm -r --filter \"./packages/**\" run build",
     "packages:test": "pnpm -r --filter \"./packages/**\" run test",
     "packages:test:coverage": "pnpm -r --filter \"./packages/**\" run test:coverage",
