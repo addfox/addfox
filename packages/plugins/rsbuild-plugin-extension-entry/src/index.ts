@@ -13,6 +13,12 @@ function isHotReloadDisabled(value: HotReloadConfig): boolean {
 
 const NO_HTML_ENTRIES = new Set(["background", "content"]);
 
+/** Same rule as {@link needsHtmlGeneration} — kept near path builders that depend on it. */
+function entryBuildsHtmlPage(entry: EntryInfo): boolean {
+  if (NO_HTML_ENTRIES.has(entry.name)) return false;
+  return entry.html === true || entry.htmlPath != null;
+}
+
 /** Chunk name for shared vendor (react, react-dom, webextension-polyfill) to avoid duplicate in popup/options. */
 export const SHARED_VENDOR_CHUNK_NAME = "shared-vendor";
 
@@ -156,6 +162,10 @@ function buildStandardPaths(entry: EntryInfo): { js: string; css: string; html?:
       : isSingleHtml
         ? `${entry.name}.html`
         : `${entry.name}/${htmlFile}`;
+  } else if (entryBuildsHtmlPage(entry)) {
+    // e.g. Vue/React: app/popup/index.ts only — manifest uses popup/index.html (@addfox/core) but
+    // Rsbuild defaults to popup.html at dist root if filename is unset.
+    htmlPath = `${entry.name}/index.html`;
   }
 
   return { js: jsPath, css: cssPath, html: htmlPath };
@@ -241,8 +251,7 @@ function createScriptInjectMap(entries: EntryInfo[]): Record<string, ScriptInjec
 
 /** Determine if an entry needs HTML generation. */
 function needsHtmlGeneration(entry: EntryInfo): boolean {
-  if (NO_HTML_ENTRIES.has(entry.name)) return false;
-  return entry.html === true || entry.htmlPath != null;
+  return entryBuildsHtmlPage(entry);
 }
 
 /** Build the source entry configuration. */

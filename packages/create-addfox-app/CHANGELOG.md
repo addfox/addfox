@@ -1,5 +1,11 @@
 # create-addfox-app
 
+## 0.1.1-beta.5
+
+### Patch Changes
+
+- fix html output path error
+
 ## 0.1.1-beta.4
 
 ### Patch Changes

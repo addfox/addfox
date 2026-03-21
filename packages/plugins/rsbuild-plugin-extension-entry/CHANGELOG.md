@@ -1,5 +1,11 @@
 # @addfox/rsbuild-plugin-extension-entry
 
+## 0.1.1-beta.4
+
+### Patch Changes
+
+- fix html output path error
+
 ## 0.1.1-beta.3
 
 ### Patch Changes

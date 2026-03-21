@@ -421,6 +421,36 @@ describe("plugin-extension-entry", () => {
     expect(htmlConfig.templateContent).toBeUndefined();
   });
 
+  it("setup tools.htmlPlugin uses popup/index.html when html:true but no htmlPath (Vue/React without index.html)", () => {
+    const popupDir = resolve(testRoot, "src", "popup");
+    mkdirSync(popupDir, { recursive: true });
+    const config = createMockConfig(testRoot);
+    const entries: EntryInfo[] = [
+      { name: "popup", scriptPath: resolve(popupDir, "index.ts"), html: true },
+    ];
+    const plugin = entryPlugin(config, entries, resolve(testRoot, "dist"));
+
+    let modifyCb: ((config: Record<string, unknown>) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: (cb: (config: Record<string, unknown>) => void) => {
+        modifyCb = cb;
+      },
+      onBeforeCreateCompiler: () => {},
+    };
+
+    plugin.setup(api as never);
+    const rsbuildConfig: Record<string, unknown> = { tools: {} };
+    modifyCb!(rsbuildConfig);
+
+    const htmlPluginFn = (rsbuildConfig.tools as Record<string, unknown>).htmlPlugin as (
+      htmlConfig: Record<string, unknown>,
+      ctx: { entryName: string }
+    ) => void;
+    const htmlConfig: Record<string, unknown> = {};
+    htmlPluginFn(htmlConfig, { entryName: "popup" });
+    expect(htmlConfig.filename).toBe("popup/index.html");
+  });
+
   it("setup html.template returns undefined when entryName not in templateMap and no prevTemplate", () => {
     const config = createMockConfig(testRoot);
     const entries = createMockEntries(testRoot);

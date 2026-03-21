@@ -8,14 +8,14 @@
     "build": "addfox build"
   },
   "dependencies": {
-    "addfox": "^0.1.0",
-    "@rsbuild/core": "^1.6.0",
-    "@addfox/utils": "^0.1.0",
-    "svelte": "^4.2.0"
+    "addfox": ">=0.1.0-0 <0.2.0",
+    "@rsbuild/core": "^1.7.3",
+    "@addfox/utils": ">=0.1.0-0 <0.2.0",
+    "svelte": "^5.54.1"
   },
   "devDependencies": {
-    "@rsbuild/plugin-svelte": "^1.1.0",
-    "typescript": "^5.0.0",
-    "@types/chrome": "^0.0.326"
+    "@rsbuild/plugin-svelte": "^1.1.1",
+    "typescript": "^5.9.3",
+    "@types/chrome": "^0.1.38"
   }
 }

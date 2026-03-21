@@ -1,13 +1,22 @@
 import { describe, expect, it } from "@rstest/core";
-import { mkdtempSync, mkdirSync, writeFileSync, existsSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, existsSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { generateAddfoxConfig } from "../src/configGenerator.ts";
 import { ENTRY_APP_DIRS, ENTRY_CHOICES, ENTRY_EXTRA_PERMISSIONS, ENTRY_NAMES } from "../src/entries.ts";
 import { filterAppEntries, getExistingAppEntryDirs } from "../src/filterApp.ts";
 import { printAddfoxLogo } from "../src/logo.ts";
 import { PACKAGE_MANAGER_CHOICES, PACKAGE_MANAGER_ORDER } from "../src/packageManager.ts";
 import { fetchSkillsList, getSkillsAddArgs, getSkillsChoices } from "../src/skills.ts";
+import {
+  ADDFOX_0_1_SCAFFOLD_RANGE,
+  RSBUILD_CORE_SCAFFOLD_RANGE,
+} from "../src/scaffoldDependencyRanges.ts";
+
+function addfoxMonorepoRootFromTests(): string {
+  return resolve(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
+}
 
 describe("create-addfox-app helpers", () => {
   it("generateAddfoxConfig includes framework plugins and minimal manifest", () => {
@@ -139,5 +148,20 @@ describe("create-addfox-app helpers", () => {
     const dest = mkdtempSync(join(tmpdir(), "addfox-no-app-"));
     writeFileSync(join(dest, "README.md"), "x", "utf-8");
     expect(getExistingAppEntryDirs(dest)).toEqual([]);
+  });
+
+  it("template package.json addfox ranges match scaffold constant (prerelease-safe)", () => {
+    const root = addfoxMonorepoRootFromTests();
+    const withUtils = JSON.parse(
+      readFileSync(resolve(root, "templates/template-vue-ts/package.json"), "utf-8"),
+    ) as { dependencies: Record<string, string> };
+    expect(withUtils.dependencies.addfox).toBe(ADDFOX_0_1_SCAFFOLD_RANGE);
+    expect(withUtils.dependencies["@addfox/utils"]).toBe(ADDFOX_0_1_SCAFFOLD_RANGE);
+    expect(withUtils.dependencies["@rsbuild/core"]).toBe(RSBUILD_CORE_SCAFFOLD_RANGE);
+
+    const vanilla = JSON.parse(
+      readFileSync(resolve(root, "templates/template-vanilla-ts/package.json"), "utf-8"),
+    ) as { dependencies: Record<string, string> };
+    expect(vanilla.dependencies.addfox).toBe(ADDFOX_0_1_SCAFFOLD_RANGE);
   });
 });

@@ -8,10 +8,10 @@
     "build": "addfox build"
   },
   "dependencies": {
-    "addfox": "^0.1.0",
-    "@rsbuild/core": "^1.6.0"
+    "addfox": ">=0.1.0-0 <0.2.0",
+    "@rsbuild/core": "^1.7.3"
   },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.9.3"
   }
 }

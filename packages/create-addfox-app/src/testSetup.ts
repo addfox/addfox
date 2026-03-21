@@ -10,11 +10,11 @@ import type { Language } from "./templates.ts";
 
 export type TestKind = "unit" | "e2e";
 
-const RSTEST_CORE = "^0.9.2";
+const RSTEST_CORE = "^0.9.4";
 const RSTEST_COVERAGE = "^0.3.0";
-const RSTEST_BROWSER = "^0.9.2";
-const PLAYWRIGHT = "^1.49.0";
-const RSDOCTOR_RSPACK = "^1.5.3";
+const RSTEST_BROWSER = "^0.9.4";
+const PLAYWRIGHT = "^1.58.2";
+const RSDOCTOR_RSPACK = "^1.5.5";
 
 export interface TestSetupSelection {
   testKinds: TestKind[];
