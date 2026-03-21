@@ -1,5 +1,15 @@
 ﻿# addfox
 
+## 0.1.1-beta.4
+
+### Patch Changes
+
+- update packages info
+- Updated dependencies
+  - @addfox/cli@0.1.1-beta.3
+  - @addfox/core@0.1.1-beta.3
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.3
+
 ## 0.1.1-beta.3
 
 ### Patch Changes

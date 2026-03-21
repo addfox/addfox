@@ -1,5 +1,11 @@
 ﻿# @addfox/common
 
+## 0.1.1-beta.3
+
+### Patch Changes
+
+- update packages info
+
 ## 0.1.1-beta.2
 
 ### Patch Changes

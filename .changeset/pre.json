@@ -43,6 +43,7 @@
     "addfox-with-env-vars": "0.0.1"
   },
   "changesets": [
+    "cuddly-donkeys-tell",
     "loud-buttons-cough",
     "pink-states-call",
     "spicy-oranges-design",

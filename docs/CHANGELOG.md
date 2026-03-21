@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.0.3-beta.3
+
+### Patch Changes
+
+- update packages info
+
 ## 0.0.3-beta.2
 
 ### Patch Changes
