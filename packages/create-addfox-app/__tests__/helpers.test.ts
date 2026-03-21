@@ -10,7 +10,9 @@ import { printAddfoxLogo } from "../src/logo.ts";
 import { PACKAGE_MANAGER_CHOICES, PACKAGE_MANAGER_ORDER } from "../src/packageManager.ts";
 import { fetchSkillsList, getSkillsAddArgs, getSkillsChoices } from "../src/skills.ts";
 import {
-  ADDFOX_0_1_SCAFFOLD_RANGE,
+  ADDFOX_CLI_PACKAGE_VERSION,
+  ADDFOX_RSBUILD_PLUGIN_VUE_VERSION,
+  ADDFOX_UTILS_PACKAGE_VERSION,
   RSBUILD_CORE_SCAFFOLD_RANGE,
 } from "../src/scaffoldDependencyRanges.ts";
 
@@ -150,18 +152,21 @@ describe("create-addfox-app helpers", () => {
     expect(getExistingAppEntryDirs(dest)).toEqual([]);
   });
 
-  it("template package.json addfox ranges match scaffold constant (prerelease-safe)", () => {
+  it("template package.json addfox versions match scaffold constants", () => {
     const root = addfoxMonorepoRootFromTests();
     const withUtils = JSON.parse(
       readFileSync(resolve(root, "templates/template-vue-ts/package.json"), "utf-8"),
-    ) as { dependencies: Record<string, string> };
-    expect(withUtils.dependencies.addfox).toBe(ADDFOX_0_1_SCAFFOLD_RANGE);
-    expect(withUtils.dependencies["@addfox/utils"]).toBe(ADDFOX_0_1_SCAFFOLD_RANGE);
+    ) as { dependencies: Record<string, string>; devDependencies: Record<string, string> };
+    expect(withUtils.dependencies.addfox).toBe(ADDFOX_CLI_PACKAGE_VERSION);
+    expect(withUtils.dependencies["@addfox/utils"]).toBe(ADDFOX_UTILS_PACKAGE_VERSION);
     expect(withUtils.dependencies["@rsbuild/core"]).toBe(RSBUILD_CORE_SCAFFOLD_RANGE);
+    expect(withUtils.devDependencies["@addfox/rsbuild-plugin-vue"]).toBe(
+      ADDFOX_RSBUILD_PLUGIN_VUE_VERSION,
+    );
 
     const vanilla = JSON.parse(
       readFileSync(resolve(root, "templates/template-vanilla-ts/package.json"), "utf-8"),
     ) as { dependencies: Record<string, string> };
-    expect(vanilla.dependencies.addfox).toBe(ADDFOX_0_1_SCAFFOLD_RANGE);
+    expect(vanilla.dependencies.addfox).toBe(ADDFOX_CLI_PACKAGE_VERSION);
   });
 });

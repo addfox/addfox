@@ -1,10 +1,16 @@
 /**
- * Dependency ranges written into scaffolded `package.json` (templates + any post-patch).
+ * Published dependency versions for scaffold `package.json` files under repo `templates/`.
+ * Bump when releasing new versions of `addfox`, `@addfox/utils`, or `@addfox/rsbuild-plugin-vue`.
  *
+ * `ADDFOX_0_1_SCAFFOLD_RANGE` is a semver range for tooling/docs that must accept 0.1.x prereleases.
+ */
+export const ADDFOX_CLI_PACKAGE_VERSION = "0.1.1-beta.5" as const;
+export const ADDFOX_UTILS_PACKAGE_VERSION = "0.1.1-beta.3" as const;
+export const ADDFOX_RSBUILD_PLUGIN_VUE_VERSION = "0.1.1-beta.3" as const;
+
+/**
  * `^0.1.0` does not satisfy npm prereleases such as `0.1.1-beta.4` (semver rules).
  * `>=0.1.0-0` includes prereleases in the 0.1.x line until a stable 0.2.0 ships.
- *
- * Keep in sync with repo `templates` folder package.json files (addfox, @addfox/utils).
  */
 export const ADDFOX_0_1_SCAFFOLD_RANGE = ">=0.1.0-0 <0.2.0" as const;
 

@@ -13,3 +13,4 @@ packages:
   - "packages/create-addfox-app"
   - "docs"
   - "examples/*"
+  - "templates/*"

@@ -8,9 +8,9 @@
     "build": "addfox build"
   },
   "dependencies": {
-    "addfox": ">=0.1.0-0 <0.2.0",
+    "addfox": "0.1.1-beta.5",
     "@rsbuild/core": "^1.7.3",
-    "@addfox/utils": ">=0.1.0-0 <0.2.0",
+    "@addfox/utils": "0.1.1-beta.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
