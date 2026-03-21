@@ -1,0 +1,16 @@
+{
+  "name": "addfox-with-history-override",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Built-in history entry with chrome_url_overrides.history auto-fill",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev",
+    "build": "addfox build"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.326",
+    "addfox": "workspace:*",
+    "typescript": "^5.0.0"
+  }
+}

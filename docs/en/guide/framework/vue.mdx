@@ -1,0 +1,52 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Vue
+
+Add `@addfox/rsbuild-plugin-vue` to **plugins** in `addfox.config.ts` to enable Vue 3 (SFC, Vue runtime).
+
+## Setup
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add vue @addfox/rsbuild-plugin-vue -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install vue @addfox/rsbuild-plugin-vue -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add vue @addfox/rsbuild-plugin-vue -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add vue @addfox/rsbuild-plugin-vue -D
+```
+
+  </Tab>
+</Tabs>
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import vue from "@addfox/rsbuild-plugin-vue";
+
+export default defineConfig({
+  plugins: [vue()],
+});
+```
+
+## Related
+
+- [Basics](/guide/manifest), [entry](/guide/entry).

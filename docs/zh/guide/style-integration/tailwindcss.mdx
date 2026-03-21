@@ -1,0 +1,65 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Tailwind CSS
+
+## 安装
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+</Tabs>
+
+## 配置
+
+在项目根目录创建 `postcss.config.mjs`：
+
+```js
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+```
+
+## 使用
+
+在你的样式入口中引入 Tailwind：
+
+```css
+/* app/popup/index.css */
+@import "tailwindcss";
+```
+
+在页面入口中引入该 CSS 文件：
+
+```ts
+import "./index.css";
+```
+
+之后可直接在组件中使用 Tailwind 类名。

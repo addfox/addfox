@@ -1,0 +1,155 @@
+import { Tab, Tabs } from '@rspress/core/theme';
+
+# App Directory
+
+Addfox follows a convention-over-configuration design philosophy. Understanding the standard directory structure helps you get started quickly and follow best practices.
+
+## Project Root
+
+A typical Addfox project structure looks like this:
+
+```
+my-extension/
+├── .addfox/           # Build output and cache (auto-generated)
+├── app/                # Application source code (configurable)
+├── public/             # Static assets
+├── addfox.config.ts       # Addfox configuration file
+└── package.json        # Project dependencies
+```
+
+## .addfox Directory
+
+`.addfox` is **auto-generated** by the framework and contains:
+
+- **`extension/`** — Default build output directory (can be changed via `outDir`)
+- **`cache/`** — Build cache for accelerating subsequent builds
+
+:::tip
+Avoid deleting the `cache` directory unless necessary, as it affects build speed and browser user data reuse.
+:::
+
+## app Directory
+
+`app/` is the default application source directory, containing all extension entries and manifest files. You can change it via the `appDir` config option:
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  appDir: "src",  // Change to src directory
+});
+```
+
+### Recommended Directory Structure
+
+<Tabs>
+  <Tab label="Multi-file structure (recommended)">
+
+```
+app/
+├── background/
+│   └── index.ts          # Service Worker / background script
+├── content/
+│   └── index.ts          # Content script
+├── popup/
+│   ├── index.html        # Popup HTML (optional)
+│   └── index.ts          # Popup script
+├── options/
+│   ├── index.html        # Options HTML (optional)
+│   └── index.ts          # Options script
+├── sidepanel/
+│   └── index.ts          # Side panel
+├── manifest/
+│   ├── manifest.json           # Base configuration
+│   ├── manifest.chromium.json  # Chrome overrides
+│   └── manifest.firefox.json   # Firefox overrides
+└── ...
+```
+
+  </Tab>
+  <Tab label="Single-file structure">
+
+```
+app/
+├── background.ts         # Background script
+├── content.ts            # Content script
+├── popup.html            # Popup page
+├── popup.ts              # Popup script
+├── manifest.json         # Extension manifest
+└── ...
+```
+
+  </Tab>
+</Tabs>
+
+:::info
+For more about entry discovery rules, see [File-based Entry](/guide/entry/file-based) and [`entry` config](/config/entry).
+:::
+
+## public Directory
+
+`public/` is for **static assets**, which are copied as-is to the output directory during build without processing:
+
+```
+public/
+├── icons/                # Extension icons
+│   ├── icon16.png
+│   ├── icon48.png
+│   └── icon128.png
+├── _locales/             # Internationalization files
+│   └── zh_CN/
+│       └── messages.json
+└── welcome.html          # Welcome page
+```
+
+When referencing these resources in code, use paths relative to the output root:
+
+```ts
+// Reference public/icons/icon16.png
+const iconPath = "icons/icon16.png";
+```
+
+## Entry Types
+
+Addfox supports the following built-in entries:
+
+| Entry Name | Type | Description | Generates HTML |
+|------------|------|-------------|----------------|
+| `background` | Script only | Service Worker / background script | No |
+| `content` | Script only | Content script | No |
+| `popup` | Script + Page | Toolbar popup | Yes |
+| `options` | Script + Page | Extension options page | Yes |
+| `sidepanel` | Script + Page | Side panel | Yes |
+| `devtools` | Script + Page | Developer tools | Yes |
+| `offscreen` | Script + Page | Offscreen document | Yes |
+
+:::warning
+Built-in entry names **cannot be changed**, as Addfox relies on them for automatic recognition.
+:::
+
+## Configuration Files
+
+### addfox.config.ts / addfox.config.js
+
+This is the **required configuration file** for Addfox, used to declare:
+
+- Extension manifest
+- Entry files
+- Output directory
+- Rsbuild plugins and configuration
+
+### Minimal Configuration Example
+
+```ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  // When omitted, framework auto-discovers entries and manifest from app/
+});
+```
+
+## Related Configuration
+
+- [`appDir`](/config/app-dir) — Customize application directory
+- [`entry`](/config/entry) — Manually configure entries
+- [`outDir`](/config/out-dir) — Customize output directory
+- [`manifest`](/config/manifest) — Manifest configuration methods

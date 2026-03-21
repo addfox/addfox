@@ -1,0 +1,25 @@
+{
+  "name": "addfox-with-react-entry-false",
+  "version": "0.0.1",
+  "private": true,
+  "description": "React extension with entry: false, entries configured via rsbuildConfig",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev",
+    "build": "addfox build"
+  },
+  "dependencies": {
+    "@addfox/utils": "workspace:*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "webextension-polyfill": "^0.10.0"
+  },
+  "devDependencies": {
+    "addfox": "workspace:*",
+    "@rsbuild/plugin-react": "^1.2.0",
+    "@types/chrome": "^0.0.326",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "^5.0.0"
+  }
+}

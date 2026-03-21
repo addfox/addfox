@@ -1,0 +1,125 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# 打包
+
+构建完成后，Addfox 会自动将输出目录打包为 zip 文件，方便分发。
+
+## 默认行为
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm build
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run build
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn build
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run build
+```
+
+  </Tab>
+</Tabs>
+
+构建完成后生成：
+
+```tree
+.addfox/
+├── extension/          # 构建输出
+└── extension.zip       # 打包文件
+```
+
+## 配置
+
+### 禁用打包
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  zip: false,
+});
+```
+
+### 启用打包（默认）
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  zip: true,
+});
+```
+
+或不配置（使用默认值）。
+
+## 打包内容
+
+zip 文件包含构建输出的所有内容：
+
+- `manifest.json` — 扩展清单
+- `background/` — 后台脚本
+- `content/` — 内容脚本
+- `popup/` — 弹窗页面
+- `options/` — 选项页
+- 其他入口
+- `public/` 目录中的静态资源（图标、国际化文件等）
+
+## 用途
+
+打包后的 zip 文件可用于：
+
+### 提交到 Chrome Web Store
+
+1. 访问 [Chrome Web Store 开发者中心](https://chrome.google.com/webstore/devconsole/)
+2. 创建或选择项目
+3. 上传 `extension.zip`
+
+### 提交到 Firefox Add-ons
+
+1. 访问 [Firefox 附加组件开发者中心](https://addons.mozilla.org/developers/)
+2. 提交新附加组件
+3. 上传 `extension.zip`
+
+### 内部分发
+
+- 通过邮件/网盘分享
+- 内部测试部署
+
+## 输出路径
+
+打包文件输出路径：
+
+```
+{outputRoot}/{outDir}.zip
+```
+
+默认：`.addfox/extension.zip`
+
+修改 `outDir` 后：
+
+```ts
+export default defineConfig({
+  outDir: "dist",
+});
+// 输出：.addfox/dist.zip
+```
+
+## 相关配置
+
+- [`zip`](/config/zip) - 打包开关配置
+- [`outDir`](/config/out-dir) - 输出目录配置

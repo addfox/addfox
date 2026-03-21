@@ -1,0 +1,22 @@
+{
+  "name": "my-extension",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev",
+    "build": "addfox build"
+  },
+  "dependencies": {
+    "addfox": "^0.1.0",
+    "@rsbuild/core": "^1.6.0",
+    "@addfox/utils": "^0.1.0",
+    "solid-js": "^1.8.0"
+  },
+  "devDependencies": {
+    "@rsbuild/plugin-babel": "^1.0.6",
+    "@rsbuild/plugin-solid": "^1.0.7",
+    "typescript": "^5.0.0",
+    "@types/chrome": "^0.0.326"
+  }
+}

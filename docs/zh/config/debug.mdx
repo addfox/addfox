@@ -1,0 +1,92 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# debug
+
+`debug` 用于启用开发时的错误监控面板。
+
+## 概述
+
+- **类型**：`boolean`
+- **默认值**：`false`
+- **是否必需**：否
+
+## 用法
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  debug: true,  // 启用错误监控
+});
+```
+
+## 功能
+
+启用后，Addfox 会：
+
+1. **捕获错误** — 自动捕获各个入口（background、content、popup 等）的错误
+2. **错误面板** — 在扩展页面中显示监控面板入口
+3. **AI 询问** — 支持一键复制错误、询问 ChatGPT/Cursor
+
+## 使用方式
+
+### 配置启用
+
+```ts
+export default defineConfig({
+  debug: true,
+});
+```
+
+### CLI 启用
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- --debug
+```
+
+  </Tab>
+</Tabs>
+
+## 监控面板
+
+启用后，访问 `chrome-extension://<id>/_addfox-monitor/` 可以查看：
+
+- 各入口的错误列表
+- 错误堆栈详情
+- 一键复制错误信息
+- 一键询问 AI（ChatGPT / Cursor）
+
+## 注意事项
+
+- 仅影响开发模式（`addfox dev`）
+- 生产构建会自动移除监控代码
+- 监控面板不会影响扩展性能
+
+## 相关配置
+
+- [guide/monitor](/guide/monitor) - 错误监控指南

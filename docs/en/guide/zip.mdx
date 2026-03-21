@@ -1,0 +1,125 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Zip Packaging
+
+After build, Addfox automatically packages the output directory into a zip file for distribution.
+
+## Default Behavior
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm build
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run build
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn build
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run build
+```
+
+  </Tab>
+</Tabs>
+
+After build completes:
+
+```tree
+.addfox/
+├── extension/          # Build output
+└── extension.zip       # Package file
+```
+
+## Configuration
+
+### Disable Packaging
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  zip: false,
+});
+```
+
+### Enable Packaging (Default)
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  zip: true,
+});
+```
+
+Or omit configuration (uses default).
+
+## Package Contents
+
+The zip file contains all build output:
+
+- `manifest.json` — Extension manifest
+- `background/` — Background scripts
+- `content/` — Content scripts
+- `popup/` — Popup page
+- `options/` — Options page
+- Other entries
+- Static assets from `public/` (icons, i18n files, etc.)
+
+## Usage
+
+Packaged zip files can be used for:
+
+### Chrome Web Store Submission
+
+1. Visit [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole/)
+2. Create or select a project
+3. Upload `extension.zip`
+
+### Firefox Add-ons Submission
+
+1. Visit [Firefox Add-ons Developer Hub](https://addons.mozilla.org/developers/)
+2. Submit new add-on
+3. Upload `extension.zip`
+
+### Internal Distribution
+
+- Share via email/cloud storage
+- Internal test deployment
+
+## Output Path
+
+Package file output path:
+
+```
+{outputRoot}/{outDir}.zip
+```
+
+Default: `.addfox/extension.zip`
+
+After modifying `outDir`:
+
+```ts
+export default defineConfig({
+  outDir: "dist",
+});
+// Output: .addfox/dist.zip
+```
+
+## Related Configuration
+
+- [`zip`](/config/zip) - Zip packaging toggle
+- [`outDir`](/config/out-dir) - Output directory configuration

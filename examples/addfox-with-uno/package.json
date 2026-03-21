@@ -1,0 +1,28 @@
+{
+  "name": "addfox-with-uno",
+  "version": "0.0.1",
+  "private": true,
+  "description": "React + UnoCSS browser extension: popup, options, content, background",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev -p --debug",
+    "build": "addfox build"
+  },
+  "dependencies": {
+    "@addfox/utils": "workspace:*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "webextension-polyfill": "^0.10.0"
+  },
+  "devDependencies": {
+    "@rsbuild/plugin-react": "^1.2.0",
+    "@types/chrome": "^0.0.326",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/webextension-polyfill": "^0.10.0",
+    "@unocss/postcss": "^0.62.4",
+    "addfox": "workspace:*",
+    "typescript": "^5.0.0",
+    "unocss": "^0.62.4"
+  }
+}

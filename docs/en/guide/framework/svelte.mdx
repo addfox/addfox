@@ -1,0 +1,52 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Svelte
+
+Add `@rsbuild/plugin-svelte` to **plugins** in `addfox.config.ts` to enable Svelte (`.svelte` files).
+
+## Setup
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add svelte @rsbuild/plugin-svelte -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install svelte @rsbuild/plugin-svelte -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add svelte @rsbuild/plugin-svelte -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add svelte @rsbuild/plugin-svelte -D
+```
+
+  </Tab>
+</Tabs>
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginSvelte } from "@rsbuild/plugin-svelte";
+
+export default defineConfig({
+  plugins: [pluginSvelte()],
+});
+```
+
+## Related
+
+- [Basics](/guide/manifest), [entry](/guide/entry).

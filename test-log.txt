@@ -1,0 +1,610 @@
+
+> addfox-workspace@0.0.1 test C:\programs\addfox
+> pnpm run packages:test
+
+
+> addfox-workspace@0.0.1 packages:test C:\programs\addfox
+> pnpm -r --filter "./packages/**" run test
+
+Scope: 12 of 39 workspace projects
+packages/common test$ rstest run
+packages/pkg-manager test$ rstest run
+packages/utils test$ rstest run
+packages/plugins/rsbuild-plugin-vue test$ rstest run
+packages/utils test:  Coverage enabled with istanbul
+packages/pkg-manager test:  Coverage enabled with istanbul
+packages/plugins/rsbuild-plugin-vue test:  Coverage enabled with istanbul
+packages/common test:  Coverage enabled with istanbul
+packages/pkg-manager test: ---
+packages/pkg-manager test: tool: "@rstest/core@0.9.2"
+packages/pkg-manager test: timestamp: "2026-03-20T09:02:43.090Z"
+packages/pkg-manager test: runtime: {"node":"v22.14.0","platform":"win32","cwd":"C:\\programs\\addfox\\packages\\pkg-manager"}
+packages/pkg-manager test: ---
+packages/pkg-manager test: # Rstest Test Execution Report
+packages/pkg-manager test: ## Summary
+packages/pkg-manager test: ```json
+packages/pkg-manager test: {
+packages/pkg-manager test:   "status": "pass",
+packages/pkg-manager test:   "counts": {
+packages/pkg-manager test:     "testFiles": 1,
+packages/pkg-manager test:     "failedFiles": 0,
+packages/pkg-manager test:     "tests": 16,
+packages/pkg-manager test:     "failedTests": 0,
+packages/pkg-manager test:     "passedTests": 16,
+packages/pkg-manager test:     "skippedTests": 0,
+packages/pkg-manager test:     "todoTests": 0
+packages/pkg-manager test:   },
+packages/pkg-manager test:   "durationMs": {
+packages/pkg-manager test:     "total": 289,
+packages/pkg-manager test:     "build": 130,
+packages/pkg-manager test:     "tests": 159
+packages/pkg-manager test:   },
+packages/pkg-manager test:   "snapshot": {
+packages/pkg-manager test:     "added": 0,
+packages/pkg-manager test:     "updated": 0,
+packages/pkg-manager test:     "unmatched": 0,
+packages/pkg-manager test:     "removed": 0,
+packages/pkg-manager test:     "unchecked": 0
+packages/pkg-manager test:   }
+packages/pkg-manager test: }
+packages/pkg-manager test: ```
+packages/pkg-manager test: ## Failures
+packages/pkg-manager test: No test failures reported.
+packages/pkg-manager test: Note: all tests passed. Lists omitted for brevity.
+packages/pkg-manager test: ----------|---------|----------|---------|---------|-------------------
+packages/pkg-manager test: File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+packages/pkg-manager test: ----------|---------|----------|---------|---------|-------------------
+packages/pkg-manager test: All files |   71.42 |    83.33 |      75 |      70 |                   
+packages/pkg-manager test:  index.ts |   71.42 |    83.33 |      75 |      70 | 53-70             
+packages/pkg-manager test: ----------|---------|----------|---------|---------|-------------------
+packages/utils test: ---
+packages/utils test: tool: "@rstest/core@0.9.2"
+packages/utils test: timestamp: "2026-03-20T09:02:43.114Z"
+packages/utils test: runtime: {"node":"v22.14.0","platform":"win32","cwd":"C:\\programs\\addfox\\packages\\utils"}
+packages/utils test: ---
+packages/utils test: # Rstest Test Execution Report
+packages/utils test: ## Summary
+packages/utils test: ```json
+packages/utils test: {
+packages/utils test:   "status": "pass",
+packages/utils test:   "counts": {
+packages/utils test:     "testFiles": 1,
+packages/utils test:     "failedFiles": 0,
+packages/utils test:     "tests": 4,
+packages/utils test:     "failedTests": 0,
+packages/utils test:     "passedTests": 4,
+packages/utils test:     "skippedTests": 0,
+packages/utils test:     "todoTests": 0
+packages/utils test:   },
+packages/utils test:   "durationMs": {
+packages/utils test:     "total": 315,
+packages/utils test:     "build": 150,
+packages/utils test:     "tests": 165
+packages/utils test:   },
+packages/utils test:   "snapshot": {
+packages/utils test:     "added": 0,
+packages/utils test:     "updated": 0,
+packages/utils test:     "unmatched": 0,
+packages/utils test:     "removed": 0,
+packages/utils test:     "unchecked": 0
+packages/utils test:   }
+packages/utils test: }
+packages/utils test: ```
+packages/utils test: ## Tests
+packages/utils test: ### Passed
+packages/utils test: - __tests__/content-ui.test.ts :: content-ui > define*ContentUI > returns mount function for native UI
+packages/utils test: - __tests__/content-ui.test.ts :: content-ui > define*ContentUI > returns mount function for shadow UI
+packages/utils test: - __tests__/content-ui.test.ts :: content-ui > define*ContentUI > returns mount function for iframe UI
+packages/utils test: - __tests__/content-ui.test.ts :: content-ui > define*ContentUI > accepts common attrs on define
+packages/utils test: ### Skipped
+packages/utils test: None.
+packages/utils test: ## Failures
+packages/utils test: No test failures reported.
+packages/utils test: ---------------|---------|----------|---------|---------|-------------------
+packages/utils test: File           | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+packages/utils test: ---------------|---------|----------|---------|---------|-------------------
+packages/utils test: All files      |    8.78 |     2.73 |    12.5 |   10.31 |                   
+packages/utils test:  content-ui.ts |    8.78 |     2.73 |    12.5 |   10.31 | 115-334           
+packages/utils test: ---------------|---------|----------|---------|---------|-------------------
+packages/pkg-manager test: Done
+packages/utils test: Done
+packages/plugins/rsbuild-plugin-vue test: ---
+packages/plugins/rsbuild-plugin-vue test: tool: "@rstest/core@0.9.2"
+packages/plugins/rsbuild-plugin-vue test: timestamp: "2026-03-20T09:02:43.288Z"
+packages/plugins/rsbuild-plugin-vue test: runtime: {"node":"v22.14.0","platform":"win32","cwd":"C:\\programs\\addfox\\packages\\plugins\\rsbuild-plugin-vue"}
+packages/plugins/rsbuild-plugin-vue test: ---
+packages/plugins/rsbuild-plugin-vue test: # Rstest Test Execution Report
+packages/plugins/rsbuild-plugin-vue test: ## Summary
+packages/plugins/rsbuild-plugin-vue test: ```json
+packages/plugins/rsbuild-plugin-vue test: {
+packages/plugins/rsbuild-plugin-vue test:   "status": "pass",
+packages/plugins/rsbuild-plugin-vue test:   "counts": {
+packages/plugins/rsbuild-plugin-vue test:     "testFiles": 1,
+packages/plugins/rsbuild-plugin-vue test:     "failedFiles": 0,
+packages/plugins/rsbuild-plugin-vue test:     "tests": 4,
+packages/plugins/rsbuild-plugin-vue test:     "failedTests": 0,
+packages/plugins/rsbuild-plugin-vue test:     "passedTests": 4,
+packages/plugins/rsbuild-plugin-vue test:     "skippedTests": 0,
+packages/plugins/rsbuild-plugin-vue test:     "todoTests": 0
+packages/plugins/rsbuild-plugin-vue test:   },
+packages/plugins/rsbuild-plugin-vue test:   "durationMs": {
+packages/plugins/rsbuild-plugin-vue test:     "total": 480,
+packages/plugins/rsbuild-plugin-vue test:     "build": 121,
+packages/plugins/rsbuild-plugin-vue test:     "tests": 359
+packages/plugins/rsbuild-plugin-vue test:   },
+packages/plugins/rsbuild-plugin-vue test:   "snapshot": {
+packages/plugins/rsbuild-plugin-vue test:     "added": 0,
+packages/plugins/rsbuild-plugin-vue test:     "updated": 0,
+packages/plugins/rsbuild-plugin-vue test:     "unmatched": 0,
+packages/plugins/rsbuild-plugin-vue test:     "removed": 0,
+packages/plugins/rsbuild-plugin-vue test:     "unchecked": 0
+packages/plugins/rsbuild-plugin-vue test:   }
+packages/plugins/rsbuild-plugin-vue test: }
+packages/plugins/rsbuild-plugin-vue test: ```
+packages/plugins/rsbuild-plugin-vue test: ## Tests
+packages/plugins/rsbuild-plugin-vue test: ### Passed
+packages/plugins/rsbuild-plugin-vue test: - __tests__/index.test.ts :: plugin-vue > getVueRsbuildPlugins returns empty array when require throws
+packages/plugins/rsbuild-plugin-vue test: - __tests__/index.test.ts :: plugin-vue > addfoxVuePlugin returns plugin with name rsbuild-plugin-vue
+packages/plugins/rsbuild-plugin-vue test: - __tests__/index.test.ts :: plugin-vue > addfoxVuePlugin setup runs without error
+packages/plugins/rsbuild-plugin-vue test: - __tests__/index.test.ts :: plugin-vue > getVueRsbuildPlugins returns [pluginBabel, pluginVue, pluginVueJsx] when deps available
+packages/plugins/rsbuild-plugin-vue test: ### Skipped
+packages/plugins/rsbuild-plugin-vue test: None.
+packages/plugins/rsbuild-plugin-vue test: ## Failures
+packages/plugins/rsbuild-plugin-vue test: No test failures reported.
+packages/common test: ---
+packages/common test: tool: "@rstest/core@0.9.2"
+packages/common test: timestamp: "2026-03-20T09:02:43.296Z"
+packages/common test: runtime: {"node":"v22.14.0","platform":"win32","cwd":"C:\\programs\\addfox\\packages\\common"}
+packages/common test: ---
+packages/common test: # Rstest Test Execution Report
+packages/common test: ## Summary
+packages/common test: ```json
+packages/common test: {
+packages/common test:   "status": "pass",
+packages/common test:   "counts": {
+packages/common test:     "testFiles": 7,
+packages/common test:     "failedFiles": 0,
+packages/common test:     "tests": 212,
+packages/common test:     "failedTests": 0,
+packages/common test:     "passedTests": 212,
+packages/common test:     "skippedTests": 0,
+packages/common test:     "todoTests": 0
+packages/common test:   },
+packages/common test:   "durationMs": {
+packages/common test:     "total": 430,
+packages/common test:     "build": 132,
+packages/common test:     "tests": 298
+packages/common test:   },
+packages/common test:   "snapshot": {
+packages/common test:     "added": 0,
+packages/common test:     "updated": 0,
+packages/common test:     "unmatched": 0,
+packages/common test:     "removed": 0,
+packages/common test:     "unchecked": 0
+packages/common test:   }
+packages/common test: }
+packages/common test: ```
+packages/common test: ## Failures
+packages/common test: No test failures reported.
+packages/common test: Note: all tests passed. Lists omitted for brevity.
+packages/plugins/rsbuild-plugin-vue test: ----------|---------|----------|---------|---------|-------------------
+packages/plugins/rsbuild-plugin-vue test: File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+packages/plugins/rsbuild-plugin-vue test: ----------|---------|----------|---------|---------|-------------------
+packages/plugins/rsbuild-plugin-vue test: ----------|---------|----------|---------|---------|-------------------
+packages/common test: -----------------|---------|----------|---------|---------|-------------------
+packages/common test: File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+packages/common test: -----------------|---------|----------|---------|---------|-------------------
+packages/common test: All files        |   98.18 |    86.12 |     100 |   98.68 |                   
+packages/common test:  src/errors      |     100 |     90.9 |     100 |     100 |                   
+packages/common test:   index.ts       |     100 |     90.9 |     100 |     100 | 156               
+packages/common test:  src/hooks       |     100 |       96 |     100 |     100 |                   
+packages/common test:   HookManager.ts |     100 |       96 |     100 |     100 | 47                
+packages/common test:  src/logger      |      94 |    63.63 |     100 |   95.55 |                   
+packages/common test:   index.ts       |      94 |    63.63 |     100 |   95.55 | 120,139-141       
+packages/common test:  src/utils       |     100 |    97.56 |     100 |     100 |                   
+packages/common test:   cache.ts       |     100 |    92.85 |     100 |     100 | 72                
+packages/common test: -----------------|---------|----------|---------|---------|-------------------
+packages/plugins/rsbuild-plugin-vue test: Done
+packages/common test: Done
+packages/core test$ rstest run
+packages/create-addfox-app test$ rstest run
+packages/create-addfox-app test:  Coverage enabled with istanbul
+packages/core test:  Coverage enabled with istanbul
+packages/create-addfox-app test: ---
+packages/create-addfox-app test: tool: "@rstest/core@0.9.2"
+packages/create-addfox-app test: timestamp: "2026-03-20T09:02:44.267Z"
+packages/create-addfox-app test: runtime: {"node":"v22.14.0","platform":"win32","cwd":"C:\\programs\\addfox\\packages\\create-addfox-app"}
+packages/create-addfox-app test: ---
+packages/create-addfox-app test: # Rstest Test Execution Report
+packages/create-addfox-app test: ## Summary
+packages/create-addfox-app test: ```json
+packages/create-addfox-app test: {
+packages/create-addfox-app test:   "status": "pass",
+packages/create-addfox-app test:   "counts": {
+packages/create-addfox-app test:     "testFiles": 3,
+packages/create-addfox-app test:     "failedFiles": 0,
+packages/create-addfox-app test:     "tests": 23,
+packages/create-addfox-app test:     "failedTests": 0,
+packages/create-addfox-app test:     "passedTests": 23,
+packages/create-addfox-app test:     "skippedTests": 0,
+packages/create-addfox-app test:     "todoTests": 0
+packages/create-addfox-app test:   },
+packages/create-addfox-app test:   "durationMs": {
+packages/create-addfox-app test:     "total": 370,
+packages/create-addfox-app test:     "build": 165,
+packages/create-addfox-app test:     "tests": 205
+packages/create-addfox-app test:   },
+packages/create-addfox-app test:   "snapshot": {
+packages/create-addfox-app test:     "added": 0,
+packages/create-addfox-app test:     "updated": 0,
+packages/create-addfox-app test:     "unmatched": 0,
+packages/create-addfox-app test:     "removed": 0,
+packages/create-addfox-app test:     "unchecked": 0
+packages/create-addfox-app test:   }
+packages/create-addfox-app test: }
+packages/create-addfox-app test: ```
+packages/create-addfox-app test: ## Failures
+packages/create-addfox-app test: No test failures reported.
+packages/create-addfox-app test: Note: all tests passed. Lists omitted for brevity.
+packages/create-addfox-app test: -------------------|---------|----------|---------|---------|-------------------
+packages/create-addfox-app test: File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+packages/create-addfox-app test: -------------------|---------|----------|---------|---------|-------------------
+packages/create-addfox-app test: All files          |   90.67 |    90.56 |   91.66 |      92 |                   
+packages/create-addfox-app test:  download.ts       |   76.31 |    86.36 |      60 |   76.47 | 11-25             
+packages/create-addfox-app test:  filterApp.ts      |   95.23 |       90 |     100 |     100 | 18                
+packages/create-addfox-app test:  skills.ts         |      95 |     90.9 |     100 |     100 | 21                
+packages/create-addfox-app test: -------------------|---------|----------|---------|---------|-------------------
+packages/core test: [38;5;208m[Addfox][0m no throw
+packages/core test: [38;5;208m[Addfox][0m [1m[32m●[0m Parse config [38;5;245m14ms[0m
+packages/core test: ┌╌╌╌╌╌╌╌╌╌╌╌╌┬╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐
+packages/core test: │ [38;5;141mEntry[0m      │ [38;5;141mFile[0m                    │
+packages/core test: ├╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
+packages/core test: │ background │ ]8;;file:///C:/programs/addfox/packages/core/__tests__/fixtures/config-loader/src/background/index.jssrc/background/index.js]8;; │
+packages/core test: └╌╌╌╌╌╌╌╌╌╌╌╌┴╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘
+packages/core test: [38;5;208m[Addfox][0m [1m[32m●[0m Parse config [38;5;245m5ms[0m
+packages/core test: ┌╌╌╌╌╌╌╌╌╌╌╌╌┬╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐
+packages/core test: │ [38;5;141mEntry[0m      │ [38;5;141mFile[0m                    │
+packages/core test: ├╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
+packages/core test: │ background │ ]8;;file:///C:/programs/addfox/packages/core/__tests__/fixtures/config-loader-minimal/app/background/index.jsapp/background/index.js]8;; │
+packages/core test: └╌╌╌╌╌╌╌╌╌╌╌╌┴╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘
+packages/core test: [38;5;208m[Addfox][0m [1m[32m●[0m Parse config [38;5;245m1ms[0m
+packages/create-addfox-app test: Done
+packages/core test: ---
+packages/core test: tool: "@rstest/core@0.9.2"
+packages/core test: timestamp: "2026-03-20T09:02:44.682Z"
+packages/core test: runtime: {"node":"v22.14.0","platform":"win32","cwd":"C:\\programs\\addfox\\packages\\core"}
+packages/core test: ---
+packages/core test: # Rstest Test Execution Report
+packages/core test: ## Summary
+packages/core test: ```json
+packages/core test: {
+packages/core test:   "status": "pass",
+packages/core test:   "counts": {
+packages/core test:     "testFiles": 16,
+packages/core test:     "failedFiles": 0,
+packages/core test:     "tests": 236,
+packages/core test:     "failedTests": 0,
+packages/core test:     "passedTests": 236,
+packages/core test:     "skippedTests": 0,
+packages/core test:     "todoTests": 0
+packages/core test:   },
+packages/core test:   "durationMs": {
+packages/core test:     "total": 768,
+packages/core test:     "build": 169,
+packages/core test:     "tests": 599
+packages/core test:   },
+packages/core test:   "snapshot": {
+packages/core test:     "added": 0,
+packages/core test:     "updated": 0,
+packages/core test:     "unmatched": 0,
+packages/core test:     "removed": 0,
+packages/core test:     "unchecked": 0
+packages/core test:   }
+packages/core test: }
+packages/core test: ```
+packages/core test: ## Failures
+packages/core test: No test failures reported.
+packages/core test: Note: all tests passed. Lists omitted for brevity.
+packages/core test: -------------------|---------|----------|---------|---------|-------------------
+packages/core test: File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+packages/core test: -------------------|---------|----------|---------|---------|-------------------
+packages/core test: All files          |      95 |    87.64 |   97.19 |   96.44 |                   
+packages/core test:  src               |    96.2 |     87.5 |     100 |   94.33 |                   
+packages/core test:   ...workDetect.ts |   95.83 |      100 |     100 |   94.44 | 32                
+packages/core test:   version.ts       |   81.81 |       50 |     100 |   81.81 | 19,29             
+packages/core test:  src/config        |   85.52 |     72.3 |   93.75 |   87.32 |                   
+packages/core test:   loader.ts        |   85.33 |     72.3 |   93.33 |   87.14 | 43-44,60,252-266  
+packages/core test:  src/entry         |    94.4 |    87.45 |   95.52 |   95.49 |                   
+packages/core test:   discoverer.ts    |   94.94 |    90.41 |   95.83 |   97.56 | 51,294            
+packages/core test:   html.ts          |   98.14 |    97.36 |     100 |   97.95 | 125               
+packages/core test:   ...festParser.ts |   92.74 |    80.95 |      95 |    92.5 | 76-86,261,308-310 
+packages/core test:   resolver.ts      |   93.87 |    88.73 |   94.44 |   96.34 | 87,148,274        
+packages/core test:  src/manifest      |   96.85 |    90.22 |    98.8 |   99.19 |                   
+packages/core test:   builder.ts       |   96.03 |    89.16 |   98.36 |   98.69 | 39-40,52          
+packages/core test:   loader.ts        |   98.14 |    91.71 |     100 |     100 | ...32,143,166,174 
+packages/core test: -------------------|---------|----------|---------|---------|-------------------
+packages/core test: Done
+.../plugins/rsbuild-plugin-extension-hmr test$ rstest run
+.../rsbuild-plugin-extension-entry test$ rstest run
+.../rsbuild-plugin-extension-monitor test$ rstest run
+.../rsbuild-plugin-extension-manifest test$ rstest run
+.../rsbuild-plugin-extension-entry test:  Coverage enabled with istanbul
+.../rsbuild-plugin-extension-manifest test:  Coverage enabled with istanbul
+.../plugins/rsbuild-plugin-extension-hmr test:  Coverage enabled with istanbul
+.../rsbuild-plugin-extension-monitor test: ---
+.../rsbuild-plugin-extension-monitor test: tool: "@rstest/core@0.9.2"
+.../rsbuild-plugin-extension-monitor test: timestamp: "2026-03-20T09:02:45.433Z"
+.../rsbuild-plugin-extension-monitor test: runtime: {"node":"v22.14.0","platform":"win32","cwd":"C:\\programs\\addfox\\packages\\plugins\\rsbuild-plugin-extension-monitor"}
+.../rsbuild-plugin-extension-monitor test: ---
+.../rsbuild-plugin-extension-monitor test: # Rstest Test Execution Report
+.../rsbuild-plugin-extension-monitor test: ## Summary
+.../rsbuild-plugin-extension-monitor test: ```json
+.../rsbuild-plugin-extension-monitor test: {
+.../rsbuild-plugin-extension-monitor test:   "status": "pass",
+.../rsbuild-plugin-extension-monitor test:   "counts": {
+.../rsbuild-plugin-extension-monitor test:     "testFiles": 1,
+.../rsbuild-plugin-extension-monitor test:     "failedFiles": 0,
+.../rsbuild-plugin-extension-monitor test:     "tests": 4,
+.../rsbuild-plugin-extension-monitor test:     "failedTests": 0,
+.../rsbuild-plugin-extension-monitor test:     "passedTests": 4,
+.../rsbuild-plugin-extension-monitor test:     "skippedTests": 0,
+.../rsbuild-plugin-extension-monitor test:     "todoTests": 0
+.../rsbuild-plugin-extension-monitor test:   },
+.../rsbuild-plugin-extension-monitor test:   "durationMs": {
+.../rsbuild-plugin-extension-monitor test:     "total": 240,
+.../rsbuild-plugin-extension-monitor test:     "build": 107,
+.../rsbuild-plugin-extension-monitor test:     "tests": 133
+.../rsbuild-plugin-extension-monitor test:   },
+.../rsbuild-plugin-extension-monitor test:   "snapshot": {
+.../rsbuild-plugin-extension-monitor test:     "added": 0,
+.../rsbuild-plugin-extension-monitor test:     "updated": 0,
+.../rsbuild-plugin-extension-monitor test:     "unmatched": 0,
+.../rsbuild-plugin-extension-monitor test:     "removed": 0,
+.../rsbuild-plugin-extension-monitor test:     "unchecked": 0
+.../rsbuild-plugin-extension-monitor test:   }
+.../rsbuild-plugin-extension-monitor test: }
+.../rsbuild-plugin-extension-monitor test: ```
+.../rsbuild-plugin-extension-monitor test: ## Tests
+.../rsbuild-plugin-extension-monitor test: ### Passed
+.../rsbuild-plugin-extension-monitor test: - __tests__/index.test.ts :: plugin-extension-monitor > monitorPlugin returns plugin with name rsbuild-plugin-extension-monitor
+.../rsbuild-plugin-extension-monitor test: - __tests__/index.test.ts :: plugin-extension-monitor > monitorPlugin setup runs without error
+.../rsbuild-plugin-extension-monitor test: - __tests__/index.test.ts :: plugin-extension-monitor > modifyRsbuildConfig injects data:text/javascript snippet for each entry
+.../rsbuild-plugin-extension-monitor test: - __tests__/index.test.ts :: plugin-extension-monitor > modifyRsbuildConfig prepends to existing import array
+.../rsbuild-plugin-extension-monitor test: ### Skipped
+.../rsbuild-plugin-extension-monitor test: None.
+.../rsbuild-plugin-extension-monitor test: ## Failures
+.../rsbuild-plugin-extension-monitor test: No test failures reported.
+.../rsbuild-plugin-extension-monitor test: Done
+.../rsbuild-plugin-extension-entry test: ---
+.../rsbuild-plugin-extension-entry test: tool: "@rstest/core@0.9.2"
+.../rsbuild-plugin-extension-entry test: timestamp: "2026-03-20T09:02:45.744Z"
+.../rsbuild-plugin-extension-entry test: runtime: {"node":"v22.14.0","platform":"win32","cwd":"C:\\programs\\addfox\\packages\\plugins\\rsbuild-plugin-extension-entry"}
+.../rsbuild-plugin-extension-entry test: ---
+.../rsbuild-plugin-extension-entry test: # Rstest Test Execution Report
+.../rsbuild-plugin-extension-entry test: ## Summary
+.../rsbuild-plugin-extension-entry test: ```json
+.../rsbuild-plugin-extension-entry test: {
+.../rsbuild-plugin-extension-entry test:   "status": "pass",
+.../rsbuild-plugin-extension-entry test:   "counts": {
+.../rsbuild-plugin-extension-entry test:     "testFiles": 1,
+.../rsbuild-plugin-extension-entry test:     "failedFiles": 0,
+.../rsbuild-plugin-extension-entry test:     "tests": 42,
+.../rsbuild-plugin-extension-entry test:     "failedTests": 0,
+.../rsbuild-plugin-extension-entry test:     "passedTests": 42,
+.../rsbuild-plugin-extension-entry test:     "skippedTests": 0,
+.../rsbuild-plugin-extension-entry test:     "todoTests": 0
+.../rsbuild-plugin-extension-entry test:   },
+.../rsbuild-plugin-extension-entry test:   "durationMs": {
+.../rsbuild-plugin-extension-entry test:     "total": 531,
+.../rsbuild-plugin-extension-entry test:     "build": 244,
+.../rsbuild-plugin-extension-entry test:     "tests": 287
+.../rsbuild-plugin-extension-entry test:   },
+.../rsbuild-plugin-extension-entry test:   "snapshot": {
+.../rsbuild-plugin-extension-entry test:     "added": 0,
+.../rsbuild-plugin-extension-entry test:     "updated": 0,
+.../rsbuild-plugin-extension-entry test:     "unmatched": 0,
+.../rsbuild-plugin-extension-entry test:     "removed": 0,
+.../rsbuild-plugin-extension-entry test:     "unchecked": 0
+.../rsbuild-plugin-extension-entry test:   }
+.../rsbuild-plugin-extension-entry test: }
+.../rsbuild-plugin-extension-entry test: ```
+.../rsbuild-plugin-extension-entry test: ## Failures
+.../rsbuild-plugin-extension-entry test: No test failures reported.
+.../rsbuild-plugin-extension-entry test: Note: all tests passed. Lists omitted for brevity.
+.../rsbuild-plugin-extension-entry test: ----------|---------|----------|---------|---------|----------------------------
+.../rsbuild-plugin-extension-entry test: File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s          
+.../rsbuild-plugin-extension-entry test: ----------|---------|----------|---------|---------|----------------------------
+.../rsbuild-plugin-extension-entry test: All files |   99.03 |    90.34 |     100 |     100 |                            
+.../rsbuild-plugin-extension-entry test:  index.ts |   99.03 |    90.34 |     100 |     100 | ...405-422,459-464,492,504 
+.../rsbuild-plugin-extension-entry test: ----------|---------|----------|---------|---------|----------------------------
+.../rsbuild-plugin-extension-entry test: Done
+.../rsbuild-plugin-extension-manifest test: ---
+.../rsbuild-plugin-extension-manifest test: tool: "@rstest/core@0.9.2"
+.../rsbuild-plugin-extension-manifest test: timestamp: "2026-03-20T09:02:45.959Z"
+.../rsbuild-plugin-extension-manifest test: runtime: {"node":"v22.14.0","platform":"win32","cwd":"C:\\programs\\addfox\\packages\\plugins\\rsbuild-plugin-extension-manifest"}
+.../rsbuild-plugin-extension-manifest test: ---
+.../rsbuild-plugin-extension-manifest test: # Rstest Test Execution Report
+.../rsbuild-plugin-extension-manifest test: ## Summary
+.../rsbuild-plugin-extension-manifest test: ```json
+.../rsbuild-plugin-extension-manifest test: {
+.../rsbuild-plugin-extension-manifest test:   "status": "pass",
+.../rsbuild-plugin-extension-manifest test:   "counts": {
+.../rsbuild-plugin-extension-manifest test:     "testFiles": 1,
+.../rsbuild-plugin-extension-manifest test:     "failedFiles": 0,
+.../rsbuild-plugin-extension-manifest test:     "tests": 35,
+.../rsbuild-plugin-extension-manifest test:     "failedTests": 0,
+.../rsbuild-plugin-extension-manifest test:     "passedTests": 35,
+.../rsbuild-plugin-extension-manifest test:     "skippedTests": 0,
+.../rsbuild-plugin-extension-manifest test:     "todoTests": 0
+.../rsbuild-plugin-extension-manifest test:   },
+.../rsbuild-plugin-extension-manifest test:   "durationMs": {
+.../rsbuild-plugin-extension-manifest test:     "total": 736,
+.../rsbuild-plugin-extension-manifest test:     "build": 251,
+.../rsbuild-plugin-extension-manifest test:     "tests": 485
+.../rsbuild-plugin-extension-manifest test:   },
+.../rsbuild-plugin-extension-manifest test:   "snapshot": {
+.../rsbuild-plugin-extension-manifest test:     "added": 0,
+.../rsbuild-plugin-extension-manifest test:     "updated": 0,
+.../rsbuild-plugin-extension-manifest test:     "unmatched": 0,
+.../rsbuild-plugin-extension-manifest test:     "removed": 0,
+.../rsbuild-plugin-extension-manifest test:     "unchecked": 0
+.../rsbuild-plugin-extension-manifest test:   }
+.../rsbuild-plugin-extension-manifest test: }
+.../rsbuild-plugin-extension-manifest test: ```
+.../rsbuild-plugin-extension-manifest test: ## Failures
+.../rsbuild-plugin-extension-manifest test: No test failures reported.
+.../rsbuild-plugin-extension-manifest test: Note: all tests passed. Lists omitted for brevity.
+.../rsbuild-plugin-extension-manifest test: ----------|---------|----------|---------|---------|-------------------
+.../rsbuild-plugin-extension-manifest test: File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+.../rsbuild-plugin-extension-manifest test: ----------|---------|----------|---------|---------|-------------------
+.../rsbuild-plugin-extension-manifest test: All files |    94.3 |    85.44 |   98.73 |   98.91 |                   
+.../rsbuild-plugin-extension-manifest test:  index.ts |    94.3 |    85.44 |   98.73 |   98.91 | 195,295,462       
+.../rsbuild-plugin-extension-manifest test: ----------|---------|----------|---------|---------|-------------------
+.../rsbuild-plugin-extension-manifest test: Done
+.../plugins/rsbuild-plugin-extension-hmr test: [38;5;208m[Addfox][0m [1m[32m●[0m chrome started (build launch), extension loaded. [38;5;245m2.13s[0m
+.../plugins/rsbuild-plugin-extension-hmr test: ---
+.../plugins/rsbuild-plugin-extension-hmr test: tool: "@rstest/core@0.9.2"
+.../plugins/rsbuild-plugin-extension-hmr test: timestamp: "2026-03-20T09:02:49.942Z"
+.../plugins/rsbuild-plugin-extension-hmr test: runtime: {"node":"v22.14.0","platform":"win32","cwd":"C:\\programs\\addfox\\packages\\plugins\\rsbuild-plugin-extension-hmr"}
+.../plugins/rsbuild-plugin-extension-hmr test: ---
+.../plugins/rsbuild-plugin-extension-hmr test: # Rstest Test Execution Report
+.../plugins/rsbuild-plugin-extension-hmr test: ## Summary
+.../plugins/rsbuild-plugin-extension-hmr test: ```json
+.../plugins/rsbuild-plugin-extension-hmr test: {
+.../plugins/rsbuild-plugin-extension-hmr test:   "status": "pass",
+.../plugins/rsbuild-plugin-extension-hmr test:   "counts": {
+.../plugins/rsbuild-plugin-extension-hmr test:     "testFiles": 3,
+.../plugins/rsbuild-plugin-extension-hmr test:     "failedFiles": 0,
+.../plugins/rsbuild-plugin-extension-hmr test:     "tests": 49,
+.../plugins/rsbuild-plugin-extension-hmr test:     "failedTests": 0,
+.../plugins/rsbuild-plugin-extension-hmr test:     "passedTests": 49,
+.../plugins/rsbuild-plugin-extension-hmr test:     "skippedTests": 0,
+.../plugins/rsbuild-plugin-extension-hmr test:     "todoTests": 0
+.../plugins/rsbuild-plugin-extension-hmr test:   },
+.../plugins/rsbuild-plugin-extension-hmr test:   "durationMs": {
+.../plugins/rsbuild-plugin-extension-hmr test:     "total": 4710,
+.../plugins/rsbuild-plugin-extension-hmr test:     "build": 213,
+.../plugins/rsbuild-plugin-extension-hmr test:     "tests": 4497
+.../plugins/rsbuild-plugin-extension-hmr test:   },
+.../plugins/rsbuild-plugin-extension-hmr test:   "snapshot": {
+.../plugins/rsbuild-plugin-extension-hmr test:     "added": 0,
+.../plugins/rsbuild-plugin-extension-hmr test:     "updated": 0,
+.../plugins/rsbuild-plugin-extension-hmr test:     "unmatched": 0,
+.../plugins/rsbuild-plugin-extension-hmr test:     "removed": 0,
+.../plugins/rsbuild-plugin-extension-hmr test:     "unchecked": 0
+.../plugins/rsbuild-plugin-extension-hmr test:   }
+.../plugins/rsbuild-plugin-extension-hmr test: }
+.../plugins/rsbuild-plugin-extension-hmr test: ```
+.../plugins/rsbuild-plugin-extension-hmr test: ## Failures
+.../plugins/rsbuild-plugin-extension-hmr test: No test failures reported.
+.../plugins/rsbuild-plugin-extension-hmr test: Note: all tests passed. Lists omitted for brevity.
+.../plugins/rsbuild-plugin-extension-hmr test: -------------------|---------|----------|---------|---------|----------------------------------------------------------------
+.../plugins/rsbuild-plugin-extension-hmr test: File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                                              
+.../plugins/rsbuild-plugin-extension-hmr test: -------------------|---------|----------|---------|---------|----------------------------------------------------------------
+.../plugins/rsbuild-plugin-extension-hmr test: All files          |   35.56 |    29.39 |   38.29 |   36.59 |                                                                
+.../plugins/rsbuild-plugin-extension-hmr test:  src               |   34.37 |       20 |   28.57 |   30.76 |                                                                
+.../plugins/rsbuild-plugin-extension-hmr test:   index.ts         |    8.69 |    11.11 |   16.66 |      10 | 72-106                                                         
+.../plugins/rsbuild-plugin-extension-hmr test:  src/browser       |   25.41 |    21.37 |   21.42 |   26.99 |                                                                
+.../plugins/rsbuild-plugin-extension-hmr test:   launcher.ts      |   44.06 |    20.33 |   35.71 |   46.15 | 49-63,70,81-100,110,113-165,208-209,279-280,301,317-318        
+.../plugins/rsbuild-plugin-extension-hmr test:   paths.ts         |   72.41 |    55.88 |     100 |      76 | 131,134,145-146,151-152                                        
+.../plugins/rsbuild-plugin-extension-hmr test:   runner.ts        |    2.56 |        0 |    2.63 |    2.98 | 32-36,39-323                                                   
+.../plugins/rsbuild-plugin-extension-hmr test:  src/hmr           |   46.93 |    43.65 |    50.7 |   50.38 |                                                                
+.../plugins/rsbuild-plugin-extension-hmr test:   cleanup.ts       |   83.33 |    79.31 |      75 |   96.66 | 35                                                             
+.../plugins/rsbuild-plugin-extension-hmr test:   disable.ts       |   93.75 |    81.25 |    90.9 |   96.15 | 67                                                             
+.../plugins/rsbuild-plugin-extension-hmr test:   rspack-plugin.ts |   46.66 |    31.81 |   44.44 |   51.42 | 31-70                                                          
+.../plugins/rsbuild-plugin-extension-hmr test:   scope.ts         |    33.8 |    36.21 |   40.42 |   35.08 | 95,108,116-149,162-169,184-191,230-332,344-419,469-470,515-521 
+.../plugins/rsbuild-plugin-extension-hmr test:  src/manager       |      65 |    62.16 |    90.9 |   63.46 |                                                                
+.../plugins/rsbuild-plugin-extension-hmr test:   extension.ts     |      65 |    62.16 |    90.9 |   63.46 | 66,83-155                                                      
+.../plugins/rsbuild-plugin-extension-hmr test:  src/server        |   14.91 |     0.82 |   31.03 |   13.72 |                                                                
+.../plugins/rsbuild-plugin-extension-hmr test:   test-server.ts   |      75 |        0 |      80 |   83.33 | 14,25                                                          
+.../plugins/rsbuild-plugin-extension-hmr test:   ws-server.ts     |     5.1 |     0.85 |    5.26 |    4.44 | 35-213,220-234                                                 
+.../plugins/rsbuild-plugin-extension-hmr test: -------------------|---------|----------|---------|---------|----------------------------------------------------------------
+.../plugins/rsbuild-plugin-extension-hmr test: Done
+packages/cli test$ rstest run
+packages/cli test:  Coverage enabled with istanbul
+packages/cli test: [38;5;208m[Addfox][0m [1m[32m●[0m Parse config [38;5;245m45ms[0m
+packages/cli test: ┌╌╌╌╌╌╌╌╌╌╌╌╌┬╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐
+packages/cli test: │ [38;5;141mEntry[0m      │ [38;5;141mFile[0m                    │
+packages/cli test: ├╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
+packages/cli test: │ background │ ]8;;file:///C:/Users/GomiGXY/AppData/Local/Temp/addfox-pipeline-1773997371164/app/background/index.tsapp/background/index.ts]8;; │
+packages/cli test: └╌╌╌╌╌╌╌╌╌╌╌╌┴╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘
+packages/cli test: [38;5;208m[Addfox][0m [1m[32m●[0m Parse config [38;5;245m2ms[0m
+packages/cli test: ┌╌╌╌╌╌╌╌╌╌╌╌╌┬╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐
+packages/cli test: │ [38;5;141mEntry[0m      │ [38;5;141mFile[0m                    │
+packages/cli test: ├╌╌╌╌╌╌╌╌╌╌╌╌┼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤
+packages/cli test: │ background │ ]8;;file:///C:/Users/GomiGXY/AppData/Local/Temp/addfox-hooks-1773997371223/app/background/index.tsapp/background/index.ts]8;; │
+packages/cli test: └╌╌╌╌╌╌╌╌╌╌╌╌┴╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘
+packages/cli test: [38;5;208m[Addfox][0m Ensuring dev dependencies: @types/chrome
+packages/cli test: npm error code E404
+packages/cli test: npm error 404 Not Found - GET https://registry.npmjs.org/no-such-pkg-xyz - Not found
+packages/cli test: npm error 404
+packages/cli test: npm error 404  'no-such-pkg-xyz@*' is not in this registry.
+packages/cli test: npm error 404
+packages/cli test: npm error 404 Note that you can also install from a
+packages/cli test: npm error 404 tarball, folder, http url, or git url.
+packages/cli test: npm error A complete log of this run can be found in: C:\Users\GomiGXY\AppData\Local\npm-cache\_logs\2026-03-20T09_02_51_474Z-debug-0.log
+packages/cli test: bun add v1.3.1 (89fa0f34)
+packages/cli test: Resolving dependencies
+packages/cli test: Resolved, downloaded and extracted [1]
+packages/cli test: error: GET https://registry.npmjs.org/no-such-pkg-xyz - 404
+packages/cli test: ! The local project doesn't define a 'packageManager' field. Corepack will now add one referencing pnpm@10.26.1+sha512.664074abc367d2c9324fdc18037097ce0a8f126034160f709928e9e9f95d98714347044e5c3164d65bd5da6c59c6be362b107546292a8eecb7999196e5ce58fa.
+packages/cli test: ! For more details about this field, consult the documentation at https://nodejs.org/api/packages.html#packagemanager
+packages/cli test:  ERR_PNPM_FETCH_404  GET https://registry.npmjs.org/no-such-pkg-xyz: Not Found - 404
+packages/cli test: This error happened while installing a direct dependency of C:\Users\GomiGXY\AppData\Local\Temp\addfox-ensure-deps-1773997373913
+packages/cli test: no-such-pkg-xyz is not in the npm registry, or you have no permission to fetch it.
+packages/cli test: An authorization header was used: Bearer npm_[hidden]
+packages/cli test: ---
+packages/cli test: tool: "@rstest/core@0.9.2"
+packages/cli test: timestamp: "2026-03-20T09:02:55.602Z"
+packages/cli test: runtime: {"node":"v22.14.0","platform":"win32","cwd":"C:\\programs\\addfox\\packages\\cli"}
+packages/cli test: ---
+packages/cli test: # Rstest Test Execution Report
+packages/cli test: ## Summary
+packages/cli test: ```json
+packages/cli test: {
+packages/cli test:   "status": "pass",
+packages/cli test:   "counts": {
+packages/cli test:     "testFiles": 7,
+packages/cli test:     "failedFiles": 0,
+packages/cli test:     "tests": 69,
+packages/cli test:     "failedTests": 0,
+packages/cli test:     "passedTests": 69,
+packages/cli test:     "skippedTests": 0,
+packages/cli test:     "todoTests": 0
+packages/cli test:   },
+packages/cli test:   "durationMs": {
+packages/cli test:     "total": 5054,
+packages/cli test:     "build": 200,
+packages/cli test:     "tests": 4854
+packages/cli test:   },
+packages/cli test:   "snapshot": {
+packages/cli test:     "added": 0,
+packages/cli test:     "updated": 0,
+packages/cli test:     "unmatched": 0,
+packages/cli test:     "removed": 0,
+packages/cli test:     "unchecked": 0
+packages/cli test:   }
+packages/cli test: }
+packages/cli test: ```
+packages/cli test: ## Failures
+packages/cli test: No test failures reported.
+packages/cli test: Note: all tests passed. Lists omitted for brevity.
+packages/cli test: -------------------|---------|----------|---------|---------|-------------------
+packages/cli test: File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+packages/cli test: -------------------|---------|----------|---------|---------|-------------------
+packages/cli test: All files          |   82.77 |    66.66 |   92.98 |   83.27 |                   
+packages/cli test:  cli               |     100 |    86.84 |     100 |     100 |                   
+packages/cli test:   args.ts          |     100 |    86.84 |     100 |     100 | 53,76,81,88,91    
+packages/cli test:  pipeline          |   58.24 |    26.66 |   85.71 |   59.55 |                   
+packages/cli test:   Pipeline.ts      |   55.07 |    21.73 |   83.33 |   55.88 | ...30,153,159-236 
+packages/cli test:   ...orkPlugins.ts |   68.18 |    42.85 |     100 |   71.42 | 22-27,47          
+packages/cli test:  utils             |   89.83 |    80.16 |   93.54 |   91.46 |                   
+packages/cli test:   buildStats.ts    |   68.57 |    74.07 |      75 |   70.37 | 6-14              
+packages/cli test:   ensureDeps.ts    |   96.55 |     82.6 |     100 |     100 | ...9,71,74-77,118 
+packages/cli test:   prefixStream.ts  |     100 |    79.16 |     100 |     100 | 33-34,72,102-103  
+packages/cli test:   version.ts       |      76 |     62.5 |   83.33 |      75 | 27,43-52,61       
+packages/cli test:   zipDist.ts       |     100 |    93.75 |     100 |     100 | 42                
+packages/cli test: -------------------|---------|----------|---------|---------|-------------------
+packages/cli test: Done
+packages/addfox test$ node -e "process.exit(0)"
+packages/addfox test: Done

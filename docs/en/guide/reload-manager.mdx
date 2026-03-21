@@ -1,0 +1,119 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Reload Manager
+
+The Reload Manager is a built-in component during Addfox development, responsible for automatically reloading the extension after code changes.
+
+## How It Works
+
+```
+Source code changes
+    ↓
+Rsbuild rebuilds
+    ↓
+WebSocket sends reload signal
+    ↓
+Reload Manager receives signal
+    ↓
+Disable extension → Enable extension
+    ↓
+Extension reloads
+```
+
+## Why Reload Manager is Needed
+
+Browser extensions differ from regular web apps. After code changes:
+
+1. **Extension needs reload** — For manifest changes to take effect
+2. **Content Script needs re-injection** — To update scripts in pages
+3. **Service Worker needs restart** — For background script updates
+
+The browser doesn't handle these automatically, so Addfox provides the Reload Manager to automate this process.
+
+## Usage
+
+The Reload Manager is **automatically enabled** during `addfox dev`, no extra configuration needed.
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev
+```
+
+  </Tab>
+</Tabs>
+
+## Technical Implementation
+
+The Reload Manager is a **helper extension** loaded alongside the main extension:
+
+1. Main extension — Your extension under development
+2. Reload Manager extension — Listens to WebSocket and controls main extension
+
+The Reload Manager extension:
+- Auto-installs in dev mode
+- Receives notification via WebSocket after build completes
+- Sends `chrome.management` API commands to disable then enable main extension
+- Refreshes current tab when Content Script changes
+
+## Configuration
+
+### Hot Reload Port
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  hotReload: {
+    port: 23333,  // WebSocket port
+  },
+});
+```
+
+### Disable Page Refresh
+
+```ts
+export default defineConfig({
+  hotReload: {
+    autoRefreshContentPage: false,  // Don't refresh page on content changes
+  },
+});
+```
+
+## Manual Reload
+
+If auto-reload has issues, you can manually reload:
+
+1. Visit `chrome://extensions/`
+2. Find the extension under development
+3. Click the refresh icon
+
+Or use keyboard shortcuts:
+- macOS: `Cmd + R` (on extensions page)
+- Windows/Linux: `Ctrl + R`
+
+## Related Configuration
+
+- [`hotReload`](/config/hot-reload) - Hot reload configuration
+- [guide/hmr](/guide/hmr) - Hot reload guide

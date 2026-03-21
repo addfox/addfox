@@ -1,0 +1,6 @@
+[
+  "index",
+  { "type": "dir", "name": "guide", "label": "Guide", "collapsible": true, "collapsed": false },
+  { "type": "dir", "name": "config", "label": "Config", "collapsible": true, "collapsed": true },
+  { "type": "dir", "name": "examples", "label": "Examples", "collapsible": true, "collapsed": true }
+]

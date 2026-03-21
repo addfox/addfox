@@ -1,0 +1,23 @@
+{
+  "name": "addfox-with-vue-tsx",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Vue 3 + TypeScript JSX browser extension: popup, options, content, background",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev --debug",
+    "build": "addfox build"
+  },
+  "dependencies": {
+    "@addfox/utils": "workspace:*",
+    "vue": "^3.5.0",
+    "webextension-polyfill": "^0.10.0"
+  },
+  "devDependencies": {
+    "@addfox/rsbuild-plugin-vue": "workspace:*",
+    "@rsbuild/plugin-babel": "^1.1.2",
+    "@types/chrome": "^0.0.326",
+    "addfox": "workspace:*",
+    "typescript": "^5.0.0"
+  }
+}

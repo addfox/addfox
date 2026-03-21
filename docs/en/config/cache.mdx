@@ -1,0 +1,116 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# cache
+
+`cache` controls whether **Chromium-based browsers reuse a dev user data directory** between `addfox dev` runs. It affects only dev mode and only Chromium-family browsers.
+
+## Type and default
+
+- **Type**: `boolean | undefined`
+- **Default**: `true`
+- **CLI precedence**:
+  - `-c/--cache` forces cache on for current run
+  - `--no-cache` forces cache off for current run
+  - If both are provided, the **last flag wins**
+
+## Role
+
+- When `true` (or CLI `--cache` is used):
+  - Dev mode **caches** a Chromium user data dir under the internal cache path, so:
+    - extension install state
+    - extension settings
+    - login sessions and cookies
+    are kept between `addfox dev` runs.
+- When `false`:
+  - Each `addfox dev` run uses a fresh temporary profile for Chromium-based browsers.
+- Does not affect Firefox; Firefox profile handling is delegated to `web-ext`.
+
+## Examples
+
+### Enable caching via config
+
+```ts
+export default defineConfig({
+  cache: true,
+});
+```
+
+### One-off caching via CLI
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- --cache
+# or
+pnpm dev -- -c
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- --cache
+# or
+npm run dev -- -c
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev --cache
+# or
+yarn dev -c
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- --cache
+# or
+bun run dev -- -c
+```
+
+  </Tab>
+</Tabs>
+
+### One-off disable via CLI
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- --no-cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- --no-cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev --no-cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- --no-cache
+```
+
+  </Tab>
+</Tabs>
+
+CLI flags override `cache` in config for that run.
+
+## Related
+
+- Dev plugin [@addfox/rsbuild-plugin-extension-hmr](https://github.com/addfox/addfox/tree/main/packages/plugins/rsbuild-plugin-extension-hmr) which uses the cached profile.

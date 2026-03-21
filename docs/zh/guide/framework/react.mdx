@@ -1,0 +1,291 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# React
+
+Addfox 完全支持 React，可以使用 JSX/TSX 开发扩展的各个入口。
+
+## 安装
+
+创建项目时选择 React 模板：
+
+```bash
+pnpm create addfox-app --framework react
+```
+
+或在现有项目中安装：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @rsbuild/plugin-react
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @rsbuild/plugin-react
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @rsbuild/plugin-react
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @rsbuild/plugin-react
+```
+
+  </Tab>
+</Tabs>
+
+## 配置
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginReact } from "@rsbuild/plugin-react";
+
+export default defineConfig({
+  plugins: [pluginReact()],
+});
+```
+
+## 项目结构
+
+```
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.tsx
+├── popup/
+│   ├── App.tsx
+│   ├── index.html
+│   └── index.tsx
+├── options/
+│   ├── App.tsx
+│   ├── index.html
+│   └── index.tsx
+└── manifest.json
+```
+
+## 示例代码
+
+### Popup
+
+```tsx
+// app/popup/index.tsx
+import { createRoot } from 'react-dom/client';
+import { App } from './App';
+import './index.css';
+
+const container = document.getElementById('app');
+const root = createRoot(container!);
+root.render(<App />);
+```
+
+```tsx
+// app/popup/App.tsx
+import { useState } from 'react';
+
+export function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div className="p-4">
+      <h1 className="text-xl font-bold">Hello React!</h1>
+      <button 
+        onClick={() => setCount(c => c + 1)}
+        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Count: {count}
+      </button>
+    </div>
+  );
+}
+```
+
+```html
+<!-- app/popup/index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="./index.tsx" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+### Content Script
+
+```tsx
+// app/content/index.tsx
+import { createRoot } from 'react-dom/client';
+import { ContentApp } from './ContentApp';
+
+// 创建挂载点
+const container = document.createElement('div');
+container.id = 'my-extension-root';
+document.body.appendChild(container);
+
+const root = createRoot(container);
+root.render(<ContentApp />);
+```
+
+### Background
+
+```ts
+// app/background/index.ts
+// Background 不使用 React，使用普通 TypeScript
+
+chrome.action.onClicked.addListener((tab) => {
+  console.log('Extension clicked');
+});
+```
+
+## 状态管理
+
+可以使用任意 React 状态管理方案：
+
+### Zustand
+
+```bash
+pnpm add zustand
+```
+
+```ts
+// app/store.ts
+import { create } from 'zustand';
+
+interface Store {
+  count: number;
+  increment: () => void;
+}
+
+export const useStore = create<Store>((set) => ({
+  count: 0,
+  increment: () => set((state) => ({ count: state.count + 1 })),
+}));
+```
+
+### Jotai
+
+```bash
+pnpm add jotai
+```
+
+```ts
+// app/atoms.ts
+import { atom } from 'jotai';
+
+export const countAtom = atom(0);
+```
+
+## CSS 方案
+
+### Tailwind CSS
+
+```bash
+pnpm add -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+```js
+// tailwind.config.js
+module.exports = {
+  content: ["./app/**/*.{js,ts,jsx,tsx}"],
+  theme: { extend: {} },
+  plugins: [],
+};
+```
+
+```css
+/* app/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+### CSS Modules
+
+```tsx
+// app/popup/App.tsx
+import styles from './App.module.css';
+
+export function App() {
+  return <div className={styles.container}>Hello</div>;
+}
+```
+
+```css
+/* app/popup/App.module.css */
+.container {
+  padding: 16px;
+}
+```
+
+### CSS-in-JS
+
+支持 styled-components 或 emotion：
+
+```bash
+pnpm add styled-components
+```
+
+```tsx
+import styled from 'styled-components';
+
+const Button = styled.button`
+  background: blue;
+  color: white;
+  padding: 8px 16px;
+`;
+
+export function App() {
+  return <Button>Click me</Button>;
+}
+```
+
+## 与 Chrome API 交互
+
+```tsx
+import { useEffect, useState } from 'react';
+
+export function TabList() {
+  const [tabs, setTabs] = useState<chrome.tabs.Tab[]>([]);
+
+  useEffect(() => {
+    chrome.tabs.query({}, setTabs);
+  }, []);
+
+  const activateTab = (tabId: number) => {
+    chrome.tabs.update(tabId, { active: true });
+  };
+
+  return (
+    <ul>
+      {tabs.map((tab) => (
+        <li key={tab.id} onClick={() => activateTab(tab.id!)}>
+          {tab.title}
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+## 相关链接
+
+- [Rsbuild React 插件](https://rsbuild.dev/plugins/list/plugin-react)
+- [React 文档](https://react.dev/)

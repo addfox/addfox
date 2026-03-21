@@ -1,0 +1,74 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Sass
+
+## Install
+
+You need to install the `@rsbuild/plugin-sass` plugin:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D @rsbuild/plugin-sass sass
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D @rsbuild/plugin-sass sass
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D @rsbuild/plugin-sass sass
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D @rsbuild/plugin-sass sass
+```
+
+  </Tab>
+</Tabs>
+
+## Configuration
+
+Add the plugin in `addfox.config.ts`:
+
+```ts
+import { defineConfig } from "addfox";
+import { pluginSass } from "@rsbuild/plugin-sass";
+
+export default defineConfig({
+  plugins: [pluginSass()],
+});
+```
+
+## Usage
+
+After installing and configuring, you can create and import `.scss` files directly:
+
+```scss
+/* app/popup/index.scss */
+$brand: #7c3aed;
+
+.card {
+  border: 1px solid $brand;
+  color: $brand;
+}
+```
+
+```ts
+import "./index.scss";
+```
+
+## Notes
+
+- If needed, use `*.module.scss` for CSS Modules style isolation
+- The plugin automatically handles Sass file compilation and imports

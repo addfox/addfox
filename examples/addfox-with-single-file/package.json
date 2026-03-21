@@ -1,0 +1,16 @@
+{
+  "name": "addfox-with-single-file",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Single-file entries template: popup.html, options.html, background.ts, content.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev",
+    "build": "addfox build"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.326",
+    "addfox": "workspace:*",
+    "typescript": "^5.0.0"
+  }
+}

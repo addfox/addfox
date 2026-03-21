@@ -1,0 +1,39 @@
+{
+  "name": "addfox",
+  "version": "0.1.1-beta.2",
+  "description": "Build tool for browser extensions — one install, addfox dev / build",
+  "type": "module",
+  "bin": {
+    "addfox": "./bin/addfox.mjs"
+  },
+  "main": "./index.mjs",
+  "module": "./index.mjs",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.mjs",
+      "default": "./index.mjs"
+    },
+    "./monitor": {
+      "types": "./monitor.d.ts",
+      "import": "./monitor.mjs",
+      "default": "./monitor.mjs"
+    }
+  },
+  "files": [
+    "bin",
+    "index.mjs",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "build": "echo 'No build step'",
+    "test": "node -e \"process.exit(0)\"",
+    "test:coverage": "node -e \"process.exit(0)\""
+  },
+  "dependencies": {
+    "@addfox/cli": "workspace:*",
+    "@addfox/core": "workspace:*",
+    "@addfox/rsbuild-plugin-extension-monitor": "workspace:*"
+  }
+}

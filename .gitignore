@@ -1,0 +1,32 @@
+# 以下规则对所有目录生效（**/ 表示任意层级）
+
+# addfox default output directory (dev/build)
+**/.addfox
+# package build output
+**/dist
+# archives (e.g. addfox build --zip)
+**/*.zip
+**/*.tar.gz
+**/*.tgz
+# env (local / secrets)
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules
+
+# 根目录合并后的覆盖率报告（CI 生成，用于 Codecov）
+/coverage
+# coverage
+**/coverage
+
+# Rspress docs build output (run pnpm docs:build to generate)
+/docs/doc_build
+/docs/node_modules
+
+# Playwright e2e
+/e2e/test-results
+/e2e/playwright-report
+/e2e/blob-report
+/e2e/playwright/.cache/.rspress
+
+.cursor

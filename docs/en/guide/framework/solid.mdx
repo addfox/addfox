@@ -1,0 +1,56 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Solid
+
+Add `@rsbuild/plugin-babel` and `@rsbuild/plugin-solid` to **plugins** in `addfox.config.ts` to enable Solid and JSX/TSX. Solid's JSX requires Babel, so both plugins are needed.
+
+## Setup
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add solid-js @rsbuild/plugin-babel @rsbuild/plugin-solid -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install solid-js @rsbuild/plugin-babel @rsbuild/plugin-solid -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add solid-js @rsbuild/plugin-babel @rsbuild/plugin-solid -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add solid-js @rsbuild/plugin-babel @rsbuild/plugin-solid -D
+```
+
+  </Tab>
+</Tabs>
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginBabel } from "@rsbuild/plugin-babel";
+import { pluginSolid } from "@rsbuild/plugin-solid";
+
+export default defineConfig({
+  plugins: [
+    pluginBabel({ include: /\.(?:jsx|tsx)$/ }),
+    pluginSolid(),
+  ],
+});
+```
+
+## Related
+
+- [Basics](/guide/manifest), [entry](/guide/entry).

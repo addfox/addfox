@@ -1,0 +1,52 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# React
+
+Add `@rsbuild/plugin-react` to **plugins** in `addfox.config.ts` to enable React and JSX/TSX.
+
+## Setup
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add react react-dom @rsbuild/plugin-react -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install react react-dom @rsbuild/plugin-react -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add react react-dom @rsbuild/plugin-react -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add react react-dom @rsbuild/plugin-react -D
+```
+
+  </Tab>
+</Tabs>
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginReact } from "@rsbuild/plugin-react";
+
+export default defineConfig({
+  plugins: [pluginReact()],
+});
+```
+
+## Related
+
+- [Basics](/guide/manifest), [entry](/guide/entry).

@@ -1,0 +1,74 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Less
+
+## 安装
+
+需要安装 `@rsbuild/plugin-less` 插件：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D @rsbuild/plugin-less less
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D @rsbuild/plugin-less less
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D @rsbuild/plugin-less less
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D @rsbuild/plugin-less less
+```
+
+  </Tab>
+</Tabs>
+
+## 配置
+
+在 `addfox.config.ts` 中添加插件：
+
+```ts
+import { defineConfig } from "addfox";
+import { pluginLess } from "@rsbuild/plugin-less";
+
+export default defineConfig({
+  plugins: [pluginLess()],
+});
+```
+
+## 使用
+
+安装并配置后，可直接创建并导入 `.less` 文件：
+
+```less
+/* app/popup/index.less */
+@brand: #2563eb;
+
+.btn {
+  background: @brand;
+  color: #fff;
+}
+```
+
+```ts
+import "./index.less";
+```
+
+## 说明
+
+- 建议在 content 场景使用命名空间类名，避免污染页面样式
+- 插件会自动处理 Less 文件的编译和导入

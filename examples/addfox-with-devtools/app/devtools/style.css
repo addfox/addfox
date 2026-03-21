@@ -1,0 +1,10 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; font-size: 12px; }
+.tabs { display: flex; border-bottom: 1px solid #ccc; background: #f5f5f5; }
+.tabs button { padding: 8px 16px; border: none; background: none; cursor: pointer; }
+.tabs button.active { background: #fff; border-bottom: 2px solid #1a73e8; font-weight: 600; }
+.panels { padding: 12px; min-height: 200px; }
+.panel { display: none; }
+.panel.active { display: block; }
+.panel h3 { margin: 0 0 8px; font-size: 14px; }
+.panel pre { margin: 0; padding: 8px; background: #f0f0f0; border-radius: 4px; overflow: auto; font-size: 11px; }

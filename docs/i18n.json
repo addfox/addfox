@@ -1,0 +1,310 @@
+{
+  "nav": {
+    "en": "Nav",
+    "zh": "导航"
+  },
+  "home": {
+    "en": "Home",
+    "zh": "首页"
+  },
+  "homeHeroLine1": {
+    "en": "Build Better Extensions",
+    "zh": "构建更好的浏览器扩展"
+  },
+  "homeHeroLine2Orange": {
+    "en": "Faster",
+    "zh": "更快"
+  },
+  "homeHeroLine2Purple": {
+    "en": "for Developers and AI",
+    "zh": "为开发者和AI"
+  },
+  "homeHeroTagline": {
+    "en": "Accelerate your browser extension development. Built on Rsbuild — fast, simple, and free.",
+    "zh": "加速你的浏览器插件开发。基于 Rsbuild，快速，简单，自由。"
+  },
+  "homeHeroGetStarted": {
+    "en": "Get Started",
+    "zh": "快速开始"
+  },
+  "homeHeroConfig": {
+    "en": "Config",
+    "zh": "配置"
+  },
+  "homeHeroViewOnGithub": {
+    "en": "View on GitHub",
+    "zh": "在 GitHub 查看"
+  },
+  "homeFeaturesSectionTitle": {
+    "en": "Redefining developer experience",
+    "zh": "重新定义开发体验"
+  },
+  "homeFeaturesSectionSubtitle": {
+    "en": "Addfox makes extension development fast and predictable.",
+    "zh": "Addfox 让扩展开发更快、更可预期。"
+  },
+  "homeBlock1Title": {
+    "en": "Instant Server Start",
+    "zh": "即时启动开发"
+  },
+  "homeBlock1Desc": {
+    "en": "Run addfox dev for watch + Hot Reload; extension loads in the browser with ultra-fast HMR for both content_script and background.",
+    "zh": "运行 addfox dev 即 watch + Hot Reload；扩展在浏览器中加载，content_script 与 background 均能极速HMR。"
+  },
+  "homeBlock2Title": {
+    "en": "Optimized Build",
+    "zh": "优化构建与打包"
+  },
+  "homeBlock2Desc": {
+    "en": "Build automatically outputs a zip file; consistent Rsbuild pipeline for production.",
+    "zh": "使用 build 将自动打包 zip 格式；与生产一致的 Rsbuild 流水线。"
+  },
+  "homeFeaturesGridTitle": {
+    "en": "Features",
+    "zh": "功能概览"
+  },
+  "homeFeaturesRow1Title": {
+    "en": "For developers",
+    "zh": "为开发者"
+  },
+  "homeFeaturesRow1Subtitle": {
+    "en": "Hot reload, multi-browser support, and minimal config to help you ship extensions faster.",
+    "zh": "热更新、多浏览器支持与极简配置，助你更快交付扩展。"
+  },
+  "homeFeaturesRow2Title": {
+    "en": "For AI",
+    "zh": "为AI"
+  },
+  "homeFeaturesRow2Subtitle": {
+    "en": "Structured meta, terminal error output, and Skills — so AI can understand and work with your extension.",
+    "zh": "结构化 meta、终端错误输出与 Skills，让 AI 能理解并扩展你的扩展。"
+  },
+  "homeFeature1Title": {
+    "en": "Same experience in dev and production",
+    "zh": "一流的开发与生产体验"
+  },
+  "homeFeature1Details": {
+    "en": "Built on Rsbuild. Full bundle mode ensures consistent dev and build experience without sacrificing ultimate performance.",
+    "zh": "底层基于 Rsbuild。Full bundle 模式保证开发与打包体验一致且不丢失极致的性能。"
+  },
+  "homeFeature2Title": {
+    "en": "Framework agnostic",
+    "zh": "框架无关"
+  },
+  "homeFeature2Details": {
+    "en": "Vanilla, Vue, React, Preact, Svelte, Solid, or React+UnoCSS — use what you like.",
+    "zh": "你可以用 Vanilla，也可以使用 Vue、React、Preact、Svelte、Solid 或 React+UnoCSS 等框架。"
+  },
+  "homeFeature3Title": {
+    "en": "Minimal config",
+    "zh": "极简的配置"
+  },
+  "homeFeature3Details": {
+    "en": "Install addfox, add addfox.config.ts at the root, and start — no complex setup.",
+    "zh": "安装 addfox 后，在根目录添加 addfox.config.ts 即可开始，无需复杂的配置即可完成插件开发。"
+  },
+  "homeFeature4Title": {
+    "en": "Full browser support",
+    "zh": "全方位的浏览器支持"
+  },
+  "homeFeature4Details": {
+    "en": "Support for mainstream Chromium-based browsers and Firefox. Auto-detects browser default install path and launches without configuration.",
+    "zh": "支持主流 Chromium 系浏览器和 Firefox。无需配置即可自动识别浏览器默认安装地址并启动。"
+  },
+  "homeFeature5Title": {
+    "en": "Fast HMR",
+    "zh": "极速HMR"
+  },
+  "homeFeature5Details": {
+    "en": "Dedicated Reloader controls extension updates — not only fast, but both content_script and background achieve ultra-fast HMR.",
+    "zh": "使用独立 Reloader 控制扩展更新，不仅快速，content_script 和 background 均能实现极速HMR。"
+  },
+  "homeFeature6Title": {
+    "en": "Content UI support",
+    "zh": "支持 content-ui"
+  },
+  "homeFeature6Details": {
+    "en": "Built-in createContentUI method for easy integration of Iframe, ShadowDom, and native content.",
+    "zh": "提供了内置的 createContentUI 方法，可轻松集成 Iframe、ShadowDom 和原生内容。"
+  },
+  "homeFeature7Title": {
+    "en": "AI-friendly error monitor",
+    "zh": "AI 友好的错误监控"
+  },
+  "homeFeature7Details": {
+    "en": "Enable terminal error output with --debug. Capture all extension errors without browser DevTools, so you can Ask AI directly in any editor.",
+    "zh": "使用 --debug 时启用终端错误输出。无需在浏览器操作即可掌握插件所有报错信息，方便你在任何 Editor 中直接 Ask AI。"
+  },
+  "homeFeatureAiMetadataTitle": {
+    "en": "llms.txt and markdown metadata support",
+    "zh": "llms.txt 和 markdown 元信息支持"
+  },
+  "homeFeatureAiMetadataDetails": {
+    "en": "Provides clear extension info, error details, and prompts to help AI agents develop.",
+    "zh": "提供明确的插件信息、错误信息和 prompts，帮助 AI agent 开发。"
+  },
+  "homeFeatureBundleAnalysisTitle": {
+    "en": "Rstack Ecosystem",
+    "zh": "Rstack 生态"
+  },
+  "homeFeatureBundleAnalysisDetails": {
+    "en": "Built-in support for Rsdoctor and Rstest to quickly complete bundle analysis, unit and e2e testing.",
+    "zh": "内置支持 Rsdoctor 与 Rstest，可快速完成打包分析及单元、e2e 测试。"
+  },
+  "homeFeature8Title": {
+    "en": "Zip on build",
+    "zh": "支持 Zip 输出"
+  },
+  "homeFeature8Details": {
+    "en": "Build automatically outputs an extension zip package for easy installation and distribution.",
+    "zh": "构建时自动输出扩展 zip 包，便于安装与分发。"
+  },
+  "homeFeature9Title": {
+    "en": "Maximum flexibility",
+    "zh": "自由度极高"
+  },
+  "homeFeature9Details": {
+    "en": "Supports file-based auto entry discovery and entry field configuration. Maximum flexibility for complex projects.",
+    "zh": "支持基于文件自动识别入口，也支持通过 entry 字段配置入口。最大程度为复杂项目提供灵活性。"
+  },
+  "homeFeatureMetaTitle": {
+    "en": "Output meta structure",
+    "zh": "输出 meta 结构"
+  },
+  "homeFeatureMetaDetails": {
+    "en": "Outputs structured meta for easy consumption by AI and tools.",
+    "zh": "输出结构化 meta，便于 AI 与工具消费。"
+  },
+  "homeFeatureSkillsTitle": {
+    "en": "Skills support",
+    "zh": "Skills 支持"
+  },
+  "homeFeatureSkillsDetails": {
+    "en": "Extensible Skills to support Agents and automation.",
+    "zh": "可扩展的 Skills，支持 Agent 与自动化。"
+  },
+  "guide": {
+    "en": "Guide",
+    "zh": "指南"
+  },
+  "config": {
+    "en": "Config",
+    "zh": "配置"
+  },
+  "introduction": {
+    "en": "Introduction",
+    "zh": "介绍"
+  },
+  "install": {
+    "en": "Installation",
+    "zh": "安装"
+  },
+  "features": {
+    "en": "Features",
+    "zh": "功能简介"
+  },
+  "manifest": {
+    "en": "manifest",
+    "zh": "manifest"
+  },
+  "plugins": {
+    "en": "plugins",
+    "zh": "plugins"
+  },
+  "rsbuild": {
+    "en": "rsbuild",
+    "zh": "rsbuild"
+  },
+  "entry": {
+    "en": "entry",
+    "zh": "entry"
+  },
+  "appDir": {
+    "en": "appDir",
+    "zh": "appDir"
+  },
+  "outDir": {
+    "en": "outDir",
+    "zh": "outDir"
+  },
+  "outputRoot": {
+    "en": "outputRoot",
+    "zh": "outputRoot"
+  },
+  "zip": {
+    "en": "zip",
+    "zh": "zip"
+  },
+  "envPrefix": {
+    "en": "envPrefix",
+    "zh": "envPrefix"
+  },
+  "launch": {
+    "en": "Browser Launch",
+    "zh": "browserPath"
+  },
+  "outlineTitle": {
+    "en": "On this page",
+    "zh": "本页目录"
+  },
+  "prevPage": {
+    "en": "Previous",
+    "zh": "上一页"
+  },
+  "nextPage": {
+    "en": "Next",
+    "zh": "下一页"
+  },
+  "editLink": {
+    "en": "Edit this page",
+    "zh": "编辑此页"
+  },
+  "creatorSaysTitle": {
+    "en": "What Creator Says",
+    "zh": "听听作者怎么说"
+  },
+  "creatorSaysContent": {
+    "en": "I'm Gomi, the creator of Video Roll, a browser extension featured on both Chrome Web Store and Edge with over 35K users. Despite its success, I still felt unsatisfied with the extension development experience. After trying Parcel, Vite, and other tools, I decided to tackle the pain points myself. Even with excellent solutions like WXT and Plasmo available, I didn't want to reinvent the wheel. The speed of Rsbuild and the AI-friendly development paradigm fascinated me, so I created Addfox.",
+    "zh": "我是 Gomi，也是浏览器插件 Video Roll 的作者。尽管我开发的插件在 Chrome Web Store 和 Edge 上都成为了精选插件，用户量也超过了 35K，但开发浏览器插件的过程中，我依然感觉到不满足。在尝试了 Parcel、Vite 等开发工具后，我决定尝试解决一些插件开发中的痛点。即使业界已经存在 WXT、Plasmo 这种非常优秀和完善的解决方案，但我坚决不会重复造轮子。基于 Rsbuild 的速度和 AI 友好的开发范式，让我着迷，于是我创造了 Addfox。"
+  },
+  "faqTitle": {
+    "en": "Frequently Asked Questions",
+    "zh": "常见问题"
+  },
+  "faqSubtitle": {
+    "en": "Quick answers to common questions about Addfox",
+    "zh": "关于 Addfox 的常见问题快速解答"
+  },
+  "faqQuestion1": {
+    "en": "Is Addfox open source?",
+    "zh": "是否开源？"
+  },
+  "faqAnswer1": {
+    "en": "Yes, Addfox is fully open source under the MIT license. You can view the source code on GitHub, contribute to the project, or fork it for your own needs.",
+    "zh": "是的，Addfox 采用 MIT 协议完全开源。你可以在 GitHub 上查看源代码、为项目贡献代码，或者根据需要进行 Fork。"
+  },
+  "faqQuestion2": {
+    "en": "Does it support Safari?",
+    "zh": "是否支持 Safari？"
+  },
+  "faqAnswer2": {
+    "en": "Currently, Addfox focuses on Chromium-based browsers (Chrome, Edge, Arc, Brave, etc.) and Firefox. Safari support is not available at this time due to its different extension API and packaging requirements.",
+    "zh": "目前 Addfox 专注于 Chromium 系浏览器（Chrome、Edge、Arc、Brave 等）和 Firefox。由于 Safari 的扩展 API 和打包要求不同，暂不支持 Safari。"
+  },
+  "faqQuestion3": {
+    "en": "Does it support mainstream frontend frameworks?",
+    "zh": "是否支持主流前端框架？"
+  },
+  "faqAnswer3": {
+    "en": "Absolutely! Addfox is framework-agnostic and works with React, Vue, Preact, Svelte, Solid, and vanilla JavaScript/TypeScript. You can use your preferred framework with minimal configuration.",
+    "zh": "当然支持！Addfox 是框架无关的，支持 React、Vue、Preact、Svelte、Solid 以及原生 JavaScript/TypeScript。你可以使用喜欢的框架，只需极少的配置。"
+  },
+  "faqQuestion4": {
+    "en": "What are the differences compared to WXT/Plasmo/Extension.js?",
+    "zh": "与 WXT/Plasmo/Extension.js 的区别是什么？"
+  },
+  "faqAnswer4": {
+    "en": "WXT, Plasmo, and Extension.js are all excellent choices that have greatly advanced the extension development ecosystem. WXT brings the power of Vite and a well-designed plugin system; Plasmo offers comprehensive cloud integration and a polished developer experience; Extension.js provides simplicity and ease of use. Addfox takes a different approach: built on Rsbuild for exceptional build speed, designed specifically for AI-assisted development with structured metadata and terminal error output, and offering maximum flexibility through minimal conventions—you can organize your code however you prefer while still getting out-of-the-box HMR and multi-browser support.",
+    "zh": "WXT、Plasmo 和 Extension.js 都是非常优秀的框架，它们极大地推动了浏览器扩展开发生态的发展。WXT 带来了 Vite 的强大性能和精心设计的插件系统；Plasmo 提供了完善的云服务集成和出色的开发体验；Extension.js 则以简洁易用著称。Addfox 选择了不同的路径：基于 Rsbuild 构建以获得极致的构建速度；专为 AI 辅助开发设计，提供结构化元数据和终端错误输出；通过最小化的约定给予你最大的灵活性——你可以按自己喜欢的方式组织代码，同时享受开箱即用的热更新和多浏览器支持。"
+  }
+}

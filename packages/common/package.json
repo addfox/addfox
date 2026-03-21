@@ -1,0 +1,37 @@
+{
+  "name": "@addfox/common",
+  "version": "0.1.1-beta.2",
+  "description": "Shared utilities for Addfox packages",
+  "type": "module",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.cjs",
+      "types": "./dist/esm/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "dev": "rslib build --watch",
+    "test": "rstest run"
+  },
+  "dependencies": {
+    "cli-table3": "^0.6.5"
+  },
+  "devDependencies": {
+    "@rsbuild/core": "^1.0.0",
+    "@rslib/core": "^0.20.0",
+    "@rstest/core": "^0.9.2",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.6.0"
+  },
+  "peerDependencies": {
+    "@rsbuild/core": "^1.0.0"
+  }
+}

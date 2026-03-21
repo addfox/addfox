@@ -1,0 +1,336 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# 浏览器启动
+
+Addfox 可以在开发时自动启动浏览器并加载扩展，提升开发效率。
+
+## 快速开始
+
+运行开发命令：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev
+```
+
+  </Tab>
+</Tabs>
+
+首次启动开发服务器会自动：
+1. 构建扩展
+2. 打开浏览器
+3. 加载开发中的扩展
+
+## Chromium 系浏览器
+
+Addfox 原生支持以下基于 Chromium 的浏览器：
+
+| 浏览器 | CLI 参数 | 说明 |
+|--------|----------|------|
+| Google Chrome | `-b chrome` | 默认浏览器 |
+| Chromium | `-b chromium` | 开源版本 |
+| Microsoft Edge | `-b edge` | Windows 自带 |
+| Brave | `-b brave` | 隐私浏览器 |
+| Vivaldi | `-b vivaldi` | 自定义浏览器 |
+| Opera | `-b opera` | 欧朋浏览器 |
+| Arc | `-b arc` | 新形态浏览器 |
+
+### 启动 Chromium 浏览器
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+# Chrome（默认）
+pnpm dev -- -b chrome
+
+# Edge
+pnpm dev -- -b edge
+
+# Brave
+pnpm dev -- -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+# Chrome（默认）
+npm run dev -- -b chrome
+
+# Edge
+npm run dev -- -b edge
+
+# Brave
+npm run dev -- -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+# Chrome（默认）
+yarn dev -b chrome
+
+# Edge
+yarn dev -b edge
+
+# Brave
+yarn dev -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+# Chrome（默认）
+bun run dev -- -b chrome
+
+# Edge
+bun run dev -- -b edge
+
+# Brave
+bun run dev -- -b brave
+```
+
+  </Tab>
+</Tabs>
+
+### Chromium 浏览器路径配置
+
+如果浏览器不在默认位置，可在配置中指定 `browserPath`：
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/path/to/chrome",
+    edge: "/path/to/edge",
+    brave: "/path/to/brave",
+  },
+});
+```
+
+#### 各平台示例
+
+**macOS：**
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  },
+});
+```
+
+**Windows：**
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  },
+});
+```
+
+**Linux：**
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/usr/bin/google-chrome",
+    chromium: "/usr/bin/chromium-browser",
+  },
+});
+```
+
+### Chromium 缓存用户数据
+
+默认每次启动使用新的用户数据目录。如需保留（如保持登录状态）：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- -c
+# 或
+pnpm dev -- --cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- -c
+# 或
+npm run dev -- --cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev -c
+# 或
+yarn dev --cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- -c
+# 或
+bun run dev -- --cache
+```
+
+  </Tab>
+</Tabs>
+
+或在配置中启用：
+
+```ts
+export default defineConfig({
+  cache: true,
+});
+```
+
+用户数据保存在 `.addfox/cache/` 目录。
+
+## Firefox
+
+Firefox 开发模式使用 **web-ext** 工具管理扩展生命周期。
+
+### 启动 Firefox
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- -b firefox
+```
+
+  </Tab>
+</Tabs>
+
+### Firefox 特性
+
+- 扩展重载由 `web-ext` 处理，而非 Addfox 的 WebSocket
+- 自动打开 Firefox 并加载扩展
+- 支持文件变更时自动重新加载
+
+### Firefox 路径配置
+
+```ts
+export default defineConfig({
+  browserPath: {
+    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  },
+});
+```
+
+:::info
+Firefox 配置文件由 `web-ext` 自动管理，无需手动配置缓存选项。
+:::
+
+## 调试技巧
+
+### 查看 Service Worker
+
+1. 打开 `chrome://extensions/`
+2. 找到开发中的扩展
+3. 点击 "Service Worker" 查看后台脚本控制台
+
+### 查看 Content Script
+
+1. 在网页上右键 → 检查
+2. 切换到 Console 面板
+3. 选择对应扩展的上下文
+
+### 使用错误监控
+
+启用监控面板捕获所有入口的错误：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- --debug
+```
+
+  </Tab>
+</Tabs>
+
+## 相关配置
+
+- [`browserPath`](/config/launch) - 浏览器可执行文件路径配置
+- [`cache`](/config/cache) - 缓存配置
+- [`hotReload`](/config/hot-reload) - 热重载配置
+- [`debug`](/config/debug) - 错误监控配置

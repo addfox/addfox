@@ -1,0 +1,168 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# browserPath
+
+`browserPath` 用于配置开发时自动打开浏览器并加载扩展的可执行文件路径。
+
+## 概述
+
+- **类型**：`BrowserPathConfig`
+- **默认值**：`undefined`（使用系统默认路径）
+- **是否必需**：否
+
+## Chromium 系浏览器
+
+支持以下基于 Chromium 的浏览器：
+
+| 浏览器 | 配置键 | 默认路径 |
+|--------|--------|----------|
+| Google Chrome | `chrome` | 自动检测 |
+| Chromium | `chromium` | 自动检测 |
+| Microsoft Edge | `edge` | 自动检测 |
+| Brave | `brave` | 自动检测 |
+| Vivaldi | `vivaldi` | 自动检测 |
+| Opera | `opera` | 自动检测 |
+| Arc | `arc` | 自动检测 |
+
+### 配置示例
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  },
+});
+```
+
+### 使用 CLI 启动
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- -b chrome
+pnpm dev -- -b edge
+pnpm dev -- -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- -b chrome
+npm run dev -- -b edge
+npm run dev -- -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev -b chrome
+yarn dev -b edge
+yarn dev -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- -b chrome
+bun run dev -- -b edge
+bun run dev -- -b brave
+```
+
+  </Tab>
+</Tabs>
+
+## Firefox
+
+Firefox 使用 `web-ext` 工具管理扩展，路径配置方式相同：
+
+```ts
+export default defineConfig({
+  browserPath: {
+    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  },
+});
+```
+
+### 启动 Firefox
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- -b firefox
+```
+
+  </Tab>
+</Tabs>
+
+:::info
+Firefox 开发模式使用 `web-ext` 工具，扩展重载由 `web-ext` 处理而非 Addfox 的 WebSocket。
+:::
+
+## 各平台示例
+
+### macOS
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  },
+});
+```
+
+### Windows
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  },
+});
+```
+
+### Linux
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/usr/bin/google-chrome",
+    chromium: "/usr/bin/chromium-browser",
+    firefox: "/usr/bin/firefox",
+  },
+});
+```
+
+## 相关配置
+
+- [guide/launch](/guide/launch) - 浏览器启动指南

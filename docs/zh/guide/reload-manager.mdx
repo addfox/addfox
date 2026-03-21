@@ -1,0 +1,119 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# 重载管理器
+
+重载管理器（Reload Manager）是 Addfox 开发时的内置组件，负责在代码变更后自动重载扩展。
+
+## 工作原理
+
+```
+源代码变更
+    ↓
+Rsbuild 重新构建
+    ↓
+WebSocket 发送重载信号
+    ↓
+重载管理器接收信号
+    ↓
+禁用扩展 → 启用扩展
+    ↓
+扩展重新加载
+```
+
+## 为什么需要重载管理器
+
+浏览器扩展与普通 Web 应用不同，代码变更后需要：
+
+1. **重新加载扩展** — 让 manifest 变更生效
+2. **重新注入 Content Script** — 更新页面中的脚本
+3. **重启 Service Worker** — 让后台脚本更新
+
+浏览器本身不会自动处理这些，所以 Addfox 提供了重载管理器来自动化这个过程。
+
+## 使用方式
+
+重载管理器在 `addfox dev` 时**自动启用**，无需额外配置。
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev
+```
+
+  </Tab>
+</Tabs>
+
+## 技术实现
+
+重载管理器是一个**辅助扩展**，与主扩展一起加载：
+
+1. 主扩展 — 你的开发中的扩展
+2. 重载管理器扩展 — 监听 WebSocket 并控制主扩展
+
+重载管理器扩展：
+- 在开发模式下自动安装
+- 构建完成后通过 WebSocket 接收通知
+- 发送 `chrome.management` API 命令禁用再启用主扩展
+- Content Script 变更时刷新当前标签页
+
+## 配置选项
+
+### 热重载端口
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  hotReload: {
+    port: 23333,  // WebSocket 端口
+  },
+});
+```
+
+### 禁用页面刷新
+
+```ts
+export default defineConfig({
+  hotReload: {
+    autoRefreshContentPage: false,  // content 变更时不刷新页面
+  },
+});
+```
+
+## 手动重载
+
+如果自动重载出现问题，可以手动重载：
+
+1. 访问 `chrome://extensions/`
+2. 找到开发中的扩展
+3. 点击刷新图标
+
+或使用快捷键：
+- macOS: `Cmd + R`（在扩展页面）
+- Windows/Linux: `Ctrl + R`
+
+## 相关配置
+
+- [`hotReload`](/config/hot-reload) - 热重载配置
+- [guide/hmr](/guide/hmr) - 热更新指南

@@ -1,0 +1,16 @@
+{
+  "name": "addfox-with-bookmarks-override",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Built-in bookmarks entry with chrome_url_overrides.bookmarks auto-fill",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev",
+    "build": "addfox build"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.326",
+    "addfox": "workspace:*",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "addfox-with-firefox",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Firefox extension template: popup, content, background",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev -b firefox --debug",
+    "build": "addfox build -b firefox"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.326",
+    "addfox": "workspace:*",
+    "typescript": "^5.0.0"
+  }
+}

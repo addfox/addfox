@@ -1,0 +1,67 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# UnoCSS
+
+## 安装
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D unocss @unocss/postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D unocss @unocss/postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D unocss @unocss/postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D unocss @unocss/postcss
+```
+
+  </Tab>
+</Tabs>
+
+## 配置
+
+创建 `postcss.config.mjs`：
+
+```js
+export default {
+  plugins: {
+    "@unocss/postcss": {},
+  },
+};
+```
+
+可选：创建 `uno.config.ts` 做规则扩展。
+
+## 使用
+
+在你的入口样式中引入 UnoCSS：
+
+```css
+/* app/popup/index.css */
+@unocss;
+```
+
+并在入口脚本里导入该 CSS：
+
+```ts
+import "./index.css";
+```
+
+随后即可在组件中使用 UnoCSS 原子类。

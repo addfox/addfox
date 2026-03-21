@@ -1,0 +1,46 @@
+{
+  "name": "addfox-workspace",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Build tool for browser extensions — one install, addfox dev / build",
+  "author": "Gomi",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/addfox/addfox.git"
+  },
+  "homepage": "https://addfox.dev",
+  "scripts": {
+    "dev": "pnpm --filter @addfox/cli dev",
+    "create": "pnpm --filter @addfox/create-addfox-app start",
+    "packages:build": "pnpm -r --filter \"./packages/**\" run build",
+    "packages:test": "pnpm -r --filter \"./packages/**\" run test",
+    "packages:test:coverage": "pnpm -r --filter \"./packages/**\" run test:coverage",
+    "test": "pnpm run packages:test",
+    "test:coverage": "pnpm run packages:test:coverage",
+    "test:coverage:report": "pnpm run test:coverage && node scripts/merge-coverage.mjs",
+    "e2e": "pnpm run packages:build && pnpm run e2e:build && pnpm run e2e:build:monitor && playwright test -c e2e",
+    "e2e:build": "pnpm --filter addfox-with-react run build",
+    "e2e:build:monitor": "node scripts/build-with-monitor.mjs",
+    "e2e:ui": "playwright test -c e2e --ui",
+    "e2e:headed": "playwright test -c e2e --headed",
+    "build": "pnpm run packages:build && pnpm run examples:build",
+    "docs:dev": "pnpm --filter addfox-docs dev",
+    "docs:build": "pnpm --filter addfox-docs build",
+    "docs:preview": "pnpm --filter addfox-docs preview",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "pnpm run packages:build && pnpm publish -r",
+    "ci:publish": "pnpm publish -r --access public",
+    "test:cross-pm": "pnpm run packages:build && node scripts/test-cross-pm.mjs"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.0",
+    "@addfox/rsbuild-plugin-extension-hmr": "workspace:*",
+    "@playwright/test": "^1.58.2",
+    "lcov-result-merger": "^5.0.1",
+    "ws": "^8.18.0"
+  },
+  "packageManager": "pnpm@10.0.0"
+}

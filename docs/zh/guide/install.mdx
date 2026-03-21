@@ -1,0 +1,262 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# 安装
+
+## 方式一：脚手架创建（推荐）
+
+使用官方脚手架快速创建项目，自动配置好开发环境：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm create addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npx create-addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn create addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun create addfox-app
+```
+
+  </Tab>
+</Tabs>
+
+### 交互式安装流程
+
+脚手架会引导你完成以下步骤：
+
+1. **项目名称** — 输入项目目录名（默认：`my-extension`）
+2. **框架选择** — 选择你偏好的前端框架：
+   - Vanilla
+   - Vue
+   - React
+   - Preact
+   - Svelte
+   - Solid
+3. **样式引擎** — 选择样式方案：`none` / `tailwindcss` / `unocss` / `less` / `sass`
+4. **语言选择** — 选择 TypeScript 或 JavaScript
+5. **包管理器** — 选择 pnpm、npm、yarn 或 bun
+6. **入口选择** — 选择需要包含的扩展入口：
+   - Background（Service Worker / 后台脚本）
+   - Content Script（内容脚本）
+   - Popup（弹窗页面）
+   - Options Page（选项页面）
+   - Side Panel（侧边栏）
+   - DevTools（开发者工具）
+7. **测试能力（可选）** — 选择是否初始化：
+   - Unit（rstest）
+   - E2E（rstest + Playwright）
+8. **Rsdoctor（可选）** — 选择是否安装 `@rsdoctor/rspack-plugin`
+9. **安装 Skills** — 选择是否为项目安装 addfox skills
+
+### 脚手架选项
+
+你也可以通过参数跳过部分交互（以最新 `create-addfox-app` 为准）：
+
+```bash
+create-addfox-app [项目名] [选项]
+```
+
+| 选项 | 说明 |
+|------|------|
+| `[项目名]` | 项目目录名（默认：`my-extension`） |
+| `--framework <name>` | 指定框架：`vanilla` \| `vue` \| `react` \| `preact` \| `svelte` \| `solid` |
+| `--language <lang>` | 指定语言：`ts` \| `js` |
+| `--style <name>` | 指定样式引擎：`none` \| `tailwindcss` \| `unocss` \| `less` \| `sass`（默认 `tailwindcss`） |
+| `--unit` | 添加 Unit 测试初始化（rstest） |
+| `--e2e` | 添加 E2E 测试初始化（rstest + Playwright） |
+| `--rsdoctor` | 安装 `@rsdoctor/rspack-plugin`（后续配合 `--report` 使用） |
+| `--help` | 显示帮助信息 |
+| `--version` | 显示版本号 |
+
+> 注意：`--style`、`--unit`、`--e2e`、`--rsdoctor` 主要用于你同时传入 `--framework` 与 `--language` 的非交互场景。
+
+**示例：**
+
+```bash
+# 创建 React + TypeScript 项目
+pnpm create addfox-app my-extension --framework react --language ts
+
+# 创建 Vue + JavaScript + UnoCSS，并初始化单元测试
+npx create-addfox-app my-vue-ext --framework vue --language js --style unocss --unit
+
+# 创建 Solid + TypeScript，并启用 E2E 与 Rsdoctor
+pnpm create addfox-app my-solid-ext --framework solid --language ts --e2e --rsdoctor
+```
+
+创建完成后，CLI 会显示后续步骤：
+
+```bash
+cd my-extension
+pnpm install
+pnpm dev
+```
+
+## 方式二：手动集成到现有项目
+
+如果你已有项目，可以手动集成 Addfox：
+
+### 1. 安装依赖
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D addfox
+```
+
+  </Tab>
+</Tabs>
+
+### 2. 创建配置文件
+
+在项目根目录创建 `addfox.config.ts`：
+
+```ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  manifest: {
+    name: "我的扩展",
+    version: "1.0.0",
+    manifest_version: 3,
+    permissions: ["storage", "activeTab"],
+  },
+});
+```
+
+### 3. 添加入口文件
+
+创建基础目录结构：
+
+```tree
+my-extension/
+├── app/
+│   ├── background/
+│   │   └── index.ts      # 后台脚本
+│   ├── content/
+│   │   └── index.ts      # 内容脚本
+│   ├── popup/
+│   │   ├── index.html    # 弹窗页面（可选）
+│   │   └── index.ts      # 弹窗脚本
+│   └── manifest.json     # 扩展清单
+├── addfox.config.ts
+└── package.json
+```
+
+### 4. 添加脚本命令
+
+在 `package.json` 中添加：
+
+```json
+{
+  "scripts": {
+    "dev": "addfox dev -b chrome",
+    "build": "addfox build -b chrome"
+  }
+}
+```
+
+### 5. 运行命令
+
+- **开发**：`addfox dev` 或使用包管理器的运行脚本（如 `pnpm dev`）。
+- **构建**：`addfox build`；产物输出到 `outputRoot/outDir/extension-<browser>`（默认 `.addfox/extension/extension-chromium`）。
+
+使用 `-b chrome|chromium|edge|brave|vivaldi|opera|santa|arc|yandex|browseros|custom|firefox` 指定目标浏览器：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev
+pnpm build
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev
+npm run build
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev
+yarn build
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev
+bun run build
+```
+
+  </Tab>
+</Tabs>
+
+不指定时默认为 Chrome。
+
+## 完整配置示例
+
+```ts
+import { defineConfig } from "addfox";
+import { pluginReact } from "@rsbuild/plugin-react";
+
+export default defineConfig({
+  manifest: {
+    name: "我的扩展",
+    version: "1.0.0",
+    manifest_version: 3,
+    permissions: ["storage", "activeTab"],
+  },
+  plugins: [pluginReact()],
+});
+```
+
+## 下一步
+
+- [目录结构](/guide/app-dir) — 了解项目文件组织方式
+- [入口配置](/guide/entry/concept) — 学习如何配置扩展入口
+- [Manifest 配置](/config/manifest) — 查看完整的 manifest 配置选项

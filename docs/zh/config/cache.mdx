@@ -1,0 +1,96 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# cache
+
+`cache` 用于控制是否在开发时保留浏览器用户数据。
+
+## 概述
+
+- **类型**：`boolean`
+- **默认值**：`true`
+- **是否必需**：否
+
+## 用法
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  cache: true,  // 启用缓存
+});
+```
+
+## 作用
+
+启用缓存后：
+- 开发时浏览器用户数据会保存在 `.addfox/cache/` 目录
+- 下次启动 `addfox dev` 时会复用这些数据
+- 登录状态、扩展设置等会保留
+
+## CLI 参数
+
+CLI 参数优先级高于配置：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+# 强制启用缓存（即使配置为 false）
+pnpm dev -- -c
+pnpm dev -- --cache
+
+# 强制禁用缓存（即使配置为 true）
+pnpm dev -- --no-cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+# 强制启用缓存（即使配置为 false）
+npm run dev -- -c
+npm run dev -- --cache
+
+# 强制禁用缓存（即使配置为 true）
+npm run dev -- --no-cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+# 强制启用缓存（即使配置为 false）
+yarn dev -c
+yarn dev --cache
+
+# 强制禁用缓存（即使配置为 true）
+yarn dev --no-cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+# 强制启用缓存（即使配置为 false）
+bun run dev -- -c
+bun run dev -- --cache
+
+# 强制禁用缓存（即使配置为 true）
+bun run dev -- --no-cache
+```
+
+  </Tab>
+</Tabs>
+
+当 `--cache` 与 `--no-cache` 同时出现时，以最后一个参数为准。
+
+## 注意事项
+
+- 仅影响开发模式（`addfox dev`）
+- 生产构建（`addfox build`）不受此配置影响
+- 遇到奇怪问题时，可尝试清除 `.addfox/cache/` 目录
+
+## 相关配置
+
+- [guide/launch](/guide/launch) - 开发启动指南

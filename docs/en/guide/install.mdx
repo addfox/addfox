@@ -1,0 +1,224 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Installation
+
+## Option 1: Scaffold a project (Recommended)
+
+Use the official scaffold to quickly create a project with pre-configured dev environment:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm create addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npx create-addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn create addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun create addfox-app
+```
+
+  </Tab>
+</Tabs>
+
+### Interactive Setup Steps (Latest)
+
+The scaffold will guide you through the following steps:
+
+1. **Project name** — Enter your project directory name (default: `my-extension`)
+2. **Framework** — Select your preferred framework:
+   - Vanilla
+   - Vue
+   - React
+   - Preact
+   - Svelte
+   - Solid
+3. **Style engine** — Choose `none` / `tailwindcss` / `unocss` / `less` / `sass`
+4. **Language** — Select TypeScript or JavaScript
+5. **Package manager** — Choose pnpm, npm, yarn, or bun
+6. **Entries** — Select which extension entries to include:
+   - Background (Service Worker / Background script)
+   - Content Script
+   - Popup
+   - Options Page
+   - Side Panel
+   - DevTools
+7. **Test setup (optional)** — Choose whether to initialize:
+   - Unit (rstest)
+   - E2E (rstest + Playwright)
+8. **Rsdoctor (optional)** — Choose whether to install `@rsdoctor/rspack-plugin`
+9. **Install Skills** — Optionally install addfox skills to your project
+
+### Scaffold Options
+
+You can also pass options directly (based on the current `create-addfox-app` CLI):
+
+```bash
+create-addfox-app [project-name] [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `[project-name]` | Project directory name (default: `my-extension`) |
+| `--framework <name>` | Set framework: `vanilla` \| `vue` \| `react` \| `preact` \| `svelte` \| `solid` |
+| `--language <lang>` | Set language: `ts` \| `js` |
+| `--style <name>` | Set style engine: `none` \| `tailwindcss` \| `unocss` \| `less` \| `sass` (default: `tailwindcss`) |
+| `--unit` | Add unit test setup (rstest) |
+| `--e2e` | Add E2E test setup (rstest + Playwright) |
+| `--rsdoctor` | Install `@rsdoctor/rspack-plugin` (then use with `--report`) |
+| `--help` | Show help information |
+| `--version` | Show version number |
+
+> Note: `--style`, `--unit`, `--e2e`, and `--rsdoctor` are primarily used in non-interactive mode when `--framework` and `--language` are provided.
+
+**Examples:**
+
+```bash
+# Create a React + TypeScript project
+pnpm create addfox-app my-extension --framework react --language ts
+
+# Create a Vue + JavaScript project with UnoCSS and unit tests
+npx create-addfox-app my-vue-ext --framework vue --language js --style unocss --unit
+
+# Create a Solid + TypeScript project with E2E and Rsdoctor
+pnpm create addfox-app my-solid-ext --framework solid --language ts --e2e --rsdoctor
+```
+
+After creation, the CLI will display the next steps:
+
+```bash
+cd my-extension
+pnpm install
+pnpm dev
+```
+
+## Option 2: Add to an existing project
+
+If you already have a project, you can manually integrate Addfox:
+
+### 1. Install addfox
+
+Install **addfox** as a **dev dependency** (one package includes CLI and build):
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D addfox
+```
+
+  </Tab>
+</Tabs>
+
+### 2. Add config file
+
+Create `addfox.config.ts` (or `addfox.config.js`) at the project root, and ensure you have `background`, `content`, `popup`, `options`, `sidepanel` entries under the root or under `appDir`.
+
+### 3. Minimal config example
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginReact } from "@rsbuild/plugin-react"; // or vue from "@addfox/rsbuild-plugin-vue"
+
+export default defineConfig({
+  appDir: "src",
+  outDir: "extension",
+  manifest: {
+    name: "My Extension",
+    version: "1.0.0",
+    manifest_version: 3,
+    permissions: ["storage", "activeTab"],
+    action: { default_popup: "popup/index.html" },
+    background: { service_worker: "background/index.js" },
+    content_scripts: [{ matches: ["<all_urls>"], js: ["content/index.js"] }],
+  },
+  plugins: [pluginReact()],
+});
+```
+
+### 4. Packages and imports
+
+- **Core**: `defineConfig`, types, entry discovery, manifest helpers are exported from `addfox`. Use: `import { defineConfig } from "addfox"`.
+- **Runtime**: For the `browser` API (Chrome/Firefox), install [webextension-polyfill](https://github.com/mozilla/webextension-polyfill) and use `import browser from "webextension-polyfill"`. **Content UI**: `@addfox/utils` provides `defineContentUI` / `mountContentUI` for injecting UI in content scripts; use `import { defineContentUI, mountContentUI } from "@addfox/utils"`.
+
+### 5. Run commands
+
+- **Dev**: `addfox dev` or use your package manager's run script (e.g. `pnpm dev`, `npm run dev`, `yarn dev`, `bun run dev` if `"dev": "addfox dev"` in package.json).
+- **Build**: `addfox build`; output goes to `outputRoot/outDir/extension-<browser>` (default `.addfox/extension/extension-chromium`).
+
+Use `-b chrome|chromium|edge|brave|vivaldi|opera|santa|arc|yandex|browseros|custom|firefox` for target browser:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev
+pnpm build
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev
+npm run build
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev
+yarn build
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev
+bun run build
+```
+
+  </Tab>
+</Tabs>
+
+Default is Chrome when not specified.

@@ -1,0 +1,22 @@
+{
+  "name": "addfox-with-preact",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Preact browser extension template: popup, options, content, background + messaging",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev",
+    "build": "addfox build"
+  },
+  "dependencies": {
+    "@addfox/utils": "workspace:*",
+    "preact": "^10.19.0",
+    "webextension-polyfill": "^0.10.0"
+  },
+  "devDependencies": {
+    "@rsbuild/plugin-preact": "^1.2.0",
+    "@types/chrome": "^0.0.326",
+    "addfox": "workspace:*",
+    "typescript": "^5.0.0"
+  }
+}

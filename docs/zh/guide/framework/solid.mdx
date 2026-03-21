@@ -1,0 +1,112 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Solid
+
+Addfox 支持使用 SolidJS 开发扩展，提供高性能的响应式体验。
+
+## 安装
+
+创建项目时选择 Solid 模板：
+
+```bash
+pnpm create addfox-app --framework solid
+```
+
+或在现有项目中安装：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @rsbuild/plugin-solid
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @rsbuild/plugin-solid
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @rsbuild/plugin-solid
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @rsbuild/plugin-solid
+```
+
+  </Tab>
+</Tabs>
+
+## 配置
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginSolid } from "@rsbuild/plugin-solid";
+
+export default defineConfig({
+  plugins: [pluginSolid()],
+});
+```
+
+## 示例代码
+
+### Popup
+
+```tsx
+// app/popup/index.tsx
+import { render } from 'solid-js/web';
+import { App } from './App';
+import './index.css';
+
+render(() => <App />, document.getElementById('app')!);
+```
+
+```tsx
+// app/popup/App.tsx
+import { createSignal } from 'solid-js';
+
+export function App() {
+  const [count, setCount] = createSignal(0);
+
+  return (
+    <div class="p-4">
+      <h1 class="text-xl font-bold">Hello Solid!</h1>
+      <button 
+        onClick={() => setCount(c => c + 1)}
+        class="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Count: {count()}
+      </button>
+    </div>
+  );
+}
+```
+
+## 响应式原语
+
+Solid 使用细粒度响应式：
+
+```tsx
+import { createSignal, createEffect, createMemo } from 'solid-js';
+
+const [count, setCount] = createSignal(0);
+const double = createMemo(() => count() * 2);
+
+createEffect(() => {
+  console.log('Count changed:', count());
+});
+```
+
+## 相关链接
+
+- [Rsbuild Solid 插件](https://rsbuild.dev/plugins/list/plugin-solid)
+- [SolidJS 文档](https://www.solidjs.com/)

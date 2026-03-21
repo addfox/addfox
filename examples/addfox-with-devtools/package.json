@@ -1,0 +1,19 @@
+{
+  "name": "addfox-with-devtools",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Pure TypeScript Chrome DevTools extension: background + devtools panel",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev",
+    "build": "addfox build"
+  },
+  "dependencies": {
+    "@addfox/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "addfox": "workspace:*",
+    "@types/chrome": "^0.0.326",
+    "typescript": "^5.0.0"
+  }
+}

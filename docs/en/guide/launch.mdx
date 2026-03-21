@@ -1,0 +1,336 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Browser Launch
+
+Addfox can automatically launch the browser and load the extension during development for improved efficiency.
+
+## Quick Start
+
+Run the dev command:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev
+```
+
+  </Tab>
+</Tabs>
+
+On first start, the dev server will automatically:
+1. Build the extension
+2. Launch the browser
+3. Load the development extension
+
+## Chromium-based Browsers
+
+Addfox natively supports the following Chromium-based browsers:
+
+| Browser | CLI Parameter | Description |
+|---------|---------------|-------------|
+| Google Chrome | `-b chrome` | Default browser |
+| Chromium | `-b chromium` | Open source version |
+| Microsoft Edge | `-b edge` | Windows built-in |
+| Brave | `-b brave` | Privacy browser |
+| Vivaldi | `-b vivaldi` | Customizable browser |
+| Opera | `-b opera` | Opera browser |
+| Arc | `-b arc` | New concept browser |
+
+### Launch Chromium Browsers
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+# Chrome (default)
+pnpm dev -- -b chrome
+
+# Edge
+pnpm dev -- -b edge
+
+# Brave
+pnpm dev -- -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+# Chrome (default)
+npm run dev -- -b chrome
+
+# Edge
+npm run dev -- -b edge
+
+# Brave
+npm run dev -- -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+# Chrome (default)
+yarn dev -b chrome
+
+# Edge
+yarn dev -b edge
+
+# Brave
+yarn dev -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+# Chrome (default)
+bun run dev -- -b chrome
+
+# Edge
+bun run dev -- -b edge
+
+# Brave
+bun run dev -- -b brave
+```
+
+  </Tab>
+</Tabs>
+
+### Chromium Browser Path Configuration
+
+If the browser is not in the default location, specify `browserPath` in config:
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/path/to/chrome",
+    edge: "/path/to/edge",
+    brave: "/path/to/brave",
+  },
+});
+```
+
+#### Platform Examples
+
+**macOS:**
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  },
+});
+```
+
+**Windows:**
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  },
+});
+```
+
+**Linux:**
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/usr/bin/google-chrome",
+    chromium: "/usr/bin/chromium-browser",
+  },
+});
+```
+
+### Chromium User Data Cache
+
+By default, a new user data directory is used on each start. To preserve data (e.g., stay logged in):
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- -c
+# or
+pnpm dev -- --cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- -c
+# or
+npm run dev -- --cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev -c
+# or
+yarn dev --cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- -c
+# or
+bun run dev -- --cache
+```
+
+  </Tab>
+</Tabs>
+
+Or enable in config:
+
+```ts
+export default defineConfig({
+  cache: true,
+});
+```
+
+User data is saved in `.addfox/cache/` directory.
+
+## Firefox
+
+Firefox dev mode uses the **web-ext** tool to manage extension lifecycle.
+
+### Launch Firefox
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- -b firefox
+```
+
+  </Tab>
+</Tabs>
+
+### Firefox Features
+
+- Extension reload is handled by `web-ext`, not Addfox's WebSocket
+- Automatically opens Firefox and loads the extension
+- Supports auto-reload on file changes
+
+### Firefox Path Configuration
+
+```ts
+export default defineConfig({
+  browserPath: {
+    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  },
+});
+```
+
+:::info
+Firefox profile is automatically managed by `web-ext`, no manual cache configuration needed.
+:::
+
+## Debugging Tips
+
+### View Service Worker
+
+1. Open `chrome://extensions/`
+2. Find the extension under development
+3. Click "Service Worker" to view background script console
+
+### View Content Script
+
+1. Right-click on the webpage → Inspect
+2. Switch to Console panel
+3. Select the extension's context
+
+### Use Error Monitor
+
+Enable monitoring panel to capture errors from all entries:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- --debug
+```
+
+  </Tab>
+</Tabs>
+
+## Related Configuration
+
+- [`browserPath`](/config/launch) - Browser executable path configuration
+- [`cache`](/config/cache) - Cache configuration
+- [`hotReload`](/config/hot-reload) - Hot reload configuration
+- [`debug`](/config/debug) - Error monitoring configuration

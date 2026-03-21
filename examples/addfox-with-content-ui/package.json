@@ -1,0 +1,19 @@
+{
+  "name": "addfox-content-ui",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Content script UI with @addfox/utils defineContentUI / mountContentUI",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev --debug",
+    "build": "addfox build"
+  },
+  "dependencies": {
+    "@addfox/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.326",
+    "addfox": "workspace:*",
+    "typescript": "^5.0.0"
+  }
+}

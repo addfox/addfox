@@ -1,0 +1,155 @@
+import { Tab, Tabs } from '@rspress/core/theme';
+
+# 目录结构
+
+Addfox 采用约定优于配置的设计理念。了解标准目录结构，有助于你快速上手并遵循最佳实践。
+
+## 项目根目录
+
+一个典型的 Addfox 项目结构如下：
+
+```
+my-extension/
+├── .addfox/           # 构建输出和缓存（自动生成）
+├── app/                # 应用源代码（可配置）
+├── public/             # 静态资源
+├── addfox.config.ts       # Addfox 配置文件
+└── package.json        # 项目依赖
+```
+
+## .addfox 目录
+
+`.addfox` 由框架**自动生成**，包含：
+
+- **`extension/`** — 默认构建输出目录（可通过 `outDir` 修改）
+- **`cache/`** — 构建缓存，用于加速后续构建
+
+:::tip
+非必要情况下请勿删除 `cache` 目录，否则会影响构建速度和浏览器用户数据的复用。
+:::
+
+## app 目录
+
+`app/` 是默认的应用源代码目录，存放所有扩展入口和 manifest 文件。可通过 `appDir` 配置项修改：
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  appDir: "src",  // 改为 src 目录
+});
+```
+
+### 推荐的目录结构
+
+<Tabs>
+  <Tab label="多文件结构（推荐）">
+
+```
+app/
+├── background/
+│   └── index.ts          # Service Worker / 后台脚本
+├── content/
+│   └── index.ts          # 内容脚本
+├── popup/
+│   ├── index.html        # 弹窗 HTML（可选）
+│   └── index.ts          # 弹窗脚本
+├── options/
+│   ├── index.html        # 选项页 HTML（可选）
+│   └── index.ts          # 选项页脚本
+├── sidepanel/
+│   └── index.ts          # 侧边栏
+├── manifest/
+│   ├── manifest.json           # 基础配置
+│   ├── manifest.chromium.json  # Chrome 覆盖
+│   └── manifest.firefox.json   # Firefox 覆盖
+└── ...
+```
+
+  </Tab>
+  <Tab label="单文件结构">
+
+```
+app/
+├── background.ts         # 后台脚本
+├── content.ts            # 内容脚本
+├── popup.html            # 弹窗页面
+├── popup.ts              # 弹窗脚本
+├── manifest.json         # 扩展清单
+└── ...
+```
+
+  </Tab>
+</Tabs>
+
+:::info
+更多关于入口发现规则，详见 [基于文件的入口](/guide/entry/file-based) 和 [`entry` 配置](/config/entry)。
+:::
+
+## public 目录
+
+`public/` 用于存放**静态资源**，构建时会原样复制到输出目录，不参与打包处理：
+
+```
+public/
+├── icons/                # 扩展图标
+│   ├── icon16.png
+│   ├── icon48.png
+│   └── icon128.png
+├── _locales/             # 国际化文件
+│   └── zh_CN/
+│       └── messages.json
+└── welcome.html          # 欢迎页面
+```
+
+在代码中引用这些资源时，使用相对于输出根目录的路径：
+
+```ts
+// 引用 public/icons/icon16.png
+const iconPath = "icons/icon16.png";
+```
+
+## 入口类型
+
+Addfox 支持以下内置入口：
+
+| 入口名 | 类型 | 说明 | 生成 HTML |
+|--------|------|------|-----------|
+| `background` | 仅脚本 | Service Worker / 后台脚本 | 否 |
+| `content` | 仅脚本 | 内容脚本 | 否 |
+| `popup` | 脚本+页面 | 工具栏弹窗 | 是 |
+| `options` | 脚本+页面 | 扩展选项页 | 是 |
+| `sidepanel` | 脚本+页面 | 侧边栏 | 是 |
+| `devtools` | 脚本+页面 | 开发者工具 | 是 |
+| `offscreen` | 脚本+页面 | Offscreen 文档 | 是 |
+
+:::warning
+内置入口名称**不可修改**，Addfox 依赖这些名称进行自动识别。
+:::
+
+## 配置文件
+
+### addfox.config.ts / addfox.config.js
+
+这是 Addfox 的**必需配置文件**，用于声明：
+
+- 扩展清单（manifest）
+- 入口文件（entry）
+- 输出目录（outDir）
+- Rsbuild 插件和配置
+
+### 最小配置示例
+
+```ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  // 省略配置时，框架会从 app/ 自动发现入口和 manifest
+});
+```
+
+## 相关配置
+
+- [`appDir`](/config/app-dir) — 自定义应用目录
+- [`entry`](/config/entry) — 手动配置入口
+- [`outDir`](/config/out-dir) — 自定义输出目录
+- [`manifest`](/config/manifest) — manifest 配置方式

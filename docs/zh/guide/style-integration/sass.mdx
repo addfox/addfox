@@ -1,0 +1,74 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Sass
+
+## 安装
+
+需要安装 `@rsbuild/plugin-sass` 插件：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D @rsbuild/plugin-sass sass
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D @rsbuild/plugin-sass sass
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D @rsbuild/plugin-sass sass
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D @rsbuild/plugin-sass sass
+```
+
+  </Tab>
+</Tabs>
+
+## 配置
+
+在 `addfox.config.ts` 中添加插件：
+
+```ts
+import { defineConfig } from "addfox";
+import { pluginSass } from "@rsbuild/plugin-sass";
+
+export default defineConfig({
+  plugins: [pluginSass()],
+});
+```
+
+## 使用
+
+安装并配置后，可直接创建并导入 `.scss` 文件：
+
+```scss
+/* app/popup/index.scss */
+$brand: #7c3aed;
+
+.card {
+  border: 1px solid $brand;
+  color: $brand;
+}
+```
+
+```ts
+import "./index.scss";
+```
+
+## 说明
+
+- 如果你使用模块化样式，可搭配 `*.module.scss` 使用
+- 插件会自动处理 Sass 文件的编译和导入

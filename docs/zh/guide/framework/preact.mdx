@@ -1,0 +1,120 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Preact
+
+Addfox 支持使用 Preact 开发扩展，提供更小的包体积。
+
+## 安装
+
+创建项目时选择 Preact 模板：
+
+```bash
+pnpm create addfox-app --framework preact
+```
+
+或在现有项目中安装：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @rsbuild/plugin-preact
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @rsbuild/plugin-preact
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @rsbuild/plugin-preact
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @rsbuild/plugin-preact
+```
+
+  </Tab>
+</Tabs>
+
+## 配置
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginPreact } from "@rsbuild/plugin-preact";
+
+export default defineConfig({
+  plugins: [pluginPreact()],
+});
+```
+
+## 项目结构
+
+```
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.tsx
+├── popup/
+│   ├── App.tsx
+│   ├── index.html
+│   └── index.tsx
+└── manifest.json
+```
+
+## 示例代码
+
+### Popup
+
+```tsx
+// app/popup/index.tsx
+import { render } from 'preact';
+import { App } from './App';
+import './index.css';
+
+render(<App />, document.getElementById('app')!);
+```
+
+```tsx
+// app/popup/App.tsx
+import { useState } from 'preact/hooks';
+
+export function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div className="p-4">
+      <h1 className="text-xl font-bold">Hello Preact!</h1>
+      <button 
+        onClick={() => setCount(c => c + 1)}
+        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Count: {count}
+      </button>
+    </div>
+  );
+}
+```
+
+## Hooks
+
+Preact 提供与 React 兼容的 Hooks：
+
+```tsx
+import { useState, useEffect, useCallback } from 'preact/hooks';
+```
+
+## 相关链接
+
+- [Rsbuild Preact 插件](https://rsbuild.dev/plugins/list/plugin-preact)
+- [Preact 文档](https://preactjs.com/)

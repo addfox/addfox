@@ -1,0 +1,81 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# 示例
+
+本页列出 addfox 仓库中的扩展示例，每个示例均为独立目录，含 `package.json` 与 `addfox.config.ts`。在仓库根目录使用 pnpm / npm / yarn / bun 安装依赖后，在对应示例目录执行 dev 或 build 即可运行或构建。
+
+| 示例 | 描述 | 仓库链接 |
+|------|------|----------|
+| **addfox-with-vue** | Vue 3 模板：popup、options、content、background，含简单消息通信。 | [examples/addfox-with-vue](https://github.com/addfox/addfox/tree/main/examples/addfox-with-vue) |
+| **addfox-with-react** | React 模板：popup、options、content、background，含简单消息通信。 | [examples/addfox-with-react](https://github.com/addfox/addfox/tree/main/examples/addfox-with-react) |
+| **addfox-with-preact** | Preact 模板：popup、options、content、background，含简单消息通信。 | [examples/addfox-with-preact](https://github.com/addfox/addfox/tree/main/examples/addfox-with-preact) |
+| **addfox-with-svelte** | Svelte 模板：popup、options、content、background，含简单消息通信。 | [examples/addfox-with-svelte](https://github.com/addfox/addfox/tree/main/examples/addfox-with-svelte) |
+| **addfox-with-solid** | Solid 模板：popup、options、content、background，含简单消息通信。 | [examples/addfox-with-solid](https://github.com/addfox/addfox/tree/main/examples/addfox-with-solid) |
+| **addfox-with-react-shadcn** | React + shadcn/ui：popup、options、content、background、sidepanel 五入口，Tailwind + 组件库。 | [examples/addfox-with-react-shadcn](https://github.com/addfox/addfox/tree/main/examples/addfox-with-react-shadcn) |
+| **addfox-with-devtools** | 纯原生 TypeScript：仅 background + devtools_page，无 React/Vue，演示 DevTools 扩展。 | [examples/addfox-with-devtools](https://github.com/addfox/addfox/tree/main/examples/addfox-with-devtools) |
+| **addfox-with-content-ui** | Content UI 示例：演示在页面中挂载扩展 UI。 | [examples/addfox-with-content-ui](https://github.com/addfox/addfox/tree/main/examples/addfox-with-content-ui) |
+| **addfox-with-content-ui-react** | React 版 Content UI 示例。 | [examples/addfox-with-content-ui-react](https://github.com/addfox/addfox/tree/main/examples/addfox-with-content-ui-react) |
+| **addfox-with-tailwindcss** | Tailwind CSS 集成示例。 | [examples/addfox-with-tailwindcss](https://github.com/addfox/addfox/tree/main/examples/addfox-with-tailwindcss) |
+| **addfox-with-uno** | UnoCSS 集成示例。 | [examples/addfox-with-uno](https://github.com/addfox/addfox/tree/main/examples/addfox-with-uno) |
+| **addfox-with-vue-tsx** | Vue + TSX 示例。 | [examples/addfox-with-vue-tsx](https://github.com/addfox/addfox/tree/main/examples/addfox-with-vue-tsx) |
+| **addfox-with-firefox** | Firefox 目标构建与运行示例。 | [examples/addfox-with-firefox](https://github.com/addfox/addfox/tree/main/examples/addfox-with-firefox) |
+| **addfox-with-mv2** | Manifest V2 兼容示例（用于迁移/对比）。 | [examples/addfox-with-mv2](https://github.com/addfox/addfox/tree/main/examples/addfox-with-mv2) |
+| **addfox-with-manifest-entries** | 通过 manifest 字段声明入口的示例。 | [examples/addfox-with-manifest-entries](https://github.com/addfox/addfox/tree/main/examples/addfox-with-manifest-entries) |
+| **addfox-with-react-entry-false** | `entry: false` 场景（由 rsbuild 自行管理入口）的 React 示例。 | [examples/addfox-with-react-entry-false](https://github.com/addfox/addfox/tree/main/examples/addfox-with-react-entry-false) |
+| **addfox-with-single-file** | 单文件/极简结构示例。 | [examples/addfox-with-single-file](https://github.com/addfox/addfox/tree/main/examples/addfox-with-single-file) |
+| **addfox-with-sandbox** | 沙盒页面（sandbox）示例。 | [examples/addfox-with-sandbox](https://github.com/addfox/addfox/tree/main/examples/addfox-with-sandbox) |
+| **addfox-with-newtab-override** | 覆盖浏览器新标签页示例。 | [examples/addfox-with-newtab-override](https://github.com/addfox/addfox/tree/main/examples/addfox-with-newtab-override) |
+| **addfox-with-history-override** | 覆盖历史页示例。 | [examples/addfox-with-history-override](https://github.com/addfox/addfox/tree/main/examples/addfox-with-history-override) |
+| **addfox-with-bookmarks-override** | 覆盖书签页示例。 | [examples/addfox-with-bookmarks-override](https://github.com/addfox/addfox/tree/main/examples/addfox-with-bookmarks-override) |
+| **addfox-with-rstest** | Rstest 单元测试集成示例。 | [examples/addfox-with-rstest](https://github.com/addfox/addfox/tree/main/examples/addfox-with-rstest) |
+| **addfox-with-rstest-e2e** | Rstest + E2E 测试示例。 | [examples/addfox-with-rstest-e2e](https://github.com/addfox/addfox/tree/main/examples/addfox-with-rstest-e2e) |
+| **addfox-with-env-vars** | 环境变量注入与作用域示例（含 `ADDFOX_PUBLIC_` 与私有变量）。 | [examples/addfox-with-env-vars](https://github.com/addfox/addfox/tree/main/examples/addfox-with-env-vars) |
+
+## 运行方式
+
+在 addfox 仓库根目录执行安装后，进入任意示例目录：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm install
+cd examples/addfox-with-vue   # 或其他示例
+pnpm dev                   # 开发模式
+pnpm build                 # 构建
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install
+cd examples/addfox-with-vue   # 或其他示例
+npm run dev                # 开发模式
+npm run build              # 构建
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn install
+cd examples/addfox-with-vue   # 或其他示例
+yarn dev                   # 开发模式
+yarn build                 # 构建
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun install
+cd examples/addfox-with-vue   # 或其他示例
+bun run dev                # 开发模式
+bun run build              # 构建
+```
+
+  </Tab>
+</Tabs>
+
+构建产物在 `.addfox/extension`（或该示例配置的 outputRoot/outDir），在浏览器中加载该目录即可；使用 dev 时框架可自动打开浏览器并加载扩展。

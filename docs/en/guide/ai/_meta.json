@@ -1,0 +1,6 @@
+[
+  
+  { "type": "file", "name": "llms", "label": "llms.txt" },
+  { "type": "file", "name": "error", "label": "error.md" },
+  { "type": "file", "name": "meta", "label": "meta.md" }
+]

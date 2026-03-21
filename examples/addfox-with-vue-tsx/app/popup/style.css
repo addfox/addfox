@@ -1,0 +1,20 @@
+.popup {
+  width: 280px;
+  padding: 12px;
+  font-family: system-ui, sans-serif;
+}
+.popup h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+.popup p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: #666;
+}
+.popup button {
+  margin-right: 8px;
+  margin-bottom: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+}

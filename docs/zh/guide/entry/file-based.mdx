@@ -1,0 +1,248 @@
+import { Tab, Tabs } from '@rspress/core/theme';
+
+# 基于文件的入口
+
+当你**不配置** `addfox.config.ts` 中的 `entry` 字段时，Addfox 会根据约定自动发现入口文件。这是推荐的开发方式，让你专注于业务代码而非配置。
+
+## 核心原则
+
+### 构建基于 Rsbuild
+
+- **入口必须是 JS/TS**：真实的构建入口只能是 `.js`、`.jsx`、`.ts`、`.tsx` 脚本
+- **HTML 的处理**：
+  - 不提供 HTML → Rsbuild 自动生成
+  - 提供 HTML → 作为模板使用，但必须通过 `data-addfox-entry` 标明入口脚本
+
+## 目录结构约定
+
+### 仅脚本入口（background / content）
+
+这类入口不需要 HTML 页面，只需提供脚本文件。
+
+<Tabs>
+<Tab label="目录形式（推荐）">
+
+```tree
+app/
+├── background/
+│   └── index.ts          # background 入口
+└── content/
+    └── index.ts          # content 入口
+```
+
+| 入口名 | 入口文件 | 输出路径 |
+|--------|----------|----------|
+| `background` | `app/background/index.ts` | `extension/background/index.js` |
+| `content` | `app/content/index.ts` | `extension/content/index.js` |
+
+</Tab>
+<Tab label="单文件形式">
+
+```tree
+app/
+├── background.ts         # background 入口
+└── content.ts            # content 入口
+```
+
+| 入口名 | 入口文件 | 输出路径 |
+|--------|----------|----------|
+| `background` | `app/background.ts` | `extension/background.js` |
+| `content` | `app/content.ts` | `extension/content.js` |
+
+</Tab>
+</Tabs>
+
+### 需要页面的入口（popup / options / sidepanel / devtools / offscreen）
+
+这类入口会产出 **HTML + JS**。支持两种方式：
+
+#### 方式一：不提供 HTML（推荐）
+
+只写脚本，不写 HTML。Rsbuild 会自动生成 HTML 并注入脚本。
+
+<Tabs>
+<Tab label="目录形式">
+
+```tree
+app/
+├── popup/
+│   └── index.ts          # popup 入口
+├── options/
+│   └── index.ts          # options 入口
+└── sidepanel/
+    └── index.ts          # sidepanel 入口
+```
+
+| 入口名 | 输出 HTML | 输出 JS |
+|--------|-----------|---------|
+| `popup` | `extension/popup/index.html` | `extension/popup/index.js` |
+| `options` | `extension/options/index.html` | `extension/options/index.js` |
+| `sidepanel` | `extension/sidepanel/index.html` | `extension/sidepanel/index.js` |
+
+</Tab>
+<Tab label="单文件形式">
+
+```tree
+app/
+├── popup.ts              # popup 入口
+├── options.ts            # options 入口
+└── sidepanel.ts          # sidepanel 入口
+```
+
+| 入口名 | 输出 HTML | 输出 JS |
+|--------|-----------|---------|
+| `popup` | `extension/popup.html` | `extension/popup.js` |
+| `options` | `extension/options.html` | `extension/options.js` |
+| `sidepanel` | `extension/sidepanel.html` | `extension/sidepanel.js` |
+
+</Tab>
+</Tabs>
+
+#### 方式二：提供 HTML 模板
+
+如果需要自定义页面结构，可以在入口目录下（或同名单文件旁）放置 HTML 文件。
+
+:::warning 重要
+使用自定义 HTML 时，**必须**通过 `data-addfox-entry` 属性标明入口脚本，否则框架无法识别。
+:::
+
+<Tabs>
+<Tab label="目录形式">
+
+```tree
+app/
+└── popup/
+    ├── index.html        # 页面模板
+    └── index.ts          # 入口脚本
+```
+
+```html
+<!-- app/popup/index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- 关键：data-addfox-entry 标明入口脚本 -->
+    <script type="module" src="./index.ts" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+</Tab>
+<Tab label="单文件形式">
+
+```tree
+app/
+├── popup.html            # 页面模板
+└── popup.ts              # 入口脚本
+```
+
+```html
+<!-- app/popup.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="./popup.ts" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+</Tab>
+</Tabs>
+
+:::tip 关于 HTML 模板的注意事项
+- `data-addfox-entry` 在一个 HTML 文件中只能出现**一次**
+- `src` 可以是相对路径，指向同目录或其他位置的脚本
+- 其他资源（CSS、图片等）请在入口脚本中通过 `import` 引入，不要在 HTML 中直接引用
+- HTML 文件本身不参与编译，仅作为模板使用
+:::
+
+## 完整示例
+
+### 示例一：自动生成所有 HTML
+
+```tree
+app/
+├── background/
+│   └── index.ts          # 仅脚本
+├── content/
+│   └── index.ts          # 仅脚本
+├── popup/
+│   └── index.ts          # 自动生成 HTML
+├── options/
+│   └── index.ts          # 自动生成 HTML
+└── manifest.json
+```
+
+### 示例二：混合使用
+
+```tree
+app/
+├── background.ts         # 单文件形式
+├── content/
+│   └── index.ts          # 目录形式
+├── popup/
+│   ├── index.html        # 自定义模板
+│   └── index.ts
+└── options/
+    └── index.ts          # 自动生成 HTML
+```
+
+### 示例三：使用框架（以 React 为例）
+
+```tree
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.tsx
+├── popup/
+│   └── index.tsx         # 在 React 组件中渲染
+└── manifest.json
+```
+
+```tsx
+// app/popup/index.tsx
+import { createRoot } from 'react-dom/client';
+import { Popup } from './Popup';
+
+const container = document.getElementById('app');
+const root = createRoot(container!);
+root.render(<Popup />);
+```
+
+## 常见问题
+
+### Q: 入口文件必须叫 index.ts 吗？
+
+**目录形式**下必须是 `index.(js|ts|jsx|tsx)`。**单文件形式**下可以是 `入口名.(js|ts|jsx|tsx)`。
+
+### Q: 可以有多层嵌套目录吗？
+
+不支持。入口目录只能有一层，即 `app/popup/index.ts` ✓，而 `app/pages/popup/index.ts` ✗。
+
+### Q: 自动生成和自定义 HTML 可以混用吗？
+
+可以。每个入口独立决定，有的用自动生成，有的用自定义模板。
+
+### Q: 如何调试 HTML 模板问题？
+
+检查：
+1. HTML 文件中是否有 `data-addfox-entry` 属性
+2. `src` 路径是否正确指向入口脚本
+3. 是否只有一个 script 标签带有 `data-addfox-entry`
+
+## 下一步
+
+- [基于配置的入口](/guide/entry/config-based) — 学习如何显式配置入口路径
+- [appDir 配置](/config/app-dir) — 修改源代码目录
+- [manifest 配置](/config/manifest) — 配置扩展清单

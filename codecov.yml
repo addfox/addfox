@@ -1,0 +1,17 @@
+# Codecov 配置：用于生成覆盖率 badge
+# 使用方式：CI 中执行 pnpm run test:coverage:report 后上传 coverage/lcov.info
+# 例如：codecov -f coverage/lcov.info
+
+coverage:
+  range: "70..100"
+  round: down
+  precision: 2
+  status:
+    project: default
+    patch: default
+    changes: false
+
+comment:
+  layout: "reach,diff,flags,tree"
+  behavior: default
+  require_changes: false

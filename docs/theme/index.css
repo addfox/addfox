@@ -1,0 +1,785 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme-aware CSS variables (light/dark) for home page */
+:root {
+  --addfox-home-bg: #fafafa;
+  --addfox-home-text: #1a1a1a;
+  --addfox-home-muted: #6b7280;
+  --addfox-home-border: #e5e7eb;
+  --addfox-home-block-bg: #ffffff;
+  --addfox-home-card-bg: rgba(255, 255, 255, 0.9);
+  --addfox-home-card-hover: #ffffff;
+  --addfox-hero-gradient: radial-gradient(ellipse 100% 80% at 30% 20%, rgba(249, 115, 22, 0.16) 0%, rgba(249, 115, 22, 0.05) 45%, transparent 70%),
+    linear-gradient(160deg, rgba(251, 146, 60, 0.06) 0%, rgba(255, 255, 255, 0.4) 100%);
+  --addfox-hero-bg: #fefaf6;
+  --addfox-hero-orange-blur: radial-gradient(ellipse 90% 70% at 20% 30%, rgba(249, 115, 22, 0.35) 0%, rgba(251, 146, 60, 0.12) 50%, transparent 75%);
+  --addfox-term-bg: #f6f8fa;
+  --addfox-term-bg-glass: rgba(246, 248, 250, 0.48);
+  --addfox-term-glass-underlay: linear-gradient(145deg, rgba(249, 115, 22, 0.08) 0%, rgba(246, 248, 250, 0.4) 50%, rgba(200, 220, 240, 0.3) 100%);
+  --addfox-term-bar-bg: #eaeef2;
+  --addfox-term-border: #d0d7de;
+  --addfox-term-prompt: #57606a;
+  --addfox-term-value: #1a1a1a;
+  --addfox-term-addfox: #c2410c;
+  --addfox-term-done: #1a7f37;
+  --addfox-term-purple: #8250df;
+  --addfox-term-time: #656d76;
+  --addfox-term-cyan: #0969da;
+  --addfox-term-cursor: #f97316;
+  --addfox-term-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+
+  /* Translate panel: orange + gray; light theme gray = 248,241,233 */
+  --addfox-orange-panel-gradient: linear-gradient(160deg, rgba(248, 241, 233, 0.96) 0%, rgba(240, 232, 222, 0.92) 25%, rgba(230, 118, 45, 0.88) 60%, rgba(230, 134, 55, 0.94) 100%);
+  /* Chart gradient gray (for bar/pie stroke); light = 248,241,233 */
+  --addfox-chart-gray-start: #f8f1e9;
+  --addfox-chart-gray-mid: #eee4dc;
+
+  /* Premium design system */
+  --addfox-accent-orange: #f97316;
+  --addfox-accent-orange-light: #fb923c;
+  --addfox-accent-purple: #8b5cf6;
+  --addfox-glow-orange: rgba(249, 115, 22, 0.4);
+  --addfox-glow-purple: rgba(139, 92, 246, 0.3);
+  --addfox-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --addfox-card-shadow-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.1), 0 10px 20px -5px rgba(0, 0, 0, 0.04);
+  
+  --addfox-home-padding-x: max(calc(( 100vw - var(--rp-content-max-width)  - var(--rp-sidebar-width)  - var(--rp-outline-width)) / 2), 20px);
+}
+
+.dark {
+  --addfox-home-bg: #0d0d0d;
+  --addfox-home-text: #ffffff;
+  --addfox-home-muted: #8b949e;
+  --addfox-home-border: #21262d;
+  --addfox-home-block-bg: #161b22;
+  --addfox-home-card-bg: rgba(22, 27, 34, 0.6);
+  --addfox-home-card-hover: rgba(22, 27, 34, 0.9);
+  --addfox-hero-gradient: radial-gradient(ellipse 100% 80% at 30% 20%, rgba(249, 115, 22, 0.2) 0%, rgba(249, 115, 22, 0.06) 45%, transparent 70%),
+    linear-gradient(160deg, rgba(251, 146, 60, 0.08) 0%, rgba(13, 17, 23, 0.3) 100%);
+  --addfox-hero-bg: #1a1510;
+  --addfox-hero-orange-blur: radial-gradient(ellipse 90% 70% at 20% 30%, rgba(249, 115, 22, 0.4) 0%, rgba(251, 146, 60, 0.15) 50%, transparent 75%);
+  --addfox-term-bg: #0d1117;
+  --addfox-term-bg-glass: rgba(13, 17, 23, 0.48);
+  --addfox-term-glass-underlay: linear-gradient(145deg, rgba(249, 115, 22, 0.12) 0%, rgba(22, 27, 34, 0.6) 50%, rgba(30, 40, 55, 0.5) 100%);
+  --addfox-term-bar-bg: #161b22;
+  --addfox-term-border: #30363d;
+  --addfox-term-prompt: #8b949e;
+  --addfox-term-value: #e6edf3;
+  --addfox-term-addfox: #e85d04;
+  --addfox-term-done: #3fb950;
+  --addfox-term-purple: #a371f7;
+  --addfox-term-time: #8b949e;
+  --addfox-term-cyan: #58a6ff;
+  --addfox-term-cursor: #fb923c;
+  --addfox-term-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+
+  /* Translate panel: orange + gray; dark theme gray = 39,30,25 */
+  --addfox-orange-panel-gradient: linear-gradient(160deg, rgba(39, 30, 25, 0.94) 0%, rgba(55, 44, 36, 0.9) 25%, rgba(230, 118, 45, 0.82) 60%, rgba(230, 134, 55, 0.9) 100%);
+  /* Chart gradient gray; dark = 39,30,25 */
+  --addfox-chart-gray-start: #271e19;
+  --addfox-chart-gray-mid: #3c3028;
+  
+  /* Premium design system - dark */
+  --addfox-glow-orange: rgba(249, 115, 22, 0.5);
+  --addfox-glow-purple: rgba(139, 92, 246, 0.4);
+  --addfox-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15);
+  --addfox-card-shadow-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 10px 20px -5px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes addfox-skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ===== Premium Animations ===== */
+@keyframes addfox-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+@keyframes addfox-float-delayed {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(-2deg); }
+}
+
+@keyframes addfox-pulse-glow {
+  0%, 100% { 
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes addfox-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes addfox-gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes addfox-border-flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+@keyframes addfox-spotlight {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+}
+
+/* Skeleton lines (custom gradient animation) */
+.addfox-skeleton-line {
+  height: 10px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--addfox-term-border) 0%,
+    var(--addfox-home-border) 50%,
+    var(--addfox-term-border) 100%
+  );
+  background-size: 200% 100%;
+  animation: addfox-skeleton-shimmer 1.6s ease-in-out infinite;
+}
+.addfox-skeleton-line--title {
+  height: 14px;
+  width: 60%;
+  margin-bottom: 0.25rem;
+}
+.addfox-skeleton-line--short {
+  width: 75%;
+}
+
+/* Hide scrollbar but keep scroll behavior (terminal body) */
+.addfox-terminal-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.addfox-terminal-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.addfox-home {
+  width: 100%;
+  padding-left: var(--addfox-home-padding-x);
+  padding-right: var(--addfox-home-padding-x);
+}
+
+/* ===== Premium Feature Cards ===== */
+.addfox-feature-card {
+  position: relative;
+  background: var(--addfox-home-block-bg);
+  border-radius: 16px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--addfox-card-shadow);
+  overflow: hidden;
+}
+
+.addfox-feature-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 1.5px;
+  background: linear-gradient(135deg, 
+    rgba(249, 115, 22, 0.35) 0%, 
+    rgba(251, 146, 60, 0.12) 30%,
+    rgba(244, 114, 182, 0.12) 70%,
+    rgba(236, 72, 153, 0.35) 100%
+  );
+  background-size: 200% 200%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: addfox-border-flow 6s linear infinite;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.addfox-feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--addfox-card-shadow-hover);
+}
+
+.addfox-feature-card:hover::before {
+  opacity: 1;
+}
+
+/* Card corner decorations */
+.addfox-feature-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle at top right, rgba(249, 115, 22, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.addfox-feature-card:hover::after {
+  opacity: 1;
+}
+
+/* Card content area with subtle grid pattern */
+.addfox-feature-content {
+  position: relative;
+}
+
+.addfox-feature-content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(249, 115, 22, 0.15) 1.5px, transparent 0);
+  background-size: 20px 20px;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.dark .addfox-feature-content::before {
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(249, 115, 22, 0.1) 1.5px, transparent 0);
+  opacity: 0.5;
+}
+
+/* Section title with decorative elements */
+.addfox-section-title {
+  position: relative;
+  display: inline-block;
+}
+
+.addfox-section-title::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--addfox-accent-orange), transparent);
+  border-radius: 2px;
+}
+
+/* Floating decorative dots - soft orange to pink */
+.addfox-dot-decoration {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, #f97316, #f472b6);
+  border-radius: 50%;
+  opacity: 0.5;
+  box-shadow: 0 0 12px rgba(244, 114, 182, 0.35);
+}
+
+.addfox-dot-decoration:nth-child(1) {
+  top: 20%;
+  left: 10%;
+  animation: addfox-float 6s ease-in-out infinite;
+}
+
+.addfox-dot-decoration:nth-child(2) {
+  top: 60%;
+  right: 15%;
+  animation: addfox-float-delayed 7s ease-in-out infinite;
+}
+
+.addfox-dot-decoration:nth-child(3) {
+  bottom: 30%;
+  left: 20%;
+  animation: addfox-float 8s ease-in-out infinite;
+}
+
+/* Hero: rounded rect, no border, orange + blur gradient inside */
+.addfox-hero-bg {
+  background-color: var(--addfox-hero-bg);
+  background-image: var(--addfox-hero-orange-blur);
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 100% 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hero decorative elements - soft orange and muted pink glow */
+.addfox-hero-bg::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: addfox-pulse-glow 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.addfox-hero-bg::after {
+  content: "";
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(244, 114, 182, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: addfox-pulse-glow 10s ease-in-out infinite reverse;
+  pointer-events: none;
+}
+
+/* Gradient text effect - soft orange to muted pink */
+.addfox-gradient-text {
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 35%, #f472b6 70%, #ec4899 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: addfox-gradient-shift 6s ease infinite;
+}
+
+/* Hero buttons with premium hover effects */
+.addfox-btn-primary {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.addfox-btn-primary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.addfox-btn-primary:hover::before {
+  left: 100%;
+}
+
+.addfox-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4);
+}
+
+.addfox-btn-secondary {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.addfox-btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.2);
+}
+
+/* Terminal premium glow effect - soft orange to pink glow */
+.addfox-terminal-glow {
+  position: relative;
+}
+
+.addfox-terminal-glow::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(244, 114, 182, 0.12), rgba(249, 115, 22, 0.2));
+  background-size: 200% 200%;
+  border-radius: inherit;
+  z-index: -1;
+  animation: addfox-border-flow 4s linear infinite;
+  filter: blur(8px);
+  opacity: 0.5;
+}
+
+/* Feature SVG animations */
+@keyframes addfox-flow-dash {
+  from { stroke-dashoffset: 20; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes addfox-fall-into-box {
+  from { opacity: 0; transform: translateY(-120%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes addfox-rotate-circle {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.addfox-flow-track {
+  fill: none;
+  stroke: var(--addfox-home-muted);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.addfox-flow-gradient {
+  fill: none;
+  stroke: url(#addfox-flow-line-gradient);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 6 4;
+  animation: addfox-flow-dash 1.2s linear infinite;
+}
+.addfox-flow-gradient-vertical {
+  stroke: url(#addfox-flow-line-gradient-vertical);
+}
+.addfox-zip-flow-gradient {
+  fill: none;
+  stroke: url(#addfox-zip-line-gradient);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 6 4;
+  animation: addfox-flow-dash 1.2s linear infinite;
+}
+.addfox-fall-icon {
+  animation: addfox-fall-into-box 0.6s ease-out forwards;
+}
+.addfox-framework-orbit {
+  animation: addfox-rotate-circle 20s linear infinite;
+}
+
+/* AI File to Robot connection lines */
+@keyframes addfox-line-flow {
+  0% {
+    stroke-dashoffset: 100;
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.3;
+  }
+}
+
+@keyframes addfox-line-pulse {
+  0%, 100% {
+    stroke-width: 2;
+    filter: drop-shadow(0 0 2px var(--rp-c-brand, #f97316));
+  }
+  50% {
+    stroke-width: 3;
+    filter: drop-shadow(0 0 6px var(--rp-c-brand, #f97316));
+  }
+}
+
+.addfox-flow-line {
+  stroke-dasharray: 8 4;
+  animation: addfox-line-flow 2s ease-in-out infinite, addfox-line-pulse 2s ease-in-out infinite;
+}
+
+@keyframes addfox-ai-error-scroll-down {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.addfox-ai-error-scroll {
+  display: flex;
+  flex-direction: column;
+  animation: addfox-ai-error-scroll-down 22s linear infinite;
+  will-change: transform;
+}
+
+.addfox-ai-error-scroll-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  padding-bottom: 0.8rem;
+}
+
+/* Terminal frosted glass background */
+.addfox-term-glass {
+  position: relative;
+}
+
+/* Inner gradient layer so the blur has something to show */
+.addfox-term-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--addfox-term-glass-underlay);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Frosted layer: semi-transparent + blur (blurs ::before behind it) */
+.addfox-term-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--addfox-term-bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Content above the glass layers */
+.addfox-term-glass > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* FAQ card styles */
+.addfox-faq-card {
+  position: relative;
+  background: var(--addfox-home-block-bg);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--addfox-card-shadow);
+}
+
+.addfox-faq-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--addfox-card-shadow-hover);
+}
+
+.addfox-faq-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, 
+    rgba(249, 115, 22, 0.25) 0%, 
+    rgba(251, 146, 60, 0.08) 50%,
+    rgba(244, 114, 182, 0.25) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.addfox-faq-card:hover::before {
+  opacity: 1;
+}
+
+/* Section spacing improvements */
+section {
+  position: relative;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Home page background grid pattern */
+.addfox-home {
+  position: relative;
+}
+
+.addfox-home::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(249, 115, 22, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(249, 115, 22, 0.06) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dark .addfox-home::before {
+  background-image: 
+    linear-gradient(rgba(249, 115, 22, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(249, 115, 22, 0.04) 1px, transparent 1px);
+}
+
+/* Ensure content is above background */
+.addfox-home > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Top gradient line decoration - soft orange to pink */
+.addfox-home::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(249, 115, 22, 0.35) 20%, 
+    rgba(251, 146, 60, 0.5) 40%, 
+    rgba(244, 114, 182, 0.5) 60%, 
+    rgba(236, 72, 153, 0.35) 80%, 
+    transparent 100%
+  );
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Remove all hover/focus interaction on package manager tab (icon + label) */
+.rp-tabs__label-with-icon {
+  pointer-events: none;
+  user-select: none;
+}
+button:has(.rp-tabs__label-with-icon) {
+  cursor: default;
+}
+button:has(.rp-tabs__label-with-icon):hover,
+button:has(.rp-tabs__label-with-icon):focus-visible {
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+}
+:has(> .addfox-home) {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* Skills: two-row staggered carousel with 3D grid background, seamless infinite loop */
+.addfox-skills-carousel {
+  position: relative;
+  width: 100%;
+  min-height: 180px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  perspective: 800px;
+  perspective-origin: center center;
+}
+
+.addfox-skills-row {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  width: max-content;
+  position: relative;
+  will-change: transform;
+  transform-style: preserve-3d;
+  animation: addfox-skills-slide 28s linear infinite;
+}
+.addfox-skills-row-2 {
+  animation-direction: reverse;
+  animation-duration: 34s;
+}
+
+.addfox-skill-card {
+  flex: 0 0 auto;
+  width: 200px;
+  margin-right: 16px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  border-radius: 12px;
+  background: var(--addfox-home-block-bg);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(2deg) translateZ(0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Subtle grid background effect */
+.addfox-skill-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background-image: 
+    linear-gradient(rgba(249, 115, 22, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(249, 115, 22, 0.08) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: center center;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.dark .addfox-skill-card::after {
+  background-image: 
+    linear-gradient(rgba(249, 115, 22, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(249, 115, 22, 0.06) 1px, transparent 1px);
+  opacity: 0.6;
+}
+
+.addfox-skill-card::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 14px;
+  padding: 2px;
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transform: translateZ(-1px);
+}
+
+.dark .addfox-skill-card::before {
+  background: linear-gradient(135deg, #fdba74 0%, #f97316 50%, #c2410c 100%);
+}
+
+.addfox-skill-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--addfox-home-text);
+  word-break: break-word;
+  text-align: center;
+  line-height: 1.3;
+  transform: translateZ(4px);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Seamless infinite scroll: move by exactly one original set width
+   4 skills per row view, each card 200px + 16px margin = 216px
+   One original set = 4 cards = 216px * 4 = 864px
+   Translate by -864px to achieve seamless loop */
+@keyframes addfox-skills-slide {
+  0% { transform: translateX(0) rotateX(1deg); }
+  100% { transform: translateX(-864px) rotateX(1deg); }
+}
+

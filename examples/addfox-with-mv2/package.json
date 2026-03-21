@@ -1,0 +1,16 @@
+{
+  "name": "addfox-with-mv2",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Example using Manifest V2 (Chromium); addfox will show MV2 deprecation warning when building for chromium",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev",
+    "build": "addfox build"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.326",
+    "addfox": "workspace:*",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,65 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Tailwind CSS
+
+## Install
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+</Tabs>
+
+## Configure
+
+Create `postcss.config.mjs` in project root:
+
+```js
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+```
+
+## Usage
+
+Import Tailwind in your style entry:
+
+```css
+/* app/popup/index.css */
+@import "tailwindcss";
+```
+
+Then import that CSS in your entry script:
+
+```ts
+import "./index.css";
+```
+
+Now you can use Tailwind utility classes directly in components.

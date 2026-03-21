@@ -1,0 +1,31 @@
+{
+  "name": "addfox-with-react-shadcn",
+  "version": "0.0.1",
+  "private": true,
+  "description": "React + shadcn/ui: popup, options, content, background, sidepanel",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev",
+    "build": "addfox build"
+  },
+  "dependencies": {
+    "@addfox/utils": "workspace:*",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^2.2.0",
+    "webextension-polyfill": "^0.10.0"
+  },
+  "devDependencies": {
+    "@rsbuild/plugin-react": "^1.2.0",
+    "@types/chrome": "^0.0.326",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "autoprefixer": "^10.4.16",
+    "addfox": "workspace:*",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.0.0"
+  }
+}

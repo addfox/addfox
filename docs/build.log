@@ -1,0 +1,16 @@
+
+> addfox-docs@0.0.3-beta.0 build
+> rspress build
+
+馃敟 Rspress v2.0.6
+
+info    build started...
+node.exe : error   build failed in 10.1 s (web)
+所在位置 C:\Program Files\nodejs\npm.ps1:29 字符: 3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error   bui 
+   ld failed in 10.1 s (web):String) [], RemoteExceptio  
+  n
+    + FullyQualifiedErrorId : NativeCommandError
+ 

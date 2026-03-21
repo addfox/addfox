@@ -1,0 +1,19 @@
+{
+  "name": "my-extension",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev",
+    "build": "addfox build"
+  },
+  "dependencies": {
+    "addfox": "^0.1.0",
+    "@rsbuild/core": "^1.6.0",
+    "@addfox/utils": "^0.1.0",
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "@rsbuild/plugin-vue": "^1.2.0"
+  }
+}

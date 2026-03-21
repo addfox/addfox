@@ -1,0 +1,168 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# browserPath
+
+`browserPath` specifies the executable paths for browsers used during `addfox dev` to open and load the extension.
+
+## Overview
+
+- **Type**: `BrowserPathConfig`
+- **Default**: `undefined` (uses system default paths)
+- **Required**: No
+
+## Chromium-based Browsers
+
+The following Chromium-based browsers are supported:
+
+| Browser | Config Key | Default Path |
+|--------|------------|--------------|
+| Google Chrome | `chrome` | Auto-detected |
+| Chromium | `chromium` | Auto-detected |
+| Microsoft Edge | `edge` | Auto-detected |
+| Brave | `brave` | Auto-detected |
+| Vivaldi | `vivaldi` | Auto-detected |
+| Opera | `opera` | Auto-detected |
+| Arc | `arc` | Auto-detected |
+
+### Configuration Example
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  },
+});
+```
+
+### Launch via CLI
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- -b chrome
+pnpm dev -- -b edge
+pnpm dev -- -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- -b chrome
+npm run dev -- -b edge
+npm run dev -- -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev -b chrome
+yarn dev -b edge
+yarn dev -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- -b chrome
+bun run dev -- -b edge
+bun run dev -- -b brave
+```
+
+  </Tab>
+</Tabs>
+
+## Firefox
+
+Firefox uses the `web-ext` tool to manage extensions. The path configuration is the same:
+
+```ts
+export default defineConfig({
+  browserPath: {
+    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  },
+});
+```
+
+### Launch Firefox
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- -b firefox
+```
+
+  </Tab>
+</Tabs>
+
+:::info
+Firefox development mode uses the `web-ext` tool. Extension reload is handled by `web-ext`, not Addfox's WebSocket.
+:::
+
+## Platform Examples
+
+### macOS
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  },
+});
+```
+
+### Windows
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  },
+});
+```
+
+### Linux
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/usr/bin/google-chrome",
+    chromium: "/usr/bin/chromium-browser",
+    firefox: "/usr/bin/firefox",
+  },
+});
+```
+
+## Related Configuration
+
+- [guide/launch](/guide/launch) - Browser launch guide

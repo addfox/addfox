@@ -1,0 +1,28 @@
+{
+  "name": "@addfox/utils",
+  "version": "0.1.1-beta.2",
+  "description": "Extension utils: content UI (defineContentUI / mountContentUI) for content scripts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "dev": "rslib build --watch",
+    "test": "rstest run",
+    "test:coverage": "rstest run --coverage"
+  },
+  "devDependencies": {
+    "@rslib/core": "^0.20.0",
+    "@rstest/core": "^0.9.2",
+    "@rstest/coverage-istanbul": "^0.3.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

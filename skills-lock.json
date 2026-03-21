@@ -1,0 +1,195 @@
+{
+  "version": 1,
+  "skills": {
+    "adapt": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "a28f026233a935d229e543f1955e79fccffa58b99c57fa0f371863ebb77ba38a"
+    },
+    "animate": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "104d8c5766505f7ec2178cf832213a9a07174c725b074cfb13a64153f6f3bd92"
+    },
+    "audit": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "85ff89a25110dd68ebb30b45c67b33b8f2d2bb123d407d957329a2931f0a6878"
+    },
+    "bolder": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "e6bbaf76bff75470f12d4583a3ef2f4081372a7167d84a6a7399649a1d0d5e24"
+    },
+    "cicd-workflow": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "9deeec8867d708ce35a4e5985afb023355bb6981c7dedc69370d86ad6e138586"
+    },
+    "clarify": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "d24958a9a929c93191e4959d0daa17155cc5f0119da6ed33998e36bdd48cbbde"
+    },
+    "codebase-stats": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "74a83a0d7ef04a5a8e8d1503e89ad4edd1931c1df91e866fb8acc8e24c1b88f0"
+    },
+    "colorize": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "c7ade3015517ee497c77c39285b25984f52e7948fd6164c3a85f717d6f8ecca9"
+    },
+    "critique": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "59a710d03e1f66e962b145283c676ed411ea71aec641601abd2ed7c5b61b3879"
+    },
+    "delight": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "14599adb8e46a4dd1349ea77bdfaf30a1d0b81460dc07d8b9321b78ac87bae2f"
+    },
+    "dependency-analyzer": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "40d2d6c048a6e75b6459888d85e6887eeca2f70fa5e76617f40033344e97965a"
+    },
+    "dev-workflow": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "65446922b4fe287726a5449a1b8d0389fc61328c7c21637e0edfc24b34f26055"
+    },
+    "distill": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "b9fb6ad6d67d798d918e0ff339322ed7f86212d2076ce4a280088b02b7ed0f86"
+    },
+    "docker-validator": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "bd734a4d66e76842f982602a25c59070eb63b18070e3e3a57163980d76a2b38c"
+    },
+    "docker-workflow": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "2a43344c5fa6651f71438443b6c67c2bb48fc38bd945e47c92580cb81e3c62aa"
+    },
+    "docs-lookup": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "33344abfc9c509acf4ca9eb19a1525f2f44a082b30c71d13fd864edb251f6e9e"
+    },
+    "docs-review": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "d6b48ecc71daf5a33c858d2322d553ca840493c1b8c30deb3c62246116e81859"
+    },
+    "docs-write": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "273af81e3795ac520c2f73df3181a6828a55102a4b4ade8c7cc36efc80e6ff00"
+    },
+    "error-standardizer": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "49b9cec4d943666b38dd0c66349c1fe69c08727e7b071c507359972847f8b083"
+    },
+    "extract": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "3c7ecd324b70ce07d525a2f8ecc0cda566b16612f1b413f121e82a65ccee38a2"
+    },
+    "frontend-design": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "d3f5281a0299aa4808bbfd4afbfac0e28ff38fb0006c5cde9c4630f372573921"
+    },
+    "harden": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "54072e299abb30b20ddca38dcbb8c585ccd3dcecc414586d6279db1fccae3578"
+    },
+    "hierarchy-unifier": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "2a1c919e74cbdfb04e53b6e863e1e4aad8215a6ef56295d7d8422920c842ebe8"
+    },
+    "library-implementer-python": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "762d71a7bbc63138b92d7d62ce882b1248c9b58e11d5d12a8e4a1933675f2447"
+    },
+    "migrate-to-addfox": {
+      "source": "addfox/skills",
+      "sourceType": "github",
+      "computedHash": "4a6bf41604930969b94efb31bf6ba36dc28cbaf35e22a023607ab34599a35df1"
+    },
+    "normalize": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "8b6ad5717818910fa76c678827019f0d1a106d427c52d520733e7790c24fca46"
+    },
+    "onboard": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "81aecc48ef5a97e24aa108250738e922d9586f47a93485ab1e1c3dcbc78a12cb"
+    },
+    "optimize": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "36de9c64e36c778a01502ca9c98a7a6d54d4fa5215c62c01a2e93dcc5912d869"
+    },
+    "polish": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "3e101ab23d322abd2de3b8a783009e034f85b46d4b86c36e58389f8670edac21"
+    },
+    "production-code-workflow": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "30647b0e4ac4dcbaf5e30d6c40e78e06cb238182094f72ff3967d6eb8835c8ae"
+    },
+    "quieter": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "3bce17549f6233b5b864fc0ee71ad23d639f621fe6aa057e711a013814305fee"
+    },
+    "readme-generator": {
+      "source": "dmccreary/claude-skills",
+      "sourceType": "github",
+      "computedHash": "e35f63b872438e30382ada2e6868d383dbcf267f8f254949726e5f8d70838677"
+    },
+    "refactor-analyzer": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "9e1aea0c6ca1103cf5e2623099849fbdc620063bd97e2343508cb76c6901f4c3"
+    },
+    "refactor-executor": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "3974a3a7a5cf3cf3636ef3248608b89b47c537b5773a79b4a1cd1a0dd24c88b3"
+    },
+    "researcher": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "7d4f23b08c2f962280924156e60038a6a2dd19aab3048d838cfcc54cba3cb3e5"
+    },
+    "schema-migrator": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "623aa511707d4d8be91a1f1f19728c85ae7a255cbf801deb99969b85c63c2b3e"
+    },
+    "security-auditor": {
+      "source": "ribatshepo/Auto-Orchestrate",
+      "sourceType": "github",
+      "computedHash": "6b49faf360a86d9509596e4cb0643ee7d0f2f246a48148b4dfab9faa04208918"
+    },
+    "teach-impeccable": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "computedHash": "5921e7a8c215a14b3adec87675fa608acb578c6782b99a47b02b2742e554f51a"
+    }
+  }
+}

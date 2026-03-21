@@ -1,0 +1,16 @@
+{
+  "name": "addfox-with-env-vars",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Verify which env vars are bundled in addfox dev/build",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev -b chrome --debug",
+    "build": "addfox build -b chrome"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.326",
+    "addfox": "workspace:*",
+    "typescript": "^5.0.0"
+  }
+}

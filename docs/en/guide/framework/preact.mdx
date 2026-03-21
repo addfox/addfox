@@ -1,0 +1,52 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Preact
+
+Add `@rsbuild/plugin-preact` to **plugins** in `addfox.config.ts` to enable Preact and JSX/TSX.
+
+## Setup
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add preact @rsbuild/plugin-preact -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install preact @rsbuild/plugin-preact -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add preact @rsbuild/plugin-preact -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add preact @rsbuild/plugin-preact -D
+```
+
+  </Tab>
+</Tabs>
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginPreact } from "@rsbuild/plugin-preact";
+
+export default defineConfig({
+  plugins: [pluginPreact()],
+});
+```
+
+## Related
+
+- [Basics](/guide/manifest), [entry](/guide/entry).

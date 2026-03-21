@@ -1,0 +1,30 @@
+/* 主题色：橙色 */
+:root {
+  --rp-c-brand: #F97316; /* hsl(25deg 95% 53%) */
+  --rp-c-brand-dark: #ef6606; /* hsl(25deg 95% 48%) */
+  --rp-c-brand-darker: #d65b06; /* hsl(25deg 95% 43%) */
+  --rp-c-brand-light: #fa9148; /* hsl(25deg 95% 63%) */
+  --rp-c-brand-lighter: #fcaf79; /* hsl(25deg 95% 73%) */
+  --rp-c-brand-tint: rgba(249, 115, 22, 0.15);
+  /* Horizontal padding aligned with rp-nav / doc content area */
+  --rp-content-padding-x: 1.5rem;
+}
+
+.dark {
+  --rp-c-brand: #F97316; /* hsl(25deg 95% 53%) */
+  --rp-c-brand-dark: #ef6606; /* hsl(25deg 95% 48%) */
+  --rp-c-brand-darker: #d65b06; /* hsl(25deg 95% 43%) */
+  --rp-c-brand-light: #fa9148; /* hsl(25deg 95% 63%) */
+  --rp-c-brand-lighter: #fcaf79; /* hsl(25deg 95% 73%) */
+  --rp-c-brand-tint: rgba(249, 115, 22, 0.15);
+}
+
+/* Align nav horizontal padding with home (same variable) */
+.rp-nav {
+  padding-left: var(--rp-content-padding-x);
+  padding-right: var(--rp-content-padding-x);
+}
+
+.rspress-logo {
+  height: 2rem !important;
+}

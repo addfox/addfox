@@ -1,0 +1,104 @@
+# Content-UI
+
+Addfox 在 `@addfox/utils` 内置了 Content-UI 工具方法，推荐在 content script 中直接使用，而不是手写挂载流程。
+
+## 注入位置
+
+Content-UI 需要在 **content 入口文件**中注入（例如 `app/content/index.ts` 或 `app/content/index.tsx`），而不是在 popup/options/background 中调用。
+
+## 内置方法
+
+### `defineContentUI(options)`
+
+原生容器模式，返回一个挂载函数。
+
+```ts
+// app/content/index.ts 或 app/content/index.tsx
+import { defineContentUI } from "@addfox/utils";
+
+const mount = defineContentUI({
+  tag: "div",
+  target: "body",
+  attr: { id: "addfox-content-ui-root" },
+  injectMode: "append",
+});
+
+function mountUI() {
+  const root = mount(); // Element
+  root.textContent = "Hello Content-UI";
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", mountUI);
+} else {
+  mountUI();
+}
+```
+
+### `defineShadowContentUI(options)`
+
+Shadow DOM 模式，适合做样式隔离。
+
+```ts
+// app/content/index.ts
+import { defineShadowContentUI } from "@addfox/utils";
+
+const mount = defineShadowContentUI({
+  name: "addfox-content-ui-root",
+  target: "body",
+  attr: { id: "addfox-content-ui-root" },
+});
+
+function mountUI() {
+  const root = mount(); // ShadowRoot 内 mount 节点
+  const title = document.createElement("div");
+  title.textContent = "Content UI (addfox)";
+  root.appendChild(title);
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", mountUI);
+} else {
+  mountUI();
+}
+```
+
+### `defineIframeContentUI(options)`
+
+iframe 模式，隔离级别最高。
+
+```ts
+// app/content/index.ts
+import { defineIframeContentUI } from "@addfox/utils";
+
+const mount = defineIframeContentUI({
+  target: "body",
+  attr: { id: "addfox-content-ui-iframe" },
+});
+
+function mountUI() {
+  const root = mount(); // iframe 文档中的根节点
+  root.textContent = "Hello from iframe content-ui";
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", mountUI);
+} else {
+  mountUI();
+}
+```
+
+## 常用参数
+
+- `target`: 目标挂载位置（CSS 选择器或 Element）
+- `attr`: 注入节点属性（`id`、`class`、`style`、`data-*` 等）
+- `injectMode`: 注入方式，`append | prepend`
+- `tag`: 仅 `defineContentUI` 需要
+- `name`: 仅 `defineShadowContentUI` 需要（自定义元素名）
+
+## 示例
+
+- [addfox-with-content-ui](https://github.com/addfox/addfox/tree/main/examples/addfox-with-content-ui)  
+  使用 `defineShadowContentUI` 注入页面面板
+- [addfox-with-content-ui-react](https://github.com/addfox/addfox/tree/main/examples/addfox-with-content-ui-react)  
+  使用 `defineContentUI` + React + Tailwind

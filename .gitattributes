@@ -1,0 +1,7 @@
+examples/** linguist-vendored
+templates/** linguist-vendored
+docs/** linguist-vendored
+.github/** linguist-vendored
+.vscode/** linguist-vendored
+.cursor/** linguist-vendored
+.agents/** linguist-vendored

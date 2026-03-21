@@ -1,0 +1,28 @@
+{
+  "name": "addfox-with-tailwindcss",
+  "version": "0.0.1",
+  "private": true,
+  "description": "React + Tailwind CSS v4 browser extension: popup, options, content, background",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev -b chrome",
+    "build": "addfox build"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "webextension-polyfill": "^0.10.0"
+  },
+  "devDependencies": {
+    "@rsbuild/plugin-react": "^1.2.0",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/chrome": "^0.0.326",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/webextension-polyfill": "^0.10.0",
+    "addfox": "workspace:*",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,104 @@
+# Content-UI
+
+Addfox provides built-in Content-UI helpers in `@addfox/utils`. Use these APIs in content scripts instead of hand-writing DOM mount logic.
+
+## Injection location
+
+Content-UI should be injected in the **content entry file** (for example `app/content/index.ts` or `app/content/index.tsx`), not in popup/options/background entries.
+
+## Built-in methods
+
+### `defineContentUI(options)`
+
+Native container mode. Returns a mount function.
+
+```ts
+// app/content/index.ts or app/content/index.tsx
+import { defineContentUI } from "@addfox/utils";
+
+const mount = defineContentUI({
+  tag: "div",
+  target: "body",
+  attr: { id: "addfox-content-ui-root" },
+  injectMode: "append",
+});
+
+function mountUI() {
+  const root = mount(); // Element
+  root.textContent = "Hello Content-UI";
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", mountUI);
+} else {
+  mountUI();
+}
+```
+
+### `defineShadowContentUI(options)`
+
+Shadow DOM mode for style isolation.
+
+```ts
+// app/content/index.ts
+import { defineShadowContentUI } from "@addfox/utils";
+
+const mount = defineShadowContentUI({
+  name: "addfox-content-ui-root",
+  target: "body",
+  attr: { id: "addfox-content-ui-root" },
+});
+
+function mountUI() {
+  const root = mount(); // mount node inside ShadowRoot
+  const title = document.createElement("div");
+  title.textContent = "Content UI (addfox)";
+  root.appendChild(title);
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", mountUI);
+} else {
+  mountUI();
+}
+```
+
+### `defineIframeContentUI(options)`
+
+iframe mode with the strongest isolation.
+
+```ts
+// app/content/index.ts
+import { defineIframeContentUI } from "@addfox/utils";
+
+const mount = defineIframeContentUI({
+  target: "body",
+  attr: { id: "addfox-content-ui-iframe" },
+});
+
+function mountUI() {
+  const root = mount(); // root node inside iframe document
+  root.textContent = "Hello from iframe content-ui";
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", mountUI);
+} else {
+  mountUI();
+}
+```
+
+## Common options
+
+- `target`: mount target (CSS selector or Element)
+- `attr`: injected node attributes (`id`, `class`, `style`, `data-*`, etc.)
+- `injectMode`: insertion mode, `append | prepend`
+- `tag`: required by `defineContentUI`
+- `name`: required by `defineShadowContentUI` (custom element name)
+
+## Examples
+
+- [addfox-with-content-ui](https://github.com/addfox/addfox/tree/main/examples/addfox-with-content-ui)  
+  Uses `defineShadowContentUI` to inject a panel
+- [addfox-with-content-ui-react](https://github.com/addfox/addfox/tree/main/examples/addfox-with-content-ui-react)  
+  Uses `defineContentUI` + React + Tailwind

@@ -1,0 +1,109 @@
+---
+title: File-based Entry
+---
+
+# File-based Entry
+
+**Do not configure `entry`**, let the framework discover entries automatically by directory and file name under `appDir` (default is `app/`).
+
+## Directory Convention
+
+Create directories under `app/` using entry names:
+
+```tree
+app/
+├── background/
+│   └── index.ts      # → background entry
+├── content/
+│   └── index.ts      # → content entry
+├── popup/
+│   └── index.ts      # → popup entry
+├── options/
+│   └── index.ts      # → options entry
+├── sidepanel/
+│   └── index.ts      # → sidepanel entry
+├── devtools/
+│   └── index.ts      # → devtools entry
+└── ...
+```
+
+## Discovery Rules
+
+The framework automatically recognizes the following reserved entry names:
+
+| Entry Name | Type | Discovery Rule |
+|------------|------|----------------|
+| `background` | Script only | `app/background/index.{ts,js}` or `app/background.{ts,js}` |
+| `content` | Script only | `app/content/index.{ts,js}` or `app/content.{ts,js}` |
+| `popup` | Script + HTML | `app/popup/index.{ts,tsx,js,jsx}` |
+| `options` | Script + HTML | `app/options/index.{ts,tsx,js,jsx}` |
+| `sidepanel` | Script + HTML | `app/sidepanel/index.{ts,tsx,js,jsx}` |
+| `devtools` | Script + HTML | `app/devtools/index.{ts,tsx,js,jsx}` |
+| `offscreen` | Script + HTML | `app/offscreen/index.{ts,tsx,js,jsx}` |
+
+## HTML Handling
+
+### Entries without HTML
+
+`background` and `content` only need script files. The framework builds them as pure JS entries.
+
+### Entries with HTML
+
+`popup`, `options`, `sidepanel`, `devtools`, `offscreen` need HTML templates:
+
+1. **Auto-generate HTML**: If no HTML file is provided, Rsbuild auto-generates one with `<div id="app"></div>`
+2. **Custom HTML template**: Create `index.html` in the same directory, mark entry script with `data-addfox-entry`
+
+### Example: Custom HTML Template
+
+```html
+<!-- app/popup/index.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- Mark entry with data-addfox-entry -->
+    <script type="module" data-addfox-entry src="./index.ts"></script>
+  </body>
+</html>
+```
+
+## Advantages
+
+- **Zero configuration**: Follow conventions, no config needed
+- **Clear structure**: One directory per entry, easy to navigate
+- **Easy to extend**: Add new entries by creating directories
+- **Framework-agnostic**: Works with React, Vue, Svelte, or vanilla JS
+
+## When to Use
+
+File-based entry is recommended when:
+- You follow standard extension architecture
+- You want minimal configuration
+- Your project structure aligns with entry organization
+
+## Hybrid with Config-based
+
+File-based discovery works alongside config-based entry. If you need to override specific entries while keeping auto-discovery for others:
+
+```ts
+export default defineConfig({
+  entry: {
+    // Override popup only
+    popup: "custom/popup/main.tsx",
+  },
+  // background, content, options still auto-discovered
+});
+```
+
+Priority: `config.entry` > manifest source paths > auto-discovery
+
+## Next Steps
+
+- [Entry Concepts](/guide/entry/concept) — Learn about entry types and principles
+- [Config-based Entry](/guide/entry/config-based) — Learn explicit entry configuration
+- [manifest configuration](/config/manifest) — Configure extension manifest

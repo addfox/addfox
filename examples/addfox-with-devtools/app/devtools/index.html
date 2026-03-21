@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Native TS Panel</title>
+</head>
+<body>
+  <div class="tabs" id="tabs">
+    <button type="button" data-tab="info" class="active">Info</button>
+    <button type="button" data-tab="page">Page</button>
+    <button type="button" data-tab="console">Console</button>
+  </div>
+  <div class="panels">
+    <div id="panel-info" class="panel active">
+      <h3>Extension Info</h3>
+      <pre id="info-content">Loading…</pre>
+    </div>
+    <div id="panel-page" class="panel">
+      <h3>Inspected Window</h3>
+      <pre id="page-content">Loading…</pre>
+    </div>
+    <div id="panel-console" class="panel">
+      <h3>Eval in page</h3>
+      <input type="text" id="eval-input" placeholder="e.g. document.title" style="width:100%;margin-bottom:8px;padding:6px;" />
+      <pre id="console-content">Result will appear here.</pre>
+    </div>
+  </div>
+  <script type="module" src="./index.ts" data-addfox-entry></script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Vue
+
+Addfox 完全支持 Vue 3，可以使用 `.vue` 单文件组件开发扩展。
+
+## 安装
+
+创建项目时选择 Vue 模板：
+
+```bash
+pnpm create addfox-app --framework vue
+```
+
+或在现有项目中安装：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @addfox/rsbuild-plugin-vue
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @addfox/rsbuild-plugin-vue
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @addfox/rsbuild-plugin-vue
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @addfox/rsbuild-plugin-vue
+```
+
+  </Tab>
+</Tabs>
+
+## 配置
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginVue } from "@addfox/rsbuild-plugin-vue";
+
+export default defineConfig({
+  plugins: [pluginVue()],
+});
+```
+
+## 项目结构
+
+```
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.ts
+├── popup/
+│   ├── App.vue
+│   ├── index.html
+│   └── index.ts
+├── options/
+│   ├── App.vue
+│   ├── index.html
+│   └── index.ts
+└── manifest.json
+```
+
+## 示例代码
+
+### Popup
+
+```vue
+<!-- app/popup/App.vue -->
+<template>
+  <div class="popup">
+    <h1>{{ title }}</h1>
+    <p>Count: {{ count }}</p>
+    <button @click="increment">Increment</button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+
+const title = ref('Hello Vue!');
+const count = ref(0);
+
+const increment = () => {
+  count.value++;
+};
+</script>
+
+<style scoped>
+.popup {
+  padding: 16px;
+  min-width: 200px;
+}
+
+h1 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  background: #42b883;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+</style>
+```
+
+```ts
+// app/popup/index.ts
+import { createApp } from 'vue';
+import App from './App.vue';
+
+createApp(App).mount('#app');
+```
+
+```html
+<!-- app/popup/index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="./index.ts" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+### Content Script
+
+```ts
+// app/content/index.ts
+import { createApp } from 'vue';
+import ContentApp from './ContentApp.vue';
+
+// 创建挂载点
+const container = document.createElement('div');
+container.id = 'my-extension-root';
+document.body.appendChild(container);
+
+createApp(ContentApp).mount(container);
+```
+
+```vue
+<!-- app/content/ContentApp.vue -->
+<template>
+  <div class="content-widget">
+    <p>Hello from Vue Content Script!</p>
+  </div>
+</template>
+
+<style scoped>
+.content-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+}
+</style>
+```
+
+## 状态管理
+
+### Pinia
+
+```bash
+pnpm add pinia
+```
+
+```ts
+// app/stores/counter.ts
+import { defineStore } from 'pinia';
+
+export const useCounterStore = defineStore('counter', {
+  state: () => ({
+    count: 0,
+  }),
+  actions: {
+    increment() {
+      this.count++;
+    },
+  },
+});
+```
+
+```ts
+// app/popup/index.ts
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import App from './App.vue';
+
+const app = createApp(App);
+app.use(createPinia());
+app.mount('#app');
+```
+
+### VueUse
+
+```bash
+pnpm add @vueuse/core
+```
+
+```vue
+<script setup>
+import { useStorage } from '@vueuse/core';
+
+// 自动同步到 chrome.storage
+const count = useStorage('count', 0);
+</script>
+```
+
+## 与 Chrome API 交互
+
+```vue
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+
+const tabs = ref<chrome.tabs.Tab[]>([]);
+
+onMounted(async () => {
+  tabs.value = await chrome.tabs.query({});
+});
+
+const activateTab = (tabId: number) => {
+  chrome.tabs.update(tabId, { active: true });
+};
+</script>
+
+<template>
+  <ul>
+    <li 
+      v-for="tab in tabs" 
+      :key="tab.id"
+      @click="activateTab(tab.id!)"
+    >
+      {{ tab.title }}
+    </li>
+  </ul>
+</template>
+```
+
+## CSS 方案
+
+### Tailwind CSS
+
+```bash
+pnpm add -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+```css
+/* app/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+```vue
+<template>
+  <div class="p-4 bg-gray-100">
+    <h1 class="text-xl font-bold text-blue-600">Hello Tailwind!</h1>
+  </div>
+</template>
+```
+
+### Scoped CSS
+
+Vue 单文件组件天然支持 scoped CSS：
+
+```vue
+<style scoped>
+.button {
+  background: #42b883;
+}
+
+/* 深度选择器 */
+:deep(.child) {
+  color: red;
+}
+</style>
+```
+
+## 相关链接
+
+- [@addfox/rsbuild-plugin-vue](https://www.npmjs.com/package/@addfox/rsbuild-plugin-vue)
+- [Vue 3 文档](https://vuejs.org/)
+- [Pinia 文档](https://pinia.vuejs.org/)

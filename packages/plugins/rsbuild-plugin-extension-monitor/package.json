@@ -1,0 +1,46 @@
+{
+  "name": "@addfox/rsbuild-plugin-extension-monitor",
+  "version": "0.1.1-beta.2",
+  "description": "Rsbuild plugin: dev monitor injection and monitor assets (internal)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "main": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./runtime": {
+      "types": "./dist/runtime.d.ts",
+      "import": "./dist/runtime.js",
+      "main": "./dist/runtime.js",
+      "default": "./dist/runtime.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "dev": "rslib build --watch",
+    "test": "rstest run",
+    "test:coverage": "rstest run --coverage"
+  },
+  "dependencies": {
+    "@addfox/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@rslib/core": "^0.20.0",
+    "@rstest/core": "^0.9.2",
+    "@rstest/coverage-istanbul": "^0.3.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@rsbuild/core": ">=1.0.0",
+    "@rspack/core": ">=1.0.0"
+  }
+}
