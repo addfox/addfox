@@ -5,6 +5,11 @@ const manifest = {
   version: "0.0.1",
   manifest_version: 3,
   description: "Built-in history entry with auto-filled chrome_url_overrides.history",
+  icons: {
+    "16": "icons/icon_128.png",
+    "48": "icons/icon_128.png",
+    "128": "icons/icon_128.png",
+  },
 };
 
 export default defineConfig({

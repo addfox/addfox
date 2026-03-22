@@ -1,5 +1,17 @@
 # @addfox/rsbuild-plugin-vue
 
+## 0.1.1-beta.5
+
+### Patch Changes
+
+- chore: update templates
+
+## 0.1.1-beta.4
+
+### Patch Changes
+
+- 21ee3c2: fixed hmr errors
+
 ## 0.1.1-beta.3
 
 ### Patch Changes

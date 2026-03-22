@@ -1,5 +1,17 @@
 ﻿# addfox-docs
 
+## 0.0.3-beta.5
+
+### Patch Changes
+
+- chore: update templates
+
+## 0.0.3-beta.4
+
+### Patch Changes
+
+- 21ee3c2: fixed hmr errors
+
 ## 0.0.3-beta.3
 
 ### Patch Changes

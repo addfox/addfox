@@ -7,6 +7,18 @@ const manifest = {
   manifest_version: 2,
   description: "Example extension with Manifest V2 for Chromium (deprecated; use MV3)",
   permissions: ["storage", "activeTab", "<all_urls>"],
+  icons: {
+    "16": "icons/icon_128.png",
+    "48": "icons/icon_128.png",
+    "128": "icons/icon_128.png",
+  },
+  browser_action: {
+    default_icon: {
+      "16": "icons/icon_128.png",
+      "48": "icons/icon_128.png",
+      "128": "icons/icon_128.png",
+    },
+  },
   content_scripts: [{ matches: ["<all_urls>"] }],
 };
 

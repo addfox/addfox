@@ -1,4 +1,4 @@
-﻿import { defineConfig } from "addfox";
+import { defineConfig } from "addfox";
 import { pluginPreact } from "@rsbuild/plugin-preact";
 
 const manifest = {
@@ -6,7 +6,12 @@ const manifest = {
   version: "1.0.0",
   manifest_version: 3,
   description: "Browser extension built with addfox",
-  permissions: ["storage", "activeTab"],
+  permissions: ["activeTab"],
+  icons: {
+    "16": "icons/icon_128.png",
+    "48": "icons/icon_128.png",
+    "128": "icons/icon_128.png",
+  },
 };
 
 export default defineConfig({

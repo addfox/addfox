@@ -16,6 +16,8 @@
 | `devtools` | 开发者工具 | 自定义 DevTools 面板 |
 | `offscreen` | Offscreen 文档 | 需要 DOM API 的后台任务 |
 
+对 **`popup` / `options` / `sidepanel` / `devtools` / `offscreen`** 等需要 HTML 的入口：若**不提供**自定义 `index.html`，构建会**自动生成**页面，其中包含 **`<div id="root"></div>`**；**`<title>`** 与 **`manifest.name`** 一致；**标签页图标**通过 **`<link rel="icon">`** 使用 **`manifest.icons`**。使用自定义 HTML 模板时需自行编写 title、图标与挂载节点（详见 [基于文件的入口](/guide/entry/file-based)）。
+
 ## 配置方式
 
 ### 方式一：基于文件（推荐）

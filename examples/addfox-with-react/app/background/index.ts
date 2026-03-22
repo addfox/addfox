@@ -6,9 +6,9 @@ function openWelcomePage(): void {
 }
 
 browser.runtime.onInstalled.addListener((details) => {
-  // if (details.reason === "install" || details.reason === "update") {
-  //   openWelcomePage();
-  // }
+  if (details.reason === "install" || details.reason === "update") {
+    openWelcomePage();
+  }
   console.log("[background] Extension installed123");
 });
 

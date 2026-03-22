@@ -20,6 +20,6 @@
 
 **图标**
 
-将 `icon_16.png`、`icon_48.png` 放入 `public/icons/`（可从 `addfox-with-react/public/icons/` 复制）。
+将 `icon_128.png` 放入 `public/icons/`（可与模板示例中的默认图互换）。`manifest` 中 16/48/128 均指向该文件。
 
 在目录下执行 `pnpm install` 后 `pnpm dev` 或 `pnpm build`，在 Chrome 中加载 `dist`。右键扩展图标可打开 popup；扩展管理页可打开 Options 与 Side panel。

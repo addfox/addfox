@@ -10,9 +10,19 @@ const manifest = {
   manifest_version: 3,
   description: "All built-in entries defined in manifest: background, popup, options, content, devtools, sidepanel, sandbox, newtab, bookmarks, history",
   permissions: ["storage", "activeTab", "tabs", "bookmarks", "history", "sidePanel"],
+  icons: {
+    "16": "icons/icon_128.png",
+    "48": "icons/icon_128.png",
+    "128": "icons/icon_128.png",
+  },
   action: {
     default_popup: "popup/index.ts",
     default_title: "Popup",
+    default_icon: {
+      16: "icons/icon_128.png",
+      48: "icons/icon_128.png",
+      128: "icons/icon_128.png",
+    },
   },
   options_ui: { page: "options/index.ts", open_in_tab: true },
   background: { service_worker: "background/index.ts" },

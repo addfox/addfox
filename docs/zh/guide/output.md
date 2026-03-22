@@ -47,6 +47,7 @@ export default defineConfig({
 
 - 由 Rsbuild 自动生成或使用自定义模板
 - 已注入对应的入口脚本
+- **自动生成**的页面（无自定义 `index.html`）会包含 **`<div id="root"></div>`**；**`<title>`** 与扩展 **`manifest.name`** 一致；**页面图标**通过 **`<link rel="icon">`** 引用 **`manifest.icons`**。自定义 HTML 模板时需自行维护 title 与图标。
 
 ### CSS 文件
 

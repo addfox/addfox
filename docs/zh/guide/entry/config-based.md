@@ -12,6 +12,7 @@
 与基于文件的入口一致：
 - **入口必须是 JS/TS**：构建基于 Rsbuild，真实入口只能是脚本文件
 - **HTML 的处理**：内置 HTML 入口（popup/options 等）自动生成；使用自定义 HTML 模板时，必须通过 `data-addfox-entry` 标明入口脚本
+- **自动生成 HTML 时**（无自定义模板）：页面含 **`<div id="root"></div>`**；**`<title>`** 使用 **`manifest.name`**；**favicon** 通过 **`<link rel="icon">`** 使用 **`manifest.icons`** 中的路径。自定义 `index.html` 时上述两项不会自动注入，需自行编写。
 
 ## 配置写法
 

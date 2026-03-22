@@ -1,5 +1,25 @@
 ﻿# addfox
 
+## 0.1.1-beta.7
+
+### Patch Changes
+
+- chore: update templates
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.5
+  - @addfox/core@0.1.1-beta.5
+  - @addfox/cli@0.1.1-beta.6
+
+## 0.1.1-beta.6
+
+### Patch Changes
+
+- 21ee3c2: fixed hmr errors
+- Updated dependencies [21ee3c2]
+  - @addfox/cli@0.1.1-beta.5
+  - @addfox/core@0.1.1-beta.4
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.4
+
 ## 0.1.1-beta.5
 
 ### Patch Changes

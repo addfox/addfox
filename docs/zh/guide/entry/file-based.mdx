@@ -60,6 +60,18 @@ app/
 
 只写脚本，不写 HTML。Rsbuild 会自动生成 HTML 并注入脚本。
 
+:::tip 自动生成 HTML 的页面约定
+
+当**没有**提供 `index.html` 等模板、由构建自动生成 HTML 时，Addfox / Rsbuild 会约定：
+
+- **挂载节点**：页面内会包含 **`<div id="root"></div>`**，供 React / Vue 等 `createRoot` / `mount` 使用。
+- **`<title>`**：与扩展清单 **`manifest.name`** 一致（随 manifest 变更而更新）。
+- **标签页图标（favicon）**：通过 **`<link rel="icon">`** 注入，**`href` 来自 `manifest.icons`**（按规则选取合适尺寸，路径会按输出 HTML 位置解析为相对路径）。
+
+若你在该入口使用**自定义 HTML 模板**，则不会自动套用上述 `title` / 图标注入，需在模板中自行编写 `<title>` 与图标 `<link>`（仍需保留 `data-addfox-entry` 与挂载节点，通常仍为 `#root`）。
+
+:::
+
 <Tabs>
 <Tab label="目录形式">
 
@@ -164,6 +176,7 @@ app/
 - `src` 可以是相对路径，指向同目录或其他位置的脚本
 - 其他资源（CSS、图片等）请在入口脚本中通过 `import` 引入，不要在 HTML 中直接引用
 - HTML 文件本身不参与编译，仅作为模板使用
+- **自定义模板**不会自动同步 manifest 的 `name` / `icons` 到 `<title>` 与 favicon；只有**自动生成**的 HTML 才会应用上文「自动生成 HTML 的页面约定」
 :::
 
 ## 完整示例

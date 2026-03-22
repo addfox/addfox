@@ -1,6 +1,6 @@
 {
   "name": "my-extension",
-  "version": "1.0.1-beta.0",
+  "version": "1.0.1-beta.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,13 +8,13 @@
     "build": "addfox build"
   },
   "dependencies": {
-    "addfox": "0.1.1-beta.5",
+    "addfox": "0.1.1-beta.7",
     "@rsbuild/core": "^1.7.3",
-    "@addfox/utils": "0.1.1-beta.3",
+    "@addfox/utils": "0.1.1-beta.5",
     "vue": "^3.5.30"
   },
   "devDependencies": {
-    "@addfox/rsbuild-plugin-vue": "0.1.1-beta.3",
+    "@addfox/rsbuild-plugin-vue": "0.1.1-beta.5",
     "@rsbuild/plugin-vue": "^1.2.7",
     "@rsbuild/plugin-vue-jsx": "^1.1.2",
     "typescript": "^5.9.3",

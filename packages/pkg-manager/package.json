@@ -1,6 +1,6 @@
 {
   "name": "@addfox/pkg-manager",
-  "version": "0.1.1-beta.3",
+  "version": "0.1.1-beta.5",
   "description": "Detect package manager and generate commands for pnpm/npm/yarn/bun",
   "license": "MIT",
   "type": "module",

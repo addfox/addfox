@@ -2,7 +2,11 @@ import { describe, expect, it } from "@rstest/core";
 import { existsSync, readFileSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { gzipSync } from "node:zlib";
-import { parseTarHeader, extractMatchingFiles } from "../src/download.ts";
+import {
+  parseTarHeader,
+  extractMatchingFiles,
+  shouldCopyLocalTemplatePath,
+} from "../src/download.ts";
 import type { TarHeader } from "../src/download.ts";
 
 const TEST_DIR = join(process.cwd(), "__tests__", ".tmp-download-test");
@@ -56,6 +60,26 @@ function cleanTestDir(): void {
 }
 
 describe("download", () => {
+  describe("shouldCopyLocalTemplatePath", () => {
+    it("allows normal template paths", () => {
+      expect(shouldCopyLocalTemplatePath("/repo/templates/react-ts/package.json")).toBe(true);
+      expect(shouldCopyLocalTemplatePath("C:\\repo\\templates\\react-ts\\app\\popup\\App.tsx")).toBe(
+        true,
+      );
+    });
+
+    it("skips node_modules and nested paths under it", () => {
+      expect(shouldCopyLocalTemplatePath("/t/node_modules/foo")).toBe(false);
+      expect(shouldCopyLocalTemplatePath("C:\\t\\node_modules\\@x\\y")).toBe(false);
+      expect(shouldCopyLocalTemplatePath("/t/pkg/node_modules/x")).toBe(false);
+    });
+
+    it("skips .git and .pnpm segments", () => {
+      expect(shouldCopyLocalTemplatePath("/t/.git/config")).toBe(false);
+      expect(shouldCopyLocalTemplatePath("/t/.pnpm/foo")).toBe(false);
+    });
+  });
+
   describe("parseTarHeader", () => {
     it("returns null for an all-zero block", () => {
       const buf = Buffer.alloc(512, 0);

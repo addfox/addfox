@@ -51,8 +51,11 @@ The framework automatically recognizes the following reserved entry names:
 
 `popup`, `options`, `sidepanel`, `devtools`, `offscreen` need HTML templates:
 
-1. **Auto-generate HTML**: If no HTML file is provided, Rsbuild auto-generates one with `<div id="root"></div>`
-2. **Custom HTML template**: Create `index.html` in the same directory, mark entry script with `data-addfox-entry`
+1. **Auto-generated HTML** (no `index.html` in the entry folder): Rsbuild generates a page that includes:
+   - **`<div id="root"></div>`** as the mount point (for `createRoot`, `mount`, etc.).
+   - **`<title>`** taken from **`manifest.name`**.
+   - A **favicon** via **`<link rel="icon">`**, whose **`href` comes from `manifest.icons`** (a suitable size is chosen; the URL is resolved relative to the emitted HTML).
+2. **Custom HTML template**: Create `index.html` in the same directory and mark the entry script with `data-addfox-entry`. In this case, **manifest-driven `title` / icon injection is not applied**—set `<title>` and any `<link rel="icon">` yourself (you usually still keep **`id="root"`** for framework mounts).
 
 ### Example: Custom HTML Template
 

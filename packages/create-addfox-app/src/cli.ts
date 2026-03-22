@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
@@ -27,7 +27,8 @@ try {
   /* use defaults */
 }
 import minimist from "minimist";
-import { downloadTemplate, tryLocalTemplates } from "./download.ts";
+import { downloadTemplate, hasLocalTemplate, tryLocalTemplates } from "./download.ts";
+import { runWithTemplateSpinner } from "./templateSpinner.ts";
 import {
   FRAMEWORKS,
   STYLE_ENGINES,
@@ -344,6 +345,7 @@ async function main(): Promise<void> {
   if (existsSync(root)) {
     const confirmed = await confirmOverwrite(targetDir);
     if (!confirmed) process.exit(0);
+    rmSync(root, { recursive: true, force: true });
   }
 
   const options =
@@ -367,14 +369,28 @@ async function main(): Promise<void> {
 
   const templateName = getTemplateName(options.framework, options.language);
 
-  console.log(yellow("\n  Downloading template...\n"));
+  const useLocalTemplate = hasLocalTemplate(templateName);
+  const templateLabel = useLocalTemplate
+    ? "Copying local template..."
+    : "Downloading template...";
+
+  /** Local copy can finish in one tick; keep spinner on screen briefly so it reads like a download step. */
+  const LOCAL_TEMPLATE_SPINNER_MIN_MS = 800;
 
   try {
-    if (tryLocalTemplates(templateName, root)) {
-      // used local templates from repo
-    } else {
-      await downloadTemplate(templateName, root);
-    }
+    await runWithTemplateSpinner(
+      templateLabel,
+      async () => {
+        await new Promise<void>((resolve) => {
+          setImmediate(resolve);
+        });
+        if (await tryLocalTemplates(templateName, root)) {
+          return;
+        }
+        await downloadTemplate(templateName, root);
+      },
+      useLocalTemplate ? { minVisibleMs: LOCAL_TEMPLATE_SPINNER_MIN_MS } : undefined,
+    );
   } catch (err) {
     console.error(red(`\n  Failed to download template: ${(err as Error).message}\n`));
     process.exit(1);

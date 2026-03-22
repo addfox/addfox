@@ -20,6 +20,8 @@ Browser extensions consist of multiple independent functional modules, each requ
 | `devtools` | Developer tools | Custom DevTools panel |
 | `offscreen` | Offscreen document | Background tasks requiring DOM API |
 
+For entries that need HTML (**`popup`**, **`options`**, **`sidepanel`**, **`devtools`**, **`offscreen`**): if you **do not** provide a custom `index.html`, the build **auto-generates** the page with **`<div id="root"></div>`**, **`<title>`** from **`manifest.name`**, and a **favicon** via **`<link rel="icon">`** from **`manifest.icons`**. With a custom HTML template, you supply title, icon links, and the mount node yourself (see [File-based Entry](/guide/entry/file-based)).
+
 ## Configuration Methods
 
 ### Method 1: File-based (Recommended)

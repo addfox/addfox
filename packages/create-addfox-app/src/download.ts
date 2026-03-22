@@ -1,4 +1,5 @@
-import { mkdirSync, writeFileSync, existsSync, cpSync } from "node:fs";
+import { mkdirSync, writeFileSync, existsSync } from "node:fs";
+import { cp, mkdir } from "node:fs/promises";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { gunzipSync } from "node:zlib";
@@ -16,12 +17,37 @@ function getRepoRoot(): string {
  * If running inside the addfox repo and templates/<templateName> exists, copy it to destDir.
  * Returns true if local copy was used, false otherwise.
  */
-export function tryLocalTemplates(templateName: string, destDir: string): boolean {
+/** True if the addfox repo checkout next to this package has `templates/<name>`. */
+export function hasLocalTemplate(templateName: string): boolean {
+  const repoRoot = getRepoRoot();
+  return existsSync(join(repoRoot, TEMPLATE_BASE, templateName));
+}
+
+const SKIP_TEMPLATE_PATH_PARTS = new Set(["node_modules", ".git", ".pnpm"]);
+
+/**
+ * Skip dependency trees and VCS when copying a local template. On Windows,
+ * copying pnpm's symlinked node_modules requires symlink privileges (EPERM otherwise).
+ */
+export function shouldCopyLocalTemplatePath(src: string): boolean {
+  const normalized = src.split(/[/\\]/);
+  for (const part of normalized) {
+    if (SKIP_TEMPLATE_PATH_PARTS.has(part)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export async function tryLocalTemplates(templateName: string, destDir: string): Promise<boolean> {
   const repoRoot = getRepoRoot();
   const templatePath = join(repoRoot, TEMPLATE_BASE, templateName);
   if (!existsSync(templatePath)) return false;
-  mkdirSync(destDir, { recursive: true });
-  cpSync(templatePath, destDir, { recursive: true });
+  await mkdir(destDir, { recursive: true });
+  await cp(templatePath, destDir, {
+    recursive: true,
+    filter: (src) => shouldCopyLocalTemplatePath(src),
+  });
   return true;
 }
 

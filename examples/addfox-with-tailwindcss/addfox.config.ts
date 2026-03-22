@@ -7,6 +7,18 @@ const manifest = {
   manifest_version: 3,
   description: "React + Tailwind CSS v4 template with popup, options, content, background",
   permissions: ["storage", "activeTab", "tabs"],
+  icons: {
+    "16": "icons/icon_128.png",
+    "48": "icons/icon_128.png",
+    "128": "icons/icon_128.png",
+  },
+  action: {
+    default_icon: {
+      16: "icons/icon_128.png",
+      48: "icons/icon_128.png",
+      128: "icons/icon_128.png",
+    },
+  },
   options_ui: { open_in_tab: true },
   content_scripts: [
     {

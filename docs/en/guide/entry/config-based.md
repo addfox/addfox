@@ -16,6 +16,7 @@ Entries not listed in `entry` will still be auto-discovered via [file-based rule
 Consistent with file-based entries:
 - **Entries must be JS/TS**: Built on Rsbuild, real entries can only be script files
 - **HTML handling**: Built-in HTML entries (popup/options, etc.) auto-generate; when using custom HTML templates, must mark entry script with `data-addfox-entry`
+- **When HTML is auto-generated** (no custom template): the page includes **`<div id="root"></div>`**; **`<title>`** matches **`manifest.name`**; the **favicon** is a **`<link rel="icon">`** pointing at **`manifest.icons`**. With a custom `index.html`, those are **not** injected automatically—add `<title>` and icon links yourself.
 
 ## Configuration Methods
 

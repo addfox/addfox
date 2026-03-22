@@ -1,5 +1,21 @@
 # create-addfox-app
 
+## 0.1.1-beta.8
+
+### Patch Changes
+
+- chore: update templates
+- Updated dependencies
+  - @addfox/pkg-manager@0.1.1-beta.5
+
+## 0.1.1-beta.7
+
+### Patch Changes
+
+- 21ee3c2: fixed hmr errors
+- Updated dependencies [21ee3c2]
+  - @addfox/pkg-manager@0.1.1-beta.4
+
 ## 0.1.1-beta.6
 
 ### Patch Changes

@@ -8,6 +8,11 @@ const manifest = {
   content_security_policy: {
     sandbox: "sandbox allow-scripts; script-src 'self' 'unsafe-inline'",
   },
+  icons: {
+    "16": "icons/icon_128.png",
+    "48": "icons/icon_128.png",
+    "128": "icons/icon_128.png",
+  },
 };
 
 export default defineConfig({

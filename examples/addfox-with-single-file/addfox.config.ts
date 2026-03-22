@@ -7,7 +7,18 @@ const manifest = {
   description: "Single file entries: popup.html, options.html, background.ts, content.ts",
   permissions: ["storage", "activeTab"],
   host_permissions: ["<all_urls>"],
-  action: {},
+  icons: {
+    "16": "icons/icon_128.png",
+    "48": "icons/icon_128.png",
+    "128": "icons/icon_128.png",
+  },
+  action: {
+    default_icon: {
+      16: "icons/icon_128.png",
+      48: "icons/icon_128.png",
+      128: "icons/icon_128.png",
+    },
+  },
   options_ui: { open_in_tab: true },
   content_scripts: [{ matches: ["<all_urls>"] }],
 };
@@ -19,7 +30,18 @@ const firefoxManifest = {
   description: "Single file entries: popup.html, options.html, background.ts, content.ts",
   permissions: ["storage", "activeTab"],
   host_permissions: ["<all_urls>"],
-  action: {},
+  icons: {
+    "16": "icons/icon_128.png",
+    "48": "icons/icon_128.png",
+    "128": "icons/icon_128.png",
+  },
+  action: {
+    default_icon: {
+      16: "icons/icon_128.png",
+      48: "icons/icon_128.png",
+      128: "icons/icon_128.png",
+    },
+  },
   options_ui: { open_in_tab: true },
   content_scripts: [{ matches: ["<all_urls>"] }],
   browser_specific_settings: {

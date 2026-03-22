@@ -131,8 +131,10 @@ import App from './App.vue';
 createApp(App).mount('#root');
 ```
 
+若**省略**下面的 `index.html`、只保留 `index.ts`，构建会自动生成 HTML，并包含 **`id="root"`**、与 **`manifest.name` / `manifest.icons`** 同步的 **title** 与 **favicon**（见 [基于文件的入口](/zh/guide/entry/file-based)）。下面示例为**可选**的自定义模板：
+
 ```html
-<!-- app/popup/index.html -->
+<!-- app/popup/index.html（可选；自定义时需自行写 title / 图标） -->
 <!DOCTYPE html>
 <html lang="zh-CN">
   <head>
