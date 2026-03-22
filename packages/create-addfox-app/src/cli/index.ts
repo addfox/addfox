@@ -27,8 +27,8 @@ try {
   /* use defaults */
 }
 import minimist from "minimist";
-import { downloadTemplate, hasLocalTemplate, tryLocalTemplates } from "./download.ts";
-import { runWithTemplateSpinner } from "./templateSpinner.ts";
+import { copyBundledTemplate, hasLocalTemplate } from "../template/bundledCopy.ts";
+import { runWithTemplateSpinner } from "../template/spinner.ts";
 import {
   FRAMEWORKS,
   STYLE_ENGINES,
@@ -36,15 +36,16 @@ import {
   type Framework,
   type Language,
   type StyleEngine,
-} from "./templates.ts";
-import { PACKAGE_MANAGER_CHOICES } from "./packageManager.ts";
-import { ENTRY_CHOICES } from "./entries.ts";
-import { filterAppEntries, getExistingAppEntryDirs } from "./filterApp.ts";
-import { generateAddfoxConfig } from "./configGenerator.ts";
-import type { TestKind } from "./testSetup.ts";
-import { applyTestAndReportSetup } from "./testSetup.ts";
-import { readJsonFile, writeJsonFile } from "./jsonFile.ts";
-import { printAddfoxLogo } from "./logo.ts";
+} from "../template/catalog.ts";
+import { PACKAGE_MANAGER_CHOICES } from "../prompts/packageManager.ts";
+import { ENTRY_CHOICES } from "../scaffold/entries.ts";
+import { filterAppEntries, getExistingAppEntryDirs } from "../template/filterEntries.ts";
+import { generateAddfoxConfig } from "../config/generate.ts";
+import { mergeScaffoldIntoAddfoxConfig } from "../config/merge.ts";
+import type { TestKind } from "../scaffold/test.ts";
+import { applyTestAndReportSetup } from "../scaffold/test.ts";
+import { readJsonFile, writeJsonFile } from "../lib/jsonFile.ts";
+import { printAddfoxLogo } from "../prompts/logo.ts";
 import type { PackageManager } from "@addfox/pkg-manager";
 import {
   detectPackageManager,
@@ -52,7 +53,7 @@ import {
   getRunCommand,
   getExecCommand,
 } from "@addfox/pkg-manager";
-import { applyStyleEngine } from "./styleSetup.ts";
+import { applyStyleEngine } from "../scaffold/style.ts";
 
 const SKILLS_REPO = "addfox/skills";
 
@@ -369,30 +370,25 @@ async function main(): Promise<void> {
 
   const templateName = getTemplateName(options.framework, options.language);
 
-  const useLocalTemplate = hasLocalTemplate(templateName);
-  const templateLabel = useLocalTemplate
-    ? "Copying local template..."
-    : "Downloading template...";
+  const templateReady = hasLocalTemplate(templateName);
+  const templateLabel = "Copying template...";
 
-  /** Local copy can finish in one tick; keep spinner on screen briefly so it reads like a download step. */
-  const LOCAL_TEMPLATE_SPINNER_MIN_MS = 800;
+  /** Copy can finish in one tick; keep spinner visible briefly. */
+  const TEMPLATE_SPINNER_MIN_MS = 800;
 
   try {
     await runWithTemplateSpinner(
       templateLabel,
       async () => {
-        await new Promise<void>((resolve) => {
-          setImmediate(resolve);
+        await new Promise<void>((resolveSpinner) => {
+          setImmediate(resolveSpinner);
         });
-        if (await tryLocalTemplates(templateName, root)) {
-          return;
-        }
-        await downloadTemplate(templateName, root);
+        await copyBundledTemplate(templateName, root);
       },
-      useLocalTemplate ? { minVisibleMs: LOCAL_TEMPLATE_SPINNER_MIN_MS } : undefined,
+      templateReady ? { minVisibleMs: TEMPLATE_SPINNER_MIN_MS } : undefined,
     );
   } catch (err) {
-    console.error(red(`\n  Failed to download template: ${(err as Error).message}\n`));
+    console.error(red(`\n  Failed to copy template: ${(err as Error).message}\n`));
     process.exit(1);
   }
 
@@ -408,11 +404,25 @@ async function main(): Promise<void> {
 
   const configExt = options.language === "ts" ? "ts" : "js";
   const configPath = resolve(root, `addfox.config.${configExt}`);
-  const configContent = generateAddfoxConfig(
-    options.framework,
-    options.language,
-    options.styleEngine
-  );
+  let configContent: string;
+  if (existsSync(configPath)) {
+    const existing = readFileSync(configPath, "utf-8");
+    if (existing.trim().length > 0 && existing.includes("defineConfig")) {
+      configContent = mergeScaffoldIntoAddfoxConfig(existing, options.styleEngine);
+    } else {
+      configContent = generateAddfoxConfig(
+        options.framework,
+        options.language,
+        options.styleEngine,
+      );
+    }
+  } else {
+    configContent = generateAddfoxConfig(
+      options.framework,
+      options.language,
+      options.styleEngine,
+    );
+  }
   writeFileSync(configPath, configContent, "utf-8");
 
   updatePackageName(root, targetDir);

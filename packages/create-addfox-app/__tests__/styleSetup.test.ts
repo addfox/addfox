@@ -2,9 +2,9 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "@rstest/core";
-import { applyStyleEngine } from "../src/styleSetup.ts";
+import { applyStyleEngine } from "../src/scaffold/style.ts";
 
-describe("styleSetup", () => {
+describe("scaffold style", () => {
   it("applyStyleEngine writes tailwind postcss and import in entries", () => {
     const dir = mkdtempSync(join(tmpdir(), "addfox-style-"));
     try {

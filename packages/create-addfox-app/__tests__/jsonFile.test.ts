@@ -2,7 +2,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "@rstest/core";
-import { readJsonFile, stripUtf8Bom, writeJsonFile } from "../src/jsonFile.ts";
+import { readJsonFile, stripUtf8Bom, writeJsonFile } from "../src/lib/jsonFile.ts";
 
 describe("jsonFile", () => {
   it("stripUtf8Bom removes leading BOM", () => {

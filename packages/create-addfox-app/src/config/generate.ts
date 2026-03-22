@@ -1,9 +1,9 @@
 /**
- * Generates addfox.config with minimal manifest (no built-in entry paths).
- * Addfox discovers entries from app/ and fills manifest at build time.
+ * Full `addfox.config` codegen when the template has no usable file (fallback only).
+ * Normal scaffold: the template’s addfox.config is kept and merged (see `./merge.ts`).
  */
 
-import type { Framework, Language, StyleEngine } from "./templates.ts";
+import type { Framework, Language, StyleEngine } from "../template/catalog.ts";
 
 function getFrameworkPluginImport(framework: Framework): string {
   switch (framework) {
@@ -39,7 +39,7 @@ function getFrameworkPluginCall(framework: Framework): string | null {
   }
 }
 
-function getStylePlugin(engine: StyleEngine | undefined): { importLine: string; call: string } | null {
+export function getStylePlugin(engine: StyleEngine | undefined): { importLine: string; call: string } | null {
   if (engine === "none" || engine === undefined) {
     return null;
   }
@@ -52,13 +52,28 @@ function getStylePlugin(engine: StyleEngine | undefined): { importLine: string; 
   return null;
 }
 
-/** Manifest without entry paths; addfox discovers from app/ and fills at build. */
+/**
+ * Manifest without entry paths; addfox discovers from app/ and fills at build.
+ * Icons match scaffold `public/icons/icon_128.png` (toolbar / store use the same asset).
+ */
 const MINIMAL_MANIFEST = [
   "  name: \"My Extension\",",
   "  version: \"1.0.0\",",
   "  manifest_version: 3,",
   "  description: \"Browser extension built with addfox\",",
-  "  permissions: [\"storage\", \"activeTab\"],",
+  "  permissions: [\"activeTab\"],",
+  "  icons: {",
+  '    "16": "icons/icon_128.png",',
+  '    "48": "icons/icon_128.png",',
+  '    "128": "icons/icon_128.png",',
+  "  },",
+  "  action: {",
+  "    default_icon: {",
+  '      "16": "icons/icon_128.png",',
+  '      "48": "icons/icon_128.png",',
+  '      "128": "icons/icon_128.png",',
+  "    },",
+  "  },",
 ].join("\n");
 
 export function generateAddfoxConfig(

@@ -1,5 +1,5 @@
 /**
- * Published dependency ranges (caret baseline) for scaffold `package.json` under repo `templates/`.
+ * Published dependency ranges (caret baseline) for scaffold `package.json` under `create-addfox-app/templates/`.
  * Bump when releasing new versions of `addfox`, `@addfox/utils`, or `@addfox/rsbuild-plugin-vue`.
  *
  * `ADDFOX_0_1_SCAFFOLD_RANGE` is a semver range for tooling/docs that must accept 0.1.x prereleases.

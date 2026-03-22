@@ -15,4 +15,4 @@ Interactive scaffolder: generates a addfox-based extension project from options 
 
 ## Templates
 
-Scaffold templates live at **repo root** in **`templates/`** (e.g. `template-vanilla-ts`, `template-react-ts`). The CLI downloads the chosen template from the GitHub repo tarball, so the repo must have `templates/` at root and committed. The npm package does not bundle templates; it fetches from GitHub at scaffold time.
+Scaffold templates ship inside this package under **`templates/`** (e.g. `template-vanilla-ts`, `template-react-ts`). They are included in the published npm tarball; the CLI copies the chosen folder into your new project (no remote download). The template’s **`addfox.config`** (including `manifest`) is **preserved**; the CLI only **merges** Rsbuild Less/Sass plugins when those style engines are selected. If no config file exists, a full fallback config is generated.

@@ -4,8 +4,8 @@
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
-import type { Framework, Language, StyleEngine } from "./templates.ts";
-import { readJsonFile, writeJsonFile } from "./jsonFile.ts";
+import type { Framework, Language, StyleEngine } from "../template/catalog.ts";
+import { readJsonFile, writeJsonFile } from "../lib/jsonFile.ts";
 
 const SKIP_STYLE_ENTRIES = new Set(["background", "content"]);
 

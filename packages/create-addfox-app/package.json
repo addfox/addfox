@@ -1,6 +1,6 @@
 {
   "name": "create-addfox-app",
-  "version": "0.1.1-beta.10",
+  "version": "0.1.1-beta.11",
   "description": "Interactive scaffolder for addfox extension projects",
   "license": "MIT",
   "type": "module",
@@ -9,10 +9,12 @@
   },
   "files": [
     "dist",
+    "templates",
     "LICENSE"
   ],
   "scripts": {
     "build": "rslib build",
+    "prepack": "rslib build",
     "start": "node dist/cli.js",
     "test": "rstest run",
     "test:coverage": "rstest run --coverage"

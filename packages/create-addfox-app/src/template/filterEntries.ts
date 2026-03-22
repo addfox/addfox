@@ -5,7 +5,7 @@
 
 import { readdirSync, rmSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { ENTRY_APP_DIRS } from "./entries.ts";
+import { ENTRY_APP_DIRS } from "../scaffold/entries.ts";
 
 const APP_DIR = "app";
 

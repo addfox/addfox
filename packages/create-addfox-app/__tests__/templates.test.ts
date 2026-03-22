@@ -3,10 +3,9 @@ import {
   FRAMEWORKS,
   LANGUAGES,
   getTemplateName,
-} from "../src/templates.ts";
-import type { Framework, Language } from "../src/templates.ts";
+} from "../src/template/catalog.ts";
 
-describe("templates", () => {
+describe("template catalog", () => {
   describe("FRAMEWORKS", () => {
     it("contains all expected frameworks", () => {
       const values = FRAMEWORKS.map((f) => f.value);
@@ -33,9 +32,6 @@ describe("templates", () => {
     });
     it("returns template-vanilla-js for vanilla + js", () => {
       expect(getTemplateName("vanilla", "js")).toBe("template-vanilla-js");
-    });
-    it("returns template-uno-ts for uno + ts", () => {
-      expect(getTemplateName("uno", "ts")).toBe("template-uno-ts");
     });
   });
 });

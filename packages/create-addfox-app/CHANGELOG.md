@@ -1,5 +1,11 @@
 # create-addfox-app
 
+## 0.1.1-beta.11
+
+### Patch Changes
+
+- fix: fixed create-addfox-app template errors
+
 ## 0.1.1-beta.10
 
 ### Patch Changes

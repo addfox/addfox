@@ -2,9 +2,9 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "@rstest/core";
-import { applyTestAndReportSetup, generateRstestConfig } from "../src/testSetup.ts";
+import { applyTestAndReportSetup, generateRstestConfig } from "../src/scaffold/test.ts";
 
-describe("testSetup", () => {
+describe("scaffold test", () => {
   it("generateRstestConfig unit-only includes node env", () => {
     const cfg = generateRstestConfig("ts", ["unit"]);
     expect(cfg).toContain("testEnvironment: \"node\"");

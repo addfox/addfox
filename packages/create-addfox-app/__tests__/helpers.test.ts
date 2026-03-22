@@ -3,21 +3,22 @@ import { mkdtempSync, mkdirSync, writeFileSync, existsSync, readFileSync } from 
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { generateAddfoxConfig } from "../src/configGenerator.ts";
-import { ENTRY_APP_DIRS, ENTRY_CHOICES, ENTRY_EXTRA_PERMISSIONS, ENTRY_NAMES } from "../src/entries.ts";
-import { filterAppEntries, getExistingAppEntryDirs } from "../src/filterApp.ts";
-import { printAddfoxLogo } from "../src/logo.ts";
-import { PACKAGE_MANAGER_CHOICES, PACKAGE_MANAGER_ORDER } from "../src/packageManager.ts";
-import { fetchSkillsList, getSkillsAddArgs, getSkillsChoices } from "../src/skills.ts";
+import { generateAddfoxConfig } from "../src/config/generate.ts";
+import { mergeScaffoldIntoAddfoxConfig } from "../src/config/merge.ts";
+import { ENTRY_APP_DIRS, ENTRY_CHOICES, ENTRY_EXTRA_PERMISSIONS, ENTRY_NAMES } from "../src/scaffold/entries.ts";
+import { filterAppEntries, getExistingAppEntryDirs } from "../src/template/filterEntries.ts";
+import { printAddfoxLogo } from "../src/prompts/logo.ts";
+import { PACKAGE_MANAGER_CHOICES, PACKAGE_MANAGER_ORDER } from "../src/prompts/packageManager.ts";
+import { fetchSkillsList, getSkillsAddArgs, getSkillsChoices } from "../src/prompts/skills.ts";
 import {
   ADDFOX_CLI_PACKAGE_VERSION,
   ADDFOX_RSBUILD_PLUGIN_VUE_VERSION,
   ADDFOX_UTILS_PACKAGE_VERSION,
   RSBUILD_CORE_SCAFFOLD_RANGE,
-} from "../src/scaffoldDependencyRanges.ts";
+} from "../src/config/dependencyRanges.ts";
 
-function addfoxMonorepoRootFromTests(): string {
-  return resolve(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
+function scaffoldTemplatesDirFromTests(): string {
+  return resolve(dirname(fileURLToPath(import.meta.url)), "..", "templates");
 }
 
 describe("create-addfox-app helpers", () => {
@@ -37,6 +38,41 @@ describe("create-addfox-app helpers", () => {
     expect(vanilla).not.toContain("plugins: [plugin");
     expect(vanilla).toContain("manifest_version: 3");
     expect(vanilla).toContain("manifest: { chromium: manifest, firefox: { ...manifest } }");
+    expect(react).toContain("icons:");
+    expect(react).toContain("default_icon:");
+    expect(react).toContain("icons/icon_128.png");
+    expect(react).not.toContain('"storage"');
+    expect(react).toContain('permissions: ["activeTab"]');
+  });
+
+  it("mergeScaffoldIntoAddfoxConfig keeps manifest and appends Less plugin", () => {
+    const tpl = `import { defineConfig } from "addfox";
+import { pluginReact } from "@rsbuild/plugin-react";
+const manifest = { name: "X", permissions: ["activeTab"], icons: {} };
+export default defineConfig({
+  manifest: { chromium: manifest, firefox: { ...manifest } },
+  plugins: [pluginReact()],
+});`;
+    const merged = mergeScaffoldIntoAddfoxConfig(tpl, "less");
+    expect(merged).toContain("pluginLess");
+    expect(merged).toContain("permissions: [\"activeTab\"]");
+    expect(merged).toContain("pluginReact()");
+  });
+
+  it("mergeScaffoldIntoAddfoxConfig adds plugins line for vanilla template when Less", () => {
+    const tpl = `import { defineConfig } from "addfox";
+const manifest = { name: "X" };
+export default defineConfig({
+  manifest: { chromium: manifest, firefox: { ...manifest } },
+});`;
+    const merged = mergeScaffoldIntoAddfoxConfig(tpl, "less");
+    expect(merged).toContain("pluginLess()");
+    expect(merged).toContain("@rsbuild/plugin-less");
+  });
+
+  it("mergeScaffoldIntoAddfoxConfig leaves config unchanged for tailwind", () => {
+    const tpl = "export default defineConfig({\n  manifest: { chromium: manifest, firefox: { ...manifest } },\n});";
+    expect(mergeScaffoldIntoAddfoxConfig(tpl, "tailwindcss")).toBe(tpl);
   });
 
   it("generateAddfoxConfig adds Less/Sass plugins when style engine needs them", () => {
@@ -153,9 +189,9 @@ describe("create-addfox-app helpers", () => {
   });
 
   it("template package.json addfox versions match scaffold constants", () => {
-    const root = addfoxMonorepoRootFromTests();
+    const tplRoot = scaffoldTemplatesDirFromTests();
     const withUtils = JSON.parse(
-      readFileSync(resolve(root, "templates/template-vue-ts/package.json"), "utf-8"),
+      readFileSync(resolve(tplRoot, "template-vue-ts/package.json"), "utf-8"),
     ) as { dependencies: Record<string, string>; devDependencies: Record<string, string> };
     expect(withUtils.dependencies.addfox).toBe(ADDFOX_CLI_PACKAGE_VERSION);
     expect(withUtils.dependencies["@addfox/utils"]).toBe(ADDFOX_UTILS_PACKAGE_VERSION);
@@ -165,7 +201,7 @@ describe("create-addfox-app helpers", () => {
     );
 
     const vanilla = JSON.parse(
-      readFileSync(resolve(root, "templates/template-vanilla-ts/package.json"), "utf-8"),
+      readFileSync(resolve(tplRoot, "template-vanilla-ts/package.json"), "utf-8"),
     ) as { dependencies: Record<string, string> };
     expect(vanilla.dependencies.addfox).toBe(ADDFOX_CLI_PACKAGE_VERSION);
   });

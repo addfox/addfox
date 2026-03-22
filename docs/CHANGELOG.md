@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.0.3-beta.8
+
+### Patch Changes
+
+- fix: fixed create-addfox-app template errors
+
 ## 0.0.3-beta.7
 
 ### Patch Changes

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Skills step: fetch addfox/skills list and run skills add via package manager.
  */
 

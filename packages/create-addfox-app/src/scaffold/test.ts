@@ -5,8 +5,8 @@
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { readJsonFile, writeJsonFile } from "./jsonFile.ts";
-import type { Language } from "./templates.ts";
+import { readJsonFile, writeJsonFile } from "../lib/jsonFile.ts";
+import type { Language } from "../template/catalog.ts";
 
 export type TestKind = "unit" | "e2e";
 

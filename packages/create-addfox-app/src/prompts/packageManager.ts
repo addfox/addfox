@@ -1,4 +1,4 @@
-﻿import type { PackageManager } from "@addfox/pkg-manager";
+import type { PackageManager } from "@addfox/pkg-manager";
 
 export const PACKAGE_MANAGER_ORDER: PackageManager[] = ["pnpm", "npm", "yarn", "bun"];
 

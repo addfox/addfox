@@ -5,7 +5,7 @@
   "cli",
   { "type": "section-header", "label": "Basics" },
   "app-dir",
-  "entry",
+  { "type": "dir", "name": "entry", "label": "Entry", "collapsible": true, "collapsed": true },
   "manifest",
   "launch",
   { "type": "dir", "name": "ai", "label": "AI", "collapsible": true, "collapsed": true },

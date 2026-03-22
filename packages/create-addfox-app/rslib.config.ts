@@ -3,7 +3,7 @@ import { defineConfig } from "@rslib/core";
 export default defineConfig({
   source: {
     entry: {
-      cli: "./src/cli.ts",
+      cli: "./src/cli/index.ts",
     },
   },
   lib: [
