@@ -128,7 +128,7 @@ button {
 import { createApp } from 'vue';
 import App from './App.vue';
 
-createApp(App).mount('#app');
+createApp(App).mount('#root');
 ```
 
 ```html
@@ -140,7 +140,7 @@ createApp(App).mount('#app');
     <title>Popup</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="root"></div>
     <script type="module" src="./index.ts" data-addfox-entry></script>
   </body>
 </html>
@@ -215,7 +215,7 @@ import App from './App.vue';
 
 const app = createApp(App);
 app.use(createPinia());
-app.mount('#app');
+app.mount('#root');
 ```
 
 ### VueUse

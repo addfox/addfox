@@ -99,7 +99,7 @@ Addfox 基于 **Rsbuild** 构建，真实的构建入口只能是 `.js`、`.jsx`
 
 - **无需 HTML 的入口**：`background`、`content` 只需脚本文件
 - **需要 HTML 的入口**：`popup`、`options`、`sidepanel`、`devtools`、`offscreen`
-  - 若不提供 HTML，Rsbuild 会自动生成（包含 `<div id="app"></div>`）
+  - 若不提供 HTML，Rsbuild 会自动生成（包含 `<div id="root"></div>`）
   - 若提供自定义 HTML 模板，必须在模板中通过 `data-addfox-entry` 标明入口脚本
 
 ### 示例：自定义 HTML 模板
@@ -113,7 +113,7 @@ Addfox 基于 **Rsbuild** 构建，真实的构建入口只能是 `.js`、`.jsx`
     <title>弹窗</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="root"></div>
     <!-- 通过 data-addfox-entry 标明入口 -->
     <script type="module" data-addfox-entry src="./index.ts"></script>
   </body>

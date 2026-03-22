@@ -2,4 +2,4 @@ import { createApp } from "vue";
 import App from "./App";
 import "./style.css";
 
-createApp(App).mount("#app");
+createApp(App).mount("#root");

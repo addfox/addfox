@@ -103,7 +103,7 @@ Addfox is built on **Rsbuild**, and the real build entries can only be `.js`, `.
 
 - **Entries without HTML**: `background`, `content` only need script files
 - **Entries with HTML**: `popup`, `options`, `sidepanel`, `devtools`, `offscreen`
-  - If no HTML is provided, Rsbuild will auto-generate (containing `<div id="app"></div>`)
+  - If no HTML is provided, Rsbuild will auto-generate (containing `<div id="root"></div>`)
   - If providing custom HTML template, must mark entry script with `data-addfox-entry`
 
 ### Example: Custom HTML Template
@@ -117,7 +117,7 @@ Addfox is built on **Rsbuild**, and the real build entries can only be `.js`, `.
     <title>Popup</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="root"></div>
     <!-- Mark entry with data-addfox-entry -->
     <script type="module" data-addfox-entry src="./index.ts"></script>
   </body>

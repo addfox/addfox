@@ -26,7 +26,7 @@ function init(): void {
 
 init();
 
-const dom = document.querySelector("#app");
+const dom = document.querySelector("#root");
 if (dom) {
   dom.innerHTML = "Hello, World!";
 }

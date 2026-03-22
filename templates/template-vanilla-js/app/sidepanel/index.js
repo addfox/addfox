@@ -1,2 +1,2 @@
-const root = document.getElementById("app");
+const root = document.getElementById("root");
 if (root) root.textContent = "Side panel";

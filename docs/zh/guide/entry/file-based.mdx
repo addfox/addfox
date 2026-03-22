@@ -125,7 +125,7 @@ app/
     <title>Popup</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="root"></div>
     <!-- 关键：data-addfox-entry 标明入口脚本 -->
     <script type="module" src="./index.ts" data-addfox-entry></script>
   </body>
@@ -150,7 +150,7 @@ app/
     <title>Popup</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="root"></div>
     <script type="module" src="./popup.ts" data-addfox-entry></script>
   </body>
 </html>
@@ -215,7 +215,7 @@ app/
 import { createRoot } from 'react-dom/client';
 import { Popup } from './Popup';
 
-const container = document.getElementById('app');
+const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(<Popup />);
 ```

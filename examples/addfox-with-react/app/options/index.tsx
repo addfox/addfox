@@ -3,5 +3,5 @@ import App from "./App";
 
 console.log("Options page loaded", fff);
 
-const root = document.getElementById("app");
+const root = document.getElementById("root");
 if (root) createRoot(root).render(<App />);

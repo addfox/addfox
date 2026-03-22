@@ -51,7 +51,7 @@ The framework automatically recognizes the following reserved entry names:
 
 `popup`, `options`, `sidepanel`, `devtools`, `offscreen` need HTML templates:
 
-1. **Auto-generate HTML**: If no HTML file is provided, Rsbuild auto-generates one with `<div id="app"></div>`
+1. **Auto-generate HTML**: If no HTML file is provided, Rsbuild auto-generates one with `<div id="root"></div>`
 2. **Custom HTML template**: Create `index.html` in the same directory, mark entry script with `data-addfox-entry`
 
 ### Example: Custom HTML Template
@@ -65,7 +65,7 @@ The framework automatically recognizes the following reserved entry names:
     <title>Popup</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="root"></div>
     <!-- Mark entry with data-addfox-entry -->
     <script type="module" data-addfox-entry src="./index.ts"></script>
   </body>

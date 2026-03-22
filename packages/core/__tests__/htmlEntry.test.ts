@@ -75,7 +75,7 @@ describe("htmlEntry", () => {
       const htmlPath = path.join(tempDir, "index.html");
       writeFileSync(
         htmlPath,
-        '<html><head></head><body><div id="app"></div><script type="module" src="./index.ts"></script></body></html>',
+        '<html><head></head><body><div id="root"></div><script type="module" src="./index.ts"></script></body></html>',
         "utf-8"
       );
       const result = parseAddfoxEntryFromHtml(htmlPath) as AddfoxEntryScriptResult;
