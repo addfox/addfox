@@ -62,6 +62,7 @@ export default defineConfig({
 :::tip Background 与 Content 的区别
 - **Background** 变更：整个扩展重载，Service Worker 重启
 - **Content** 变更：扩展重载 + 重新注入到页面
+
 :::
 
 ## 相关配置

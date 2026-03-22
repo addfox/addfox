@@ -39,6 +39,7 @@ console.log(process.env.PRIVATE_API_KEY);         // ❌ undefined
 :::tip 服务端与客户端区别
 - `manifest` 配置中的 `process.env.*` 在**构建时**解析（服务端）
 - 入口代码中的 `process.env.*` 在**运行时**可用（客户端）
+
 :::
 
 ## 内置变量

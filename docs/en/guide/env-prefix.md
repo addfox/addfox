@@ -39,6 +39,7 @@ Environment variables are injected into all **client code** entries:
 :::tip Server vs Client
 - `process.env.*` in `manifest` config is resolved at **build time** (server-side)
 - `process.env.*` in entry code is available at **runtime** (client-side)
+
 :::
 
 ## Built-in Variables

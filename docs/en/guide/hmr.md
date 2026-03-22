@@ -65,6 +65,7 @@ Page entries use **Rsbuild HMR** mechanism:
 - Faster update speed
 - Preserves component state (e.g., form inputs)
 - Smoother development experience
+
 :::
 
 :::warning HTML template limitation
