@@ -2,6 +2,7 @@
   <div class="popup">
     <img src="/icons/icon_128.png" alt="" width="64" height="64" />
     <div class="title">AddFox Vue</div>
+    <a class="site-link" href="https://addfox.dev/" target="_blank" rel="noopener noreferrer">addfox.dev</a>
   </div>
 </template>
 
@@ -24,5 +25,10 @@
 .title {
   font-size: 18px;
   font-weight: 600;
+}
+
+.site-link {
+  font-size: 13px;
+  color: #2563eb;
 }
 </style>

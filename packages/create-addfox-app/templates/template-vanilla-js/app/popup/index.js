@@ -28,9 +28,20 @@ function createTitle() {
   return title;
 }
 
+function createSiteLink() {
+  const a = document.createElement("a");
+  a.href = "https://addfox.dev/";
+  a.target = "_blank";
+  a.rel = "noopener noreferrer";
+  a.textContent = "addfox.dev";
+  a.style.fontSize = "13px";
+  a.style.color = "#2563eb";
+  return a;
+}
+
 function mountPopup(root) {
   applyPopupLayout(root);
-  root.append(createIcon(), createTitle());
+  root.append(createIcon(), createTitle(), createSiteLink());
 }
 
 const root = document.getElementById("root");

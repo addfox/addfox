@@ -1,5 +1,11 @@
 # create-addfox-app
 
+## 0.1.1-beta.14
+
+### Patch Changes
+
+- chore: add addfox.dev link
+
 ## 0.1.1-beta.13
 
 ### Patch Changes

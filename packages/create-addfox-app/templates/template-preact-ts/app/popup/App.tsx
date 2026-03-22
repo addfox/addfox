@@ -18,6 +18,14 @@ export default function App() {
     <div style={popupStyle}>
       <img src="/icons/icon_128.png" alt="" width={64} height={64} />
       <div style={{ fontSize: 18, fontWeight: 600 }}>AddFox Preact</div>
+      <a
+        href="https://addfox.dev/"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ fontSize: 13, color: "#2563eb" }}
+      >
+        addfox.dev
+      </a>
     </div>
   );
 }

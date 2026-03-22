@@ -21,6 +21,14 @@ export default function App() {
     <div style={popupStyle}>
       <img src="/icons/icon_128.png" alt="" width={64} height={64} />
       <div style={titleStyle}>AddFox Solid</div>
+      <a
+        href="https://addfox.dev/"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ "font-size": "13px", color: "#2563eb" }}
+      >
+        addfox.dev
+      </a>
     </div>
   );
 }
