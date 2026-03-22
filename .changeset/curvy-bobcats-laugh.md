@@ -14,4 +14,4 @@
 "@addfox/utils": patch
 ---
 
-fixed hmr errors
+update templates addfox version

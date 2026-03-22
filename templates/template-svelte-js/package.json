@@ -8,9 +8,9 @@
     "build": "addfox build"
   },
   "dependencies": {
-    "addfox": "0.1.1-beta.5",
+    "addfox": "^0.1.1-beta.7",
     "@rsbuild/core": "^1.7.3",
-    "@addfox/utils": "0.1.1-beta.3",
+    "@addfox/utils": "^0.1.1-beta.5",
     "svelte": "^5.54.1"
   },
   "devDependencies": {

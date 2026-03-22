@@ -40,13 +40,14 @@
     "@addfox/rsbuild-plugin-extension-monitor": "0.1.1-beta.0",
     "@addfox/rsbuild-plugin-vue": "0.1.1-beta.0",
     "@addfox/utils": "0.1.1-beta.0",
-    "addfox-with-env-vars": "0.0.1",
-    "my-extension": "1.0.0"
+    "addfox-with-env-vars": "0.0.1"
   },
   "changesets": [
     "clear-rocks-double",
     "cuddly-donkeys-tell",
+    "curvy-bobcats-laugh",
     "curvy-ducks-push",
+    "cute-dolls-check",
     "dark-hornets-act",
     "forty-facts-exist",
     "loose-pigs-press",

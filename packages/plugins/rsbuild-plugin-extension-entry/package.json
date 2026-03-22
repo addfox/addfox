@@ -1,6 +1,6 @@
 {
   "name": "@addfox/rsbuild-plugin-extension-entry",
-  "version": "0.1.1-beta.6",
+  "version": "0.1.1-beta.8",
   "description": "Rsbuild plugin: multi-entry, HTML and public copy (internal)",
   "license": "MIT",
   "type": "module",

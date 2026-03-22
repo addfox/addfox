@@ -1,6 +1,6 @@
 {
   "name": "addfox-docs",
-  "version": "0.0.3-beta.5",
+  "version": "0.0.3-beta.7",
   "private": true,
   "type": "module",
   "scripts": {

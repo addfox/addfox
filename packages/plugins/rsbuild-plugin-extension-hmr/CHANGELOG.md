@@ -1,5 +1,23 @@
 # @addfox/rsbuild-plugin-extension-hmr
 
+## 0.1.1-beta.7
+
+### Patch Changes
+
+- update templates addfox version
+- Updated dependencies
+  - @addfox/common@0.1.1-beta.7
+  - @addfox/core@0.1.1-beta.7
+
+## 0.1.1-beta.6
+
+### Patch Changes
+
+- update templates addfox version
+- Updated dependencies
+  - @addfox/common@0.1.1-beta.6
+  - @addfox/core@0.1.1-beta.6
+
 ## 0.1.1-beta.5
 
 ### Patch Changes

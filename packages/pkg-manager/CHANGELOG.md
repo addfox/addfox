@@ -1,5 +1,17 @@
 ﻿# @addfox/pkg-manager
 
+## 0.1.1-beta.7
+
+### Patch Changes
+
+- update templates addfox version
+
+## 0.1.1-beta.6
+
+### Patch Changes
+
+- update templates addfox version
+
 ## 0.1.1-beta.5
 
 ### Patch Changes

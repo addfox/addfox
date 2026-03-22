@@ -1,5 +1,35 @@
 ﻿# @addfox/cli
 
+## 0.1.1-beta.8
+
+### Patch Changes
+
+- update templates addfox version
+- Updated dependencies
+  - @addfox/common@0.1.1-beta.7
+  - @addfox/core@0.1.1-beta.7
+  - @addfox/pkg-manager@0.1.1-beta.7
+  - @addfox/rsbuild-plugin-extension-entry@0.1.1-beta.8
+  - @addfox/rsbuild-plugin-extension-hmr@0.1.1-beta.7
+  - @addfox/rsbuild-plugin-extension-manifest@0.1.1-beta.7
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.7
+  - @addfox/rsbuild-plugin-vue@0.1.1-beta.7
+
+## 0.1.1-beta.7
+
+### Patch Changes
+
+- update templates addfox version
+- Updated dependencies
+  - @addfox/common@0.1.1-beta.6
+  - @addfox/core@0.1.1-beta.6
+  - @addfox/pkg-manager@0.1.1-beta.6
+  - @addfox/rsbuild-plugin-extension-entry@0.1.1-beta.7
+  - @addfox/rsbuild-plugin-extension-hmr@0.1.1-beta.6
+  - @addfox/rsbuild-plugin-extension-manifest@0.1.1-beta.6
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.6
+  - @addfox/rsbuild-plugin-vue@0.1.1-beta.6
+
 ## 0.1.1-beta.6
 
 ### Patch Changes

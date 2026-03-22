@@ -1,5 +1,21 @@
 # @addfox/rsbuild-plugin-extension-entry
 
+## 0.1.1-beta.8
+
+### Patch Changes
+
+- update templates addfox version
+- Updated dependencies
+  - @addfox/core@0.1.1-beta.7
+
+## 0.1.1-beta.7
+
+### Patch Changes
+
+- update templates addfox version
+- Updated dependencies
+  - @addfox/core@0.1.1-beta.6
+
 ## 0.1.1-beta.6
 
 ### Patch Changes

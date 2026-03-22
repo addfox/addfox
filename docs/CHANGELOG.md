@@ -1,5 +1,17 @@
 ﻿# addfox-docs
 
+## 0.0.3-beta.7
+
+### Patch Changes
+
+- update templates addfox version
+
+## 0.0.3-beta.6
+
+### Patch Changes
+
+- update templates addfox version
+
 ## 0.0.3-beta.5
 
 ### Patch Changes
