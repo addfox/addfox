@@ -7,11 +7,8 @@
     "dev": "addfox dev",
     "build": "addfox build"
   },
-  "dependencies": {
-    "addfox": "^0.1.1-beta.7",
-    "@rsbuild/core": "^1.7.3"
-  },
   "devDependencies": {
+    "addfox": "^0.1.1-beta.7",
     "typescript": "^5.9.3"
   }
 }

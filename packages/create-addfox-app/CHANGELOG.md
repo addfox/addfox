@@ -1,5 +1,17 @@
 # create-addfox-app
 
+## 0.1.1-beta.13
+
+### Patch Changes
+
+- chore: update templates dependencies and plugins
+
+## 0.1.1-beta.12
+
+### Patch Changes
+
+- fix:fixed create-addfox-app download template error
+
 ## 0.1.1-beta.11
 
 ### Patch Changes

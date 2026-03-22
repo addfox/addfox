@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { cp, mkdir } from "node:fs/promises";
-import { join, dirname, resolve } from "node:path";
+import { join, dirname, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const TEMPLATE_BASE = "templates";
@@ -19,16 +19,21 @@ export function hasLocalTemplate(templateName: string): boolean {
   return existsSync(join(getBundledTemplatesDir(), templateName));
 }
 
-const SKIP_TEMPLATE_PATH_PARTS = new Set(["node_modules", ".git", ".pnpm"]);
+const SKIP_RELATIVE_SEGMENTS = new Set(["node_modules", ".git", ".pnpm"]);
 
 /**
- * Skip dependency trees and VCS when copying a bundled template. On Windows,
- * copying pnpm's symlinked node_modules requires symlink privileges (EPERM otherwise).
+ * Skip dependency trees and VCS **inside the template folder** when copying.
+ * Must use paths relative to `templateRoot`: the install path often contains
+ * `.pnpm` / `node_modules` (e.g. pnpm store), which must not cause every file to be skipped.
  */
-export function shouldCopyLocalTemplatePath(src: string): boolean {
-  const normalized = src.split(/[/\\]/);
-  for (const part of normalized) {
-    if (SKIP_TEMPLATE_PATH_PARTS.has(part)) {
+export function shouldCopyLocalTemplatePath(src: string, templateRoot: string): boolean {
+  const root = resolve(templateRoot);
+  const rel = relative(root, resolve(src));
+  if (rel.startsWith("..")) {
+    return true;
+  }
+  for (const part of rel.split(/[/\\]/)) {
+    if (SKIP_RELATIVE_SEGMENTS.has(part)) {
       return false;
     }
   }
@@ -47,8 +52,9 @@ export async function copyBundledTemplate(templateName: string, destDir: string)
     );
   }
   await mkdir(destDir, { recursive: true });
-  await cp(templatePath, destDir, {
+  const resolvedTemplate = resolve(templatePath);
+  await cp(resolvedTemplate, destDir, {
     recursive: true,
-    filter: (src) => shouldCopyLocalTemplatePath(src),
+    filter: (src) => shouldCopyLocalTemplatePath(src, resolvedTemplate),
   });
 }

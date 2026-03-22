@@ -1,8 +1,7 @@
 import { describe, expect, it } from "@rstest/core";
 import { mkdtempSync, mkdirSync, writeFileSync, existsSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, resolve } from "node:path";
 import { generateAddfoxConfig } from "../src/config/generate.ts";
 import { mergeScaffoldIntoAddfoxConfig } from "../src/config/merge.ts";
 import { ENTRY_APP_DIRS, ENTRY_CHOICES, ENTRY_EXTRA_PERMISSIONS, ENTRY_NAMES } from "../src/scaffold/entries.ts";
@@ -12,13 +11,13 @@ import { PACKAGE_MANAGER_CHOICES, PACKAGE_MANAGER_ORDER } from "../src/prompts/p
 import { fetchSkillsList, getSkillsAddArgs, getSkillsChoices } from "../src/prompts/skills.ts";
 import {
   ADDFOX_CLI_PACKAGE_VERSION,
-  ADDFOX_RSBUILD_PLUGIN_VUE_VERSION,
   ADDFOX_UTILS_PACKAGE_VERSION,
-  RSBUILD_CORE_SCAFFOLD_RANGE,
+  RSBUILD_PLUGIN_VUE_PACKAGE_VERSION,
 } from "../src/config/dependencyRanges.ts";
 
+/** Use cwd (package root); `import.meta.url` can point at rstest/cache output and break `../templates`. */
 function scaffoldTemplatesDirFromTests(): string {
-  return resolve(dirname(fileURLToPath(import.meta.url)), "..", "templates");
+  return resolve(process.cwd(), "templates");
 }
 
 describe("create-addfox-app helpers", () => {
@@ -193,16 +192,20 @@ export default defineConfig({
     const withUtils = JSON.parse(
       readFileSync(resolve(tplRoot, "template-vue-ts/package.json"), "utf-8"),
     ) as { dependencies: Record<string, string>; devDependencies: Record<string, string> };
-    expect(withUtils.dependencies.addfox).toBe(ADDFOX_CLI_PACKAGE_VERSION);
+    expect(withUtils.devDependencies.addfox).toBe(ADDFOX_CLI_PACKAGE_VERSION);
     expect(withUtils.dependencies["@addfox/utils"]).toBe(ADDFOX_UTILS_PACKAGE_VERSION);
-    expect(withUtils.dependencies["@rsbuild/core"]).toBe(RSBUILD_CORE_SCAFFOLD_RANGE);
-    expect(withUtils.devDependencies["@addfox/rsbuild-plugin-vue"]).toBe(
-      ADDFOX_RSBUILD_PLUGIN_VUE_VERSION,
-    );
+    expect(withUtils.devDependencies["@addfox/utils"]).toBeUndefined();
+    expect(withUtils.dependencies["@rsbuild/core"]).toBeUndefined();
+    expect(withUtils.devDependencies["@rsbuild/plugin-vue"]).toBe(RSBUILD_PLUGIN_VUE_PACKAGE_VERSION);
+
+    const vueJs = JSON.parse(
+      readFileSync(resolve(tplRoot, "template-vue-js/package.json"), "utf-8"),
+    ) as { devDependencies: Record<string, string> };
+    expect(vueJs.devDependencies["@rsbuild/plugin-vue"]).toBe(RSBUILD_PLUGIN_VUE_PACKAGE_VERSION);
 
     const vanilla = JSON.parse(
       readFileSync(resolve(tplRoot, "template-vanilla-ts/package.json"), "utf-8"),
-    ) as { dependencies: Record<string, string> };
-    expect(vanilla.dependencies.addfox).toBe(ADDFOX_CLI_PACKAGE_VERSION);
+    ) as { devDependencies: Record<string, string> };
+    expect(vanilla.devDependencies.addfox).toBe(ADDFOX_CLI_PACKAGE_VERSION);
   });
 });

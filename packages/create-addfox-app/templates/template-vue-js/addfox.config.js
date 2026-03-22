@@ -1,5 +1,5 @@
 import { defineConfig } from "addfox";
-import vue from "@addfox/rsbuild-plugin-vue";
+import { pluginVue } from "@rsbuild/plugin-vue";
 
 const manifest = {
   name: "My Extension",
@@ -23,5 +23,5 @@ const manifest = {
 
 export default defineConfig({
   manifest: { chromium: manifest, firefox: { ...manifest } },
-  plugins: [vue()],
+  plugins: [pluginVue()],
 });

@@ -1,15 +1,14 @@
 /**
- * CLI banner: FIGlet-style block letters (same family as Vercel skills CLI),
- * with a left→right orange → pink truecolor gradient on ink.
+ * CLI banner: FIGlet-style block letters (same family as Vercel skills CLI).
  *
- * @see https://github.com/vercel-labs/skills/blob/main/src/cli.ts (LOGO_LINES / showLogo)
+ * Uses **256-color** ANSI (`\x1b[38;5;Nm`) for the orange→pink gradient, not 24-bit
+ * truecolor (`38;2;r;g;b`). Apple Terminal + zsh often mishandle or strip truecolor;
+ * Vercel `skills` uses per-line 256-color grays for the same reason.
+ *
+ * @see https://github.com/vercel-labs/skills/blob/main/src/cli.ts (showLogo / GRAYS)
  */
 
 const RESET = "\x1b[0m";
-
-/** Orange → pink (RGB), applied horizontally across each line. */
-const ORANGE: [number, number, number] = [255, 118, 38];
-const PINK: [number, number, number] = [255, 92, 186];
 
 /**
  * `figlet addfox -f "ANSI Shadow"` (fixed width, no trailing blank row).
@@ -24,18 +23,24 @@ const LOGO_LINES = [
   "╚═╝  ╚═╝╚═════╝ ╚═════╝ ╚═╝      ╚═════╝ ╚═╝  ╚═╝",
 ];
 
-function lerpChannel(a: number, b: number, t: number): number {
-  return Math.round(a + (b - a) * t);
+/** xterm 256 palette: orange → magenta/pink (horizontal gradient). */
+const GRADIENT_START_256 = 208;
+const GRADIENT_END_256 = 213;
+
+/** https://no-color.org/ — any non-empty `NO_COLOR` disables ANSI color. */
+function shouldEmitAnsiColor(): boolean {
+  return !process.env.NO_COLOR;
 }
 
-function rgbFg(r: number, g: number, b: number): string {
-  return `\x1b[38;2;${r};${g};${b}m`;
+function ansi256Fg(code: number): string {
+  return `\x1b[38;5;${code}m`;
 }
 
-function colorizeLine(line: string): string {
+function colorizeLineAnsi256(line: string): string {
   const len = line.length;
-  if (len === 0) return "";
-
+  if (len === 0) {
+    return "";
+  }
   let out = "";
   for (let i = 0; i < len; i++) {
     const ch = line[i] ?? "";
@@ -44,18 +49,28 @@ function colorizeLine(line: string): string {
       continue;
     }
     const t = len <= 1 ? 0 : i / (len - 1);
-    const r = lerpChannel(ORANGE[0], PINK[0], t);
-    const g = lerpChannel(ORANGE[1], PINK[1], t);
-    const b = lerpChannel(ORANGE[2], PINK[2], t);
-    out += rgbFg(r, g, b) + ch;
+    const code = Math.round(GRADIENT_START_256 + t * (GRADIENT_END_256 - GRADIENT_START_256));
+    out += ansi256Fg(code) + ch;
   }
   return out + RESET;
 }
 
-export function printAddfoxLogo(): void {
+function printPlainLogo(): void {
   console.log("");
   for (const line of LOGO_LINES) {
-    console.log(colorizeLine(line));
+    console.log(line);
+  }
+  console.log("");
+}
+
+export function printAddfoxLogo(): void {
+  if (!shouldEmitAnsiColor()) {
+    printPlainLogo();
+    return;
+  }
+  console.log("");
+  for (const line of LOGO_LINES) {
+    console.log(colorizeLineAnsi256(line));
   }
   console.log("");
 }

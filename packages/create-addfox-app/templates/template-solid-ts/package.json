@@ -8,12 +8,11 @@
     "build": "addfox build"
   },
   "dependencies": {
-    "addfox": "^0.1.1-beta.7",
-    "@rsbuild/core": "^1.7.3",
     "@addfox/utils": "^0.1.1-beta.5",
     "solid-js": "^1.9.11"
   },
   "devDependencies": {
+    "addfox": "^0.1.1-beta.7",
     "@rsbuild/plugin-babel": "^1.1.2",
     "@rsbuild/plugin-solid": "^1.1.1",
     "typescript": "^5.9.3",
