@@ -44,6 +44,75 @@ On first start, the dev server will automatically:
 2. Launch the browser
 3. Load the development extension
 
+## Using Scripts (Recommended)
+
+Configure scripts in `package.json` for cleaner browser launch commands:
+
+```json
+{
+  "scripts": {
+    "dev": "addfox dev",
+    "dev:chrome": "addfox dev -b chrome",
+    "dev:edge": "addfox dev -b edge",
+    "dev:brave": "addfox dev -b brave",
+    "dev:firefox": "addfox dev -b firefox"
+  }
+}
+```
+
+Then use directly:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+# Chrome (default)
+pnpm dev
+
+# Other browsers
+pnpm dev:edge
+pnpm dev:firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+# Chrome (default)
+npm run dev
+
+# Other browsers
+npm run dev:edge
+npm run dev:firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+# Chrome (default)
+yarn dev
+
+# Other browsers
+yarn dev:edge
+yarn dev:firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+# Chrome (default)
+bun run dev
+
+# Other browsers
+bun run dev:edge
+bun run dev:firefox
+```
+
+  </Tab>
+</Tabs>
+
 ## Chromium-based Browsers
 
 Addfox natively supports the following Chromium-based browsers:
@@ -56,22 +125,27 @@ Addfox natively supports the following Chromium-based browsers:
 | Brave | `-b brave` | Privacy browser |
 | Vivaldi | `-b vivaldi` | Customizable browser |
 | Opera | `-b opera` | Opera browser |
+| Santa | `-b santa` | Santa Browser |
 | Arc | `-b arc` | New concept browser |
+| Yandex | `-b yandex` | Yandex Browser |
+| BrowserOS | `-b browseros` | BrowserOS |
+| Custom | `-b custom` | Custom browser (requires `browser.custom` config) |
 
-### Launch Chromium Browsers
+### Launch via CLI Directly
+
+If not using scripts, you can also launch directly via CLI:
 
 <Tabs>
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
 # Chrome (default)
-pnpm dev -- -b chrome
+pnpm addfox dev
 
-# Edge
-pnpm dev -- -b edge
-
-# Brave
-pnpm dev -- -b brave
+# Other browsers
+pnpm addfox dev -b edge
+pnpm addfox dev -b brave
+pnpm addfox dev -b vivaldi
 ```
 
   </Tab>
@@ -79,13 +153,12 @@ pnpm dev -- -b brave
 
 ```bash
 # Chrome (default)
-npm run dev -- -b chrome
+npx addfox dev
 
-# Edge
-npm run dev -- -b edge
-
-# Brave
-npm run dev -- -b brave
+# Other browsers
+npx addfox dev -b edge
+npx addfox dev -b brave
+npx addfox dev -b vivaldi
 ```
 
   </Tab>
@@ -93,13 +166,12 @@ npm run dev -- -b brave
 
 ```bash
 # Chrome (default)
-yarn dev -b chrome
+yarn addfox dev
 
-# Edge
-yarn dev -b edge
-
-# Brave
-yarn dev -b brave
+# Other browsers
+yarn addfox dev -b edge
+yarn addfox dev -b brave
+yarn addfox dev -b vivaldi
 ```
 
   </Tab>
@@ -107,13 +179,12 @@ yarn dev -b brave
 
 ```bash
 # Chrome (default)
-bun run dev -- -b chrome
+bunx addfox dev
 
-# Edge
-bun run dev -- -b edge
-
-# Brave
-bun run dev -- -b brave
+# Other browsers
+bunx addfox dev -b edge
+bunx addfox dev -b brave
+bunx addfox dev -b vivaldi
 ```
 
   </Tab>
@@ -171,42 +242,53 @@ export default defineConfig({
 
 ### Chromium User Data Cache
 
-By default, a new user data directory is used on each start. To preserve data (e.g., stay logged in):
+By default, a new user data directory is used on each start. To preserve data (e.g., stay logged in), add to `package.json`:
+
+```json
+{
+  "scripts": {
+    "dev:cache": "addfox dev -b chrome --cache",
+    "dev:edge:cache": "addfox dev -b edge --cache"
+  }
+}
+```
+
+Or run directly via CLI:
 
 <Tabs>
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-pnpm dev -- -c
+pnpm addfox dev --cache
 # or
-pnpm dev -- --cache
+pnpm addfox dev -c
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-npm run dev -- -c
+npx addfox dev --cache
 # or
-npm run dev -- --cache
+npx addfox dev -c
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-yarn dev -c
+yarn addfox dev --cache
 # or
-yarn dev --cache
+yarn addfox dev -c
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-bun run dev -- -c
+bunx addfox dev --cache
 # or
-bun run dev -- --cache
+bunx addfox dev -c
 ```
 
   </Tab>
@@ -228,32 +310,40 @@ Firefox dev mode uses the **web-ext** tool to manage extension lifecycle.
 
 ### Launch Firefox
 
+Using the configured script:
+
+```bash
+pnpm dev:firefox
+```
+
+Or run directly via CLI:
+
 <Tabs>
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-pnpm dev -- -b firefox
+pnpm addfox dev -b firefox
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-npm run dev -- -b firefox
+npx addfox dev -b firefox
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-yarn dev -b firefox
+yarn addfox dev -b firefox
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-bun run dev -- -b firefox
+bunx addfox dev -b firefox
 ```
 
   </Tab>
@@ -295,34 +385,51 @@ Firefox profile is automatically managed by `web-ext`, no manual cache configura
 
 ### Use Error Monitor
 
-Enable monitoring panel to capture errors from all entries:
+Add debug scripts to `package.json`:
+
+```json
+{
+  "scripts": {
+    "dev:debug": "addfox dev --debug",
+    "dev:firefox:debug": "addfox dev -b firefox --debug"
+  }
+}
+```
+
+Then run:
+
+```bash
+pnpm dev:debug
+```
+
+Or enable directly via CLI:
 
 <Tabs>
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-pnpm dev -- --debug
+pnpm addfox dev --debug
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-npm run dev -- --debug
+npx addfox dev --debug
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-yarn dev --debug
+yarn addfox dev --debug
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-bun run dev -- --debug
+bunx addfox dev --debug
 ```
 
   </Tab>

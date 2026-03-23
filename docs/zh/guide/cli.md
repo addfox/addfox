@@ -8,6 +8,20 @@
 addfox <command> [options]
 ```
 
+## 在 package.json 中配置 scripts
+
+```json
+{
+  "scripts": {
+    "dev": "addfox dev",
+    "dev:firefox": "addfox dev -b firefox",
+    "build": "addfox build",
+    "build:chrome": "addfox build -b chrome",
+    "test": "addfox test"
+  }
+}
+```
+
 ## 命令
 
 | 命令 | 说明 |
@@ -20,7 +34,7 @@ addfox <command> [options]
 
 | 参数 | 内置默认值 | 对应 `addfox.config` 字段 | 说明 |
 |------|------------|---------------------------|------|
-| `-b, --browser <browser>` | `chromium` | 无直接字段（影响目标与启动） | 指定目标/启动浏览器，例如 `chromium`、`firefox`、`chrome`、`edge`、`brave`。 |
+| `-b, --browser <browser>` | `chromium` | 无直接字段（影响目标与启动） | 指定目标/启动浏览器，详见下方[支持的浏览器列表](#支持的浏览器列表)。 |
 | `-c, --cache` | `true` | `cache` | 启用浏览器 profile 缓存。 |
 | `--no-cache` | `false`（仅当前命令） | `cache` | 禁用本次运行的浏览器 profile 缓存。 |
 | `-r, --report` | `false` | `report` | 启用 Rsdoctor 构建分析报告。 |
@@ -28,6 +42,25 @@ addfox <command> [options]
 | `--debug` | `false` | `debug` | 启用调试模式（开发时错误监控等能力）。 |
 | `--help` | - | - | 显示帮助。 |
 | `--version` | - | - | 显示版本号。 |
+
+## 支持的浏览器列表
+
+`-b, --browser` 参数支持以下浏览器：
+
+| 浏览器 | 说明 |
+|--------|------|
+| `chromium` | Chromium（默认） |
+| `chrome` | Google Chrome |
+| `edge` | Microsoft Edge |
+| `brave` | Brave Browser |
+| `vivaldi` | Vivaldi |
+| `opera` | Opera |
+| `santa` | Santa Browser |
+| `arc` | Arc Browser |
+| `yandex` | Yandex Browser |
+| `browseros` | BrowserOS |
+| `custom` | 自定义浏览器（需在配置中指定 `browser.custom`） |
+| `firefox` | Mozilla Firefox |
 
 ## 示例
 

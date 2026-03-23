@@ -8,6 +8,20 @@ This page lists the supported `addfox` CLI commands and options.
 addfox <command> [options]
 ```
 
+## Configure scripts in package.json
+
+```json
+{
+  "scripts": {
+    "dev": "addfox dev",
+    "dev:firefox": "addfox dev -b firefox",
+    "build": "addfox build",
+    "build:chrome": "addfox build -b chrome",
+    "test": "addfox test"
+  }
+}
+```
+
 ## Commands
 
 | Command | Description |
@@ -20,7 +34,7 @@ addfox <command> [options]
 
 | Option | Built-in Default | `addfox.config` Field | Description |
 |--------|------------------|------------------------|-------------|
-| `-b, --browser <browser>` | `chromium` | No direct field (command-level target/launch selection) | Target/launch browser. Examples: `chromium`, `firefox`, `chrome`, `edge`, `brave`. |
+| `-b, --browser <browser>` | `chromium` | No direct field (command-level target/launch selection) | Target/launch browser. See [Supported Browsers List](#supported-browsers-list) below. |
 | `-c, --cache` | `true` | `cache` | Enable browser profile cache for current run. |
 | `--no-cache` | `false` (for this run) | `cache` | Disable browser profile cache for current run. |
 | `-r, --report` | `false` | `report` | Enable Rsdoctor build report. |
@@ -28,6 +42,25 @@ addfox <command> [options]
 | `--debug` | `false` | `debug` | Enable debug mode (error monitor in dev). |
 | `--help` | - | - | Print help. |
 | `--version` | - | - | Print version. |
+
+## Supported Browsers List
+
+The `-b, --browser` option supports the following browsers:
+
+| Browser | Description |
+|---------|-------------|
+| `chromium` | Chromium (default) |
+| `chrome` | Google Chrome |
+| `edge` | Microsoft Edge |
+| `brave` | Brave Browser |
+| `vivaldi` | Vivaldi |
+| `opera` | Opera |
+| `santa` | Santa Browser |
+| `arc` | Arc Browser |
+| `yandex` | Yandex Browser |
+| `browseros` | BrowserOS |
+| `custom` | Custom browser (requires `browser.custom` in config) |
+| `firefox` | Mozilla Firefox |
 
 ## Examples
 

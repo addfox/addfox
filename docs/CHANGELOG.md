@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.0.3-beta.9
+
+### Patch Changes
+
+- chore:update docs
+
 ## 0.0.3-beta.8
 
 ### Patch Changes
