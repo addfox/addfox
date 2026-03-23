@@ -1,0 +1,443 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Inicio de navegador
+
+Addfox puede iniciar automáticamente el navegador y cargar la extensión durante el desarrollo, mejorando la eficiencia de desarrollo.
+
+## Inicio rápido
+
+Ejecutar el comando de desarrollo:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev
+```
+
+  </Tab>
+</Tabs>
+
+El primer inicio del servidor de desarrollo hará automáticamente:
+1. Construir la extensión
+2. Abrir el navegador
+3. Cargar la extensión en desarrollo
+
+## Usar Scripts para iniciar (recomendado)
+
+Configurar scripts en `package.json` permite iniciar diferentes navegadores más concisamente:
+
+```json
+{
+  "scripts": {
+    "dev": "addfox dev",
+    "dev:chrome": "addfox dev -b chrome",
+    "dev:edge": "addfox dev -b edge",
+    "dev:brave": "addfox dev -b brave",
+    "dev:firefox": "addfox dev -b firefox"
+  }
+}
+```
+
+Después de la configuración, usar directamente:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+# Chrome (predeterminado)
+pnpm dev
+
+# Otros navegadores
+pnpm dev:edge
+pnpm dev:firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+# Chrome (predeterminado)
+npm run dev
+
+# Otros navegadores
+npm run dev:edge
+npm run dev:firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+# Chrome (predeterminado)
+yarn dev
+
+# Otros navegadores
+yarn dev:edge
+yarn dev:firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+# Chrome (predeterminado)
+bun run dev
+
+# Otros navegadores
+bun run dev:edge
+bun run dev:firefox
+```
+
+  </Tab>
+</Tabs>
+
+## Navegadores basados en Chromium
+
+Addfox soporta nativamente los siguientes navegadores basados en Chromium:
+
+| Navegador | Parámetro CLI | Descripción |
+|--------|----------|------|
+| Google Chrome | `-b chrome` | Navegador predeterminado |
+| Chromium | `-b chromium` | Versión de código abierto |
+| Microsoft Edge | `-b edge` | Incluido en Windows |
+| Brave | `-b brave` | Navegador de privacidad |
+| Vivaldi | `-b vivaldi` | Navegador personalizable |
+| Opera | `-b opera` | Navegador Opera |
+| Santa | `-b santa` | Navegador Santa |
+| Arc | `-b arc` | Navegador de nueva forma |
+| Yandex | `-b yandex` | Navegador Yandex |
+| BrowserOS | `-b browseros` | BrowserOS |
+| Custom | `-b custom` | Navegador personalizado (necesita configurar `browser.custom`) |
+
+### Iniciar directamente a través de CLI
+
+Si no usas scripts, también puedes especificar el navegador directamente desde CLI:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+# Chrome (predeterminado)
+pnpm addfox dev
+
+# Otros navegadores
+pnpm addfox dev -b edge
+pnpm addfox dev -b brave
+pnpm addfox dev -b vivaldi
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+# Chrome (predeterminado)
+npx addfox dev
+
+# Otros navegadores
+npx addfox dev -b edge
+npx addfox dev -b brave
+npx addfox dev -b vivaldi
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+# Chrome (predeterminado)
+yarn addfox dev
+
+# Otros navegadores
+yarn addfox dev -b edge
+yarn addfox dev -b brave
+yarn addfox dev -b vivaldi
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+# Chrome (predeterminado)
+bunx addfox dev
+
+# Otros navegadores
+bunx addfox dev -b edge
+bunx addfox dev -b brave
+bunx addfox dev -b vivaldi
+```
+
+  </Tab>
+</Tabs>
+
+### Configuración de ruta de navegadores Chromium
+
+Si el navegador no está en la ubicación predeterminada, puedes especificar `browserPath` en la configuración:
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/path/to/chrome",
+    edge: "/path/to/edge",
+    brave: "/path/to/brave",
+  },
+});
+```
+
+#### Ejemplos por plataforma
+
+**macOS:**
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  },
+});
+```
+
+**Windows:**
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  },
+});
+```
+
+**Linux:**
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/usr/bin/google-chrome",
+    chromium: "/usr/bin/chromium-browser",
+  },
+});
+```
+
+### Caché de datos de usuario de Chromium
+
+Por defecto, cada inicio usa un nuevo directorio de datos de usuario. Si necesitas conservarlo (como mantener el estado de inicio de sesión), agrega en `package.json`:
+
+```json
+{
+  "scripts": {
+    "dev:cache": "addfox dev -b chrome --cache",
+    "dev:edge:cache": "addfox dev -b edge --cache"
+  }
+}
+```
+
+O ejecutar directamente desde CLI:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm addfox dev --cache
+# o
+pnpm addfox dev -c
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npx addfox dev --cache
+# o
+npx addfox dev -c
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn addfox dev --cache
+# o
+yarn addfox dev -c
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bunx addfox dev --cache
+# o
+bunx addfox dev -c
+```
+
+  </Tab>
+</Tabs>
+
+O habilitar en la configuración:
+
+```ts
+export default defineConfig({
+  cache: true,
+});
+```
+
+Los datos de usuario se guardan en el directorio `.addfox/cache/`.
+
+## Firefox
+
+El modo de desarrollo de Firefox usa la herramienta **web-ext** para gestionar el ciclo de vida de la extensión.
+
+### Iniciar Firefox
+
+Usar el script configurado:
+
+```bash
+pnpm dev:firefox
+```
+
+O ejecutar directamente desde CLI:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm addfox dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npx addfox dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn addfox dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bunx addfox dev -b firefox
+```
+
+  </Tab>
+</Tabs>
+
+### Características de Firefox
+
+- La recarga de extensión es manejada por `web-ext`, no por WebSocket de Addfox
+- Abre automáticamente Firefox y carga la extensión al iniciar
+- Soporta recarga automática cuando cambian los archivos
+
+### Configuración de ruta de Firefox
+
+```ts
+export default defineConfig({
+  browserPath: {
+    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  },
+});
+```
+
+:::info
+El perfil de Firefox es gestionado automáticamente por `web-ext`, no es necesario configurar opciones de caché manualmente.
+:::
+
+## Técnicas de depuración
+
+### Ver Service Worker
+
+1. Abrir `chrome://extensions/`
+2. Encontrar la extensión en desarrollo
+3. Hacer clic en "Service Worker" para ver la consola del script de fondo
+
+### Ver Content Script
+
+1. Clic derecho en la página web → Inspeccionar
+2. Cambiar al panel Console
+3. Seleccionar el contexto correspondiente de la extensión
+
+### Usar monitoreo de errores
+
+Agregar script de debug en `package.json`:
+
+```json
+{
+  "scripts": {
+    "dev:debug": "addfox dev --debug",
+    "dev:firefox:debug": "addfox dev -b firefox --debug"
+  }
+}
+```
+
+Luego ejecutar:
+
+```bash
+pnpm dev:debug
+```
+
+O habilitar directamente desde CLI:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm addfox dev --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npx addfox dev --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn addfox dev --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bunx addfox dev --debug
+```
+
+  </Tab>
+</Tabs>
+
+## Configuraciones relacionadas
+
+- [`browserPath`](/config/launch) - Configuración de ruta de archivo ejecutable del navegador
+- [`cache`](/config/cache) - Configuración de caché
+- [`hotReload`](/config/hot-reload) - Configuración de recarga en caliente
+- [`debug`](/config/debug) - Configuración de monitoreo de errores

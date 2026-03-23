@@ -1,0 +1,96 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# cache
+
+`cache` は開発時にブラウザのユーザーデータを保持するかどうかを制御するために使用されます。
+
+## 概要
+
+- **型**: `boolean`
+- **デフォルト値**: `true`
+- **必須**: いいえ
+
+## 使い方
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  cache: true,  // キャッシュを有効にする
+});
+```
+
+## 機能
+
+キャッシュを有効にすると：
+- 開発時のブラウザユーザーデータが `.addfox/cache/` ディレクトリに保存されます
+- 次回 `addfox dev` 起動時にこれらのデータが再利用されます
+- ログイン状態、拡張機能の設定などが保持されます
+
+## CLI パラメータ
+
+CLI パラメータは設定より優先されます：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+# キャッシュを強制的に有効にする（設定が false でも）
+pnpm dev -- -c
+pnpm dev -- --cache
+
+# キャッシュを強制的に無効にする（設定が true でも）
+pnpm dev -- --no-cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+# キャッシュを強制的に有効にする（設定が false でも）
+npm run dev -- -c
+npm run dev -- --cache
+
+# キャッシュを強制的に無効にする（設定が true でも）
+npm run dev -- --no-cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+# キャッシュを強制的に有効にする（設定が false でも）
+yarn dev -c
+yarn dev --cache
+
+# キャッシュを強制的に無効にする（設定が true でも）
+yarn dev -- --no-cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+# キャッシュを強制的に有効にする（設定が false でも）
+bun run dev -- -c
+bun run dev -- --cache
+
+# キャッシュを強制的に無効にする（設定が true でも）
+bun run dev -- --no-cache
+```
+
+  </Tab>
+</Tabs>
+
+`--cache` と `--no-cache` が同時に指定された場合、最後のパラメータが優先されます。
+
+## 注意事項
+
+- 開発モード（`addfox dev`）にのみ影響します
+- 本番ビルド（`addfox build`）には影響しません
+- 奇妙な問題が発生した場合は、`.addfox/cache/` ディレクトリを削除してみてください
+
+## 関連設定
+
+- [guide/launch](/ja/guide/launch) - 開発起動ガイド

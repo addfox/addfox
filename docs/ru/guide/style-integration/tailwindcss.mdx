@@ -1,0 +1,65 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Tailwind CSS
+
+## Установка
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+</Tabs>
+
+## Конфигурация
+
+Создайте `postcss.config.mjs` в корне проекта:
+
+```js
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+```
+
+## Использование
+
+Импортируйте Tailwind в вашем стилевом entry:
+
+```css
+/* app/popup/index.css */
+@import "tailwindcss";
+```
+
+Импортируйте этот CSS файл в entry страницы:
+
+```ts
+import "./index.css";
+```
+
+Затем можно использовать классы Tailwind непосредственно в компонентах.

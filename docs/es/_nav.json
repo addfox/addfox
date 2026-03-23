@@ -1,0 +1,17 @@
+[
+  {
+    "text": "Guía",
+    "link": "/guide/introduction",
+    "activeMatch": "^/es/guide/"
+  },
+  {
+    "text": "Configuración",
+    "link": "/config/manifest",
+    "activeMatch": "^/es/config/"
+  },
+  {
+    "text": "Ejemplos",
+    "link": "/examples/index",
+    "activeMatch": "^/es/examples/"
+  }
+]

@@ -1,0 +1,144 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Svelte
+
+Addfox поддерживает разработку расширений с использованием Svelte, обеспечивая легковесный опыт с оптимизацией на этапе компиляции.
+
+## Установка
+
+Выберите шаблон Svelte при создании проекта:
+
+```bash
+pnpm create addfox-app --framework svelte
+```
+
+Или установите в существующий проект:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @rsbuild/plugin-svelte
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @rsbuild/plugin-svelte
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @rsbuild/plugin-svelte
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @rsbuild/plugin-svelte
+```
+
+  </Tab>
+</Tabs>
+
+## Конфигурация
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginSvelte } from "@rsbuild/plugin-svelte";
+
+export default defineConfig({
+  plugins: [pluginSvelte()],
+});
+```
+
+## Структура проекта
+
+```
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.ts
+├── popup/
+│   ├── App.svelte
+│   ├── index.html
+│   └── index.ts
+└── manifest.json
+```
+
+## Пример кода
+
+### Popup
+
+```svelte
+<!-- app/popup/App.svelte -->
+<script lang="ts">
+  let count = 0;
+  
+  function increment() {
+    count += 1;
+  }
+</script>
+
+<div class="p-4">
+  <h1 class="text-xl font-bold">Hello Svelte!</h1>
+  <button 
+    on:click={increment}
+    class="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+  >
+    Count: {count}
+  </button>
+</div>
+
+<style>
+  h1 {
+    color: #333;
+  }
+</style>
+```
+
+```ts
+// app/popup/index.ts
+import App from './App.svelte';
+import './index.css';
+
+new App({
+  target: document.getElementById('root')!,
+});
+```
+
+## Store
+
+Использование Svelte Store для управления состоянием:
+
+```ts
+// app/stores/count.ts
+import { writable } from 'svelte/store';
+
+export const count = writable(0);
+
+export function increment() {
+  count.update(n => n + 1);
+}
+```
+
+```svelte
+<script>
+  import { count, increment } from '../stores/count';
+</script>
+
+<button on:click={increment}>
+  Count: {$count}
+</button>
+```
+
+## Связанные ссылки
+
+- [Плагин Svelte для Rsbuild](https://rsbuild.dev/plugins/list/plugin-svelte)
+- [Документация Svelte](https://svelte.dev/)

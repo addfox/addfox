@@ -1,0 +1,17 @@
+[
+  {
+    "text": "ガイド",
+    "link": "/guide/introduction",
+    "activeMatch": "^/ja/guide/"
+  },
+  {
+    "text": "設定",
+    "link": "/config/manifest",
+    "activeMatch": "^/ja/config/"
+  },
+  {
+    "text": "サンプル",
+    "link": "/examples/index",
+    "activeMatch": "^/ja/examples/"
+  }
+]

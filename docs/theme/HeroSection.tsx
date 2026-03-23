@@ -1,9 +1,21 @@
-﻿import React from "react";
+import React from "react";
 import { useI18n } from "@rspress/core/runtime";
 import { HeroTerminalWithAnimation } from "./HeroDemo";
 
 function HeroActions({ getStartedLink, githubLink }: { getStartedLink: string; githubLink: string }) {
   const t = useI18n();
+  const [copied, setCopied] = React.useState(false);
+
+  const handleCopyCreateCommand = React.useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText("pnpm create addfox-app");
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1200);
+    } catch {
+      // No-op fallback: keep button behavior silent if clipboard is blocked.
+    }
+  }, []);
+
   return (
     <div className="flex flex-wrap gap-3">
       <a
@@ -12,6 +24,27 @@ function HeroActions({ getStartedLink, githubLink }: { getStartedLink: string; g
       >
         {t("homeHeroGetStarted")}
       </a>
+      <div className="inline-flex items-center rounded-md border border-dashed border-orange-300/70 bg-orange-100/50 text-orange-600/80 dark:border-orange-400/30 dark:bg-orange-500/10 dark:text-orange-300/80">
+        <span className="px-3 py-2.5 text-sm font-medium tracking-tight select-text">pnpm create addfox-app</span>
+        <button
+          type="button"
+          onClick={handleCopyCreateCommand}
+          className="inline-flex items-center justify-center w-10 h-10 border-l border-orange-300/60 text-orange-500/85 transition-all hover:bg-orange-100/65 hover:text-orange-600/95 dark:border-orange-400/30 dark:text-orange-300/80 dark:hover:bg-orange-500/15"
+          aria-label="Copy pnpm create addfox-app"
+          title="pnpm create addfox-app"
+        >
+          {copied ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+          )}
+        </button>
+      </div>
       <a
         href={githubLink}
         target="_blank"

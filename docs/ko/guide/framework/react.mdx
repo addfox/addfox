@@ -1,0 +1,293 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# React
+
+Addfox는 React를 완전히 지원하며, JSX/TSX를 사용하여 확장의 각 Entry를 개발할 수 있습니다.
+
+## 설치
+
+프로젝트 생성 시 React 템플릿 선택:
+
+```bash
+pnpm create addfox-app --framework react
+```
+
+또는 기존 프로젝트에 설치:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @rsbuild/plugin-react
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @rsbuild/plugin-react
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @rsbuild/plugin-react
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @rsbuild/plugin-react
+```
+
+  </Tab>
+</Tabs>
+
+## 구성
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginReact } from "@rsbuild/plugin-react";
+
+export default defineConfig({
+  plugins: [pluginReact()],
+});
+```
+
+## 프로젝트 구조
+
+```
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.tsx
+├── popup/
+│   ├── App.tsx
+│   ├── index.html
+│   └── index.tsx
+├── options/
+│   ├── App.tsx
+│   ├── index.html
+│   └── index.tsx
+└── manifest.json
+```
+
+## 예시 코드
+
+### Popup
+
+```tsx
+// app/popup/index.tsx
+import { createRoot } from 'react-dom/client';
+import { App } from './App';
+import './index.css';
+
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(<App />);
+```
+
+```tsx
+// app/popup/App.tsx
+import { useState } from 'react';
+
+export function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div className="p-4">
+      <h1 className="text-xl font-bold">Hello React!</h1>
+      <button 
+        onClick={() => setCount(c => c + 1)}
+        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Count: {count}
+      </button>
+    </div>
+  );
+}
+```
+
+아래의 `index.html`을 **생략**하고 `index.tsx`만 유지하면 빌드가 자동으로 HTML을 생성하고 **`id="root"`**, **`manifest.name` / `manifest.icons`**과 동기화된 **title** 및 **favicon**을 포함합니다 (자세한 내용은 [파일 기반 Entry](/ko/guide/entry/file-based) 참조). 아래 예시는 **선택적** 사용자 지정 템플릿입니다:
+
+```html
+<!-- app/popup/index.html (선택적; 사용자 지정 시 title / 아이콘을 직접 작성해야 함) -->
+<!DOCTYPE html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./index.tsx" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+### Content Script
+
+```tsx
+// app/content/index.tsx
+import { createRoot } from 'react-dom/client';
+import { ContentApp } from './ContentApp';
+
+// 마운트 포인트 생성
+const container = document.createElement('div');
+container.id = 'my-extension-root';
+document.body.appendChild(container);
+
+const root = createRoot(container);
+root.render(<ContentApp />);
+```
+
+### Background
+
+```ts
+// app/background/index.ts
+// Background는 React를 사용하지 않으며 일반 TypeScript를 사용합니다
+
+chrome.action.onClicked.addListener((tab) => {
+  console.log('Extension clicked');
+});
+```
+
+## 상태 관리
+
+임의의 React 상태 관리 솔루션을 사용할 수 있습니다:
+
+### Zustand
+
+```bash
+pnpm add zustand
+```
+
+```ts
+// app/store.ts
+import { create } from 'zustand';
+
+interface Store {
+  count: number;
+  increment: () => void;
+}
+
+export const useStore = create<Store>((set) => ({
+  count: 0,
+  increment: () => set((state) => ({ count: state.count + 1 })),
+}));
+```
+
+### Jotai
+
+```bash
+pnpm add jotai
+```
+
+```ts
+// app/atoms.ts
+import { atom } from 'jotai';
+
+export const countAtom = atom(0);
+```
+
+## CSS 솔루션
+
+### Tailwind CSS
+
+```bash
+pnpm add -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+```js
+// tailwind.config.js
+module.exports = {
+  content: ["./app/**/*.{js,ts,jsx,tsx}"],
+  theme: { extend: {} },
+  plugins: [],
+};
+```
+
+```css
+/* app/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+### CSS Modules
+
+```tsx
+// app/popup/App.tsx
+import styles from './App.module.css';
+
+export function App() {
+  return <div className={styles.container}>Hello</div>;
+}
+```
+
+```css
+/* app/popup/App.module.css */
+.container {
+  padding: 16px;
+}
+```
+
+### CSS-in-JS
+
+styled-components 또는 emotion 지원:
+
+```bash
+pnpm add styled-components
+```
+
+```tsx
+import styled from 'styled-components';
+
+const Button = styled.button`
+  background: blue;
+  color: white;
+  padding: 8px 16px;
+`;
+
+export function App() {
+  return <Button>Click me</Button>;
+}
+```
+
+## Chrome API와 상호 작용
+
+```tsx
+import { useEffect, useState } from 'react';
+
+export function TabList() {
+  const [tabs, setTabs] = useState<chrome.tabs.Tab[]>([]);
+
+  useEffect(() => {
+    chrome.tabs.query({}, setTabs);
+  }, []);
+
+  const activateTab = (tabId: number) => {
+    chrome.tabs.update(tabId, { active: true });
+  };
+
+  return (
+    <ul>
+      {tabs.map((tab) => (
+        <li key={tab.id} onClick={() => activateTab(tab.id!)}>
+          {tab.title}
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+## 관련 링크
+
+- [Rsbuild React 플러그인](https://rsbuild.dev/plugins/list/plugin-react)
+- [React 문서](https://react.dev/)

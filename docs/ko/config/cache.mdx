@@ -1,0 +1,96 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# cache
+
+`cache`는 개발 시 브라우저 사용자 데이터를 유지할지 여부를 제어합니다.
+
+## 개요
+
+- **타입**: `boolean`
+- **기본값**: `true`
+- **필수 여부**: 아니오
+
+## 사용법
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  cache: true,  // 캐시 활성화
+});
+```
+
+## 역할
+
+캐시를 활성화하면:
+- 개발 시 브라우저 사용자 데이터가 `.addfox/cache/` 디렉토리에 저장됩니다
+- 다음에 `addfox dev`를 시작할 때 이 데이터를 재사용합니다
+- 로그인 상태, 확장 설정 등이 유지됩니다
+
+## CLI 파라미터
+
+CLI 파라미터는 설정보다 우선순위가 높습니다:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+# 캐시 강제 활성화 (설정이 false여도)
+pnpm dev -- -c
+pnpm dev -- --cache
+
+# 캐시 강제 비활성화 (설정이 true여도)
+pnpm dev -- --no-cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+# 캐시 강제 활성화 (설정이 false여도)
+npm run dev -- -c
+npm run dev -- --cache
+
+# 캐시 강제 비활성화 (설정이 true여도)
+npm run dev -- --no-cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+# 캐시 강제 활성화 (설정이 false여도)
+yarn dev -c
+yarn dev --cache
+
+# 캐시 강제 비활성화 (설정이 true여도)
+yarn dev -- --no-cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+# 캐시 강제 활성화 (설정이 false여도)
+bun run dev -- -c
+bun run dev -- --cache
+
+# 캐시 강제 비활성화 (설정이 true여도)
+bun run dev -- --no-cache
+```
+
+  </Tab>
+</Tabs>
+
+`--cache`와 `--no-cache`가 동시에 있으면 마지막 파라미터가 우선합니다.
+
+## 주의사항
+
+- 개발 모드(`addfox dev`)에만 영향을 줍니다
+- 프로덕션 빌드(`addfox build`)는 이 설정의 영향을 받지 않습니다
+- 이상한 문제가 발생하면 `.addfox/cache/` 디렉토리를 삭제해 보세요
+
+## 관련 설정
+
+- [guide/launch](/guide/launch) - 개발 시작 가이드

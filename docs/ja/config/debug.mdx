@@ -1,0 +1,92 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# debug
+
+`debug` は開発時のエラーモニタリングパネルを有効にするために使用されます。
+
+## 概要
+
+- **型**: `boolean`
+- **デフォルト値**: `false`
+- **必須**: いいえ
+
+## 使い方
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  debug: true,  // エラーモニタリングを有効にする
+});
+```
+
+## 機能
+
+有効にすると、Addfox は以下を行います：
+
+1. **エラーのキャプチャ** — background、content、popup などの各エントリーのエラーを自動的にキャプチャ
+2. **エラーパネル** — 拡張機能ページにモニタリングパネルエントリーを表示
+3. **AI への問い合わせ** — エラーのコピー、ChatGPT/Cursor への問い合わせをワンクリックでサポート
+
+## 使用方法
+
+### 設定で有効にする
+
+```ts
+export default defineConfig({
+  debug: true,
+});
+```
+
+### CLI で有効にする
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- --debug
+```
+
+  </Tab>
+</Tabs>
+
+## モニタリングパネル
+
+有効にすると、`chrome-extension://<id>/_addfox-monitor/` にアクセスすると以下が表示されます：
+
+- 各エントリーのエラーリスト
+- エラースタックの詳細
+- エラー情報のワンクリックコピー
+- AI へのワンクリック問い合わせ（ChatGPT / Cursor）
+
+## 注意事項
+
+- 開発モード（`addfox dev`）にのみ影響します
+- 本番ビルドではモニタリングコードが自動的に削除されます
+- モニタリングパネルは拡張機能のパフォーマンスに影響しません
+
+## 関連設定
+
+- [guide/monitor](/ja/guide/monitor) - エラーモニタリングガイド

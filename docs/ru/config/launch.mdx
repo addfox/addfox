@@ -1,0 +1,168 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# browserPath
+
+`browserPath` используется для настройки пути к исполняемому файлу браузера, который автоматически открывается при разработке и загружает расширение.
+
+## Обзор
+
+- **Тип**: `BrowserPathConfig`
+- **Значение по умолчанию**: `undefined` (используется системный путь по умолчанию)
+- **Обязательный**: Нет
+
+## Браузеры на базе Chromium
+
+Поддерживаются следующие браузеры на базе Chromium:
+
+| Браузер | Ключ конфигурации | Путь по умолчанию |
+|--------|--------|----------|
+| Google Chrome | `chrome` | Автообнаружение |
+| Chromium | `chromium` | Автообнаружение |
+| Microsoft Edge | `edge` | Автообнаружение |
+| Brave | `brave` | Автообнаружение |
+| Vivaldi | `vivaldi` | Автообнаружение |
+| Opera | `opera` | Автообнаружение |
+| Arc | `arc` | Автообнаружение |
+
+### Пример конфигурации
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  },
+});
+```
+
+### Запуск через CLI
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- -b chrome
+pnpm dev -- -b edge
+pnpm dev -- -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- -b chrome
+npm run dev -- -b edge
+npm run dev -- -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev -b chrome
+yarn dev -b edge
+yarn dev -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- -b chrome
+bun run dev -- -b edge
+bun run dev -- -b brave
+```
+
+  </Tab>
+</Tabs>
+
+## Firefox
+
+Firefox использует инструмент `web-ext` для управления расширением, конфигурация пути аналогична:
+
+```ts
+export default defineConfig({
+  browserPath: {
+    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  },
+});
+```
+
+### Запуск Firefox
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- -b firefox
+```
+
+  </Tab>
+</Tabs>
+
+:::info
+Режим разработки Firefox использует инструмент `web-ext`, перезагрузка расширения обрабатывается `web-ext`, а не WebSocket от Addfox.
+:::
+
+## Примеры для разных платформ
+
+### macOS
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  },
+});
+```
+
+### Windows
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  },
+});
+```
+
+### Linux
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/usr/bin/google-chrome",
+    chromium: "/usr/bin/chromium-browser",
+    firefox: "/usr/bin/firefox",
+  },
+});
+```
+
+## Связанная конфигурация
+
+- [guide/launch](/guide/launch) — руководство по запуску браузера

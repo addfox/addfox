@@ -1,0 +1,262 @@
+import { Tab, Tabs } from '@rspress/core/theme';
+
+# 파일 기반 Entry
+
+**`addfox.config.ts`의 `entry` 필드를 구성하지 않으면** Addfox가 규칙에 따라 Entry 파일을 자동으로 발견합니다. 이는 권장되는 개발 방식으로, 구성보다는 비즈니스 코드에 집중할 수 있게 해줍니다.
+
+## 핵심 원칙
+
+### Rsbuild 기반 빌드
+
+- **Entry는 JS/TS여야 합니다**: 실제 빌드 Entry는 `.js`, `.jsx`, `.ts`, `.tsx` 스크립트만 될 수 있습니다
+- **HTML 처리**:
+  - HTML을 제공하지 않음 → Rsbuild가 자동으로 생성
+  - HTML을 제공함 → 템플릿으로 사용되지만 `data-addfox-entry`로 Entry 스크립트를 표시해야 합니다
+
+## 디렉토리 구조 규칙
+
+### 스크립트만 Entry (background / content)
+
+이러한 Entry는 HTML 페이지가 필요하지 않으며 스크립트 파일만 제공하면 됩니다.
+
+<Tabs>
+<Tab label="디렉토리 형식 (권장)">
+
+```tree
+app/
+├── background/
+│   └── index.ts          # background Entry
+└── content/
+    └── index.ts          # content Entry
+```
+
+| Entry 이름 | Entry 파일 | 출력 경로 |
+|--------|----------|----------|
+| `background` | `app/background/index.ts` | `extension/background/index.js` |
+| `content` | `app/content/index.ts` | `extension/content/index.js` |
+
+</Tab>
+<Tab label="단일 파일 형식">
+
+```tree
+app/
+├── background.ts         # background Entry
+└── content.ts            # content Entry
+```
+
+| Entry 이름 | Entry 파일 | 출력 경로 |
+|--------|----------|----------|
+| `background` | `app/background.ts` | `extension/background.js` |
+| `content` | `app/content.ts` | `extension/content.js` |
+
+</Tab>
+</Tabs>
+
+### 페이지가 필요한 Entry (popup / options / sidepanel / devtools / offscreen)
+
+이러한 Entry는 **HTML + JS**를 생성합니다. 두 가지 방식을 지원합니다:
+
+#### 방식 1: HTML을 제공하지 않음 (권장)
+
+스크립트만 작성하고 HTML은 작성하지 않습니다. Rsbuild가 자동으로 HTML을 생성하고 스크립트를 주입합니다.
+
+:::tip 자동 생성된 HTML 페이지 규칙
+
+**사용자 지정** `index.html` 등의 템플릿을 **제공하지 않고** 빌드가 HTML을 자동으로 생성할 때 Addfox / Rsbuild는 다음을 약속합니다:
+
+- **마운트 노드**: 페이지에는 **`<div id="root"></div>`**가 포함되어 React / Vue 등의 `createRoot` / `mount`에서 사용할 수 있습니다.
+- **`<title>`**: 확장 매니페스트 **`manifest.name`**과 일치하며 (manifest 변경 시 업데이트됨).
+- **탭 아이콘 (favicon)**: **`manifest.icons`**에서 선택한 적절한 크기의 **`href`**를 통해 **`<link rel="icon">`**으로 주입됩니다 (경로는 출력 HTML 위치에 따라 상대 경로로 해석됩니다).
+
+해당 Entry에서 **사용자 지정 HTML 템플릿**을 사용하는 경우 위의 `title` / 아이콘 주입이 자동으로 적용되지 않으며, 템플릿에서 `<title>`과 아이콘 `<link>`를 직접 작성해야 합니다 (`data-addfox-entry`와 마운트 노드는 여전히 필요하며, 일반적으로 여전히 `#root`입니다).
+
+:::
+
+<Tabs>
+<Tab label="디렉토리 형식">
+
+```tree
+app/
+├── popup/
+│   └── index.ts          # popup Entry
+├── options/
+│   └── index.ts          # options Entry
+└── sidepanel/
+    └── index.ts          # sidepanel Entry
+```
+
+| Entry 이름 | 출력 HTML | 출력 JS |
+|--------|-----------|---------|
+| `popup` | `extension/popup/index.html` | `extension/popup/index.js` |
+| `options` | `extension/options/index.html` | `extension/options/index.js` |
+| `sidepanel` | `extension/sidepanel/index.html` | `extension/sidepanel/index.js` |
+
+</Tab>
+<Tab label="단일 파일 형식">
+
+```tree
+app/
+├── popup.ts              # popup Entry
+├── options.ts            # options Entry
+└── sidepanel.ts          # sidepanel Entry
+```
+
+| Entry 이름 | 출력 HTML | 출력 JS |
+|--------|-----------|---------|
+| `popup` | `extension/popup.html` | `extension/popup.js` |
+| `options` | `extension/options.html` | `extension/options.js` |
+| `sidepanel` | `extension/sidepanel.html` | `extension/sidepanel.js` |
+
+</Tab>
+</Tabs>
+
+#### 방식 2: HTML 템플릿 제공
+
+사용자 지정 페이지 구조가 필요한 경우 Entry 디렉토리 (또는 단일 파일 옆)에 HTML 파일을 배치할 수 있습니다.
+
+:::warning 중요
+사용자 지정 HTML을 사용할 때는 **반드시** `data-addfox-entry` 속성으로 Entry 스크립트를 표시해야 합니다. 그렇지 않으면 프레임워크가 인식할 수 없습니다.
+:::
+
+<Tabs>
+<Tab label="디렉토리 형식">
+
+```tree
+app/
+└── popup/
+    ├── index.html        # 페이지 템플릿
+    └── index.ts          # Entry 스크립트
+```
+
+```html
+<!-- app/popup/index.html -->
+<!DOCTYPE html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- 핵심: data-addfox-entry로 Entry 스크립트 표시 -->
+    <script type="module" src="./index.ts" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+</Tab>
+<Tab label="단일 파일 형식">
+
+```tree
+app/
+├── popup.html            # 페이지 템플릿
+└── popup.ts              # Entry 스크립트
+```
+
+```html
+<!-- app/popup.html -->
+<!DOCTYPE html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./popup.ts" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+</Tab>
+</Tabs>
+
+:::tip HTML 템플릿에 대한 참고사항
+- `data-addfox-entry`는 HTML 파일에서 **한 번만** 나타날 수 있습니다
+- `src`는 상대 경로일 수 있으며, 동일한 디렉토리 또는 다른 위치의 스크립트를 가리킬 수 있습니다
+- 다른 리소스(CSS, 이미지 등)는 Entry 스크립트에서 `import`로 가져오세요. HTML에서 직접 참조하지 마세요
+- HTML 파일 자체는 컴파일에 참여하지 않으며 템플릿으로만 사용됩니다
+- **사용자 지정 템플릿**은 manifest의 `name` / `icons`를 `<title>`과 favicon에 자동으로 동기화하지 않습니다. **자동 생성**된 HTML만 위의 "자동 생성된 HTML 페이지 규칙"을 적용합니다
+
+:::
+
+## 전체 예시
+
+### 예시 1: 모든 HTML 자동 생성
+
+```tree
+app/
+├── background/
+│   └── index.ts          # 스크립트만
+├── content/
+│   └── index.ts          # 스크립트만
+├── popup/
+│   └── index.ts          # HTML 자동 생성
+├── options/
+│   └── index.ts          # HTML 자동 생성
+└── manifest.json
+```
+
+### 예시 2: 혼합 사용
+
+```tree
+app/
+├── background.ts         # 단일 파일 형식
+├── content/
+│   └── index.ts          # 디렉토리 형식
+├── popup/
+│   ├── index.html        # 사용자 지정 템플릿
+│   └── index.ts
+└── options/
+    └── index.ts          # HTML 자동 생성
+```
+
+### 예시 3: 프레임워크 사용 (React 예시)
+
+```tree
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.tsx
+├── popup/
+│   └── index.tsx         # React 컴포넌트에서 렌더링
+└── manifest.json
+```
+
+```tsx
+// app/popup/index.tsx
+import { createRoot } from 'react-dom/client';
+import { Popup } from './Popup';
+
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(<Popup />);
+```
+
+## 자주 묻는 질문
+
+### Q: Entry 파일 이름이 반드시 index.ts여야 하나요?
+
+**디렉토리 형식**에서는 반드시 `index.(js|ts|jsx|tsx)`여야 합니다. **단일 파일 형식**에서는 `Entry이름.(js|ts|jsx|tsx)`일 수 있습니다.
+
+### Q: 다중 중첩 디렉토리를 사용할 수 있나요?
+
+지원되지 않습니다. Entry 디렉토리는 한 레벨만 가능합니다. 즉, `app/popup/index.ts` ✓는 가능하지만 `app/pages/popup/index.ts` ✗는 불가능합니다.
+
+### Q: 자동 생성과 사용자 지정 HTML을 혼합할 수 있나요?
+
+가능합니다. 각 Entry는 독립적으로 결정되며, 일부는 자동 생성을 사용하고 일부는 사용자 지정 템플릿을 사용할 수 있습니다.
+
+### Q: HTML 템플릿 문제를 어떻게 디버그하나요?
+
+확인:
+1. HTML 파일에 `data-addfox-entry` 속성이 있는지
+2. `src` 경로가 Entry 스크립트를 올바르게 가리키는지
+3. `data-addfox-entry`가 있는 script 태그가 하나만 있는지
+
+## 다음 단계
+
+- [구성 기반 Entry](/guide/entry/config-based) — Entry 경로를 명시적으로 구성하는 방법 학습
+- [appDir 구성](/config/app-dir) — 소스 코드 디렉토리 수정
+- [manifest 구성](/config/manifest) — 확장 매니페스트 구성

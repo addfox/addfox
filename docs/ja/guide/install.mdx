@@ -1,0 +1,176 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# インストール
+
+## 方法1：Scaffold で作成（推奨）
+
+公式の scaffold を使用してプロジェクトを素早く作成し、開発環境を自動的に構成します：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm create addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npx create-addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn create addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun create addfox-app
+```
+
+  </Tab>
+</Tabs>
+
+### インタラクティブなインストールフロー
+
+Scaffold は以下のステップをガイドします：
+
+1. **プロジェクト名** — プロジェクトディレクトリ名を入力（デフォルト：`my-extension`）
+2. **フレームワーク選択** — 好みのフロントエンドフレームワークを選択：Vanilla / Vue / React / Preact / Svelte / Solid
+3. **スタイルエンジン** — スタイル方案を選択：`none` / `tailwindcss` / `unocss` / `less` / `sass`
+4. **言語選択** — TypeScript または JavaScript を選択
+5. **パッケージマネージャー** — pnpm、npm、yarn、bun のいずれかを選択
+6. **エントリ選択** — 含める拡張エントリを選択：Background / Content Script / Popup / Options Page / Side Panel / DevTools
+7. **テスト機能（オプション）** — Unit（rstest）または E2E（rstest + Playwright）を初期化するかどうかを選択
+8. **Rsdoctor（オプション）** — `@rsdoctor/rspack-plugin` をインストールするかどうかを選択
+9. **Skills のインストール** — プロジェクトに addfox skills をインストールするかどうかを選択
+
+作成完了後、CLI は次のステップを表示します：
+
+```bash
+cd my-extension
+pnpm install
+pnpm dev
+```
+
+## 方法2：既存プロジェクトへの手動統合
+
+### 1. 依存関係のインストール
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D addfox
+```
+
+  </Tab>
+</Tabs>
+
+### 2. 設定ファイルの作成
+
+プロジェクトルートに `addfox.config.ts` を作成：
+
+```ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  manifest: {
+    name: "マイ拡張機能",
+    version: "1.0.0",
+    manifest_version: 3,
+    permissions: ["storage", "activeTab"],
+  },
+});
+```
+
+### 3. エントリファイルの追加
+
+基本的なディレクトリ構造を作成：
+
+```tree
+my-extension/
+├── app/
+│   ├── background/
+│   │   └── index.ts      # バックグラウンドスクリプト
+│   ├── content/
+│   │   └── index.ts      # コンテンツスクリプト
+│   ├── popup/
+│   │   ├── index.html    # ポップアップページ（オプション）
+│   │   └── index.ts      # ポップアップスクリプト
+│   └── manifest.json     # 拡張マニフェスト
+├── addfox.config.ts
+└── package.json
+```
+
+### 4. スクリプトコマンドの追加
+
+`package.json` に追加：
+
+```json
+{
+  "scripts": {
+    "dev": "addfox dev -b chrome",
+    "build": "addfox build -b chrome"
+  }
+}
+```
+
+### 5. コマンドの実行
+
+- **開発**：`addfox dev` またはパッケージマネージャーの実行スクリプトを使用（例：`pnpm dev`）。
+- **ビルド**：`addfox build`；成果物は `outputRoot/outDir/extension-<browser>` に出力されます（デフォルト `.addfox/extension/extension-chromium`）。
+
+`-b chrome|chromium|edge|brave|vivaldi|opera|santa|arc|yandex|browseros|custom|firefox` を使用して対象ブラウザを指定：
+
+指定しない場合のデフォルトは Chrome です。
+
+## 完全な設定例
+
+```ts
+import { defineConfig } from "addfox";
+import { pluginReact } from "@rsbuild/plugin-react";
+
+export default defineConfig({
+  manifest: {
+    name: "マイ拡張機能",
+    version: "1.0.0",
+    manifest_version: 3,
+    permissions: ["storage", "activeTab"],
+  },
+  plugins: [pluginReact()],
+});
+```
+
+## 次のステップ
+
+- [ディレクトリ構造](/ja/guide/app-dir) — プロジェクトファイルの構成方法を理解する
+- [エントリ設定](/ja/guide/entry/concept) — 拡張エントリの設定方法を学ぶ
+- [Manifest 設定](/ja/config/manifest) — 完全な manifest 設定オプションを確認

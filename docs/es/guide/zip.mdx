@@ -1,0 +1,125 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Empaquetado
+
+Después de completar la construcción, Addfox empaquetará automáticamente el directorio de salida como archivo zip para facilitar la distribución.
+
+## Comportamiento predeterminado
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm build
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run build
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn build
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run build
+```
+
+  </Tab>
+</Tabs>
+
+Después de completar la construcción se genera:
+
+```tree
+.addfox/
+├── extension/          # Salida de construcción
+└── extension.zip       # Archivo empaquetado
+```
+
+## Configuración
+
+### Deshabilitar empaquetado
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  zip: false,
+});
+```
+
+### Habilitar empaquetado (predeterminado)
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  zip: true,
+});
+```
+
+O no configurar (usar valor predeterminado).
+
+## Contenido del paquete
+
+El archivo zip contiene todo el contenido de salida de la construcción:
+
+- `manifest.json` — Manifiesto de extensión
+- `background/` — Script de fondo
+- `content/` — Script de contenido
+- `popup/` — Página emergente
+- `options/` — Página de opciones
+- Otras entradas
+- Recursos estáticos del directorio `public/` (iconos, archivos de internacionalización, etc.)
+
+## Usos
+
+El archivo zip empaquetado se puede usar para:
+
+### Enviar a Chrome Web Store
+
+1. Visitar [Centro de desarrolladores de Chrome Web Store](https://chrome.google.com/webstore/devconsole/)
+2. Crear o seleccionar proyecto
+3. Subir `extension.zip`
+
+### Enviar a Firefox Add-ons
+
+1. Visitar [Centro de desarrolladores de complementos de Firefox](https://addons.mozilla.org/developers/)
+2. Enviar nuevo complemento
+3. Subir `extension.zip`
+
+### Distribución interna
+
+- Compartir mediante correo/disco en la nube
+- Despliegue de pruebas internas
+
+## Ruta de salida
+
+Ruta de salida del archivo empaquetado:
+
+```
+{outputRoot}/{outDir}.zip
+```
+
+Predeterminado: `.addfox/extension.zip`
+
+Después de modificar `outDir`:
+
+```ts
+export default defineConfig({
+  outDir: "dist",
+});
+// Salida: .addfox/dist.zip
+```
+
+## Configuraciones relacionadas
+
+- [`zip`](/config/zip) - Configuración de interruptor de empaquetado
+- [`outDir`](/config/out-dir) - Configuración de directorio de salida

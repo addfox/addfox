@@ -1,0 +1,81 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Ejemplos
+
+Esta página lista los ejemplos de extensión en el repositorio de addfox, cada ejemplo es un directorio independiente con `package.json` y `addfox.config.ts`. Después de instalar dependencias con pnpm / npm / yarn / bun en la raíz del repositorio, ejecuta dev o build en el directorio del ejemplo correspondiente para ejecutar o construir.
+
+| Ejemplo | Descripción | Enlace del repositorio |
+|------|------|----------|
+| **addfox-with-vue** | Plantilla Vue 3: popup, options, content, background, con comunicación de mensajes simple. | [examples/addfox-with-vue](https://github.com/addfox/addfox/tree/main/examples/addfox-with-vue) |
+| **addfox-with-react** | Plantilla React: popup, options, content, background, con comunicación de mensajes simple. | [examples/addfox-with-react](https://github.com/addfox/addfox/tree/main/examples/addfox-with-react) |
+| **addfox-with-preact** | Plantilla Preact: popup, options, content, background, con comunicación de mensajes simple. | [examples/addfox-with-preact](https://github.com/addfox/addfox/tree/main/examples/addfox-with-preact) |
+| **addfox-with-svelte** | Plantilla Svelte: popup, options, content, background, con comunicación de mensajes simple. | [examples/addfox-with-svelte](https://github.com/addfox/addfox/tree/main/examples/addfox-with-svelte) |
+| **addfox-with-solid** | Plantilla Solid: popup, options, content, background, con comunicación de mensajes simple. | [examples/addfox-with-solid](https://github.com/addfox/addfox/tree/main/examples/addfox-with-solid) |
+| **addfox-with-react-shadcn** | React + shadcn/ui: cinco entradas popup, options, content, background, sidepanel, Tailwind + biblioteca de componentes. | [examples/addfox-with-react-shadcn](https://github.com/addfox/addfox/tree/main/examples/addfox-with-react-shadcn) |
+| **addfox-with-devtools** | TypeScript nativo puro: solo background + devtools_page, sin React/Vue, demostración de extensión DevTools. | [examples/addfox-with-devtools](https://github.com/addfox/addfox/tree/main/examples/addfox-with-devtools) |
+| **addfox-with-content-ui** | Ejemplo de Content UI: demuestra el montaje de UI de extensión en la página. | [examples/addfox-with-content-ui](https://github.com/addfox/addfox/tree/main/examples/addfox-with-content-ui) |
+| **addfox-with-content-ui-react** | Ejemplo de Content UI en React. | [examples/addfox-with-content-ui-react](https://github.com/addfox/addfox/tree/main/examples/addfox-with-content-ui-react) |
+| **addfox-with-tailwindcss** | Ejemplo de integración de Tailwind CSS. | [examples/addfox-with-tailwindcss](https://github.com/addfox/addfox/tree/main/examples/addfox-with-tailwindcss) |
+| **addfox-with-uno** | Ejemplo de integración de UnoCSS. | [examples/addfox-with-uno](https://github.com/addfox/addfox/tree/main/examples/addfox-with-uno) |
+| **addfox-with-vue-tsx** | Ejemplo de Vue + TSX. | [examples/addfox-with-vue-tsx](https://github.com/addfox/addfox/tree/main/examples/addfox-with-vue-tsx) |
+| **addfox-with-firefox** | Ejemplo de construcción y ejecución con objetivo Firefox. | [examples/addfox-with-firefox](https://github.com/addfox/addfox/tree/main/examples/addfox-with-firefox) |
+| **addfox-with-mv2** | Ejemplo de compatibilidad con Manifest V2 (para migración/comparación). | [examples/addfox-with-mv2](https://github.com/addfox/addfox/tree/main/examples/addfox-with-mv2) |
+| **addfox-with-manifest-entries** | Ejemplo de declarar entradas mediante campos de manifest. | [examples/addfox-with-manifest-entries](https://github.com/addfox/addfox/tree/main/examples/addfox-with-manifest-entries) |
+| **addfox-with-react-entry-false** | Escenario de `entry: false` (Rsbuild gestiona las entradas por sí mismo) en React. | [examples/addfox-with-react-entry-false](https://github.com/addfox/addfox/tree/main/examples/addfox-with-react-entry-false) |
+| **addfox-with-single-file** | Ejemplo de estructura mínima/archivo único. | [examples/addfox-with-single-file](https://github.com/addfox/addfox/tree/main/examples/addfox-with-single-file) |
+| **addfox-with-sandbox** | Ejemplo de página sandbox. | [examples/addfox-with-sandbox](https://github.com/addfox/addfox/tree/main/examples/addfox-with-sandbox) |
+| **addfox-with-newtab-override** | Ejemplo de sobrescritura de nueva pestaña del navegador. | [examples/addfox-with-newtab-override](https://github.com/addfox/addfox/tree/main/examples/addfox-with-newtab-override) |
+| **addfox-with-history-override** | Ejemplo de sobrescritura de página de historial. | [examples/addfox-with-history-override](https://github.com/addfox/addfox/tree/main/examples/addfox-with-history-override) |
+| **addfox-with-bookmarks-override** | Ejemplo de sobrescritura de página de marcadores. | [examples/addfox-with-bookmarks-override](https://github.com/addfox/addfox/tree/main/examples/addfox-with-bookmarks-override) |
+| **addfox-with-rstest** | Ejemplo de integración de pruebas unitarias con Rstest. | [examples/addfox-with-rstest](https://github.com/addfox/addfox/tree/main/examples/addfox-with-rstest) |
+| **addfox-with-rstest-e2e** | Ejemplo de pruebas con Rstest + E2E. | [examples/addfox-with-rstest-e2e](https://github.com/addfox/addfox/tree/main/examples/addfox-with-rstest-e2e) |
+| **addfox-with-env-vars** | Ejemplo de inyección y alcance de variables de entorno (incluyendo `ADDFOX_PUBLIC_` y variables privadas). | [examples/addfox-with-env-vars](https://github.com/addfox/addfox/tree/main/examples/addfox-with-env-vars) |
+
+## Forma de ejecución
+
+Después de ejecutar la instalación en la raíz del repositorio de addfox, entra en cualquier directorio de ejemplo:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm install
+cd examples/addfox-with-vue   # u otro ejemplo
+pnpm dev                   # modo desarrollo
+pnpm build                 # construcción
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install
+cd examples/addfox-with-vue   # u otro ejemplo
+npm run dev                # modo desarrollo
+npm run build              # construcción
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn install
+cd examples/addfox-with-vue   # u otro ejemplo
+yarn dev                   # modo desarrollo
+yarn build                 # construcción
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun install
+cd examples/addfox-with-vue   # u otro ejemplo
+bun run dev                # modo desarrollo
+bun run build              # construcción
+```
+
+  </Tab>
+</Tabs>
+
+El producto de construcción está en `.addfox/extension` (o outputRoot/outDir configurado por el ejemplo), carga este directorio en el navegador; cuando uses dev, el framework puede abrir automáticamente el navegador y cargar la extensión.

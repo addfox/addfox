@@ -1,0 +1,74 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Less
+
+## Instalación
+
+Necesitas instalar el plugin `@rsbuild/plugin-less`:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D @rsbuild/plugin-less less
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D @rsbuild/plugin-less less
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D @rsbuild/plugin-less less
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D @rsbuild/plugin-less less
+```
+
+  </Tab>
+</Tabs>
+
+## Configuración
+
+Agregar el plugin en `addfox.config.ts`:
+
+```ts
+import { defineConfig } from "addfox";
+import { pluginLess } from "@rsbuild/plugin-less";
+
+export default defineConfig({
+  plugins: [pluginLess()],
+});
+```
+
+## Uso
+
+Después de instalar y configurar, puedes crear e importar archivos `.less` directamente:
+
+```less
+/* app/popup/index.less */
+@brand: #2563eb;
+
+.btn {
+  background: @brand;
+  color: #fff;
+}
+```
+
+```ts
+import "./index.less";
+```
+
+## Notas
+
+- Se recomienda usar nombres de clase con espacio de nombres en escenarios de content para evitar contaminar los estilos de la página
+- El plugin procesará automáticamente la compilación e importación de archivos Less

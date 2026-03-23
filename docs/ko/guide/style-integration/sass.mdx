@@ -1,0 +1,74 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Sass
+
+## 설치
+
+`@rsbuild/plugin-sass` 플러그인을 설치해야 합니다:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D @rsbuild/plugin-sass sass
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D @rsbuild/plugin-sass sass
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D @rsbuild/plugin-sass sass
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D @rsbuild/plugin-sass sass
+```
+
+  </Tab>
+</Tabs>
+
+## 구성
+
+`addfox.config.ts`에 플러그인을 추가합니다:
+
+```ts
+import { defineConfig } from "addfox";
+import { pluginSass } from "@rsbuild/plugin-sass";
+
+export default defineConfig({
+  plugins: [pluginSass()],
+});
+```
+
+## 사용
+
+설치 및 구성 후 `.scss` 파일을 직접 생성하고 가져올 수 있습니다:
+
+```scss
+/* app/popup/index.scss */
+$brand: #7c3aed;
+
+.card {
+  border: 1px solid $brand;
+  color: $brand;
+}
+```
+
+```ts
+import "./index.scss";
+```
+
+## 설명
+
+- 모듈화된 스타일을 사용하는 경우 `*.module.scss`와 함께 사용할 수 있습니다
+- 플러그인은 Sass 파일의 컴파일 및 가져오기를 자동으로 처리합니다

@@ -1,0 +1,293 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# React
+
+Addfox は React を完全にサポートし、拡張機能の各エントリーを JSX/TSX で開発できます。
+
+## インストール
+
+プロジェクト作成時に React テンプレートを選択：
+
+```bash
+pnpm create addfox-app --framework react
+```
+
+または既存のプロジェクトにインストール：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @rsbuild/plugin-react
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @rsbuild/plugin-react
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @rsbuild/plugin-react
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @rsbuild/plugin-react
+```
+
+  </Tab>
+</Tabs>
+
+## 設定
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginReact } from "@rsbuild/plugin-react";
+
+export default defineConfig({
+  plugins: [pluginReact()],
+});
+```
+
+## プロジェクト構造
+
+```
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.tsx
+├── popup/
+│   ├── App.tsx
+│   ├── index.html
+│   └── index.tsx
+├── options/
+│   ├── App.tsx
+│   ├── index.html
+│   └── index.tsx
+└── manifest.json
+```
+
+## サンプルコード
+
+### Popup
+
+```tsx
+// app/popup/index.tsx
+import { createRoot } from 'react-dom/client';
+import { App } from './App';
+import './index.css';
+
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(<App />);
+```
+
+```tsx
+// app/popup/App.tsx
+import { useState } from 'react';
+
+export function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div className="p-4">
+      <h1 className="text-xl font-bold">Hello React!</h1>
+      <button 
+        onClick={() => setCount(c => c + 1)}
+        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Count: {count}
+      </button>
+    </div>
+  );
+}
+```
+
+以下の `index.html` を**省略**し、`index.tsx` のみを保持する場合、ビルドは自動的に HTML を生成し、**`id="root"`**、**`manifest.name` / `manifest.icons`** と同期する **title** と **favicon** を含みます（[ファイルベースのエントリー](/ja/guide/entry/file-based) を参照）。以下の例は**オプション**のカスタムテンプレートです：
+
+```html
+<!-- app/popup/index.html（オプション；カスタム時は自分で title / アイコンを記述） -->
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./index.tsx" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+### Content Script
+
+```tsx
+// app/content/index.tsx
+import { createRoot } from 'react-dom/client';
+import { ContentApp } from './ContentApp';
+
+// マウントポイントを作成
+const container = document.createElement('div');
+container.id = 'my-extension-root';
+document.body.appendChild(container);
+
+const root = createRoot(container);
+root.render(<ContentApp />);
+```
+
+### Background
+
+```ts
+// app/background/index.ts
+// Background は React を使用せず、通常の TypeScript を使用
+
+chrome.action.onClicked.addListener((tab) => {
+  console.log('Extension clicked');
+});
+```
+
+## 状態管理
+
+任意の React 状態管理ソリューションを使用可能：
+
+### Zustand
+
+```bash
+pnpm add zustand
+```
+
+```ts
+// app/store.ts
+import { create } from 'zustand';
+
+interface Store {
+  count: number;
+  increment: () => void;
+}
+
+export const useStore = create<Store>((set) => ({
+  count: 0,
+  increment: () => set((state) => ({ count: state.count + 1 })),
+}));
+```
+
+### Jotai
+
+```bash
+pnpm add jotai
+```
+
+```ts
+// app/atoms.ts
+import { atom } from 'jotai';
+
+export const countAtom = atom(0);
+```
+
+## CSS ソリューション
+
+### Tailwind CSS
+
+```bash
+pnpm add -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+```js
+// tailwind.config.js
+module.exports = {
+  content: ["./app/**/*.{js,ts,jsx,tsx}"],
+  theme: { extend: {} },
+  plugins: [],
+};
+```
+
+```css
+/* app/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+### CSS Modules
+
+```tsx
+// app/popup/App.tsx
+import styles from './App.module.css';
+
+export function App() {
+  return <div className={styles.container}>Hello</div>;
+}
+```
+
+```css
+/* app/popup/App.module.css */
+.container {
+  padding: 16px;
+}
+```
+
+### CSS-in-JS
+
+styled-components または emotion をサポート：
+
+```bash
+pnpm add styled-components
+```
+
+```tsx
+import styled from 'styled-components';
+
+const Button = styled.button`
+  background: blue;
+  color: white;
+  padding: 8px 16px;
+`;
+
+export function App() {
+  return <Button>Click me</Button>;
+}
+```
+
+## Chrome API との相互作用
+
+```tsx
+import { useEffect, useState } from 'react';
+
+export function TabList() {
+  const [tabs, setTabs] = useState<chrome.tabs.Tab[]>([]);
+
+  useEffect(() => {
+    chrome.tabs.query({}, setTabs);
+  }, []);
+
+  const activateTab = (tabId: number) => {
+    chrome.tabs.update(tabId, { active: true });
+  };
+
+  return (
+    <ul>
+      {tabs.map((tab) => (
+        <li key={tab.id} onClick={() => activateTab(tab.id!)}>
+          {tab.title}
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+## 関連リンク
+
+- [Rsbuild React プラグイン](https://rsbuild.dev/plugins/list/plugin-react)
+- [React ドキュメント](https://react.dev/)

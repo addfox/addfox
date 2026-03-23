@@ -1,0 +1,15 @@
+[
+  { "type": "file", "name": "manifest", "label": "manifest" },
+  { "type": "file", "name": "entry", "label": "entry" },
+  { "type": "file", "name": "app-dir", "label": "appDir" },
+  { "type": "file", "name": "out-dir", "label": "outDir" },
+  { "type": "file", "name": "zip", "label": "zip" },
+  { "type": "file", "name": "env-prefix", "label": "envPrefix" },
+  { "type": "file", "name": "launch", "label": "browserPath" },
+  { "type": "file", "name": "hot-reload", "label": "hotReload" },
+  { "type": "file", "name": "cache", "label": "cache" },
+  { "type": "file", "name": "debug", "label": "debug" },
+  { "type": "file", "name": "report", "label": "report" },
+  { "type": "file", "name": "plugins", "label": "plugins" },
+  { "type": "file", "name": "rsbuild", "label": "rsbuild" }
+]

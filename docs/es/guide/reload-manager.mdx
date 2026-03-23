@@ -1,0 +1,119 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Administrador de recarga
+
+El Administrador de recarga (Reload Manager) es un componente integrado de Addfox durante el desarrollo, responsable de recargar automáticamente la extensión después de cambios en el código.
+
+## Cómo funciona
+
+```
+Cambio en código fuente
+    ↓
+Rsbuild reconstruye
+    ↓
+WebSocket envía señal de recarga
+    ↓
+Administrador de recarga recibe señal
+    ↓
+Deshabilitar extensión → Habilitar extensión
+    ↓
+Extensión se recarga
+```
+
+## Por qué se necesita el administrador de recarga
+
+Las extensiones de navegador son diferentes de las aplicaciones web comunes, después de cambios en el código se necesita:
+
+1. **Recargar la extensión** — Hacer efectivos los cambios en el manifest
+2. **Reinyectar Content Script** — Actualizar el script en la página
+3. **Reiniciar Service Worker** — Actualizar el script de fondo
+
+El navegador en sí no maneja esto automáticamente, por lo que Addfox proporciona el administrador de recarga para automatizar este proceso.
+
+## Forma de uso
+
+El administrador de recarga se **habilita automáticamente** durante `addfox dev`, sin necesidad de configuración adicional.
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev
+```
+
+  </Tab>
+</Tabs>
+
+## Implementación técnica
+
+El administrador de recarga es una **extensión auxiliar** que se carga junto con la extensión principal:
+
+1. Extensión principal — Tu extensión en desarrollo
+2. Extensión de administrador de recarga — Escucha WebSocket y controla la extensión principal
+
+La extensión de administrador de recarga:
+- Se instala automáticamente en modo de desarrollo
+- Recibe notificaciones a través de WebSocket después de que la construcción se completa
+- Envía comandos de API `chrome.management` para deshabilitar y luego habilitar la extensión principal
+- Recarga la pestaña actual cuando cambia el Content Script
+
+## Opciones de configuración
+
+### Puerto de recarga en caliente
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  hotReload: {
+    port: 23333,  // Puerto WebSocket
+  },
+});
+```
+
+### Deshabilitar recarga de página
+
+```ts
+export default defineConfig({
+  hotReload: {
+    autoRefreshContentPage: false,  // No recargar página cuando cambia content
+  },
+});
+```
+
+## Recarga manual
+
+Si la recarga automática tiene problemas, puedes recargar manualmente:
+
+1. Visitar `chrome://extensions/`
+2. Encontrar la extensión en desarrollo
+3. Hacer clic en el icono de actualización
+
+O usar atajos de teclado:
+- macOS: `Cmd + R` (en página de extensión)
+- Windows/Linux: `Ctrl + R`
+
+## Configuraciones relacionadas
+
+- [`hotReload`](/config/hot-reload) - Configuración de recarga en caliente
+- [guide/hmr](/guide/hmr) - Guía de recarga en caliente

@@ -1,0 +1,92 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# debug
+
+`debug` используется для включения панели мониторинга ошибок при разработке.
+
+## Обзор
+
+- **Тип**: `boolean`
+- **Значение по умолчанию**: `false`
+- **Обязательный**: Нет
+
+## Использование
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  debug: true,  // Включить мониторинг ошибок
+});
+```
+
+## Функционал
+
+При включении Addfox будет:
+
+1. **Перехватывать ошибки** — автоматически перехватывать ошибки во всех entry (background, content, popup и т.д.)
+2. **Панель ошибок** — отображать кнопку доступа к панели мониторинга на страницах расширения
+3. **AI запрос** — поддерживать однокликовое копирование ошибок и запрос к ChatGPT/Cursor
+
+## Способы использования
+
+### Через конфигурацию
+
+```ts
+export default defineConfig({
+  debug: true,
+});
+```
+
+### Через CLI
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- --debug
+```
+
+  </Tab>
+</Tabs>
+
+## Панель мониторинга
+
+После включения, посетите `chrome-extension://<id>/_addfox-monitor/` для просмотра:
+
+- Списка ошибок по каждому entry
+- Деталей стека ошибок
+- Однокликового копирования информации об ошибке
+- Однокликового запроса к AI (ChatGPT / Cursor)
+
+## Примечания
+
+- Влияет только на режим разработки (`addfox dev`)
+- Код мониторинга автоматически удаляется в продакшн сборке
+- Панель мониторинга не влияет на производительность расширения
+
+## Связанная конфигурация
+
+- [guide/monitor](/guide/monitor) — руководство по мониторингу ошибок

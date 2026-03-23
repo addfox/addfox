@@ -1,0 +1,17 @@
+[
+  {
+    "text": "Руководство",
+    "link": "/guide/introduction",
+    "activeMatch": "^/ru/guide/"
+  },
+  {
+    "text": "Конфигурация",
+    "link": "/config/manifest",
+    "activeMatch": "^/ru/config/"
+  },
+  {
+    "text": "Примеры",
+    "link": "/examples/index",
+    "activeMatch": "^/ru/examples/"
+  }
+]

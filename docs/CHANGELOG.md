@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.0.3-beta.11
+
+### Patch Changes
+
+- docs: add es/ja/ko/ru i18n
+
 ## 0.0.3-beta.10
 
 ### Patch Changes

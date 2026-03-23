@@ -1,0 +1,443 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Запуск браузера
+
+Addfox может автоматически запускать браузер и загружать расширение при разработке, повышая эффективность разработки.
+
+## Быстрый старт
+
+Запустите команду разработки:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev
+```
+
+  </Tab>
+</Tabs>
+
+При первом запуске сервера разработки автоматически:
+1. Собирается расширение
+2. Открывается браузер
+3. Загружается расширение в разработке
+
+## Использование Scripts для запуска (рекомендуется)
+
+Настройте scripts в `package.json` для более лаконичного запуска разных браузеров:
+
+```json
+{
+  "scripts": {
+    "dev": "addfox dev",
+    "dev:chrome": "addfox dev -b chrome",
+    "dev:edge": "addfox dev -b edge",
+    "dev:brave": "addfox dev -b brave",
+    "dev:firefox": "addfox dev -b firefox"
+  }
+}
+```
+
+После настройки используйте напрямую:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+# Chrome (по умолчанию)
+pnpm dev
+
+# Другие браузеры
+pnpm dev:edge
+pnpm dev:firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+# Chrome (по умолчанию)
+npm run dev
+
+# Другие браузеры
+npm run dev:edge
+npm run dev:firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+# Chrome (по умолчанию)
+yarn dev
+
+# Другие браузеры
+yarn dev:edge
+yarn dev:firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+# Chrome (по умолчанию)
+bun run dev
+
+# Другие браузеры
+bun run dev:edge
+bun run dev:firefox
+```
+
+  </Tab>
+</Tabs>
+
+## Браузеры на базе Chromium
+
+Addfox нативно поддерживает следующие браузеры на базе Chromium:
+
+| Браузер | CLI параметр | Описание |
+|--------|----------|------|
+| Google Chrome | `-b chrome` | Браузер по умолчанию |
+| Chromium | `-b chromium` | Открытая версия |
+| Microsoft Edge | `-b edge` | Предустановлен в Windows |
+| Brave | `-b brave` | Браузер конфиденциальности |
+| Vivaldi | `-b vivaldi` | Настраиваемый браузер |
+| Opera | `-b opera` | Браузер Opera |
+| Santa | `-b santa` | Santa браузер |
+| Arc | `-b arc` | Браузер нового формата |
+| Yandex | `-b yandex` | Яндекс браузер |
+| BrowserOS | `-b browseros` | BrowserOS |
+| Custom | `-b custom` | Пользовательский браузер (требуется настройка `browser.custom`) |
+
+### Прямой запуск через CLI
+
+Если не использовать scripts, можно напрямую указать браузер через CLI:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+# Chrome (по умолчанию)
+pnpm addfox dev
+
+# Другие браузеры
+pnpm addfox dev -b edge
+pnpm addfox dev -b brave
+pnpm addfox dev -b vivaldi
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+# Chrome (по умолчанию)
+npx addfox dev
+
+# Другие браузеры
+npx addfox dev -b edge
+npx addfox dev -b brave
+npx addfox dev -b vivaldi
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+# Chrome (по умолчанию)
+yarn addfox dev
+
+# Другие браузеры
+yarn addfox dev -b edge
+yarn addfox dev -b brave
+yarn addfox dev -b vivaldi
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+# Chrome (по умолчанию)
+bunx addfox dev
+
+# Другие браузеры
+bunx addfox dev -b edge
+bunx addfox dev -b brave
+bunx addfox dev -b vivaldi
+```
+
+  </Tab>
+</Tabs>
+
+### Конфигурация пути к Chromium браузеру
+
+Если браузер не находится в стандартном расположении, можно указать `browserPath` в конфигурации:
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/path/to/chrome",
+    edge: "/path/to/edge",
+    brave: "/path/to/brave",
+  },
+});
+```
+
+#### Примеры для разных платформ
+
+**macOS:**
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  },
+});
+```
+
+**Windows:**
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  },
+});
+```
+
+**Linux:**
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/usr/bin/google-chrome",
+    chromium: "/usr/bin/chromium-browser",
+  },
+});
+```
+
+### Кэширование пользовательских данных Chromium
+
+По умолчанию при каждом запуске используется новая директория пользовательских данных. Для сохранения (например, состояния входа) добавьте в `package.json`:
+
+```json
+{
+  "scripts": {
+    "dev:cache": "addfox dev -b chrome --cache",
+    "dev:edge:cache": "addfox dev -b edge --cache"
+  }
+}
+```
+
+Или запустите напрямую через CLI:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm addfox dev --cache
+# или
+pnpm addfox dev -c
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npx addfox dev --cache
+# или
+npx addfox dev -c
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn addfox dev --cache
+# или
+yarn addfox dev -c
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bunx addfox dev --cache
+# или
+bunx addfox dev -c
+```
+
+  </Tab>
+</Tabs>
+
+Или включите в конфигурации:
+
+```ts
+export default defineConfig({
+  cache: true,
+});
+```
+
+Пользовательские данные сохраняются в директории `.addfox/cache/`.
+
+## Firefox
+
+Режим разработки Firefox использует инструмент **web-ext** для управления жизненным циклом расширения.
+
+### Запуск Firefox
+
+Используйте настроенный script:
+
+```bash
+pnpm dev:firefox
+```
+
+Или запустите напрямую через CLI:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm addfox dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npx addfox dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn addfox dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bunx addfox dev -b firefox
+```
+
+  </Tab>
+</Tabs>
+
+### Особенности Firefox
+
+- Перезагрузка расширения обрабатывается `web-ext`, а не WebSocket от Addfox
+- Автоматически открывается Firefox и загружается расширение
+- Поддерживается автоматическая перезагрузка при изменении файлов
+
+### Конфигурация пути к Firefox
+
+```ts
+export default defineConfig({
+  browserPath: {
+    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  },
+});
+```
+
+:::info
+Профиль Firefox автоматически управляется `web-ext`, ручная настройка кэширования не требуется.
+:::
+
+## Советы по отладке
+
+### Просмотр Service Worker
+
+1. Откройте `chrome://extensions/`
+2. Найдите расширение в разработке
+3. Нажмите "Service Worker" для просмотра консоли фонового скрипта
+
+### Просмотр Content Script
+
+1. На веб-странице правый клик → Просмотреть код
+2. Переключитесь на панель Console
+3. Выберите соответствующий контекст расширения
+
+### Использование мониторинга ошибок
+
+Добавьте debug script в `package.json`:
+
+```json
+{
+  "scripts": {
+    "dev:debug": "addfox dev --debug",
+    "dev:firefox:debug": "addfox dev -b firefox --debug"
+  }
+}
+```
+
+Затем запустите:
+
+```bash
+pnpm dev:debug
+```
+
+Или включите напрямую через CLI:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm addfox dev --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npx addfox dev --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn addfox dev --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bunx addfox dev --debug
+```
+
+  </Tab>
+</Tabs>
+
+## Связанная конфигурация
+
+- [`browserPath`](/config/launch) — конфигурация пути к исполняемому файлу браузера
+- [`cache`](/config/cache) — конфигурация кэширования
+- [`hotReload`](/config/hot-reload) — конфигурация горячей перезагрузки
+- [`debug`](/config/debug) — конфигурация мониторинга ошибок

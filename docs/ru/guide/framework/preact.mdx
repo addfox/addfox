@@ -1,0 +1,120 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Preact
+
+Addfox поддерживает разработку расширений с использованием Preact, обеспечивая меньший размер пакета.
+
+## Установка
+
+Выберите шаблон Preact при создании проекта:
+
+```bash
+pnpm create addfox-app --framework preact
+```
+
+Или установите в существующий проект:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @rsbuild/plugin-preact
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @rsbuild/plugin-preact
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @rsbuild/plugin-preact
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @rsbuild/plugin-preact
+```
+
+  </Tab>
+</Tabs>
+
+## Конфигурация
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginPreact } from "@rsbuild/plugin-preact";
+
+export default defineConfig({
+  plugins: [pluginPreact()],
+});
+```
+
+## Структура проекта
+
+```
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.tsx
+├── popup/
+│   ├── App.tsx
+│   ├── index.html
+│   └── index.tsx
+└── manifest.json
+```
+
+## Пример кода
+
+### Popup
+
+```tsx
+// app/popup/index.tsx
+import { render } from 'preact';
+import { App } from './App';
+import './index.css';
+
+render(<App />, document.getElementById('root')!);
+```
+
+```tsx
+// app/popup/App.tsx
+import { useState } from 'preact/hooks';
+
+export function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div className="p-4">
+      <h1 className="text-xl font-bold">Hello Preact!</h1>
+      <button 
+        onClick={() => setCount(c => c + 1)}
+        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Count: {count}
+      </button>
+    </div>
+  );
+}
+```
+
+## Hooks
+
+Preact предоставляет Hooks, совместимые с React:
+
+```tsx
+import { useState, useEffect, useCallback } from 'preact/hooks';
+```
+
+## Связанные ссылки
+
+- [Плагин Preact для Rsbuild](https://rsbuild.dev/plugins/list/plugin-preact)
+- [Документация Preact](https://preactjs.com/)

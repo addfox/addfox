@@ -1,0 +1,262 @@
+import { Tab, Tabs } from '@rspress/core/theme';
+
+# Entradas basadas en archivos
+
+Cuando **no configuras** el campo `entry` en `addfox.config.ts`, Addfox descubrirá automáticamente los archivos de entrada según las convenciones. Esta es la forma de desarrollo recomendada, permitiéndote enfocarte en el código de negocio en lugar de la configuración.
+
+## Principios fundamentales
+
+### Construcción basada en Rsbuild
+
+- **La entrada debe ser JS/TS**: Las entradas reales de construcción solo pueden ser scripts `.js`, `.jsx`, `.ts`, `.tsx`
+- **Manejo de HTML**:
+  - No proporcionar HTML → Rsbuild genera automáticamente
+  - Proporcionar HTML → Se usa como plantilla, pero debe marcar el script de entrada mediante `data-addfox-entry`
+
+## Convenciones de estructura de directorios
+
+### Entradas solo script (background / content)
+
+Estas entradas no necesitan páginas HTML, solo necesitan proporcionar archivos de script.
+
+<Tabs>
+<Tab label="Forma de directorio (recomendado)">
+
+```tree
+app/
+├── background/
+│   └── index.ts          # entrada background
+└── content/
+    └── index.ts          # entrada content
+```
+
+| Nombre de entrada | Archivo de entrada | Ruta de salida |
+|--------|----------|----------|
+| `background` | `app/background/index.ts` | `extension/background/index.js` |
+| `content` | `app/content/index.ts` | `extension/content/index.js` |
+
+</Tab>
+<Tab label="Forma de archivo único">
+
+```tree
+app/
+├── background.ts         # entrada background
+└── content.ts            # entrada content
+```
+
+| Nombre de entrada | Archivo de entrada | Ruta de salida |
+|--------|----------|----------|
+| `background` | `app/background.ts` | `extension/background.js` |
+| `content` | `app/content.ts` | `extension/content.js` |
+
+</Tab>
+</Tabs>
+
+### Entradas que necesitan páginas (popup / options / sidepanel / devtools / offscreen)
+
+Estas entradas producirán **HTML + JS**. Soportan dos formas:
+
+#### Forma 1: No proporcionar HTML (recomendado)
+
+Solo escribe script, no escribas HTML. Rsbuild generará automáticamente HTML e inyectará el script.
+
+:::tip Convenciones de páginas HTML generadas automáticamente
+
+Cuando **no** se proporciona `index.html` u otra plantilla, el HTML se genera automáticamente por construcción, Addfox / Rsbuild convendrá:
+
+- **Nodo de montaje**: La página contendrá **`<div id="root"></div>`**, para uso con `createRoot` / `mount` de React / Vue, etc.
+- **`<title>`**: Consistente con **`manifest.name`** de la extensión (se actualiza con los cambios de manifest).
+- **Icono de pestaña (favicon)**: Se inyecta a través de **`<link rel="icon">`**, el **`href`** proviene de **`manifest.icons`** (se selecciona el tamaño apropiado según reglas, la ruta se resuelve como relativa a la ubicación del HTML de salida).
+
+Si usas **plantillas HTML personalizadas** en esta entrada, no se aplicarán automáticamente las inyecciones de `title` / icono anteriores; necesitas escribir `<title>` e icono `<link>` tú mismo en la plantilla (aún necesitas conservar `data-addfox-entry` y el nodo de montaje, generalmente sigue siendo `#root`).
+
+:::
+
+<Tabs>
+<Tab label="Forma de directorio">
+
+```tree
+app/
+├── popup/
+│   └── index.ts          # entrada popup
+├── options/
+│   └── index.ts          # entrada options
+└── sidepanel/
+    └── index.ts          # entrada sidepanel
+```
+
+| Nombre de entrada | HTML de salida | JS de salida |
+|--------|-----------|---------|
+| `popup` | `extension/popup/index.html` | `extension/popup/index.js` |
+| `options` | `extension/options/index.html` | `extension/options/index.js` |
+| `sidepanel` | `extension/sidepanel/index.html` | `extension/sidepanel/index.js` |
+
+</Tab>
+<Tab label="Forma de archivo único">
+
+```tree
+app/
+├── popup.ts              # entrada popup
+├── options.ts            # entrada options
+└── sidepanel.ts          # entrada sidepanel
+```
+
+| Nombre de entrada | HTML de salida | JS de salida |
+|--------|-----------|---------|
+| `popup` | `extension/popup.html` | `extension/popup.js` |
+| `options` | `extension/options.html` | `extension/options.js` |
+| `sidepanel` | `extension/sidepanel.html` | `extension/sidepanel.js` |
+
+</Tab>
+</Tabs>
+
+#### Forma 2: Proporcionar plantilla HTML
+
+Si necesitas personalizar la estructura de la página, puedes colocar archivos HTML en el directorio de entrada (o junto al archivo del mismo nombre).
+
+:::warning Importante
+Al usar HTML personalizado, **debes** marcar el script de entrada mediante el atributo `data-addfox-entry`, de lo contrario el framework no puede reconocerlo.
+:::
+
+<Tabs>
+<Tab label="Forma de directorio">
+
+```tree
+app/
+└── popup/
+    ├── index.html        # Plantilla de página
+    └── index.ts          # Script de entrada
+```
+
+```html
+<!-- app/popup/index.html -->
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Clave: data-addfox-entry marca el script de entrada -->
+    <script type="module" src="./index.ts" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+</Tab>
+<Tab label="Forma de archivo único">
+
+```tree
+app/
+├── popup.html            # Plantilla de página
+└── popup.ts              # Script de entrada
+```
+
+```html
+<!-- app/popup.html -->
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./popup.ts" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+</Tab>
+</Tabs>
+
+:::tip Notas sobre plantillas HTML
+- `data-addfox-entry` solo puede aparecer **una vez** en un archivo HTML
+- `src` puede ser ruta relativa, apuntando a script en el mismo directorio u otra ubicación
+- Otros recursos (CSS, imágenes, etc.) deben importarse en el script de entrada mediante `import`, no referenciarse directamente en HTML
+- El archivo HTML en sí no participa en la compilación, solo se usa como plantilla
+- **Plantillas personalizadas** no sincronizarán automáticamente `name` / `icons` del manifest a `<title>` y favicon; solo el HTML **generado automáticamente** aplicará las convenciones anteriores de "páginas HTML generadas automáticamente"
+
+:::
+
+## Ejemplos completos
+
+### Ejemplo 1: Generar automáticamente todo el HTML
+
+```tree
+app/
+├── background/
+│   └── index.ts          # Solo script
+├── content/
+│   └── index.ts          # Solo script
+├── popup/
+│   └── index.ts          # Generar HTML automáticamente
+├── options/
+│   └── index.ts          # Generar HTML automáticamente
+└── manifest.json
+```
+
+### Ejemplo 2: Uso mixto
+
+```tree
+app/
+├── background.ts         # Forma de archivo único
+├── content/
+│   └── index.ts          # Forma de directorio
+├── popup/
+│   ├── index.html        # Plantilla personalizada
+│   └── index.ts
+└── options/
+    └── index.ts          # Generar HTML automáticamente
+```
+
+### Ejemplo 3: Usar framework (ejemplo con React)
+
+```tree
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.tsx
+├── popup/
+│   └── index.tsx         # Renderizar en componente React
+└── manifest.json
+```
+
+```tsx
+// app/popup/index.tsx
+import { createRoot } from 'react-dom/client';
+import { Popup } from './Popup';
+
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(<Popup />);
+```
+
+## Preguntas frecuentes
+
+### P: ¿El archivo de entrada debe llamarse index.ts?
+
+**Forma de directorio** debe ser `index.(js|ts|jsx|tsx)`. **Forma de archivo único** puede ser `nombre_de_entrada.(js|ts|jsx|tsx)`.
+
+### P: ¿Se permiten directorios anidados de múltiples niveles?
+
+No soportado. Los directorios de entrada solo pueden tener un nivel, es decir, `app/popup/index.ts` ✓, mientras que `app/pages/popup/index.ts` ✗.
+
+### P: ¿Se puede mezclar generación automática y HTML personalizado?
+
+Sí. Cada entrada decide independientemente, algunas usan generación automática, otras usan plantillas personalizadas.
+
+### P: ¿Cómo depurar problemas de plantillas HTML?
+
+Verificar:
+1. Si el archivo HTML tiene el atributo `data-addfox-entry`
+2. Si la ruta `src` apunta correctamente al script de entrada
+3. Si solo hay una etiqueta script con `data-addfox-entry`
+
+## Siguientes pasos
+
+- [Entradas basadas en configuración](/guide/entry/config-based) — Aprender cómo configurar rutas de entrada explícitamente
+- [Configuración de appDir](/config/app-dir) — Modificar el directorio de código fuente
+- [Configuración de manifest](/config/manifest) — Configurar el manifiesto de extensión

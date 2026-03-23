@@ -1,0 +1,67 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# UnoCSS
+
+## インストール
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D unocss @unocss/postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D unocss @unocss/postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D unocss @unocss/postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D unocss @unocss/postcss
+```
+
+  </Tab>
+</Tabs>
+
+## 設定
+
+`postcss.config.mjs` を作成：
+
+```js
+export default {
+  plugins: {
+    "@unocss/postcss": {},
+  },
+};
+```
+
+オプション：`uno.config.ts` を作成してルールを拡張。
+
+## 使用
+
+エントリースタイルで UnoCSS をインポート：
+
+```css
+/* app/popup/index.css */
+@unocss;
+```
+
+そしてエントリースクリプトでこの CSS をインポート：
+
+```ts
+import "./index.css";
+```
+
+その後、コンポーネントで UnoCSS アトミッククラスを使用できます。

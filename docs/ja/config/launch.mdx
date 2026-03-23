@@ -1,0 +1,168 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# browserPath
+
+`browserPath` は開発時に自動的にブラウザを開いて拡張機能を読み込むための実行ファイルパスを設定するために使用されます。
+
+## 概要
+
+- **型**: `BrowserPathConfig`
+- **デフォルト値**: `undefined`（システムのデフォルトパスを使用）
+- **必須**: いいえ
+
+## Chromium 系ブラウザ
+
+以下の Chromium ベースのブラウザをサポートしています：
+
+| ブラウザ | 設定キー | デフォルトパス |
+|--------|--------|----------|
+| Google Chrome | `chrome` | 自動検出 |
+| Chromium | `chromium` | 自動検出 |
+| Microsoft Edge | `edge` | 自動検出 |
+| Brave | `brave` | 自動検出 |
+| Vivaldi | `vivaldi` | 自動検出 |
+| Opera | `opera` | 自動検出 |
+| Arc | `arc` | 自動検出 |
+
+### 設定例
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  },
+});
+```
+
+### CLI で起動
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- -b chrome
+pnpm dev -- -b edge
+pnpm dev -- -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- -b chrome
+npm run dev -- -b edge
+npm run dev -- -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev -b chrome
+yarn dev -b edge
+yarn dev -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- -b chrome
+bun run dev -- -b edge
+bun run dev -- -b brave
+```
+
+  </Tab>
+</Tabs>
+
+## Firefox
+
+Firefox は `web-ext` ツールを使用して拡張機能を管理し、パス設定方法は同じです：
+
+```ts
+export default defineConfig({
+  browserPath: {
+    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  },
+});
+```
+
+### Firefox の起動
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- -b firefox
+```
+
+  </Tab>
+</Tabs>
+
+:::info
+Firefox 開発モードでは `web-ext` ツールを使用し、拡張機能のリロードは `web-ext` によって処理され、Addfox の WebSocket ではありません。
+:::
+
+## 各プラットフォームの例
+
+### macOS
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  },
+});
+```
+
+### Windows
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  },
+});
+```
+
+### Linux
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/usr/bin/google-chrome",
+    chromium: "/usr/bin/chromium-browser",
+    firefox: "/usr/bin/firefox",
+  },
+});
+```
+
+## 関連設定
+
+- [guide/launch](/ja/guide/launch) - ブラウザ起動ガイド

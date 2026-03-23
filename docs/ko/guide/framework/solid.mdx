@@ -1,0 +1,112 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Solid
+
+Addfox는 SolidJS를 사용하여 확장을 개발할 수 있도록 지원하며, 고성능 반응형 경험을 제공합니다.
+
+## 설치
+
+프로젝트 생성 시 Solid 템플릿 선택:
+
+```bash
+pnpm create addfox-app --framework solid
+```
+
+또는 기존 프로젝트에 설치:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @rsbuild/plugin-solid
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @rsbuild/plugin-solid
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @rsbuild/plugin-solid
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @rsbuild/plugin-solid
+```
+
+  </Tab>
+</Tabs>
+
+## 구성
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginSolid } from "@rsbuild/plugin-solid";
+
+export default defineConfig({
+  plugins: [pluginSolid()],
+});
+```
+
+## 예시 코드
+
+### Popup
+
+```tsx
+// app/popup/index.tsx
+import { render } from 'solid-js/web';
+import { App } from './App';
+import './index.css';
+
+render(() => <App />, document.getElementById('root')!);
+```
+
+```tsx
+// app/popup/App.tsx
+import { createSignal } from 'solid-js';
+
+export function App() {
+  const [count, setCount] = createSignal(0);
+
+  return (
+    <div class="p-4">
+      <h1 class="text-xl font-bold">Hello Solid!</h1>
+      <button 
+        onClick={() => setCount(c => c + 1)}
+        class="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Count: {count()}
+      </button>
+    </div>
+  );
+}
+```
+
+## 반응형 프리미티브
+
+Solid는 세분화된 반응형을 사용합니다:
+
+```tsx
+import { createSignal, createEffect, createMemo } from 'solid-js';
+
+const [count, setCount] = createSignal(0);
+const double = createMemo(() => count() * 2);
+
+createEffect(() => {
+  console.log('Count changed:', count());
+});
+```
+
+## 관련 링크
+
+- [Rsbuild Solid 플러그인](https://rsbuild.dev/plugins/list/plugin-solid)
+- [SolidJS 문서](https://www.solidjs.com/)

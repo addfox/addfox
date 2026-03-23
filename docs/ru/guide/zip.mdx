@@ -1,0 +1,125 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Упаковка
+
+После завершения сборки Addfox автоматически упаковывает директорию вывода в zip файл для удобства распространения.
+
+## Поведение по умолчанию
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm build
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run build
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn build
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run build
+```
+
+  </Tab>
+</Tabs>
+
+После завершения сборки генерируется:
+
+```tree
+.addfox/
+├── extension/          # Вывод сборки
+└── extension.zip       # Упакованный файл
+```
+
+## Конфигурация
+
+### Отключение упаковки
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  zip: false,
+});
+```
+
+### Включение упаковки (по умолчанию)
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  zip: true,
+});
+```
+
+Или не настраивать (использовать значение по умолчанию).
+
+## Содержимое архива
+
+Zip файл содержит всё содержимое выходной директории сборки:
+
+- `manifest.json` — манифест расширения
+- `background/` — фоновый скрипт
+- `content/` — content script
+- `popup/` — всплывающее окно
+- `options/` — страница настроек
+- Другие entry
+- Статические ресурсы из директории `public/` (иконки, файлы интернационализации и т.д.)
+
+## Применение
+
+Упакованный zip файл можно использовать для:
+
+### Публикации в Chrome Web Store
+
+1. Посетите [Центр разработчиков Chrome Web Store](https://chrome.google.com/webstore/devconsole/)
+2. Создайте или выберите проект
+3. Загрузите `extension.zip`
+
+### Публикации в Firefox Add-ons
+
+1. Посетите [Центр разработчиков Firefox Add-ons](https://addons.mozilla.org/developers/)
+2. Отправьте новое дополнение
+3. Загрузите `extension.zip`
+
+### Внутреннее распространение
+
+- Распространение через почту/облачное хранилище
+- Внутреннее тестовое развертывание
+
+## Путь вывода
+
+Путь к выходному zip файлу:
+
+```
+{outputRoot}/{outDir}.zip
+```
+
+По умолчанию: `.addfox/extension.zip`
+
+После изменения `outDir`:
+
+```ts
+export default defineConfig({
+  outDir: "dist",
+});
+// Вывод: .addfox/dist.zip
+```
+
+## Связанная конфигурация
+
+- [`zip`](/config/zip) — конфигурация переключения упаковки
+- [`outDir`](/config/out-dir) — конфигурация директории вывода

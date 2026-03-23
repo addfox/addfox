@@ -1,0 +1,125 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# 패키징
+
+빌드 완료 후 Addfox는 자동으로 출력 디렉토리를 zip 파일로 패키징하여 배포를 용이하게 합니다.
+
+## 기본 동작
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm build
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run build
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn build
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run build
+```
+
+  </Tab>
+</Tabs>
+
+빌드 완료 후 생성:
+
+```tree
+.addfox/
+├── extension/          # 빌드 출력
+└── extension.zip       # 패키징 파일
+```
+
+## 구성
+
+### 패키징 비활성화
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  zip: false,
+});
+```
+
+### 패키징 활성화 (기본값)
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  zip: true,
+});
+```
+
+또는 구성하지 않음 (기본값 사용).
+
+## 패키징 내용
+
+zip 파일은 빌드 출력의 모든 콘텐츠를 포함합니다:
+
+- `manifest.json` — 확장 매니페스트
+- `background/` — 백그라운드 스크립트
+- `content/` — 콘텐츠 스크립트
+- `popup/` — 팝업 페이지
+- `options/` — 옵션 페이지
+- 다른 Entry
+- `public/` 디렉토리의 정적 리소스 (아이콘, 국제화 파일 등)
+
+## 용도
+
+패키징된 zip 파일은 다음에 사용할 수 있습니다:
+
+### Chrome Web Store에 제출
+
+1. [Chrome Web Store 개발자 센터](https://chrome.google.com/webstore/devconsole/) 방문
+2. 프로젝트 생성 또는 선택
+3. `extension.zip` 업로드
+
+### Firefox Add-ons에 제출
+
+1. [Firefox 부가 기능 개발자 센터](https://addons.mozilla.org/developers/) 방문
+2. 새 부가 기능 제출
+3. `extension.zip` 업로드
+
+### 낸부 배포
+
+- 이메일/클우드 스토리지를 통해 공유
+- 낸부 테스트 배포
+
+## 출력 경로
+
+패키징 파일 출력 경로:
+
+```
+{outputRoot}/{outDir}.zip
+```
+
+기본값: `.addfox/extension.zip`
+
+`outDir` 수정 후:
+
+```ts
+export default defineConfig({
+  outDir: "dist",
+});
+// 출력: .addfox/dist.zip
+```
+
+## 관련 설정
+
+- [`zip`](/config/zip) - 패키징 스위치 구성
+- [`outDir`](/config/out-dir) - 출력 디렉토리 구성

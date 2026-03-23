@@ -1,0 +1,6 @@
+[
+  "index",
+  { "type": "dir", "name": "guide", "label": "가이드", "collapsible": true, "collapsed": false },
+  { "type": "dir", "name": "config", "label": "설정", "collapsible": true, "collapsed": true },
+  { "type": "dir", "name": "examples", "label": "예시", "collapsible": true, "collapsed": true }
+]

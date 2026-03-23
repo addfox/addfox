@@ -1,0 +1,119 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# 리로드 관리자
+
+리로드 관리자(Reload Manager)는 Addfox 개발 시 내장 컴포넌트로, 코드 변경 후 확장을 자동으로 리로드하는 역할을 담당합니다.
+
+## 작동 원리
+
+```
+소스 코드 변경
+    ↓
+Rsbuild 재빌드
+    ↓
+WebSocket이 리로드 신호 전송
+    ↓
+리로드 관리자가 신호 수신
+    ↓
+확장 비활성화 → 확장 활성화
+    ↓
+확장 다시 로드
+```
+
+## 리로드 관리자가 필요한 이유
+
+브라우저 확장은 일반 웹 애플리케이션과 다륾며, 코드 변경 후 다음이 필요합니다:
+
+1. **확장 다시 로드** — manifest 변경을 적용하기 위해
+2. **Content Script 다시 주입** — 페이지의 스크립트 업데이트
+3. **Service Worker 재시작** — 백그라운드 스크립트 업데이트
+
+브라우저 자체는 이를 자동으로 처리하지 않으므로 Addfox는 이 프로세스를 자동화하기 위해 리로드 관리자를 제공합니다.
+
+## 사용 방식
+
+리로드 관리자는 `addfox dev`에서 **자동으로 활성화**되며 추가 구성이 필요 없습니다.
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev
+```
+
+  </Tab>
+</Tabs>
+
+## 기술 구현
+
+리로드 관리자는 주 확장과 함께 로드되는 **보조 확장**입니다:
+
+1. 주 확장 — 개발 중인 확장
+2. 리로드 관리자 확장 — WebSocket을 수신하고 주 확장을 제어
+
+리로드 관리자 확장:
+- 개발 모드에서 자동으로 설치
+- 빌드 완료 후 WebSocket을 통해 알림 수신
+- `chrome.management` API 명령을 별내 주 확장을 비활성화한 후 다시 활성화
+- Content Script 변경 시 현재 탭 새로고침
+
+## 구성 옵션
+
+### 핫 리로드 포트
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  hotReload: {
+    port: 23333,  // WebSocket 포트
+  },
+});
+```
+
+### 페이지 새로고침 비활성화
+
+```ts
+export default defineConfig({
+  hotReload: {
+    autoRefreshContentPage: false,  // content 변경 시 페이지 새로고침 안 함
+  },
+});
+```
+
+## 수동 리로드
+
+자동 리로드에 문제가 발생하면 수동으로 리로드할 수 있습니다:
+
+1. `chrome://extensions/` 방문
+2. 개발 중인 확장 찾기
+3. 새로고침 아이콘 클릭
+
+또는 단축키 사용:
+- macOS: `Cmd + R` (확장 페이지에서)
+- Windows/Linux: `Ctrl + R`
+
+## 관련 설정
+
+- [`hotReload`](/config/hot-reload) - 핫 리로드 구성
+- [guide/hmr](/guide/hmr) - 핫 업데이트 가이드

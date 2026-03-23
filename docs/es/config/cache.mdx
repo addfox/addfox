@@ -1,0 +1,96 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# cache
+
+`cache` se utiliza para controlar si se conservan los datos de usuario del navegador durante el desarrollo.
+
+## Resumen
+
+- **Tipo**: `boolean`
+- **Valor por defecto**: `true`
+- **Requerido**: No
+
+## Uso
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  cache: true,  // Habilitar caché
+});
+```
+
+## Función
+
+Después de habilitar la caché:
+- Los datos de usuario del navegador durante el desarrollo se guardan en el directorio `.addfox/cache/`
+- Se reutilizan estos datos la próxima vez que se inicie `addfox dev`
+- Estado de inicio de sesión, configuraciones de extensión, etc. se conservan
+
+## Parámetros de CLI
+
+Los parámetros de CLI tienen mayor prioridad que la configuración:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+# Forzar habilitar caché (incluso si está configurado como false)
+pnpm dev -- -c
+pnpm dev -- --cache
+
+# Forzar deshabilitar caché (incluso si está configurado como true)
+pnpm dev -- --no-cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+# Forzar habilitar caché (incluso si está configurado como false)
+npm run dev -- -c
+npm run dev -- --cache
+
+# Forzar deshabilitar caché (incluso si está configurado como true)
+npm run dev -- --no-cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+# Forzar habilitar caché (incluso si está configurado como false)
+yarn dev -c
+yarn dev --cache
+
+# Forzar deshabilitar caché (incluso si está configurado como true)
+yarn dev -- --no-cache
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+# Forzar habilitar caché (incluso si está configurado como false)
+bun run dev -- -c
+bun run dev -- --cache
+
+# Forzar deshabilitar caché (incluso si está configurado como true)
+bun run dev -- --no-cache
+```
+
+  </Tab>
+</Tabs>
+
+Cuando `--cache` y `--no-cache` aparecen simultáneamente, prevalece el último parámetro.
+
+## Notas
+
+- Solo afecta modo de desarrollo (`addfox dev`)
+- La construcción de producción (`addfox build`) no se ve afectada por esta configuración
+- Cuando encuentres problemas extraños, intenta limpiar el directorio `.addfox/cache/`
+
+## Configuraciones relacionadas
+
+- [guide/launch](/guide/launch) - Guía de inicio de desarrollo

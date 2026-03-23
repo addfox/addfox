@@ -1,0 +1,67 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# UnoCSS
+
+## Instalación
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D unocss @unocss/postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D unocss @unocss/postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D unocss @unocss/postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D unocss @unocss/postcss
+```
+
+  </Tab>
+</Tabs>
+
+## Configuración
+
+Crear `postcss.config.mjs`:
+
+```js
+export default {
+  plugins: {
+    "@unocss/postcss": {},
+  },
+};
+```
+
+Opcional: Crear `uno.config.ts` para reglas de extensión.
+
+## Uso
+
+Importar UnoCSS en tu entrada de estilo:
+
+```css
+/* app/popup/index.css */
+@unocss;
+```
+
+E importar este CSS en el script de entrada:
+
+```ts
+import "./index.css";
+```
+
+Luego puedes usar clases atómicas de UnoCSS en componentes.

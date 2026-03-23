@@ -1,0 +1,92 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# debug
+
+`debug` se utiliza para habilitar el panel de monitoreo de errores durante el desarrollo.
+
+## Resumen
+
+- **Tipo**: `boolean`
+- **Valor por defecto**: `false`
+- **Requerido**: No
+
+## Uso
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  debug: true,  // Habilitar monitoreo de errores
+});
+```
+
+## Función
+
+Después de habilitar, Addfox:
+
+1. **Captura errores** — Captura automáticamente errores de varias entradas (background, content, popup, etc.)
+2. **Panel de errores** — Muestra entrada de panel de monitoreo en páginas de extensión
+3. **Consulta AI** — Soporta copiar errores con un clic, consultar ChatGPT/Cursor
+
+## Forma de uso
+
+### Habilitar en configuración
+
+```ts
+export default defineConfig({
+  debug: true,
+});
+```
+
+### Habilitar desde CLI
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- --debug
+```
+
+  </Tab>
+</Tabs>
+
+## Panel de monitoreo
+
+Después de habilitar, visitar `chrome-extension://<id>/_addfox-monitor/` permite ver:
+
+- Lista de errores de cada entrada
+- Detalles de la pila de errores
+- Copiar información de error con un clic
+- Consultar AI con un clic (ChatGPT / Cursor)
+
+## Notas
+
+- Solo afecta modo de desarrollo (`addfox dev`)
+- La construcción de producción eliminará automáticamente el código de monitoreo
+- El panel de monitoreo no afecta el rendimiento de la extensión
+
+## Configuraciones relacionadas
+
+- [guide/monitor](/guide/monitor) - Guía de monitoreo de errores

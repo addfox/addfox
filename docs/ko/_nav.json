@@ -1,0 +1,17 @@
+[
+  {
+    "text": "가이드",
+    "link": "/guide/introduction",
+    "activeMatch": "^/ko/guide/"
+  },
+  {
+    "text": "설정",
+    "link": "/config/manifest",
+    "activeMatch": "^/ko/config/"
+  },
+  {
+    "text": "예시",
+    "link": "/examples/index",
+    "activeMatch": "^/ko/examples/"
+  }
+]

@@ -1,0 +1,149 @@
+import { Tab, Tabs } from '@rspress/core/theme';
+
+# Estructura de Directorios
+
+Addfox adopta un diseño de convención sobre configuración. Comprender la estructura de directorios estándar te ayudará a comenzar rápidamente y seguir las mejores prácticas.
+
+## Directorio Raíz del Proyecto
+
+La estructura típica de un proyecto Addfox es la siguiente:
+
+```
+my-extension/
+├── .addfox/           # Salida de build y caché (generado automáticamente)
+├── app/               # Código fuente de la aplicación (configurable)
+├── public/            # Recursos estáticos
+├── addfox.config.ts   # Archivo de configuración de Addfox
+└── package.json       # Dependencias del proyecto
+```
+
+## Directorio .addfox
+
+`.addfox` es **generado automáticamente** por el framework y contiene:
+
+- **`extension/`** — Directorio de salida de build por defecto (puede modificarse mediante `outDir`)
+- **`cache/`** — Caché de build para acelerar compilaciones posteriores
+
+:::tip
+No elimines el directorio `cache` a menos que sea necesario, ya que afectará la velocidad de build y la reutilización de datos de usuario del navegador.
+:::
+
+## Directorio app
+
+`app/` es el directorio de código fuente de la aplicación por defecto, donde se almacenan todos los entry points de extensión y archivos de manifest. Puede modificarse mediante la opción de configuración `appDir`:
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  appDir: "src",  // Cambiar al directorio src
+});
+```
+
+### Estructura de Directorios Recomendada
+
+<Tabs>
+  <Tab label="Estructura Multi-Archivo (Recomendada)">
+
+```
+app/
+├── background/
+│   └── index.ts          # Service Worker / Background script
+├── content/
+│   └── index.ts          # Content script
+├── popup/
+│   ├── index.html        # HTML del popup (opcional)
+│   └── index.ts          # Script del popup
+├── options/
+│   ├── index.html        # HTML de la página de opciones (opcional)
+│   └── index.ts          # Script de la página de opciones
+├── sidepanel/
+│   └── index.ts          # Side panel
+├── manifest/
+│   ├── manifest.json           # Configuración base
+│   ├── manifest.chromium.json  # Override de Chrome
+│   └── manifest.firefox.json   # Override de Firefox
+└── ...
+```
+
+  </Tab>
+  <Tab label="Estructura de Archivo Único">
+
+```
+app/
+├── background.ts         # Background script
+├── content.ts            # Content script
+├── popup.html            # Página popup
+├── popup.ts              # Script popup
+├── manifest.json         # Manifest de extensión
+└── ...
+```
+
+  </Tab>
+</Tabs>
+
+:::info
+Para más información sobre las reglas de descubrimiento de entry points, consulta [Entry Points Basados en Archivos](/es/guide/entry/file-based) y [Configuración de `entry`](/es/config/entry).
+:::
+
+## Directorio public
+
+`public/` se utiliza para almacenar **recursos estáticos**, que se copian tal cual al directorio de salida durante el build sin procesarse:
+
+```
+public/
+├── icons/                # Iconos de extensión
+│   ├── icon16.png
+│   ├── icon48.png
+│   └── icon128.png
+├── _locales/             # Archivos de internacionalización
+│   └── zh_CN/
+│       └── messages.json
+└── welcome.html          # Página de bienvenida
+```
+
+## Tipos de Entry Points
+
+Addfox soporta los siguientes entry points integrados:
+
+| Nombre del Entry Point | Tipo | Descripción | Genera HTML |
+|--------|------|------|-----------|
+| `background` | Solo script | Service Worker / Background script | No |
+| `content` | Solo script | Content script | No |
+| `popup` | Script + Página | Popup de la barra de herramientas | Sí |
+| `options` | Script + Página | Página de opciones de extensión | Sí |
+| `sidepanel` | Script + Página | Side panel | Sí |
+| `devtools` | Script + Página | DevTools | Sí |
+| `offscreen` | Script + Página | Documento offscreen | Sí |
+
+:::warning
+Los nombres de los entry points integrados **no pueden modificarse**, ya que Addfox depende de ellos para el reconocimiento automático.
+:::
+
+## Archivos de Configuración
+
+### addfox.config.ts / addfox.config.js
+
+Este es el **archivo de configuración requerido** de Addfox, utilizado para declarar:
+
+- El manifest de la extensión (manifest)
+- Los archivos de entry point (entry)
+- El directorio de salida (outDir)
+- Plugins y configuración de Rsbuild
+
+### Ejemplo de Configuración Mínima
+
+```ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  // Cuando se omite la configuración, el framework descubre automáticamente
+  // los entry points y el manifest desde app/
+});
+```
+
+## Configuraciones Relacionadas
+
+- [`appDir`](/es/config/app-dir) — Personalizar el directorio de aplicación
+- [`entry`](/es/config/entry) — Configurar entry points manualmente
+- [`outDir`](/es/config/out-dir) — Personalizar el directorio de salida
+- [`manifest`](/es/config/manifest) — Modos de configuración del manifest

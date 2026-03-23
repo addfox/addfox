@@ -1,0 +1,81 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# サンプル
+
+このページでは、addfox リポジトリの拡張機能サンプルを一覧表示します。各サンプルは独立したディレクトリで、`package.json` と `addfox.config.ts` を含みます。リポジトリのルートで pnpm / npm / yarn / bun を使用して依存関係をインストールした後、対応するサンプルディレクトリで dev または build を実行して、実行またはビルドできます。
+
+| サンプル | 説明 | リポジトリリンク |
+|------|------|----------|
+| **addfox-with-vue** | Vue 3 テンプレート：popup、options、content、background。簡単なメッセージ通信を含む。 | [examples/addfox-with-vue](https://github.com/addfox/addfox/tree/main/examples/addfox-with-vue) |
+| **addfox-with-react** | React テンプレート：popup、options、content、background。簡単なメッセージ通信を含む。 | [examples/addfox-with-react](https://github.com/addfox/addfox/tree/main/examples/addfox-with-react) |
+| **addfox-with-preact** | Preact テンプレート：popup、options、content、background。簡単なメッセージ通信を含む。 | [examples/addfox-with-preact](https://github.com/addfox/addfox/tree/main/examples/addfox-with-preact) |
+| **addfox-with-svelte** | Svelte テンプレート：popup、options、content、background。簡単なメッセージ通信を含む。 | [examples/addfox-with-svelte](https://github.com/addfox/addfox/tree/main/examples/addfox-with-svelte) |
+| **addfox-with-solid** | Solid テンプレート：popup、options、content、background。簡単なメッセージ通信を含む。 | [examples/addfox-with-solid](https://github.com/addfox/addfox/tree/main/examples/addfox-with-solid) |
+| **addfox-with-react-shadcn** | React + shadcn/ui：popup、options、content、background、sidepanel の5エントリー。Tailwind + コンポーネントライブラリ。 | [examples/addfox-with-react-shadcn](https://github.com/addfox/addfox/tree/main/examples/addfox-with-react-shadcn) |
+| **addfox-with-devtools** | 純粋な TypeScript：background + devtools_page のみ。React/Vue なし。DevTools 拡張機能をデモ。 | [examples/addfox-with-devtools](https://github.com/addfox/addfox/tree/main/examples/addfox-with-devtools) |
+| **addfox-with-content-ui** | Content UI サンプル：ページへの拡張機能 UI のマウントをデモ。 | [examples/addfox-with-content-ui](https://github.com/addfox/addfox/tree/main/examples/addfox-with-content-ui) |
+| **addfox-with-content-ui-react** | React 版 Content UI サンプル。 | [examples/addfox-with-content-ui-react](https://github.com/addfox/addfox/tree/main/examples/addfox-with-content-ui-react) |
+| **addfox-with-tailwindcss** | Tailwind CSS 統合サンプル。 | [examples/addfox-with-tailwindcss](https://github.com/addfox/addfox/tree/main/examples/addfox-with-tailwindcss) |
+| **addfox-with-uno** | UnoCSS 統合サンプル。 | [examples/addfox-with-uno](https://github.com/addfox/addfox/tree/main/examples/addfox-with-uno) |
+| **addfox-with-vue-tsx** | Vue + TSX サンプル。 | [examples/addfox-with-vue-tsx](https://github.com/addfox/addfox/tree/main/examples/addfox-with-vue-tsx) |
+| **addfox-with-firefox** | Firefox ターゲットビルドと実行サンプル。 | [examples/addfox-with-firefox](https://github.com/addfox/addfox/tree/main/examples/addfox-with-firefox) |
+| **addfox-with-mv2** | Manifest V2 互換サンプル（移行/比較用）。 | [examples/addfox-with-mv2](https://github.com/addfox/addfox/tree/main/examples/addfox-with-mv2) |
+| **addfox-with-manifest-entries** | manifest フィールドでエントリーを宣言するサンプル。 | [examples/addfox-with-manifest-entries](https://github.com/addfox/addfox/tree/main/examples/addfox-with-manifest-entries) |
+| **addfox-with-react-entry-false** | `entry: false` シナリオ（rsbuild がエントリーを自己管理）の React サンプル。 | [examples/addfox-with-react-entry-false](https://github.com/addfox/addfox/tree/main/examples/addfox-with-react-entry-false) |
+| **addfox-with-single-file** | 単一ファイル/最小限の構造サンプル。 | [examples/addfox-with-single-file](https://github.com/addfox/addfox/tree/main/examples/addfox-with-single-file) |
+| **addfox-with-sandbox** | サンドボックスページ（sandbox）サンプル。 | [examples/addfox-with-sandbox](https://github.com/addfox/addfox/tree/main/examples/addfox-with-sandbox) |
+| **addfox-with-newtab-override** | ブラウザの新規タブページを上書きするサンプル。 | [examples/addfox-with-newtab-override](https://github.com/addfox/addfox/tree/main/examples/addfox-with-newtab-override) |
+| **addfox-with-history-override** | 履歴ページを上書きするサンプル。 | [examples/addfox-with-history-override](https://github.com/addfox/addfox/tree/main/examples/addfox-with-history-override) |
+| **addfox-with-bookmarks-override** | ブックマークページを上書きするサンプル。 | [examples/addfox-with-bookmarks-override](https://github.com/addfox/addfox/tree/main/examples/addfox-with-bookmarks-override) |
+| **addfox-with-rstest** | Rstest ユニットテスト統合サンプル。 | [examples/addfox-with-rstest](https://github.com/addfox/addfox/tree/main/examples/addfox-with-rstest) |
+| **addfox-with-rstest-e2e** | Rstest + E2E テストサンプル。 | [examples/addfox-with-rstest-e2e](https://github.com/addfox/addfox/tree/main/examples/addfox-with-rstest-e2e) |
+| **addfox-with-env-vars** | 環境変数注入とスコープサンプル（`ADDFOX_PUBLIC_` とプライベート変数を含む）。 | [examples/addfox-with-env-vars](https://github.com/addfox/addfox/tree/main/examples/addfox-with-env-vars) |
+
+## 実行方法
+
+addfox リポジトリのルートでインストールを実行した後、任意のサンプルディレクトリに移動：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm install
+cd examples/addfox-with-vue   # または他のサンプル
+pnpm dev                   # 開発モード
+pnpm build                 # ビルド
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install
+cd examples/addfox-with-vue   # または他のサンプル
+npm run dev                # 開発モード
+npm run build              # ビルド
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn install
+cd examples/addfox-with-vue   # または他のサンプル
+yarn dev                   # 開発モード
+yarn build                 # ビルド
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun install
+cd examples/addfox-with-vue   # または他のサンプル
+bun run dev                # 開発モード
+bun run build              # ビルド
+```
+
+  </Tab>
+</Tabs>
+
+ビルド成果物は `.addfox/extension`（または該当サンプルで設定された outputRoot/outDir）にあります。このディレクトリをブラウザで読み込むことができます。dev を使用する場合、フレームワークは自動的にブラウザを開いて拡張機能を読み込みます。

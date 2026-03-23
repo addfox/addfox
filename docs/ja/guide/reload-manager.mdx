@@ -1,0 +1,119 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# リロードマネージャー
+
+リロードマネージャー（Reload Manager）は Addfox 開発時の組み込みコンポーネントで、コード変更後に自動的に拡張機能をリロードします。
+
+## 動作原理
+
+```
+ソースコード変更
+    ↓
+Rsbuild 再ビルド
+    ↓
+WebSocket でリロード信号を送信
+    ↓
+リロードマネージャーが信号を受信
+    ↓
+拡張機能を無効化 → 有効化
+    ↓
+拡張機能が再読み込み
+```
+
+## リロードマネージャーが必要な理由
+
+ブラウザ拡張機能は通常のウェブアプリケーションとは異なり、コード変更後に以下が必要です：
+
+1. **拡張機能を再読み込み** — manifest の変更を有効にするため
+2. **Content Script を再注入** — ページ内のスクリプトを更新するため
+3. **Service Worker を再起動** — バックグラウンドスクリプトを更新するため
+
+ブラウザ自体はこれらを自動的に処理しないため、Addfox はこのプロセスを自動化するリロードマネージャーを提供します。
+
+## 使用方法
+
+リロードマネージャーは `addfox dev` 時に**自動的に有効**になり、追加の設定は不要です。
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev
+```
+
+  </Tab>
+</Tabs>
+
+## 技術的な実装
+
+リロードマネージャーは**ヘルパー拡張機能**であり、メイン拡張機能と一緒に読み込まれます：
+
+1. メイン拡張機能 — 開発中の拡張機能
+2. リロードマネージャー拡張機能 — WebSocket をリッスンしてメイン拡張機能を制御
+
+リロードマネージャー拡張機能：
+- 開発モードで自動的にインストール
+- ビルド完了後に WebSocket を介して通知を受信
+- `chrome.management` API コマンドを送信してメイン拡張機能を無効化して再有効化
+- Content Script 変更時に現在のタブページを更新
+
+## 設定オプション
+
+### ホットリロードポート
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  hotReload: {
+    port: 23333,  // WebSocket ポート
+  },
+});
+```
+
+### ページ更新を無効にする
+
+```ts
+export default defineConfig({
+  hotReload: {
+    autoRefreshContentPage: false,  // content 変更時にページを更新しない
+  },
+});
+```
+
+## 手動リロード
+
+自動リロードに問題がある場合は、手動でリロードできます：
+
+1. `chrome://extensions/` にアクセス
+2. 開発中の拡張機能を見つける
+3. 更新アイコンをクリック
+
+またはキーボードショートカットを使用：
+- macOS: `Cmd + R`（拡張機能ページで）
+- Windows/Linux: `Ctrl + R`
+
+## 関連設定
+
+- [`hotReload`](/ja/config/hot-reload) - ホットリロード設定
+- [guide/hmr](/ja/guide/hmr) - ホットアップデートガイド

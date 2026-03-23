@@ -1,0 +1,148 @@
+import { Tab, Tabs } from '@rspress/core/theme';
+
+# Структура директорий
+
+Addfox следует философии "соглашение важнее конфигурации". Понимание стандартной структуры директорий поможет вам быстро начать работу и следовать best practices.
+
+## Корневая директория проекта
+
+Типичная структура проекта Addfox выглядит так:
+
+```
+my-extension/
+├── .addfox/           # Выходные файлы сборки и кэш (автоматически генерируется)
+├── app/                # Исходный код приложения (настраивается)
+├── public/             # Статические ресурсы
+├── addfox.config.ts       # Конфигурационный файл Addfox
+└── package.json        # Зависимости проекта
+```
+
+## Директория .addfox
+
+`.addfox` **автоматически генерируется** фреймворком и содержит:
+
+- **`extension/`** — директория выходных файлов сборки по умолчанию (можно изменить через `outDir`)
+- **`cache/`** — кэш сборки для ускорения последующих сборок
+
+:::tip
+Не удаляйте директорию `cache` без необходимости, иначе это повлияет на скорость сборки и повторное использование пользовательских данных браузера.
+:::
+
+## Директория app
+
+`app/` — это директория исходного кода приложения по умолчанию, содержащая все entry points расширения и файлы manifest. Можно изменить через опцию конфигурации `appDir`:
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  appDir: "src",  // изменение на директорию src
+});
+```
+
+### Рекомендуемая структура директорий
+
+<Tabs>
+  <Tab label="Многофайловая структура (рекомендуется)">
+
+```
+app/
+├── background/
+│   └── index.ts          # Service Worker / Background script
+├── content/
+│   └── index.ts          # Content script
+├── popup/
+│   ├── index.html        # Popup HTML (опционально)
+│   └── index.ts          # Popup script
+├── options/
+│   ├── index.html        # Options page HTML (опционально)
+│   └── index.ts          # Options page script
+├── sidepanel/
+│   └── index.ts          # Side panel
+├── manifest/
+│   ├── manifest.json           # Базовая конфигурация
+│   ├── manifest.chromium.json  # Переопределение для Chrome
+│   └── manifest.firefox.json   # Переопределение для Firefox
+└── ...
+```
+
+  </Tab>
+  <Tab label="Однофайловая структура">
+
+```
+app/
+├── background.ts         # Background script
+├── content.ts            # Content script
+├── popup.html            # Popup страница
+├── popup.ts              # Popup script
+├── manifest.json         # Extension manifest
+└── ...
+```
+
+  </Tab>
+</Tabs>
+
+:::info
+Подробнее о правилах обнаружения entry points см. [File-based entry](/guide/entry/file-based) и [конфигурация `entry`](/config/entry).
+:::
+
+## Директория public
+
+`public/` используется для **статических ресурсов**, которые копируются в выходную директорию без изменений и не обрабатываются сборщиком:
+
+```
+public/
+├── icons/                # Иконки расширения
+│   ├── icon16.png
+│   ├── icon48.png
+│   └── icon128.png
+├── _locales/             # Файлы локализации
+│   └── zh_CN/
+│       └── messages.json
+└── welcome.html          # Страница приветствия
+```
+
+## Типы entry points
+
+Addfox поддерживает следующие встроенные типы entry points:
+
+| Имя entry point | Тип | Описание | Генерирует HTML |
+|--------|------|------|-----------|
+| `background` | Только скрипт | Service Worker / Background script | Нет |
+| `content` | Только скрипт | Content script | Нет |
+| `popup` | Скрипт+страница | Toolbar popup | Да |
+| `options` | Скрипт+страница | Options страница расширения | Да |
+| `sidepanel` | Скрипт+страница | Side panel | Да |
+| `devtools` | Скрипт+страница | DevTools | Да |
+| `offscreen` | Скрипт+страница | Offscreen document | Да |
+
+:::warning
+Имена встроенных entry points **нельзя изменить**, Addfox использует их для автоматического распознавания.
+:::
+
+## Конфигурационные файлы
+
+### addfox.config.ts / addfox.config.js
+
+Это **обязательный конфигурационный файл** Addfox, используемый для объявления:
+
+- Extension manifest
+- Entry files
+- Выходной директории (outDir)
+- Rsbuild плагинов и конфигурации
+
+### Минимальный пример конфигурации
+
+```ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  // При отсутствии конфигурации фреймворк автоматически обнаружит entry points и manifest из app/
+});
+```
+
+## Связанная конфигурация
+
+- [`appDir`](/config/app-dir) — настройка директории приложения
+- [`entry`](/config/entry) — ручная настройка entry points
+- [`outDir`](/config/out-dir) — настройка выходной директории
+- [`manifest`](/config/manifest) — способы конфигурации manifest

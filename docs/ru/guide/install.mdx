@@ -1,0 +1,176 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Установка
+
+## Способ 1: Создание через CLI (рекомендуется)
+
+Используйте официальный CLI для быстрого создания проекта с автоматически настроенной средой разработки:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm create addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npx create-addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn create addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun create addfox-app
+```
+
+  </Tab>
+</Tabs>
+
+### Интерактивный процесс установки
+
+CLI проведет вас через следующие шаги:
+
+1. **Имя проекта** — введите название директории проекта (по умолчанию: `my-extension`)
+2. **Выбор фреймворка** — выберите предпочитаемый frontend-фреймворк: Vanilla / Vue / React / Preact / Svelte / Solid
+3. **CSS engine** — выберите CSS-решение: `none` / `tailwindcss` / `unocss` / `less` / `sass`
+4. **Выбор языка** — выберите TypeScript или JavaScript
+5. **Package manager** — выберите pnpm, npm, yarn или bun
+6. **Выбор entry points** — выберите entry points расширения: Background / Content Script / Popup / Options Page / Side Panel / DevTools
+7. **Тестирование (опционально)** — выберите, инициализировать ли Unit (rstest) или E2E (rstest + Playwright)
+8. **Rsdoctor (опционально)** — выберите, устанавливать ли `@rsdoctor/rspack-plugin`
+9. **Установка Skills** — выберите, устанавливать ли addfox skills для проекта
+
+После создания CLI отобразит следующие шаги:
+
+```bash
+cd my-extension
+pnpm install
+pnpm dev
+```
+
+## Способ 2: Ручная интеграция в существующий проект
+
+### 1. Установка зависимостей
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D addfox
+```
+
+  </Tab>
+</Tabs>
+
+### 2. Создание конфигурационного файла
+
+Создайте `addfox.config.ts` в корне проекта:
+
+```ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  manifest: {
+    name: "Моё расширение",
+    version: "1.0.0",
+    manifest_version: 3,
+    permissions: ["storage", "activeTab"],
+  },
+});
+```
+
+### 3. Добавление entry files
+
+Создайте базовую структуру директорий:
+
+```tree
+my-extension/
+├── app/
+│   ├── background/
+│   │   └── index.ts      # Background script
+│   ├── content/
+│   │   └── index.ts      # Content script
+│   ├── popup/
+│   │   ├── index.html    # Popup страница (опционально)
+│   │   └── index.ts      # Popup script
+│   └── manifest.json     # Extension manifest
+├── addfox.config.ts
+└── package.json
+```
+
+### 4. Добавление скриптов
+
+Добавьте в `package.json`:
+
+```json
+{
+  "scripts": {
+    "dev": "addfox dev -b chrome",
+    "build": "addfox build -b chrome"
+  }
+}
+```
+
+### 5. Запуск команд
+
+- **Разработка**: `addfox dev` или используйте скрипты package manager (например, `pnpm dev`).
+- **Сборка**: `addfox build`; выходные файлы помещаются в `outputRoot/outDir/extension-<browser>` (по умолчанию `.addfox/extension/extension-chromium`).
+
+Используйте `-b chrome|chromium|edge|brave|vivaldi|opera|santa|arc|yandex|browseros|custom|firefox` для указания целевого браузера:
+
+По умолчанию используется Chrome.
+
+## Пример полной конфигурации
+
+```ts
+import { defineConfig } from "addfox";
+import { pluginReact } from "@rsbuild/plugin-react";
+
+export default defineConfig({
+  manifest: {
+    name: "Моё расширение",
+    version: "1.0.0",
+    manifest_version: 3,
+    permissions: ["storage", "activeTab"],
+  },
+  plugins: [pluginReact()],
+});
+```
+
+## Следующие шаги
+
+- [Структура директорий](/guide/app-dir) — узнайте об организации файлов проекта
+- [Настройка entry points](/guide/entry/concept) — научитесь настраивать entry points расширения
+- [Конфигурация Manifest](/config/manifest) — просмотрите полные опции конфигурации manifest

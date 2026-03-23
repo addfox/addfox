@@ -1,0 +1,168 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# browserPath
+
+`browserPath`는 개발 시 자동으로 브라우저를 열고 확장을 로드할 브라우저 실행 파일 경로를 구성하는 데 사용됩니다.
+
+## 개요
+
+- **타입**: `BrowserPathConfig`
+- **기본값**: `undefined` (시스템 기본 경로 사용)
+- **필수 여부**: 아니오
+
+## Chromium 기반 브라우저
+
+다음 Chromium 기반 브라우저를 지원합니다:
+
+| 브라우저 | 구성 키 | 기본 경로 |
+|--------|--------|----------|
+| Google Chrome | `chrome` | 자동 감지 |
+| Chromium | `chromium` | 자동 감지 |
+| Microsoft Edge | `edge` | 자동 감지 |
+| Brave | `brave` | 자동 감지 |
+| Vivaldi | `vivaldi` | 자동 감지 |
+| Opera | `opera` | 자동 감지 |
+| Arc | `arc` | 자동 감지 |
+
+### 구성 예시
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  },
+});
+```
+
+### CLI로 시작
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- -b chrome
+pnpm dev -- -b edge
+pnpm dev -- -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- -b chrome
+npm run dev -- -b edge
+npm run dev -- -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev -b chrome
+yarn dev -b edge
+yarn dev -b brave
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- -b chrome
+bun run dev -- -b edge
+bun run dev -- -b brave
+```
+
+  </Tab>
+</Tabs>
+
+## Firefox
+
+Firefox는 `web-ext` 도구를 사용하여 확장을 관리하며, 경로 구성 방식은 동일합니다:
+
+```ts
+export default defineConfig({
+  browserPath: {
+    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  },
+});
+```
+
+### Firefox 시작
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev -- -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev -- -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev -- -b firefox
+```
+
+  </Tab>
+</Tabs>
+
+:::info
+Firefox 개발 모드는 `web-ext` 도구를 사용하며, 확장 리로드는 Addfox의 WebSocket이 아닌 `web-ext`에서 처리합니다.
+:::
+
+## 각 플랫폼 예시
+
+### macOS
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  },
+});
+```
+
+### Windows
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  },
+});
+```
+
+### Linux
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/usr/bin/google-chrome",
+    chromium: "/usr/bin/chromium-browser",
+    firefox: "/usr/bin/firefox",
+  },
+});
+```
+
+## 관련 설정
+
+- [guide/launch](/guide/launch) - 브라우저 시작 가이드

@@ -34,6 +34,30 @@ export default {
       title: "AddFox",
       description: "Browser extension development framework built on Rsbuild",
     },
+    {
+      lang: "ja",
+      label: "日本語",
+      title: "AddFox",
+      description: "Rsbuild ベースのブラウザ拡張開発フレームワーク",
+    },
+    {
+      lang: "ko",
+      label: "한국어",
+      title: "AddFox",
+      description: "Rsbuild 기반 브라우저 확장 프로그램 개발 프레임워크",
+    },
+    {
+      lang: "ru",
+      label: "Русский",
+      title: "AddFox",
+      description: "Фреймворк разработки браузерных расширений на базе Rsbuild",
+    },
+    {
+      lang: "es",
+      label: "Español",
+      title: "AddFox",
+      description: "Framework de desarrollo de extensiones de navegador basado en Rsbuild",
+    },
   ],
   icon: "/addfox-z.png",
   logo: { light: "/addfox-z.png", dark: "/addfox-light-z.png" },
@@ -53,6 +77,10 @@ export default {
     editLinkText: {
       zh: "编辑此页",
       en: "Edit this page",
+      ja: "このページを編集",
+      ko: "이 페이지 편집",
+      ru: "Редактировать эту страницу",
+      es: "Editar esta página",
     },
   },
   markdown: {

@@ -1,0 +1,176 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# 설치
+
+## 방법 1: CLI로 생성 (권장)
+
+공식 CLI를 사용하여 프로젝트를 빠르게 생성하면 개발 환경이 자동으로 구성됩니다:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm create addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npx create-addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn create addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun create addfox-app
+```
+
+  </Tab>
+</Tabs>
+
+### 대화형 설치 프로세스
+
+CLI가 다음 단계를 안내합니다:
+
+1. **프로젝트 이름** — 프로젝트 디렉토리 이름 입력 (기본값: `my-extension`)
+2. **프레임워크 선택** — 선호하는 frontend framework 선택: Vanilla / Vue / React / Preact / Svelte / Solid
+3. **스타일 엔진** — 스타일 솔루션 선택: `none` / `tailwindcss` / `unocss` / `less` / `sass`
+4. **언어 선택** — TypeScript 또는 JavaScript 선택
+5. **패키지 매니저** — pnpm, npm, yarn 또는 bun 선택
+6. **엔트리 선택** — 포함할 extension entry 선택: Background / Content Script / Popup / Options Page / Side Panel / DevTools
+7. **테스트 기능 (선택)** — Unit (rstest) 또는 E2E (rstest + Playwright) 초기화 여부 선택
+8. **Rsdoctor (선택)** — `@rsdoctor/rspack-plugin` 설치 여부 선택
+9. **Skills 설치** — 프로젝트에 addfox skills 설치 여부 선택
+
+생성 완료 후 CLI가 다음 단계를 표시합니다:
+
+```bash
+cd my-extension
+pnpm install
+pnpm dev
+```
+
+## 방법 2: 기존 프로젝트에 수동 통합
+
+### 1. 의존성 설치
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D addfox
+```
+
+  </Tab>
+</Tabs>
+
+### 2. 설정 파일 생성
+
+프로젝트 루트에 `addfox.config.ts` 생성:
+
+```ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  manifest: {
+    name: "我的扩展",
+    version: "1.0.0",
+    manifest_version: 3,
+    permissions: ["storage", "activeTab"],
+  },
+});
+```
+
+### 3. 엔트리 파일 추가
+
+기본 디렉토리 구조 생성:
+
+```tree
+my-extension/
+├── app/
+│   ├── background/
+│   │   └── index.ts      # background script
+│   ├── content/
+│   │   └── index.ts      # content script
+│   ├── popup/
+│   │   ├── index.html    # popup 페이지 (선택)
+│   │   └── index.ts      # popup script
+│   └── manifest.json     # extension manifest
+├── addfox.config.ts
+└── package.json
+```
+
+### 4. 스크립트 명령 추가
+
+`package.json`에 추가:
+
+```json
+{
+  "scripts": {
+    "dev": "addfox dev -b chrome",
+    "build": "addfox build -b chrome"
+  }
+}
+```
+
+### 5. 명령 실행
+
+- **개발**: `addfox dev` 또는 패키지 매니저의 run script 사용 (예: `pnpm dev`).
+- **빌드**: `addfox build`; 출력물은 `outputRoot/outDir/extension-<browser>`에 저장됨 (기본값 `.addfox/extension/extension-chromium`).
+
+`-b chrome|chromium|edge|brave|vivaldi|opera|santa|arc|yandex|browseros|custom|firefox`로 대상 browser 지정:
+
+미지정 시 기본값은 Chrome입니다.
+
+## 전체 설정 예시
+
+```ts
+import { defineConfig } from "addfox";
+import { pluginReact } from "@rsbuild/plugin-react";
+
+export default defineConfig({
+  manifest: {
+    name: "我的扩展",
+    version: "1.0.0",
+    manifest_version: 3,
+    permissions: ["storage", "activeTab"],
+  },
+  plugins: [pluginReact()],
+});
+```
+
+## 다음 단계
+
+- [디렉토리 구조](/ko/guide/app-dir) — 프로젝트 파일 구성 방식 이해
+- [엔트리 설정](/ko/guide/entry/concept) — extension entry 설정 방법 학습
+- [Manifest 설정](/ko/config/manifest) — 전체 manifest 설정 옵션 보기

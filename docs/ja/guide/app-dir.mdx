@@ -1,0 +1,148 @@
+import { Tab, Tabs } from '@rspress/core/theme';
+
+# ディレクトリ構造
+
+Addfox は「設定より規約」のデザイン理念を採用しています。標準的なディレクトリ構造を理解することで、素早く始めてベストプラクティスに従うことができます。
+
+## プロジェクトルート
+
+典型的な Addfox プロジェクトの構造は以下の通りです：
+
+```
+my-extension/
+├── .addfox/           # ビルド出力とキャッシュ（自動生成）
+├── app/                # アプリケーションソースコード（設定可能）
+├── public/             # 静的リソース
+├── addfox.config.ts       # Addfox 設定ファイル
+└── package.json        # プロジェクト依存関係
+```
+
+## .addfox ディレクトリ
+
+`.addfox` はフレームワークによって**自動生成**され、以下を含みます：
+
+- **`extension/`** — デフォルトのビルド出力ディレクトリ（`outDir` で変更可能）
+- **`cache/`** — ビルドキャッシュ、後続のビルドを高速化するために使用
+
+:::tip
+必要でない限り `cache` ディレクトリを削除しないでください。削除するとビルド速度やブラウザユーザーデータの再利用に影響します。
+:::
+
+## app ディレクトリ
+
+`app/` はデフォルトのアプリケーションソースコードディレクトリで、すべての拡張エントリと manifest ファイルが格納されます。`appDir` 設定項目で変更できます：
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  appDir: "src",  // src ディレクトリに変更
+});
+```
+
+### 推奨されるディレクトリ構造
+
+<Tabs>
+  <Tab label="マルチファイル構造（推奨）">
+
+```
+app/
+├── background/
+│   └── index.ts          # Service Worker / バックグラウンドスクリプト
+├── content/
+│   └── index.ts          # コンテンツスクリプト
+├── popup/
+│   ├── index.html        # ポップアップ HTML（オプション）
+│   └── index.ts          # ポップアップスクリプト
+├── options/
+│   ├── index.html        # オプションページ HTML（オプション）
+│   └── index.ts          # オプションページスクリプト
+├── sidepanel/
+│   └── index.ts          # サイドパネル
+├── manifest/
+│   ├── manifest.json           # 基本設定
+│   ├── manifest.chromium.json  # Chrome 上書き
+│   └── manifest.firefox.json   # Firefox 上書き
+└── ...
+```
+
+  </Tab>
+  <Tab label="シングルファイル構造">
+
+```
+app/
+├── background.ts         # バックグラウンドスクリプト
+├── content.ts            # コンテンツスクリプト
+├── popup.html            # ポップアップページ
+├── popup.ts              # ポップアップスクリプト
+├── manifest.json         # 拡張マニフェスト
+└── ...
+```
+
+  </Tab>
+</Tabs>
+
+:::info
+エントリ検出ルールの詳細については、[ファイルベースのエントリ](/ja/guide/entry/file-based) と [`entry` 設定](/ja/config/entry) を参照してください。
+:::
+
+## public ディレクトリ
+
+`public/` は**静的リソース**を格納するために使用され、ビルド時に出力ディレクトリにそのままコピーされ、バンドル処理は行われません：
+
+```
+public/
+├── icons/                # 拡張アイコン
+│   ├── icon16.png
+│   ├── icon48.png
+│   └── icon128.png
+├── _locales/             # 国際化ファイル
+│   └── zh_CN/
+│       └── messages.json
+└── welcome.html          # ウェルカムページ
+```
+
+## エントリタイプ
+
+Addfox は以下の組み込みエントリをサポートしています：
+
+| エントリ名 | タイプ | 説明 | HTML 生成 |
+|--------|------|------|-----------|
+| `background` | スクリプトのみ | Service Worker / バックグラウンドスクリプト | いいえ |
+| `content` | スクリプトのみ | コンテンツスクリプト | いいえ |
+| `popup` | スクリプト+ページ | ツールバーポップアップ | はい |
+| `options` | スクリプト+ページ | 拡張オプションページ | はい |
+| `sidepanel` | スクリプト+ページ | サイドパネル | はい |
+| `devtools` | スクリプト+ページ | 開発者ツール | はい |
+| `offscreen` | スクリプト+ページ | Offscreen ドキュメント | はい |
+
+:::warning
+組み込みのエントリ名は**変更不可**です。Addfox はこれらの名前に依存して自動認識を行います。
+:::
+
+## 設定ファイル
+
+### addfox.config.ts / addfox.config.js
+
+これは Addfox の**必須設定ファイル**で、以下を宣言するために使用されます：
+
+- 拡張マニフェスト（manifest）
+- エントリファイル（entry）
+- 出力ディレクトリ（outDir）
+- Rsbuild プラグインと設定
+
+### 最小設定例
+
+```ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  // 設定を省略すると、フレームワークは app/ からエントリと manifest を自動検出します
+});
+```
+
+## 関連設定
+
+- [`appDir`](/ja/config/app-dir) — アプリケーションディレクトリのカスタマイズ
+- [`entry`](/ja/config/entry) — エントリの手動設定
+- [`outDir`](/ja/config/out-dir) — 出力ディレクトリのカスタマイズ
+- [`manifest`](/ja/config/manifest) — manifest 設定方法

@@ -1,0 +1,262 @@
+import { Tab, Tabs } from '@rspress/core/theme';
+
+# ファイルベースのエントリー
+
+`addfox.config.ts` の `entry` フィールドを**設定しない**場合、Addfox は規約に従って自動的にエントリーファイルを検出します。これはお勧めの開発方法で、設定ではなくビジネスコードに集中できます。
+
+## コア原則
+
+### Rsbuild に基づくビルド
+
+- **エントリーは JS/TS である必要がある**：実際のビルドエントリーは `.js`、`.jsx`、`.ts`、`.tsx` スクリプトのみ
+- **HTML の処理**：
+  - HTML を提供しない → Rsbuild が自動的に生成
+  - HTML を提供する → テンプレートとして使用しますが、`data-addfox-entry` を介してエントリースクリプトを指定する必要がある
+
+## ディレクトリ構造の規約
+
+### スクリプトのみのエントリー（background / content）
+
+これらのエントリーには HTML ページは不要で、スクリプトファイルのみを提供します。
+
+<Tabs>
+<Tab label="ディレクトリ形式（推奨）">
+
+```tree
+app/
+├── background/
+│   └── index.ts          # background エントリー
+└── content/
+    └── index.ts          # content エントリー
+```
+
+| エントリー名 | エントリーファイル | 出力パス |
+|--------|----------|----------|
+| `background` | `app/background/index.ts` | `extension/background/index.js` |
+| `content` | `app/content/index.ts` | `extension/content/index.js` |
+
+</Tab>
+<Tab label="単一ファイル形式">
+
+```tree
+app/
+├── background.ts         # background エントリー
+└── content.ts            # content エントリー
+```
+
+| エントリー名 | エントリーファイル | 出力パス |
+|--------|----------|----------|
+| `background` | `app/background.ts` | `extension/background.js` |
+| `content` | `app/content.ts` | `extension/content.js` |
+
+</Tab>
+</Tabs>
+
+### ページが必要なエントリー（popup / options / sidepanel / devtools / offscreen）
+
+これらのエントリーは **HTML + JS** を出力します。2つの方法をサポートしています：
+
+#### 方法1：HTML を提供しない（推奨）
+
+スクリプトのみを記述し、HTML は記述しません。Rsbuild が自動的に HTML を生成し、スクリプトを注入します。
+
+:::tip 自動生成された HTML のページ規約
+
+**`index.html`** などのテンプレートを提供せず、ビルドによって HTML を自動生成する場合、Addfox / Rsbuild は以下を規約します：
+
+- **マウントノード**：ページには **`<div id="root"></div>`** が含まれ、React / Vue などの `createRoot` / `mount` で使用されます。
+- **`<title>``**：拡張機能マニフェスト **`manifest.name`** と一致します（manifest の変更に応じて更新されます）。
+- **タブアイコン（favicon）**：**`<link rel="icon">`** を介して注入され、**`href`** は **`manifest.icons`** から取得されます（適切なサイズを選択し、パスは出力 HTML の位置から相対パスとして解決されます）。
+
+**カスタム HTML テンプレート**をエントリーで使用する場合、上記の `title` / アイコン注入は自動的に適用されず、テンプレートで自分で `<title>` とアイコン `<link>` を作成する必要があります（`data-addfox-entry` とマウントノード、通常は `#root` を保持する必要があります）。
+
+:::
+
+<Tabs>
+<Tab label="ディレクトリ形式">
+
+```tree
+app/
+├── popup/
+│   └── index.ts          # popup エントリー
+├── options/
+│   └── index.ts          # options エントリー
+└── sidepanel/
+    └── index.ts          # sidepanel エントリー
+```
+
+| エントリー名 | 出力 HTML | 出力 JS |
+|--------|-----------|---------|
+| `popup` | `extension/popup/index.html` | `extension/popup/index.js` |
+| `options` | `extension/options/index.html` | `extension/options/index.js` |
+| `sidepanel` | `extension/sidepanel/index.html` | `extension/sidepanel/index.js` |
+
+</Tab>
+<Tab label="単一ファイル形式">
+
+```tree
+app/
+├── popup.ts              # popup エントリー
+├── options.ts            # options エントリー
+└── sidepanel.ts          # sidepanel エントリー
+```
+
+| エントリー名 | 出力 HTML | 出力 JS |
+|--------|-----------|---------|
+| `popup` | `extension/popup.html` | `extension/popup.js` |
+| `options` | `extension/options.html` | `extension/options.js` |
+| `sidepanel` | `extension/sidepanel.html` | `extension/sidepanel.js` |
+
+</Tab>
+</Tabs>
+
+#### 方法2：HTML テンプレートを提供
+
+カスタムページ構造が必要な場合は、エントリーディレクトリ（または同じ名前の単一ファイルの隣）に HTML ファイルを配置できます。
+
+:::warning 重要
+カスタム HTML を使用する場合、**必ず** `data-addfox-entry` 属性を介してエントリースクリプトを指定する必要があります。そうしないと、フレームワークは認識できません。
+:::
+
+<Tabs>
+<Tab label="ディレクトリ形式">
+
+```tree
+app/
+└── popup/
+    ├── index.html        # ページテンプレート
+    └── index.ts          # エントリースクリプト
+```
+
+```html
+<!-- app/popup/index.html -->
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- 重要：data-addfox-entry を介してエントリースクリプトを指定 -->
+    <script type="module" src="./index.ts" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+</Tab>
+<Tab label="単一ファイル形式">
+
+```tree
+app/
+├── popup.html            # ページテンプレート
+└── popup.ts              # エントリースクリプト
+```
+
+```html
+<!-- app/popup.html -->
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./popup.ts" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+</Tab>
+</Tabs>
+
+:::tip HTML テンプレートに関する注意事項
+- `data-addfox-entry` は1つの HTML ファイルに**1回のみ**出現可能
+- `src` は相対パスで、同じディレクトリまたは他の場所のスクリプトを指すことが可能
+- その他のリソース（CSS、画像など）は、エントリースクリプトで `import` を介して読み込んでください。HTML で直接参照しないでください
+- HTML ファイル自体はコンパイルに参加せず、テンプレートとしてのみ使用されます
+- **カスタムテンプレート**は manifest の `name` / `icons` を自動的に `<title>` と favicon に同期しません。上記の「自動生成された HTML のページ規約」は**自動生成**された HTML にのみ適用されます
+
+:::
+
+## 完全な例
+
+### 例1：すべての HTML を自動生成
+
+```tree
+app/
+├── background/
+│   └── index.ts          # スクリプトのみ
+├── content/
+│   └── index.ts          # スクリプトのみ
+├── popup/
+│   └── index.ts          # HTML を自動生成
+├── options/
+│   └── index.ts          # HTML を自動生成
+└── manifest.json
+```
+
+### 例2：混在して使用
+
+```tree
+app/
+├── background.ts         # 単一ファイル形式
+├── content/
+│   └── index.ts          # ディレクトリ形式
+├── popup/
+│   ├── index.html        # カスタムテンプレート
+│   └── index.ts
+└── options/
+    └── index.ts          # HTML を自動生成
+```
+
+### 例3：フレームワークを使用（React を例に）
+
+```tree
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.tsx
+├── popup/
+│   └── index.tsx         # React コンポーネントでレンダリング
+└── manifest.json
+```
+
+```tsx
+// app/popup/index.tsx
+import { createRoot } from 'react-dom/client';
+import { Popup } from './Popup';
+
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(<Popup />);
+```
+
+## よくある質問
+
+### Q: エントリーファイルは index.ts である必要がありますか？
+
+**ディレクトリ形式**では、`index.(js|ts|jsx|tsx)` である必要があります。**単一ファイル形式**では、`エントリー名.(js|ts|jsx|tsx)` になります。
+
+### Q: 複数レベルのネストされたディレクトリをサポートしていますか？
+
+サポートしていません。エントリーディレクトリは1レベルのみ可能です。つまり、`app/popup/index.ts` ✓ ですが、`app/pages/popup/index.ts` ✗ です。
+
+### Q: 自動生成とカスタム HTML を混在させることはできますか？
+
+可能です。各エントリーは独立して決定され、一部は自動生成を使用し、一部はカスタムテンプレートを使用できます。
+
+### Q: HTML テンプレートの問題をデバッグする方法は？
+
+確認してください：
+1. HTML ファイルに `data-addfox-entry` 属性があるか
+2. `src` パスがエントリースクリプトを正しく指しているか
+3. `data-addfox-entry` を持つ script タグが1つだけあるか
+
+## 次のステップ
+
+- [設定ベースのエントリー](/ja/guide/entry/config-based) — エントリーパスを明示的に設定する方法を学ぶ
+- [appDir 設定](/ja/config/app-dir) — ソースコードディレクトリを変更する
+- [manifest 設定](/ja/config/manifest) — 拡張機能マニフェストを設定する

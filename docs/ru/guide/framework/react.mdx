@@ -1,0 +1,293 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# React
+
+Addfox полностью поддерживает React, можно использовать JSX/TSX для разработки всех entry расширения.
+
+## Установка
+
+Выберите шаблон React при создании проекта:
+
+```bash
+pnpm create addfox-app --framework react
+```
+
+Или установите в существующий проект:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @rsbuild/plugin-react
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @rsbuild/plugin-react
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @rsbuild/plugin-react
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @rsbuild/plugin-react
+```
+
+  </Tab>
+</Tabs>
+
+## Конфигурация
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginReact } from "@rsbuild/plugin-react";
+
+export default defineConfig({
+  plugins: [pluginReact()],
+});
+```
+
+## Структура проекта
+
+```
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.tsx
+├── popup/
+│   ├── App.tsx
+│   ├── index.html
+│   └── index.tsx
+├── options/
+│   ├── App.tsx
+│   ├── index.html
+│   └── index.tsx
+└── manifest.json
+```
+
+## Пример кода
+
+### Popup
+
+```tsx
+// app/popup/index.tsx
+import { createRoot } from 'react-dom/client';
+import { App } from './App';
+import './index.css';
+
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(<App />);
+```
+
+```tsx
+// app/popup/App.tsx
+import { useState } from 'react';
+
+export function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div className="p-4">
+      <h1 className="text-xl font-bold">Hello React!</h1>
+      <button 
+        onClick={() => setCount(c => c + 1)}
+        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Count: {count}
+      </button>
+    </div>
+  );
+}
+```
+
+Если **опустить** следующий `index.html` и оставить только `index.tsx`, сборка автоматически сгенерирует HTML, содержащий **`id="root"`**, **title** и **favicon**, синхронизированные с **`manifest.name`** / **`manifest.icons`** (см. [Entry на основе файлов](/ru/guide/entry/file-based)). Следующий пример является **опциональным** пользовательским шаблоном:
+
+```html
+<!-- app/popup/index.html (опционально; при пользовательском шаблоне необходимо самостоятельно написать title / иконку) -->
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./index.tsx" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+### Content Script
+
+```tsx
+// app/content/index.tsx
+import { createRoot } from 'react-dom/client';
+import { ContentApp } from './ContentApp';
+
+// Создание точки монтирования
+const container = document.createElement('div');
+container.id = 'my-extension-root';
+document.body.appendChild(container);
+
+const root = createRoot(container);
+root.render(<ContentApp />);
+```
+
+### Background
+
+```ts
+// app/background/index.ts
+// Background не использует React, используем обычный TypeScript
+
+chrome.action.onClicked.addListener((tab) => {
+  console.log('Extension clicked');
+});
+```
+
+## Управление состоянием
+
+Можно использовать любое решение для управления состоянием React:
+
+### Zustand
+
+```bash
+pnpm add zustand
+```
+
+```ts
+// app/store.ts
+import { create } from 'zustand';
+
+interface Store {
+  count: number;
+  increment: () => void;
+}
+
+export const useStore = create<Store>((set) => ({
+  count: 0,
+  increment: () => set((state) => ({ count: state.count + 1 })),
+}));
+```
+
+### Jotai
+
+```bash
+pnpm add jotai
+```
+
+```ts
+// app/atoms.ts
+import { atom } from 'jotai';
+
+export const countAtom = atom(0);
+```
+
+## CSS решения
+
+### Tailwind CSS
+
+```bash
+pnpm add -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+```js
+// tailwind.config.js
+module.exports = {
+  content: ["./app/**/*.{js,ts,jsx,tsx}"],
+  theme: { extend: {} },
+  plugins: [],
+};
+```
+
+```css
+/* app/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+### CSS Modules
+
+```tsx
+// app/popup/App.tsx
+import styles from './App.module.css';
+
+export function App() {
+  return <div className={styles.container}>Hello</div>;
+}
+```
+
+```css
+/* app/popup/App.module.css */
+.container {
+  padding: 16px;
+}
+```
+
+### CSS-in-JS
+
+Поддерживаются styled-components или emotion:
+
+```bash
+pnpm add styled-components
+```
+
+```tsx
+import styled from 'styled-components';
+
+const Button = styled.button`
+  background: blue;
+  color: white;
+  padding: 8px 16px;
+`;
+
+export function App() {
+  return <Button>Click me</Button>;
+}
+```
+
+## Взаимодействие с Chrome API
+
+```tsx
+import { useEffect, useState } from 'react';
+
+export function TabList() {
+  const [tabs, setTabs] = useState<chrome.tabs.Tab[]>([]);
+
+  useEffect(() => {
+    chrome.tabs.query({}, setTabs);
+  }, []);
+
+  const activateTab = (tabId: number) => {
+    chrome.tabs.update(tabId, { active: true });
+  };
+
+  return (
+    <ul>
+      {tabs.map((tab) => (
+        <li key={tab.id} onClick={() => activateTab(tab.id!)}>
+          {tab.title}
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+## Связанные ссылки
+
+- [Плагин React для Rsbuild](https://rsbuild.dev/plugins/list/plugin-react)
+- [Документация React](https://react.dev/)

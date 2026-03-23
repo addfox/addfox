@@ -1,0 +1,125 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# パッケージング
+
+ビルド完了後、Addfox は自動的に出力ディレクトリを zip ファイルにパッケージングし、配布を容易にします。
+
+## デフォルトの動作
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm build
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run build
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn build
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run build
+```
+
+  </Tab>
+</Tabs>
+
+ビルド完了後に生成：
+
+```tree
+.addfox/
+├── extension/          # ビルド出力
+└── extension.zip       # パッケージファイル
+```
+
+## 設定
+
+### パッケージングを無効にする
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  zip: false,
+});
+```
+
+### パッケージングを有効にする（デフォルト）
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  zip: true,
+});
+```
+
+または設定しない（デフォルト値を使用）。
+
+## パッケージング内容
+
+zip ファイルにはビルド出力のすべての内容が含まれます：
+
+- `manifest.json` — 拡張機能マニフェスト
+- `background/` — バックグラウンドスクリプト
+- `content/` — Content Script
+- `popup/` — ポップアップページ
+- `options/` — オプションページ
+- その他のエントリー
+- `public/` ディレクトリの静的リソース（アイコン、国際化ファイルなど）
+
+## 用途
+
+パッケージングされた zip ファイルは以下に使用できます：
+
+### Chrome Web Store に提出
+
+1. [Chrome Web Store デベロッパーセンター](https://chrome.google.com/webstore/devconsole/) にアクセス
+2. プロジェクトを作成または選択
+3. `extension.zip` をアップロード
+
+### Firefox Add-ons に提出
+
+1. [Firefox アドオン デベロッパーセンター](https://addons.mozilla.org/developers/) にアクセス
+2. 新しいアドオンを提出
+3. `extension.zip` をアップロード
+
+### 内部分配
+
+- メール/クラウドストレージで共有
+- 内部テスト展開
+
+## 出力パス
+
+パッケージファイルの出力パス：
+
+```
+{outputRoot}/{outDir}.zip
+```
+
+デフォルト：`.addfox/extension.zip`
+
+`outDir` を変更した後：
+
+```ts
+export default defineConfig({
+  outDir: "dist",
+});
+// 出力：.addfox/dist.zip
+```
+
+## 関連設定
+
+- [`zip`](/ja/config/zip) - パッケージングスイッチ設定
+- [`outDir`](/ja/config/out-dir) - 出力ディレクトリ設定

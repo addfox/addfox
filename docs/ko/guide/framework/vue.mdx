@@ -1,0 +1,313 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Vue
+
+Addfox는 Vue 3을 완전히 지원하며, `.vue` 단일 파일 컴포넌트를 사용하여 확장을 개발할 수 있습니다.
+
+## 설치
+
+프로젝트 생성 시 Vue 템플릿 선택:
+
+```bash
+pnpm create addfox-app --framework vue
+```
+
+또는 기존 프로젝트에 설치:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @addfox/rsbuild-plugin-vue
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @addfox/rsbuild-plugin-vue
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @addfox/rsbuild-plugin-vue
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @addfox/rsbuild-plugin-vue
+```
+
+  </Tab>
+</Tabs>
+
+## 구성
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginVue } from "@addfox/rsbuild-plugin-vue";
+
+export default defineConfig({
+  plugins: [pluginVue()],
+});
+```
+
+## 프로젝트 구조
+
+```
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.ts
+├── popup/
+│   ├── App.vue
+│   ├── index.html
+│   └── index.ts
+├── options/
+│   ├── App.vue
+│   ├── index.html
+│   └── index.ts
+└── manifest.json
+```
+
+## 예시 코드
+
+### Popup
+
+```vue
+<!-- app/popup/App.vue -->
+<template>
+  <div class="popup">
+    <h1>{{ title }}</h1>
+    <p>Count: {{ count }}</p>
+    <button @click="increment">Increment</button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+
+const title = ref('Hello Vue!');
+const count = ref(0);
+
+const increment = () => {
+  count.value++;
+};
+</script>
+
+<style scoped>
+.popup {
+  padding: 16px;
+  min-width: 200px;
+}
+
+h1 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  background: #42b883;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+</style>
+```
+
+```ts
+// app/popup/index.ts
+import { createApp } from 'vue';
+import App from './App.vue';
+
+createApp(App).mount('#root');
+```
+
+아래의 `index.html`을 **생략**하고 `index.ts`만 유지하면 빌드가 자동으로 HTML을 생성하고 **`id="root"`**, **`manifest.name` / `manifest.icons`**과 동기화된 **title** 및 **favicon**을 포함합니다 (자세한 내용은 [파일 기반 Entry](/ko/guide/entry/file-based) 참조). 아래 예시는 **선택적** 사용자 지정 템플릿입니다:
+
+```html
+<!-- app/popup/index.html (선택적; 사용자 지정 시 title / 아이콘을 직접 작성해야 함) -->
+<!DOCTYPE html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./index.ts" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+### Content Script
+
+```ts
+// app/content/index.ts
+import { createApp } from 'vue';
+import ContentApp from './ContentApp.vue';
+
+// 마운트 포인트 생성
+const container = document.createElement('div');
+container.id = 'my-extension-root';
+document.body.appendChild(container);
+
+createApp(ContentApp).mount(container);
+```
+
+```vue
+<!-- app/content/ContentApp.vue -->
+<template>
+  <div class="content-widget">
+    <p>Hello from Vue Content Script!</p>
+  </div>
+</template>
+
+<style scoped>
+.content-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+}
+</style>
+```
+
+## 상태 관리
+
+### Pinia
+
+```bash
+pnpm add pinia
+```
+
+```ts
+// app/stores/counter.ts
+import { defineStore } from 'pinia';
+
+export const useCounterStore = defineStore('counter', {
+  state: () => ({
+    count: 0,
+  }),
+  actions: {
+    increment() {
+      this.count++;
+    },
+  },
+});
+```
+
+```ts
+// app/popup/index.ts
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import App from './App.vue';
+
+const app = createApp(App);
+app.use(createPinia());
+app.mount('#root');
+```
+
+### VueUse
+
+```bash
+pnpm add @vueuse/core
+```
+
+```vue
+<script setup>
+import { useStorage } from '@vueuse/core';
+
+// chrome.storage에 자동 동기화
+const count = useStorage('count', 0);
+</script>
+```
+
+## Chrome API와 상호 작용
+
+```vue
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+
+const tabs = ref<chrome.tabs.Tab[]>([]);
+
+onMounted(async () => {
+  tabs.value = await chrome.tabs.query({});
+});
+
+const activateTab = (tabId: number) => {
+  chrome.tabs.update(tabId, { active: true });
+};
+</script>
+
+<template>
+  <ul>
+    <li 
+      v-for="tab in tabs" 
+      :key="tab.id"
+      @click="activateTab(tab.id!)"
+    >
+      {{ tab.title }}
+    </li>
+  </ul>
+</template>
+```
+
+## CSS 솔루션
+
+### Tailwind CSS
+
+```bash
+pnpm add -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+```css
+/* app/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+```vue
+<template>
+  <div class="p-4 bg-gray-100">
+    <h1 class="text-xl font-bold text-blue-600">Hello Tailwind!</h1>
+  </div>
+</template>
+```
+
+### Scoped CSS
+
+Vue 단일 파일 컴포넌트는 기본적으로 scoped CSS를 지원합니다:
+
+```vue
+<style scoped>
+.button {
+  background: #42b883;
+}
+
+/* 깊은 선택자 */
+:deep(.child) {
+  color: red;
+}
+</style>
+```
+
+## 관련 링크
+
+- [@addfox/rsbuild-plugin-vue](https://www.npmjs.com/package/@addfox/rsbuild-plugin-vue)
+- [Vue 3 문서](https://vuejs.org/)
+- [Pinia 문서](https://pinia.vuejs.org/)

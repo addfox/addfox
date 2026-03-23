@@ -1,0 +1,112 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Solid
+
+Addfox soporta usar SolidJS para desarrollar extensiones, proporcionando una experiencia reactiva de alto rendimiento.
+
+## Instalación
+
+Seleccionar plantilla Solid al crear el proyecto:
+
+```bash
+pnpm create addfox-app --framework solid
+```
+
+O instalar en proyecto existente:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @rsbuild/plugin-solid
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @rsbuild/plugin-solid
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @rsbuild/plugin-solid
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @rsbuild/plugin-solid
+```
+
+  </Tab>
+</Tabs>
+
+## Configuración
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginSolid } from "@rsbuild/plugin-solid";
+
+export default defineConfig({
+  plugins: [pluginSolid()],
+});
+```
+
+## Código de ejemplo
+
+### Popup
+
+```tsx
+// app/popup/index.tsx
+import { render } from 'solid-js/web';
+import { App } from './App';
+import './index.css';
+
+render(() => <App />, document.getElementById('root')!);
+```
+
+```tsx
+// app/popup/App.tsx
+import { createSignal } from 'solid-js';
+
+export function App() {
+  const [count, setCount] = createSignal(0);
+
+  return (
+    <div class="p-4">
+      <h1 class="text-xl font-bold">Hello Solid!</h1>
+      <button 
+        onClick={() => setCount(c => c + 1)}
+        class="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Count: {count()}
+      </button>
+    </div>
+  );
+}
+```
+
+## Primitivas reactivas
+
+Solid usa reactividad de grano fino:
+
+```tsx
+import { createSignal, createEffect, createMemo } from 'solid-js';
+
+const [count, setCount] = createSignal(0);
+const double = createMemo(() => count() * 2);
+
+createEffect(() => {
+  console.log('Count changed:', count());
+});
+```
+
+## Enlaces relacionados
+
+- [Plugin Solid de Rsbuild](https://rsbuild.dev/plugins/list/plugin-solid)
+- [Documentación de SolidJS](https://www.solidjs.com/)

@@ -1,0 +1,65 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Tailwind CSS
+
+## 설치
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D tailwindcss @tailwindcss/postcss postcss
+```
+
+  </Tab>
+</Tabs>
+
+## 구성
+
+프로젝트 루트에 `postcss.config.mjs`를 생성합니다:
+
+```js
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+```
+
+## 사용
+
+스타일 Entry에서 Tailwind를 가져옵니다:
+
+```css
+/* app/popup/index.css */
+@import "tailwindcss";
+```
+
+페이지 Entry에서 이 CSS 파일을 가져옵니다:
+
+```ts
+import "./index.css";
+```
+
+그런 다음 컴포넌트에서 직접 Tailwind 클래스를 사용할 수 있습니다.

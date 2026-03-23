@@ -1,0 +1,120 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Preact
+
+Addfox는 Preact를 사용하여 확장을 개발할 수 있도록 지원하며, 더 작은 패키지 크기를 제공합니다.
+
+## 설치
+
+프로젝트 생성 시 Preact 템플릿 선택:
+
+```bash
+pnpm create addfox-app --framework preact
+```
+
+또는 기존 프로젝트에 설치:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @rsbuild/plugin-preact
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @rsbuild/plugin-preact
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @rsbuild/plugin-preact
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @rsbuild/plugin-preact
+```
+
+  </Tab>
+</Tabs>
+
+## 구성
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginPreact } from "@rsbuild/plugin-preact";
+
+export default defineConfig({
+  plugins: [pluginPreact()],
+});
+```
+
+## 프로젝트 구조
+
+```
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.tsx
+├── popup/
+│   ├── App.tsx
+│   ├── index.html
+│   └── index.tsx
+└── manifest.json
+```
+
+## 예시 코드
+
+### Popup
+
+```tsx
+// app/popup/index.tsx
+import { render } from 'preact';
+import { App } from './App';
+import './index.css';
+
+render(<App />, document.getElementById('root')!);
+```
+
+```tsx
+// app/popup/App.tsx
+import { useState } from 'preact/hooks';
+
+export function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div className="p-4">
+      <h1 className="text-xl font-bold">Hello Preact!</h1>
+      <button 
+        onClick={() => setCount(c => c + 1)}
+        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Count: {count}
+      </button>
+    </div>
+  );
+}
+```
+
+## Hooks
+
+Preact는 React와 호환되는 Hooks를 제공합니다:
+
+```tsx
+import { useState, useEffect, useCallback } from 'preact/hooks';
+```
+
+## 관련 링크
+
+- [Rsbuild Preact 플러그인](https://rsbuild.dev/plugins/list/plugin-preact)
+- [Preact 문서](https://preactjs.com/)

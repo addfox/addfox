@@ -1,0 +1,176 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Instalación
+
+## Método 1: Crear con Scaffolding (Recomendado)
+
+Utiliza el scaffolding oficial para crear un proyecto rápidamente con el entorno de desarrollo configurado automáticamente:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm create addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npx create-addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn create addfox-app
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun create addfox-app
+```
+
+  </Tab>
+</Tabs>
+
+### Proceso de Instalación Interactivo
+
+El scaffolding te guiará a través de los siguientes pasos:
+
+1. **Nombre del proyecto** — Ingresa el nombre del directorio del proyecto (por defecto: `my-extension`)
+2. **Selección de framework** — Elige tu framework frontend preferido: Vanilla / Vue / React / Preact / Svelte / Solid
+3. **Motor de estilos** — Selecciona la solución de estilos: `none` / `tailwindcss` / `unocss` / `less` / `sass`
+4. **Selección de lenguaje** — Elige TypeScript o JavaScript
+5. **Gestor de paquetes** — Selecciona pnpm, npm, yarn o bun
+6. **Selección de entry points** — Elige los entry points de extensión a incluir: Background / Content Script / Popup / Options Page / Side Panel / DevTools
+7. **Capacidades de testing (opcional)** — Selecciona si deseas inicializar Unit (rstest) o E2E (rstest + Playwright)
+8. **Rsdoctor (opcional)** — Selecciona si deseas instalar `@rsdoctor/rspack-plugin`
+9. **Instalar Skills** — Selecciona si deseas instalar addfox skills para el proyecto
+
+Una vez completada la creación, el CLI mostrará los siguientes pasos:
+
+```bash
+cd my-extension
+pnpm install
+pnpm dev
+```
+
+## Método 2: Integración Manual en Proyecto Existente
+
+### 1. Instalar Dependencias
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add -D addfox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add -D addfox
+```
+
+  </Tab>
+</Tabs>
+
+### 2. Crear Archivo de Configuración
+
+Crea `addfox.config.ts` en el directorio raíz del proyecto:
+
+```ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  manifest: {
+    name: "Mi Extensión",
+    version: "1.0.0",
+    manifest_version: 3,
+    permissions: ["storage", "activeTab"],
+  },
+});
+```
+
+### 3. Agregar Archivos de Entry Point
+
+Crea la estructura de directorios base:
+
+```tree
+my-extension/
+├── app/
+│   ├── background/
+│   │   └── index.ts      # Background script
+│   ├── content/
+│   │   └── index.ts      # Content script
+│   ├── popup/
+│   │   ├── index.html    # Página popup (opcional)
+│   │   └── index.ts      # Script popup
+│   └── manifest.json     # Manifest de extensión
+├── addfox.config.ts
+└── package.json
+```
+
+### 4. Agregar Comandos de Script
+
+Añade en `package.json`:
+
+```json
+{
+  "scripts": {
+    "dev": "addfox dev -b chrome",
+    "build": "addfox build -b chrome"
+  }
+}
+```
+
+### 5. Ejecutar Comandos
+
+- **Desarrollo**: `addfox dev` o usa el script de ejecución del gestor de paquetes (ej. `pnpm dev`).
+- **Build**: `addfox build`; los artefactos se generan en `outputRoot/outDir/extension-<browser>` (por defecto `.addfox/extension/extension-chromium`).
+
+Usa `-b chrome|chromium|edge|brave|vivaldi|opera|santa|arc|yandex|browseros|custom|firefox` para especificar el navegador objetivo:
+
+Si no se especifica, Chrome es el predeterminado.
+
+## Ejemplo de Configuración Completa
+
+```ts
+import { defineConfig } from "addfox";
+import { pluginReact } from "@rsbuild/plugin-react";
+
+export default defineConfig({
+  manifest: {
+    name: "Mi Extensión",
+    version: "1.0.0",
+    manifest_version: 3,
+    permissions: ["storage", "activeTab"],
+  },
+  plugins: [pluginReact()],
+});
+```
+
+## Próximos Pasos
+
+- [Estructura de Directorios](/es/guide/app-dir) — Conoce cómo se organizan los archivos del proyecto
+- [Configuración de Entry Points](/es/guide/entry/concept) — Aprende a configurar los entry points de extensión
+- [Configuración de Manifest](/es/config/manifest) — Consulta las opciones completas de configuración del manifest

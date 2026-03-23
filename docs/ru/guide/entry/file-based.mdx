@@ -1,0 +1,262 @@
+import { Tab, Tabs } from '@rspress/core/theme';
+
+# Entry на основе файлов
+
+Когда вы **не настраиваете** поле `entry` в `addfox.config.ts`, Addfox автоматически обнаруживает файлы entry по соглашениям. Это рекомендуемый способ разработки, позволяющий сосредоточиться на бизнес-логике, а не на конфигурации.
+
+## Основные принципы
+
+### Сборка на основе Rsbuild
+
+- **Entry должен быть JS/TS**: реальные entry сборки могут быть только скриптами `.js`, `.jsx`, `.ts`, `.tsx`
+- **Обработка HTML**:
+  - HTML не предоставлен → Rsbuild автоматически генерирует
+  - HTML предоставлен → используется как шаблон, но необходимо указать entry скрипт через `data-addfox-entry`
+
+## Соглашения о структуре директорий
+
+### Entry только со скриптами (background / content)
+
+Эти entry не требуют HTML страниц, достаточно предоставить скриптовые файлы.
+
+<Tabs>
+<Tab label="Директория (рекомендуется)">
+
+```tree
+app/
+├── background/
+│   └── index.ts          # background entry
+└── content/
+    └── index.ts          # content entry
+```
+
+| Имя entry | Файл entry | Путь вывода |
+|--------|----------|----------|
+| `background` | `app/background/index.ts` | `extension/background/index.js` |
+| `content` | `app/content/index.ts` | `extension/content/index.js` |
+
+</Tab>
+<Tab label="Однофайловая форма">
+
+```tree
+app/
+├── background.ts         # background entry
+└── content.ts            # content entry
+```
+
+| Имя entry | Файл entry | Путь вывода |
+|--------|----------|----------|
+| `background` | `app/background.ts` | `extension/background.js` |
+| `content` | `app/content.ts` | `extension/content.js` |
+
+</Tab>
+</Tabs>
+
+### Entry требующие страниц (popup / options / sidepanel / devtools / offscreen)
+
+Эти entry создают **HTML + JS**. Поддерживаются два способа:
+
+#### Способ 1: HTML не предоставлен (рекомендуется)
+
+Пишем только скрипт, без HTML. Rsbuild автоматически генерирует HTML и внедряет скрипт.
+
+:::tip Соглашение для автоматически генерируемых HTML страниц
+
+Когда HTML **не** предоставлен (нет шаблона) и генерируется сборкой, Addfox / Rsbuild договариваются:
+
+- **Точка монтирования**: страница содержит **`<div id="root"></div>`** для использования с `createRoot` / `mount` в React / Vue и т.д.
+- **`<title>`**: соответствует **`manifest.name`** расширения (обновляется при изменении manifest).
+- **Иконка вкладки (favicon)**: внедряется через **`<link rel="icon">`**, **`href`** берется из `manifest.icons` (подходящий размер выбирается по правилам, путь разрешается относительно расположения HTML).
+
+Если в данном entry используется **пользовательский HTML шаблон**, автоматическое внедрение `title` / иконки не применяется; их необходимо написать в шаблоне самостоятельно (атрибут `data-addfox-entry` и точка монтирования, обычно `#root`, должны быть сохранены).
+
+:::
+
+<Tabs>
+<Tab label="Директория">
+
+```tree
+app/
+├── popup/
+│   └── index.ts          # popup entry
+├── options/
+│   └── index.ts          # options entry
+└── sidepanel/
+    └── index.ts          # sidepanel entry
+```
+
+| Имя entry | Выходной HTML | Выходной JS |
+|--------|-----------|---------|
+| `popup` | `extension/popup/index.html` | `extension/popup/index.js` |
+| `options` | `extension/options/index.html` | `extension/options/index.js` |
+| `sidepanel` | `extension/sidepanel/index.html` | `extension/sidepanel/index.js` |
+
+</Tab>
+<Tab label="Однофайловая форма">
+
+```tree
+app/
+├── popup.ts              # popup entry
+├── options.ts            # options entry
+└── sidepanel.ts          # sidepanel entry
+```
+
+| Имя entry | Выходной HTML | Выходной JS |
+|--------|-----------|---------|
+| `popup` | `extension/popup.html` | `extension/popup.js` |
+| `options` | `extension/options.html` | `extension/options.js` |
+| `sidepanel` | `extension/sidepanel.html` | `extension/sidepanel.js` |
+
+</Tab>
+</Tabs>
+
+#### Способ 2: Предоставление HTML шаблона
+
+Если требуется пользовательская структура страницы, можно разместить HTML файл в директории entry (или рядом с однофайловым entry).
+
+:::warning Важно
+При использовании пользовательского HTML **необходимо** указать entry скрипт через атрибут `data-addfox-entry`, иначе фреймворк не сможет распознать его.
+:::
+
+<Tabs>
+<Tab label="Директория">
+
+```tree
+app/
+└── popup/
+    ├── index.html        # Шаблон страницы
+    └── index.ts          # Entry скрипт
+```
+
+```html
+<!-- app/popup/index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Ключевое: data-addfox-entry указывает entry скрипт -->
+    <script type="module" src="./index.ts" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+</Tab>
+<Tab label="Однофайловая форма">
+
+```tree
+app/
+├── popup.html            # Шаблон страницы
+└── popup.ts              # Entry скрипт
+```
+
+```html
+<!-- app/popup.html -->
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./popup.ts" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+</Tab>
+</Tabs>
+
+:::tip Примечания по HTML шаблонам
+- `data-addfox-entry` может появляться в HTML файле только **один раз**
+- `src` может быть относительным путем, указывающим на скрипт в той же или другой директории
+- Другие ресурсы (CSS, изображения и т.д.) импортируйте в entry скрипте через `import`, не ссылайтесь на них напрямую в HTML
+- HTML файл сам по себе не компилируется, используется только как шаблон
+- **Пользовательский шаблон** не автоматически синхронизирует `name` / `icons` из manifest в `<title>` и favicon; только **автоматически генерируемый** HTML применяет соглашения, описанные выше в разделе «Соглашение для автоматически генерируемых HTML страниц»
+
+:::
+
+## Полные примеры
+
+### Пример 1: Автоматическая генерация всех HTML
+
+```tree
+app/
+├── background/
+│   └── index.ts          # Только скрипт
+├── content/
+│   └── index.ts          # Только скрипт
+├── popup/
+│   └── index.ts          # Автоматическая генерация HTML
+├── options/
+│   └── index.ts          # Автоматическая генерация HTML
+└── manifest.json
+```
+
+### Пример 2: Смешанное использование
+
+```tree
+app/
+├── background.ts         # Однофайловая форма
+├── content/
+│   └── index.ts          # Директория
+├── popup/
+│   ├── index.html        # Пользовательский шаблон
+│   └── index.ts
+└── options/
+    └── index.ts          # Автоматическая генерация HTML
+```
+
+### Пример 3: Использование фреймворка (на примере React)
+
+```tree
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.tsx
+├── popup/
+│   └── index.tsx         # Рендеринг в React компоненте
+└── manifest.json
+```
+
+```tsx
+// app/popup/index.tsx
+import { createRoot } from 'react-dom/client';
+import { Popup } from './Popup';
+
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(<Popup />);
+```
+
+## Часто задаваемые вопросы
+
+### В: Файл entry должен называться index.ts?
+
+**В директории** должен быть `index.(js|ts|jsx|tsx)`. **В однофайловой форме** может быть `имя_entry.(js|ts|jsx|tsx)`.
+
+### В: Поддерживается ли многоуровневая вложенность директорий?
+
+Не поддерживается. Директория entry может иметь только один уровень, т.е. `app/popup/index.ts` ✓, а `app/pages/popup/index.ts` ✗.
+
+### В: Можно ли смешивать автоматическую генерацию и пользовательские HTML?
+
+Можно. Каждый entry независимо решает, использовать автоматическую генерацию или пользовательский шаблон.
+
+### В: Как отладить проблемы с HTML шаблоном?
+
+Проверьте:
+1. Есть ли атрибут `data-addfox-entry` в HTML файле
+2. Правильно ли указан путь `src` к entry скрипту
+3. Только ли один тег script имеет атрибут `data-addfox-entry`
+
+## Следующие шаги
+
+- [Entry на основе конфигурации](/guide/entry/config-based) — изучите явную конфигурацию путей entry
+- [Конфигурация appDir](/config/app-dir) — изменение директории исходного кода
+- [Конфигурация manifest](/config/manifest) — конфигурация manifest расширения

@@ -1,0 +1,313 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Vue
+
+Addfox soporta completamente Vue 3, puedes usar componentes de archivo único `.vue` para desarrollar extensiones.
+
+## Instalación
+
+Seleccionar plantilla Vue al crear el proyecto:
+
+```bash
+pnpm create addfox-app --framework vue
+```
+
+O instalar en proyecto existente:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @addfox/rsbuild-plugin-vue
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @addfox/rsbuild-plugin-vue
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @addfox/rsbuild-plugin-vue
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @addfox/rsbuild-plugin-vue
+```
+
+  </Tab>
+</Tabs>
+
+## Configuración
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import { pluginVue } from "@addfox/rsbuild-plugin-vue";
+
+export default defineConfig({
+  plugins: [pluginVue()],
+});
+```
+
+## Estructura del proyecto
+
+```
+app/
+├── background/
+│   └── index.ts
+├── content/
+│   └── index.ts
+├── popup/
+│   ├── App.vue
+│   ├── index.html
+│   └── index.ts
+├── options/
+│   ├── App.vue
+│   ├── index.html
+│   └── index.ts
+└── manifest.json
+```
+
+## Código de ejemplo
+
+### Popup
+
+```vue
+<!-- app/popup/App.vue -->
+<template>
+  <div class="popup">
+    <h1>{{ title }}</h1>
+    <p>Count: {{ count }}</p>
+    <button @click="increment">Increment</button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+
+const title = ref('Hello Vue!');
+const count = ref(0);
+
+const increment = () => {
+  count.value++;
+};
+</script>
+
+<style scoped>
+.popup {
+  padding: 16px;
+  min-width: 200px;
+}
+
+h1 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+button {
+  padding: 8px 16px;
+  background: #42b883;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+</style>
+```
+
+```ts
+// app/popup/index.ts
+import { createApp } from 'vue';
+import App from './App.vue';
+
+createApp(App).mount('#root');
+```
+
+Si **omites** el siguiente `index.html` y solo conservas `index.ts`, la construcción generará automáticamente HTML, que contiene **`id="root"`**, **title** y **favicon** sincronizados con **`manifest.name`** / **`manifest.icons`** (ver [Entradas basadas en archivos](/es/guide/entry/file-based)). El siguiente ejemplo es una plantilla personalizada **opcional**:
+
+```html
+<!-- app/popup/index.html (opcional; al personalizar necesitas escribir title / icono tú mismo) -->
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Popup</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./index.ts" data-addfox-entry></script>
+  </body>
+</html>
+```
+
+### Content Script
+
+```ts
+// app/content/index.ts
+import { createApp } from 'vue';
+import ContentApp from './ContentApp.vue';
+
+// Crear punto de montaje
+const container = document.createElement('div');
+container.id = 'my-extension-root';
+document.body.appendChild(container);
+
+createApp(ContentApp).mount(container);
+```
+
+```vue
+<!-- app/content/ContentApp.vue -->
+<template>
+  <div class="content-widget">
+    <p>Hello from Vue Content Script!</p>
+  </div>
+</template>
+
+<style scoped>
+.content-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+}
+</style>
+```
+
+## Gestión de estado
+
+### Pinia
+
+```bash
+pnpm add pinia
+```
+
+```ts
+// app/stores/counter.ts
+import { defineStore } from 'pinia';
+
+export const useCounterStore = defineStore('counter', {
+  state: () => ({
+    count: 0,
+  }),
+  actions: {
+    increment() {
+      this.count++;
+    },
+  },
+});
+```
+
+```ts
+// app/popup/index.ts
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import App from './App.vue';
+
+const app = createApp(App);
+app.use(createPinia());
+app.mount('#root');
+```
+
+### VueUse
+
+```bash
+pnpm add @vueuse/core
+```
+
+```vue
+<script setup>
+import { useStorage } from '@vueuse/core';
+
+// Sincronización automática a chrome.storage
+const count = useStorage('count', 0);
+</script>
+```
+
+## Interacción con la API de Chrome
+
+```vue
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+
+const tabs = ref<chrome.tabs.Tab[]>([]);
+
+onMounted(async () => {
+  tabs.value = await chrome.tabs.query({});
+});
+
+const activateTab = (tabId: number) => {
+  chrome.tabs.update(tabId, { active: true });
+};
+</script>
+
+<template>
+  <ul>
+    <li 
+      v-for="tab in tabs" 
+      :key="tab.id"
+      @click="activateTab(tab.id!)"
+    >
+      {{ tab.title }}
+    </li>
+  </ul>
+</template>
+```
+
+## Soluciones CSS
+
+### Tailwind CSS
+
+```bash
+pnpm add -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+```css
+/* app/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+```vue
+<template>
+  <div class="p-4 bg-gray-100">
+    <h1 class="text-xl font-bold text-blue-600">Hello Tailwind!</h1>
+  </div>
+</template>
+```
+
+### Scoped CSS
+
+Los componentes de archivo único de Vue soportan scoped CSS nativamente:
+
+```vue
+<style scoped>
+.button {
+  background: #42b883;
+}
+
+/* Selector profundo */
+:deep(.child) {
+  color: red;
+}
+</style>
+```
+
+## Enlaces relacionados
+
+- [@addfox/rsbuild-plugin-vue](https://www.npmjs.com/package/@addfox/rsbuild-plugin-vue)
+- [Documentación de Vue 3](https://vuejs.org/)
+- [Documentación de Pinia](https://pinia.vuejs.org/)

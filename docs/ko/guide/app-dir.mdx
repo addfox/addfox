@@ -1,0 +1,148 @@
+import { Tab, Tabs } from '@rspress/core/theme';
+
+# 디렉토리 구조
+
+Addfox는 convention over configuration 디자인 철학을 채택합니다. 표준 디렉토리 구조를 이해하면 빠르게 시작하고 best practice를 따를 수 있습니다.
+
+## 프로젝트 루트 디렉토리
+
+전형적인 Addfox 프로젝트 구조는 다음과 같습니다:
+
+```
+my-extension/
+├── .addfox/           # 빌드 출력 및 캐시 (자동 생성)
+├── app/                # 애플리케이션 소스 코드 (설정 가능)
+├── public/             # 정적 리소스
+├── addfox.config.ts       # Addfox 설정 파일
+└── package.json        # 프로젝트 의존성
+```
+
+## .addfox 디렉토리
+
+`.addfox`는 프레임워크에서 **자동 생성**되며 다음을 포함합니다:
+
+- **`extension/`** — 기본 빌드 출력 디렉토리 (`outDir`로 수정 가능)
+- **`cache/`** — 빌드 캐시, 후속 빌드 가속에 사용
+
+:::tip
+`cache` 디렉토리는 불필요한 경우 삭제하지 마세요. 그렇지 않으면 빌드 속도와 browser 사용자 데이터 재사용에 영향을 미칩니다.
+:::
+
+## app 디렉토리
+
+`app/`은 기본 애플리케이션 소스 코드 디렉토리로 모든 extension entry와 manifest 파일을 저장합니다. `appDir` 설정으로 변경 가능:
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  appDir: "src",  // src 디렉토리로 변경
+});
+```
+
+### 권장 디렉토리 구조
+
+<Tabs>
+  <Tab label="다중 파일 구조 (권장)">
+
+```
+app/
+├── background/
+│   └── index.ts          # Service Worker / background script
+├── content/
+│   └── index.ts          # content script
+├── popup/
+│   ├── index.html        # popup HTML (선택)
+│   └── index.ts          # popup script
+├── options/
+│   ├── index.html        # options 페이지 HTML (선택)
+│   └── index.ts          # options 페이지 script
+├── sidepanel/
+│   └── index.ts          # side panel
+├── manifest/
+│   ├── manifest.json           # 기본 설정
+│   ├── manifest.chromium.json  # Chrome 오버라이드
+│   └── manifest.firefox.json   # Firefox 오버라이드
+└── ...
+```
+
+  </Tab>
+  <Tab label="단일 파일 구조">
+
+```
+app/
+├── background.ts         # background script
+├── content.ts            # content script
+├── popup.html            # popup 페이지
+├── popup.ts              # popup script
+├── manifest.json         # extension manifest
+└── ...
+```
+
+  </Tab>
+</Tabs>
+
+:::info
+entry discovery 규칙에 대한 자세한 내용은 [File-based Entry](/ko/guide/entry/file-based) 및 [`entry` 설정](/ko/config/entry)을 참조하세요.
+:::
+
+## public 디렉토리
+
+`public/`은 **정적 리소스**를 저장하는 데 사용되며, 빌드 시 출력 디렉토리로 그대로 복사되어 번들 처리되지 않습니다:
+
+```
+public/
+├── icons/                # extension 아이콘
+│   ├── icon16.png
+│   ├── icon48.png
+│   └── icon128.png
+├── _locales/             # 국제화 파일
+│   └── zh_CN/
+│       └── messages.json
+└── welcome.html          # 환영 페이지
+```
+
+## 엔트리 유형
+
+Addfox는 다음 내장 엔트리를 지원합니다:
+
+| 엔트리명 | 유형 | 설명 | HTML 생성 |
+|--------|------|------|-----------|
+| `background` | 스크립트만 | Service Worker / background script | 아니요 |
+| `content` | 스크립트만 | content script | 아니요 |
+| `popup` | 스크립트+페이지 | 툴팁 popup | 예 |
+| `options` | 스크립트+페이지 | extension options 페이지 | 예 |
+| `sidepanel` | 스크립트+페이지 | side panel | 예 |
+| `devtools` | 스크립트+페이지 | 개발자 도구 | 예 |
+| `offscreen` | 스크립트+페이지 | Offscreen document | 예 |
+
+:::warning
+내장 엔트리 이름은 **변경할 수 없습니다**. Addfox는 자동 인식을 위해 이러한 이름에 의존합니다.
+:::
+
+## 설정 파일
+
+### addfox.config.ts / addfox.config.js
+
+이것은 Addfox의 **필수 설정 파일**로 다음을 선언하는 데 사용됩니다:
+
+- extension manifest
+- 엔트리 파일 (entry)
+- 출력 디렉토리 (outDir)
+- Rsbuild 플러그인 및 설정
+
+### 최소 설정 예시
+
+```ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  // 설정을 생략하면 프레임워크가 app/에서 엔트리와 manifest를 자동으로 찾습니다
+});
+```
+
+## 관련 설정
+
+- [`appDir`](/ko/config/app-dir) — 애플리케이션 디렉토리 사용자 정의
+- [`entry`](/ko/config/entry) — 엔트리 수동 설정
+- [`outDir`](/ko/config/out-dir) — 출력 디렉토리 사용자 정의
+- [`manifest`](/ko/config/manifest) — manifest 설정 방법

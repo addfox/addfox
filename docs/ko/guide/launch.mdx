@@ -1,0 +1,443 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# 브라우저 시작
+
+Addfox는 개발 시 브라우저를 자동으로 시작하고 확장을 로드하여 개발 효율성을 높일 수 있습니다.
+
+## 빠른 시작
+
+개발 명령 실행:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm run dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn dev
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun run dev
+```
+
+  </Tab>
+</Tabs>
+
+처음 개발 서버를 시작하면 자동으로 다음을 수행합니다:
+1. 확장 빌드
+2. 브라우저 열기
+3. 개발 중인 확장 로드
+
+## Scripts로 시작 (권장)
+
+`package.json`에서 scripts를 구성하면 더 간결하게 다양한 브라우저를 시작할 수 있습니다:
+
+```json
+{
+  "scripts": {
+    "dev": "addfox dev",
+    "dev:chrome": "addfox dev -b chrome",
+    "dev:edge": "addfox dev -b edge",
+    "dev:brave": "addfox dev -b brave",
+    "dev:firefox": "addfox dev -b firefox"
+  }
+}
+```
+
+구성 후 직접 사용:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+# Chrome (기본값)
+pnpm dev
+
+# 다른 브라우저
+pnpm dev:edge
+pnpm dev:firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+# Chrome (기본값)
+npm run dev
+
+# 다른 브라우저
+npm run dev:edge
+npm run dev:firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+# Chrome (기본값)
+yarn dev
+
+# 다른 브라우저
+yarn dev:edge
+yarn dev:firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+# Chrome (기본값)
+bun run dev
+
+# 다른 브라우저
+bun run dev:edge
+bun run dev:firefox
+```
+
+  </Tab>
+</Tabs>
+
+## Chromium 기반 브라우저
+
+Addfox는 다음 Chromium 기반 브라우저를 기본적으로 지원합니다:
+
+| 브라우저 | CLI 파라미터 | 설명 |
+|--------|----------|------|
+| Google Chrome | `-b chrome` | 기본 브라우저 |
+| Chromium | `-b chromium` | 오픈소스 버전 |
+| Microsoft Edge | `-b edge` | Windows 기본 제공 |
+| Brave | `-b brave` | 프라이버시 브라우저 |
+| Vivaldi | `-b vivaldi` | 사용자 지정 브라우저 |
+| Opera | `-b opera` | 오페라 브라우저 |
+| Santa | `-b santa` | Santa 브라우저 |
+| Arc | `-b arc` | 새로운 형태의 브라우저 |
+| Yandex | `-b yandex` | Yandex 브라우저 |
+| BrowserOS | `-b browseros` | BrowserOS |
+| Custom | `-b custom` | 사용자 지정 브라우저 (구성에서 `browser.custom` 필요) |
+
+### CLI를 통해 직접 시작
+
+scripts를 사용하지 않는 경우 CLI를 통해 브라우저를 직접 지정할 수 있습니다:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+# Chrome (기본값)
+pnpm addfox dev
+
+# 다른 브라우저
+pnpm addfox dev -b edge
+pnpm addfox dev -b brave
+pnpm addfox dev -b vivaldi
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+# Chrome (기본값)
+npx addfox dev
+
+# 다른 브라우저
+npx addfox dev -b edge
+npx addfox dev -b brave
+npx addfox dev -b vivaldi
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+# Chrome (기본값)
+yarn addfox dev
+
+# 다른 브라우저
+yarn addfox dev -b edge
+yarn addfox dev -b brave
+yarn addfox dev -b vivaldi
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+# Chrome (기본값)
+bunx addfox dev
+
+# 다른 브라우저
+bunx addfox dev -b edge
+bunx addfox dev -b brave
+bunx addfox dev -b vivaldi
+```
+
+  </Tab>
+</Tabs>
+
+### Chromium 브라우저 경로 구성
+
+브라우저가 기본 위치에 없는 경우 `browserPath`에서 구성할 수 있습니다:
+
+```ts
+// addfox.config.ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/path/to/chrome",
+    edge: "/path/to/edge",
+    brave: "/path/to/brave",
+  },
+});
+```
+
+#### 각 플랫폼 예시
+
+**macOS:**
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  },
+});
+```
+
+**Windows:**
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  },
+});
+```
+
+**Linux:**
+
+```ts
+export default defineConfig({
+  browserPath: {
+    chrome: "/usr/bin/google-chrome",
+    chromium: "/usr/bin/chromium-browser",
+  },
+});
+```
+
+### Chromium 캐시 사용자 데이터
+
+기본적으로 각 시작은 새로운 사용자 데이터 디렉토리를 사용합니다. 유지해야 하는 경우(예: 로그인 상태 유지) `package.json`에 추가하세요:
+
+```json
+{
+  "scripts": {
+    "dev:cache": "addfox dev -b chrome --cache",
+    "dev:edge:cache": "addfox dev -b edge --cache"
+  }
+}
+```
+
+또는 CLI를 통해 직접 실행:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm addfox dev --cache
+# 또는
+pnpm addfox dev -c
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npx addfox dev --cache
+# 또는
+npx addfox dev -c
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn addfox dev --cache
+# 또는
+yarn addfox dev -c
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bunx addfox dev --cache
+# 또는
+bunx addfox dev -c
+```
+
+  </Tab>
+</Tabs>
+
+또는 구성에서 활성화:
+
+```ts
+export default defineConfig({
+  cache: true,
+});
+```
+
+사용자 데이터는 `.addfox/cache/` 디렉토리에 저장됩니다.
+
+## Firefox
+
+Firefox 개발 모드는 **web-ext** 도구를 사용하여 확장 수명 주기를 관리합니다.
+
+### Firefox 시작
+
+구성된 script 사용:
+
+```bash
+pnpm dev:firefox
+```
+
+또는 CLI를 통해 직접 실행:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm addfox dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npx addfox dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn addfox dev -b firefox
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bunx addfox dev -b firefox
+```
+
+  </Tab>
+</Tabs>
+
+### Firefox 특성
+
+- 확장 리로드는 `web-ext`에서 처리되며 Addfox의 WebSocket이 아닙니다
+- Firefox가 자동으로 열리고 확장이 로드됩니다
+- 파일 변경 시 자동 리로드 지원
+
+### Firefox 경로 구성
+
+```ts
+export default defineConfig({
+  browserPath: {
+    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  },
+});
+```
+
+:::info
+Firefox 프로필은 `web-ext`에서 자동으로 관리되므로 캐시 옵션을 수동으로 구성할 필요가 없습니다.
+:::
+
+## 디버그 팁
+
+### Service Worker 보기
+
+1. `chrome://extensions/` 열기
+2. 개발 중인 확장 찾기
+3. "Service Worker"를 클릭하여 백그라운드 스크립트 콘솔 보기
+
+### Content Script 보기
+
+1. 웹페이지에서 마우스 오른쪽 버튼 클릭 → 검사
+2. Console 패널로 전환
+3. 해당 확장의 컨텍스트 선택
+
+### 오류 모니터링 사용
+
+`package.json`에 debug script를 추가합니다:
+
+```json
+{
+  "scripts": {
+    "dev:debug": "addfox dev --debug",
+    "dev:firefox:debug": "addfox dev -b firefox --debug"
+  }
+}
+```
+
+그런 다음 실행:
+
+```bash
+pnpm dev:debug
+```
+
+또는 CLI를 통해 직접 활성화:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm addfox dev --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npx addfox dev --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn addfox dev --debug
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bunx addfox dev --debug
+```
+
+  </Tab>
+</Tabs>
+
+## 관련 설정
+
+- [`browserPath`](/config/launch) - 브라우저 실행 파일 경로 구성
+- [`cache`](/config/cache) - 캐시 구성
+- [`hotReload`](/config/hot-reload) - 핫 리로드 구성
+- [`debug`](/config/debug) - 오류 모니터링 구성

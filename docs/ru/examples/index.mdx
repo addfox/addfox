@@ -1,0 +1,81 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
+# Примеры
+
+На этой странице перечислены примеры расширений из репозитория addfox. Каждый пример — это отдельная директория с `package.json` и `addfox.config.ts`. Установите зависимости в корне репозитория с помощью pnpm / npm / yarn / bun, затем выполните dev или build в соответствующей директории примера.
+
+| Пример | Описание | Ссылка на репозиторий |
+|------|------|----------|
+| **addfox-with-vue** | Шаблон Vue 3: popup, options, content, background, с простым обменом сообщениями. | [examples/addfox-with-vue](https://github.com/addfox/addfox/tree/main/examples/addfox-with-vue) |
+| **addfox-with-react** | Шаблон React: popup, options, content, background, с простым обменом сообщениями. | [examples/addfox-with-react](https://github.com/addfox/addfox/tree/main/examples/addfox-with-react) |
+| **addfox-with-preact** | Шаблон Preact: popup, options, content, background, с простым обменом сообщениями. | [examples/addfox-with-preact](https://github.com/addfox/addfox/tree/main/examples/addfox-with-preact) |
+| **addfox-with-svelte** | Шаблон Svelte: popup, options, content, background, с простым обменом сообщениями. | [examples/addfox-with-svelte](https://github.com/addfox/addfox/tree/main/examples/addfox-with-svelte) |
+| **addfox-with-solid** | Шаблон Solid: popup, options, content, background, с простым обменом сообщениями. | [examples/addfox-with-solid](https://github.com/addfox/addfox/tree/main/examples/addfox-with-solid) |
+| **addfox-with-react-shadcn** | React + shadcn/ui: пять entry (popup, options, content, background, sidepanel), Tailwind + библиотека компонентов. | [examples/addfox-with-react-shadcn](https://github.com/addfox/addfox/tree/main/examples/addfox-with-react-shadcn) |
+| **addfox-with-devtools** | Чистый TypeScript: только background + devtools_page, без React/Vue, демонстрация DevTools расширения. | [examples/addfox-with-devtools](https://github.com/addfox/addfox/tree/main/examples/addfox-with-devtools) |
+| **addfox-with-content-ui** | Пример Content UI: демонстрация монтирования UI расширения на странице. | [examples/addfox-with-content-ui](https://github.com/addfox/addfox/tree/main/examples/addfox-with-content-ui) |
+| **addfox-with-content-ui-react** | Версия Content UI на React. | [examples/addfox-with-content-ui-react](https://github.com/addfox/addfox/tree/main/examples/addfox-with-content-ui-react) |
+| **addfox-with-tailwindcss** | Пример интеграции Tailwind CSS. | [examples/addfox-with-tailwindcss](https://github.com/addfox/addfox/tree/main/examples/addfox-with-tailwindcss) |
+| **addfox-with-uno** | Пример интеграции UnoCSS. | [examples/addfox-with-uno](https://github.com/addfox/addfox/tree/main/examples/addfox-with-uno) |
+| **addfox-with-vue-tsx** | Пример Vue + TSX. | [examples/addfox-with-vue-tsx](https://github.com/addfox/addfox/tree/main/examples/addfox-with-vue-tsx) |
+| **addfox-with-firefox** | Пример сборки и запуска для Firefox. | [examples/addfox-with-firefox](https://github.com/addfox/addfox/tree/main/examples/addfox-with-firefox) |
+| **addfox-with-mv2** | Пример совместимости с Manifest V2 (для миграции/сравнения). | [examples/addfox-with-mv2](https://github.com/addfox/addfox/tree/main/examples/addfox-with-mv2) |
+| **addfox-with-manifest-entries** | Пример объявления entry через поля manifest. | [examples/addfox-with-manifest-entries](https://github.com/addfox/addfox/tree/main/examples/addfox-with-manifest-entries) |
+| **addfox-with-react-entry-false** | Пример React с `entry: false` (Rsbuild самостоятельно управляет entry). | [examples/addfox-with-react-entry-false](https://github.com/addfox/addfox/tree/main/examples/addfox-with-react-entry-false) |
+| **addfox-with-single-file** | Пример однофайловой/минимальной структуры. | [examples/addfox-with-single-file](https://github.com/addfox/addfox/tree/main/examples/addfox-with-single-file) |
+| **addfox-with-sandbox** | Пример песочницы (sandbox). | [examples/addfox-with-sandbox](https://github.com/addfox/addfox/tree/main/examples/addfox-with-sandbox) |
+| **addfox-with-newtab-override** | Пример переопределения новой вкладки браузера. | [examples/addfox-with-newtab-override](https://github.com/addfox/addfox/tree/main/examples/addfox-with-newtab-override) |
+| **addfox-with-history-override** | Пример переопределения страницы истории. | [examples/addfox-with-history-override](https://github.com/addfox/addfox/tree/main/examples/addfox-with-history-override) |
+| **addfox-with-bookmarks-override** | Пример переопределения страницы закладок. | [examples/addfox-with-bookmarks-override](https://github.com/addfox/addfox/tree/main/examples/addfox-with-bookmarks-override) |
+| **addfox-with-rstest** | Пример интеграции модульных тестов Rstest. | [examples/addfox-with-rstest](https://github.com/addfox/addfox/tree/main/examples/addfox-with-rstest) |
+| **addfox-with-rstest-e2e** | Пример тестов Rstest + E2E. | [examples/addfox-with-rstest-e2e](https://github.com/addfox/addfox/tree/main/examples/addfox-with-rstest-e2e) |
+| **addfox-with-env-vars** | Пример внедрения переменных окружения и их области действия (с `ADDFOX_PUBLIC_` и приватными переменными). | [examples/addfox-with-env-vars](https://github.com/addfox/addfox/tree/main/examples/addfox-with-env-vars) |
+
+## Как запустить
+
+После установки зависимостей в корне репозитория addfox перейдите в директорию нужного примера:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm install
+cd examples/addfox-with-vue   # или другой пример
+pnpm dev                   # Режим разработки
+pnpm build                 # Сборка
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install
+cd examples/addfox-with-vue   # или другой пример
+npm run dev                # Режим разработки
+npm run build              # Сборка
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn install
+cd examples/addfox-with-vue   # или другой пример
+yarn dev                   # Режим разработки
+yarn build                 # Сборка
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun install
+cd examples/addfox-with-vue   # или другой пример
+bun run dev                # Режим разработки
+bun run build              # Сборка
+```
+
+  </Tab>
+</Tabs>
+
+Артефакты сборки находятся в `.addfox/extension` (или в соответствии с конфигурацией outputRoot/outDir для данного примера). Загрузите эту директорию в браузер; при использовании dev фреймворк может автоматически открыть браузер и загрузить расширение.
