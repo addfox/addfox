@@ -52,10 +52,16 @@ export function detectFromLockfile(root: string): PackageManager {
 export function isPackageInstalled(root: string, pkgName: string): boolean {
   const require = createRequire(import.meta.url);
   try {
-    require.resolve(`${pkgName}/package.json`, { paths: [root] });
+    // Prefer resolving package entry first. Some packages block `package.json` subpath via exports.
+    require.resolve(pkgName, { paths: [root] });
     return true;
   } catch {
-    return false;
+    try {
+      require.resolve(`${pkgName}/package.json`, { paths: [root] });
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
 

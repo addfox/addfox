@@ -5,7 +5,7 @@
   "description": "React browser extension template: popup, options, content, background + messaging",
   "type": "module",
   "scripts": {
-    "dev": "addfox dev -b chrome --debug",
+    "dev": "addfox dev -b chrome --report",
     "build": "addfox build -b edge"
   },
   "dependencies": {

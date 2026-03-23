@@ -1,5 +1,12 @@
 # create-addfox-app
 
+## 0.1.1-beta.15
+
+### Patch Changes
+
+- Updated dependencies
+  - @addfox/pkg-manager@0.1.1-beta.8
+
 ## 0.1.1-beta.14
 
 ### Patch Changes

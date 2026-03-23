@@ -6,7 +6,12 @@
 <p align="center">Browser extension framework built on Rsbuild</p>
 
 <div align="center">
-  <a href="https://addfox.dev">Documentation</a> · <a href="https://www.npmjs.com/package/addfox">npm</a> · <a href="https://github.com/addfox/skills">Skills</a>
+  <a href="https://github.com/addfox/addfox/stargazers"><img src="https://img.shields.io/github/stars/addfox/addfox?style=flat-square" alt="GitHub stars"></a>
+  <a href="https://www.npmjs.com/package/addfox"><img src="https://img.shields.io/npm/v/addfox?style=flat-square" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/addfox"><img src="https://img.shields.io/npm/dm/addfox?style=flat-square" alt="npm downloads"></a>
+</div>
+<div align="center">
+  <a href="https://addfox.dev">Documentation</a> · <a href="https://www.npmjs.com/package/addfox">npm</a> · <a href="https://github.com/addfox/skills">Skills</a> · English | <a href="./README-zh_CN.md">中文</a>
 </div>
 
 ---
@@ -23,16 +28,16 @@ Addfox wraps Rsbuild (Rspack/Rstack) with extension-specific plugins; build outp
 
 ## Features
 
-- 🔥 **Fast dev mode and hot reload** — `addfox dev` runs watch, rebuilds on change, and hot-reloads the extension in the browser; the browser launches automatically; same bundle as production.
-- 📦 **Auto-generated zip** — After `addfox build`, output is packed into a zip under `.addfox` by default; one command for both folder and store-ready zip.
-- 📁 **File-based entries** — Entries are discovered from `app/` layout (background, content, popup, options, sidepanel, devtools); override or add custom entries in config when needed.
-- 🌐 **Many Chromium browsers and Firefox** — Use `-b chrome|edge|brave|vivaldi|opera|firefox|...` to target Chrome, Edge, Brave, Vivaldi, Opera, Arc, Yandex, or Firefox; manifest can be split per browser.
-- ⚛️ **Framework-agnostic** — Vue, React, Svelte, Solid, or vanilla; TypeScript or JavaScript; choose in scaffold or add the plugin you need.
-- 🤖 **AI-friendly error output** — Enable `--debug` for a dev-only error panel with per-entry errors, Copy prompt, Ask ChatGPT, and Ask Cursor in one click.
-- 🧪 **Rstest support** — Run `addfox test` for unit and e2e tests; arguments are forwarded to Rstest.
-- 📊 **Rsdoctor bundle analysis** — Add `--report` to build or dev to open the Rsdoctor analysis report after the build.
-- 🧩 **Full Skills support** — Install [addfox/skills](https://github.com/addfox/skills) via create-addfox-app or `skills add`; AI workflow modules in `.agents/skills/`.
-- 🔐 **Env variable support** — `.env` is loaded; `envPrefix` controls which vars are exposed to the extension (e.g. `PUBLIC_`).
+- 🔥 **Fast dev + HMR** — `addfox dev` watches files, rebuilds on change, and hot-reloads the extension.
+- 📦 **Zip on build** — `addfox build` outputs extension files and a store-ready zip in `.addfox`.
+- 📁 **File-based entries** — Auto-discovers entries from `app/` (background/content/popup/options/sidepanel/devtools) with custom entry support.
+- 🌐 **Cross-browser targets** — `-b` supports Chromium browsers and Firefox with browser-specific manifest overrides.
+- ⚛️ **Framework-agnostic** — Works with Vue, React, Svelte, Solid, or vanilla (TS/JS).
+- 🤖 **AI-friendly debugging** — `--debug` shows per-entry runtime errors in terminal.
+- 🧪 **Built-in testing flow** — `addfox test` forwards args to Rstest for unit and e2e workflows.
+- 📊 **Rsdoctor reports** — Add `--report` in dev/build to generate bundle analysis.
+- 🧩 **Skills integration** — Supports [addfox/skills](https://github.com/addfox/skills) via scaffold or `skills add`.
+- 🔐 **Env control** — Loads `.env` and exposes vars via `envPrefix` rules.
 
 ## Install & use
 

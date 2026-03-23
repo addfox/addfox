@@ -9,6 +9,7 @@ import {
   getRunCommand,
   getExecCommand,
   getAddCommand,
+  isPackageInstalled,
 } from "../src/index.ts";
 
 describe("detectPackageManager", () => {
@@ -102,5 +103,41 @@ describe("getAddCommand", () => {
   it("returns add command with -D for dev dependencies", () => {
     expect(getAddCommand("pnpm", "typescript", true)).toBe("pnpm add typescript -D");
     expect(getAddCommand("npm", "typescript", true)).toBe("npm install typescript -D");
+  });
+});
+
+describe("isPackageInstalled", () => {
+  let testRoot: string;
+
+  beforeEach(() => {
+    testRoot = resolve(tmpdir(), `pkg-installed-test-${Date.now()}`);
+    mkdirSync(testRoot, { recursive: true });
+  });
+
+  afterEach(() => {
+    if (existsSync(testRoot)) rmSync(testRoot, { recursive: true, force: true });
+  });
+
+  it("detects package installed even when package.json subpath is not exported", () => {
+    const pkgRoot = resolve(testRoot, "node_modules", "virtual-pkg");
+    mkdirSync(pkgRoot, { recursive: true });
+    writeFileSync(
+      resolve(pkgRoot, "package.json"),
+      JSON.stringify(
+        {
+          name: "virtual-pkg",
+          version: "1.0.0",
+          type: "module",
+          exports: {
+            ".": "./index.js",
+          },
+        },
+        null,
+        2,
+      ),
+    );
+    writeFileSync(resolve(pkgRoot, "index.js"), "export default 1;\n");
+
+    expect(isPackageInstalled(testRoot, "virtual-pkg")).toBe(true);
   });
 });

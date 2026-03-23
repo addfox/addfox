@@ -1,5 +1,12 @@
 ﻿# addfox
 
+## 0.1.1-beta.10
+
+### Patch Changes
+
+- Updated dependencies
+  - @addfox/cli@0.1.1-beta.9
+
 ## 0.1.1-beta.9
 
 ### Patch Changes

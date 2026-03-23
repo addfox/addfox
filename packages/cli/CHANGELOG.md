@@ -1,5 +1,13 @@
 ﻿# @addfox/cli
 
+## 0.1.1-beta.9
+
+### Patch Changes
+
+- fix: fixed rsdoctor-plugin detected error
+- Updated dependencies
+  - @addfox/pkg-manager@0.1.1-beta.8
+
 ## 0.1.1-beta.8
 
 ### Patch Changes

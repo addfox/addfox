@@ -1,6 +1,6 @@
 {
   "name": "create-addfox-app",
-  "version": "0.1.1-beta.14",
+  "version": "0.1.1-beta.15",
   "description": "Interactive scaffolder for addfox extension projects",
   "license": "MIT",
   "type": "module",

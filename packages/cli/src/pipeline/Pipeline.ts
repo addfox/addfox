@@ -1,8 +1,10 @@
 import { existsSync, readFileSync } from "fs";
 import { resolve } from 'path';
+import { pathToFileURL } from "url";
 import type { RsbuildConfig, RsbuildPlugin, RsbuildPluginAPI } from '@rsbuild/core';
 import { mergeRsbuildConfig } from '@rsbuild/core';
 import { HookManager } from '@addfox/common';
+import { createRequire } from "module";
 import type { PipelineContext, AddfoxResolvedConfig, EntryInfo, LaunchTarget } from '@addfox/core';
 import { warn } from "@addfox/common";
 import { AddfoxError, ADDFOX_ERROR_CODES } from "@addfox/common";
@@ -248,7 +250,9 @@ export class Pipeline {
     }
 
     const reportDir = resolve(root, outputRoot, 'report');
-    const { RsdoctorRspackPlugin } = await import('@rsdoctor/rspack-plugin');
+    const require = createRequire(import.meta.url);
+    const rsdoctorEntry = require.resolve("@rsdoctor/rspack-plugin", { paths: [root] });
+    const { RsdoctorRspackPlugin } = await import(pathToFileURL(rsdoctorEntry).href);
     const tools = config.tools as { rspack?: { plugins?: unknown[] } } | undefined;
     const existing = tools?.rspack?.plugins ?? [];
     

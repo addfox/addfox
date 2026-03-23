@@ -1,5 +1,11 @@
 ﻿# @addfox/pkg-manager
 
+## 0.1.1-beta.8
+
+### Patch Changes
+
+- fix: fixed rsdoctor-plugin detected error
+
 ## 0.1.1-beta.7
 
 ### Patch Changes

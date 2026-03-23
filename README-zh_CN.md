@@ -6,7 +6,12 @@
 <p align="center">基于 Rsbuild 的浏览器扩展开发框架</p>
 
 <div align="center">
-  <a href="https://addfox.dev">官方文档</a> · <a href="https://www.npmjs.com/package/addfox">npm</a> · <a href="https://github.com/addfox/skills">Skills</a>
+  <a href="https://github.com/addfox/addfox/stargazers"><img src="https://img.shields.io/github/stars/addfox/addfox?style=flat-square" alt="GitHub stars"></a>
+  <a href="https://www.npmjs.com/package/addfox"><img src="https://img.shields.io/npm/v/addfox?style=flat-square" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/addfox"><img src="https://img.shields.io/npm/dm/addfox?style=flat-square" alt="npm downloads"></a>
+</div>
+<div align="center">
+  <a href="https://addfox.dev">官方文档</a> · <a href="https://www.npmjs.com/package/addfox">npm</a> · <a href="https://github.com/addfox/skills">Skills</a> · <a href="./README.md">English</a> | 中文
 </div>
 
 ---
@@ -23,16 +28,16 @@ Addfox 基于 Rsbuild（Rspack/Rstack）封装扩展能力；构建产物在 Chr
 
 ## 特点
 
-- 🔥 **急速开发模式与热更新** — `addfox dev` 启动 watch，改代码即重建并热重载扩展；浏览器自动打开并加载构建结果，与生产同一套产物。
-- 📦 **自动生成 zip** — `addfox build` 后默认在 `.addfox` 下打出 zip；一条命令同时得到目录和可提交商店的 zip。
-- 📁 **基于文件的入口** — 按 `app/` 目录结构自动发现 background、content、popup、options、sidepanel、devtools；需要时在配置中覆盖或增加自定义入口。
-- 🌐 **多 Chromium 系浏览器与 Firefox** — 使用 `-b chrome|edge|brave|vivaldi|opera|firefox|...` 指定 Chrome、Edge、Brave、Vivaldi、Opera、Arc、Yandex 或 Firefox；manifest 可按浏览器拆分。
-- ⚛️ **框架无关** — 支持 Vue、React、Svelte、Solid 或纯 JS；TypeScript 或 JavaScript；在脚手架中选择或按需添加对应插件。
-- 🤖 **AI 友好错误输出** — 开启 `--debug` 即可使用仅开发环境的错误面板：按入口聚合错误，一键 Copy prompt、Ask ChatGPT、Ask Cursor。
-- 🧪 **Rstest 支持** — 直接运行 `addfox test` 完成单元测试与 e2e 测试，参数会转发给 Rstest。
-- 📊 **Rsdoctor 打包分析** — 在 build 或 dev 命令后加 `--report` 即可在构建结束后打开 Rsdoctor 分析报告。
-- 🧩 **完整 Skills 支持** — 通过 create-addfox-app 或 `skills add` 安装 [addfox/skills](https://github.com/addfox/skills)，在 `.agents/skills/` 使用 AI 工作流模块。
-- 🔐 **env 变量支持** — 加载根目录 `.env`；通过 `envPrefix` 控制哪些变量注入扩展（如 `PUBLIC_`）。
+- 🔥 **快速开发与热更新** — `addfox dev` 监听变更并自动重建、热重载扩展。
+- 📦 **构建即打包 zip** — `addfox build` 同时输出扩展目录与 `.addfox` 下可上架 zip。
+- 📁 **文件式入口** — 从 `app/` 自动发现 background/content/popup/options/sidepanel/devtools，并支持自定义入口。
+- 🌐 **跨浏览器支持** — `-b` 可指定 Chromium 系与 Firefox，支持按浏览器拆分 manifest。
+- ⚛️ **框架无关** — 支持 Vue、React、Svelte、Solid 和原生 JS，兼容 TS/JS。
+- 🤖 **AI 友好调试** — `--debug` 终端展示按入口聚合的错误信息。
+- 🧪 **测试流程内置** — `addfox test` 转发参数到 Rstest，覆盖单测与 e2e 流程。
+- 📊 **Rsdoctor 分析** — 在 dev/build 加 `--report` 可生成打包分析报告。
+- 🧩 **Skills 集成** — 可通过脚手架或 `skills add` 使用 [addfox/skills](https://github.com/addfox/skills)。
+- 🔐 **环境变量控制** — 加载 `.env`，通过 `envPrefix` 控制变量暴露范围。
 
 ## 安装与使用
 
