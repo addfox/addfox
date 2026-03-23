@@ -13,6 +13,7 @@ const docRouteExclude = [
 
 export default {
   root: ".",
+  llms: true,
   route: { exclude: docRouteExclude },
   plugins: [fileTree()],
   builderConfig: {

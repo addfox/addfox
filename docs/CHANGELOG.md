@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.0.3-beta.10
+
+### Patch Changes
+
+- chore: update locak file
+
 ## 0.0.3-beta.9
 
 ### Patch Changes
