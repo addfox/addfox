@@ -1,5 +1,11 @@
 ﻿# @addfox/common
 
+## 0.1.1-beta.8
+
+### Patch Changes
+
+- feat: add agents.md for templates
+
 ## 0.1.1-beta.7
 
 ### Patch Changes

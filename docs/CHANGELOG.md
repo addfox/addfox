@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.0.3-beta.12
+
+### Patch Changes
+
+- feat: add agents.md for templates
+
 ## 0.0.3-beta.11
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @addfox/rsbuild-plugin-extension-entry
 
+## 0.1.1-beta.9
+
+### Patch Changes
+
+- feat: add agents.md for templates
+- Updated dependencies
+  - @addfox/core@0.1.1-beta.8
+
 ## 0.1.1-beta.8
 
 ### Patch Changes

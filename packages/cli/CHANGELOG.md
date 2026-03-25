@@ -1,5 +1,20 @@
 ﻿# @addfox/cli
 
+## 0.1.1-beta.10
+
+### Patch Changes
+
+- feat: add agents.md for templates
+- Updated dependencies
+  - @addfox/common@0.1.1-beta.8
+  - @addfox/core@0.1.1-beta.8
+  - @addfox/pkg-manager@0.1.1-beta.9
+  - @addfox/rsbuild-plugin-extension-entry@0.1.1-beta.9
+  - @addfox/rsbuild-plugin-extension-hmr@0.1.1-beta.8
+  - @addfox/rsbuild-plugin-extension-manifest@0.1.1-beta.8
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.8
+  - @addfox/rsbuild-plugin-vue@0.1.1-beta.8
+
 ## 0.1.1-beta.9
 
 ### Patch Changes

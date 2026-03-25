@@ -1,5 +1,13 @@
 # create-addfox-app
 
+## 0.1.1-beta.16
+
+### Patch Changes
+
+- feat: add agents.md for templates
+- Updated dependencies
+  - @addfox/pkg-manager@0.1.1-beta.9
+
 ## 0.1.1-beta.15
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@addfox/core",
-  "version": "0.1.1-beta.7",
+  "version": "0.1.1-beta.8",
   "description": "addfox core: types, config loading, entry discovery/resolution, manifest building",
   "license": "MIT",
   "type": "module",

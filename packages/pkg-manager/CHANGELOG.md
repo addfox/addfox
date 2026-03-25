@@ -1,5 +1,11 @@
 ﻿# @addfox/pkg-manager
 
+## 0.1.1-beta.9
+
+### Patch Changes
+
+- feat: add agents.md for templates
+
 ## 0.1.1-beta.8
 
 ### Patch Changes

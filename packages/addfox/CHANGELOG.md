@@ -1,5 +1,15 @@
 ﻿# addfox
 
+## 0.1.1-beta.11
+
+### Patch Changes
+
+- feat: add agents.md for templates
+- Updated dependencies
+  - @addfox/cli@0.1.1-beta.10
+  - @addfox/core@0.1.1-beta.8
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.8
+
 ## 0.1.1-beta.10
 
 ### Patch Changes
