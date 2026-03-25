@@ -32,6 +32,7 @@
     "test:coverage": "rstest run --coverage"
   },
   "dependencies": {
+    "@addfox/common": "workspace:*",
     "@addfox/core": "workspace:*"
   },
   "devDependencies": {

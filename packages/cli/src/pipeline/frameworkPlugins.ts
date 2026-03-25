@@ -43,6 +43,7 @@ export function buildFrameworkPluginList(ctx: PipelineContext): LoosePlugin[] {
     list.push(entryPlugin(ctx.config, ctx.entries, ctx.distPath, { browser: ctx.browser }) as LoosePlugin);
   }
   list.push(...expanded);
+
   if (useMonitor) {
     list.push(monitorPlugin(ctx.config, ctx.entries, ctx.browser) as LoosePlugin);
   }

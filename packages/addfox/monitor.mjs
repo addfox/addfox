@@ -1,1 +1,1 @@
-export { setupAddfoxMonitor, reportLoadError, startHmrReloadClient } from "@addfox/rsbuild-plugin-extension-monitor/runtime";
+export { setupAddfoxMonitor, reportLoadError, startHmrReloadClient, wrapImportedBrowser, wrapImportedRuntime } from "@addfox/rsbuild-plugin-extension-monitor/runtime";

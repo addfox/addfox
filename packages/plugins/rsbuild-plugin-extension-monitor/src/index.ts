@@ -65,11 +65,12 @@ export class AddfoxMonitorPlugin {
     this.entryNames = entries.map((e) => e.name);
   }
 
-  toRsbuildPlugin(): { name: string; setup: (api: RsbuildPluginAPI) => void } {
+  toRsbuildPlugin(): { name: string; enforce: "post"; setup: (api: RsbuildPluginAPI) => void } {
     const self = this;
     
     return {
       name: "rsbuild-plugin-extension-monitor",
+      enforce: "post" as const,
       setup(api: RsbuildPluginAPI) {
         // Use transformLoader to inject monitor code into each entry
         api.modifyRsbuildConfig((config) => {
@@ -100,6 +101,7 @@ export class AddfoxMonitorPlugin {
           const nextEntry: Record<string, RsbuildEntryValue> = {};
           for (const [key, value] of Object.entries(entry)) {
             const snippet = injectionSnippets[key];
+
             if (!snippet) {
               nextEntry[key] = value;
               continue;

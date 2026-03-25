@@ -8,9 +8,11 @@ export default defineConfig({
   coverage: {
     enabled: true,
     include: ["src/**/*.ts"],
+    // Exclude CLI entry point and commands that require interactive terminal
     exclude: ["**/cli.ts", "**/commands/test.ts"],
     reporters: [["text", { skipFull: true }], "html", "json", "lcov"],
     reportsDirectory: "./coverage",
-    thresholds: { statements: 54, branches: 44, functions: 67, lines: 54 },
+    // Thresholds set to actual coverage levels
+    thresholds: { statements: 74, branches: 59, functions: 85, lines: 75 },
   },
 });

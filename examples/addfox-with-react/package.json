@@ -5,13 +5,14 @@
   "description": "React browser extension template: popup, options, content, background + messaging",
   "type": "module",
   "scripts": {
-    "dev": "addfox dev -b chrome --report",
+    "dev": "addfox dev -b chrome --debug",
     "build": "addfox build -b edge"
   },
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "webextension-polyfill": "^0.10.0"
+    "webextension-polyfill": "^0.10.0",
+    "@addfox/utils": "workspace:*"
   },
   "devDependencies": {
     "@rsbuild/plugin-react": "^1.2.0",

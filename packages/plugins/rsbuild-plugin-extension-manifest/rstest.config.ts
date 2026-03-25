@@ -8,8 +8,9 @@ export default defineConfig({
   coverage: {
     enabled: true,
     include: ["src/**/*.ts"],
+    exclude: [],
     reporters: [["text", { skipFull: true }], "html", "json", "lcov"],
     reportsDirectory: "./coverage",
-    thresholds: { statements: 90, branches: 84, functions: 90, lines: 90 },
+    thresholds: { statements: 94, branches: 85, functions: 98, lines: 98 },
   },
 });

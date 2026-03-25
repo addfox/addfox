@@ -4,6 +4,7 @@ import { getLocalePrefix } from "./utils";
 import { HeroSection } from "./HeroSection";
 import { FeaturesGrid } from "./FeaturesGrid";
 import { FAQSection } from "./FAQSection";
+import { HomeFooter } from "./HomeFooter";
 import "./index.css";
 import "../styles/theme.css";
 
@@ -22,6 +23,7 @@ function CustomHomeContent() {
       />
       <FeaturesGrid />
       <FAQSection />
+      <HomeFooter />
     </div>
   );
 }

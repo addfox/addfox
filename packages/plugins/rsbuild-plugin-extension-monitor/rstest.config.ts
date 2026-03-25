@@ -5,12 +5,13 @@ export default defineConfig({
   exclude: { patterns: ["**/node_modules/**", "**/dist/**"] },
   testEnvironment: "node",
   root: process.cwd(),
-  tools: {
-    rspack: (config: { module?: { rules?: unknown[] } }) => {
-      config.module = config.module ?? {};
-      config.module.rules = config.module.rules ?? [];
-      config.module.rules.unshift({ test: /\.html$/, type: "asset/source" });
-      return config;
-    },
+  coverage: {
+    enabled: true,
+    include: ["src/**/*.ts"],
+    // Exclude runtime files that require browser extension environment
+    exclude: ["**/runtime.ts"],
+    reporters: [["text", { skipFull: true }], "html", "json", "lcov"],
+    reportsDirectory: "./coverage",
+    thresholds: { statements: 85, branches: 60, functions: 100, lines: 86 },
   },
 });

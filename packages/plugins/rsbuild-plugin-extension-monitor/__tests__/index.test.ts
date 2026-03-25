@@ -125,4 +125,57 @@ describe("plugin-extension-monitor", () => {
     };
     plugin.setup!(api as never);
   });
+
+  it("should have enforce: 'post' to ensure it runs after entryPlugin", () => {
+    const config = minimalConfig({ name: "X", version: "1.0.0", manifest_version: 3 });
+    const plugin = monitorPlugin(config, [minimalEntry("background")]);
+    
+    // Verify enforce is set to "post" to ensure correct plugin execution order
+    expect(plugin.enforce).toBe("post");
+  });
+
+  it("should handle entry when entryPlugin sets it first (simulating execution order)", () => {
+    const config = minimalConfig({ name: "X", version: "1.0.0", manifest_version: 3 });
+    const plugin = monitorPlugin(config, [minimalEntry("background"), minimalEntry("popup")]);
+    
+    // Simulate config before entryPlugin runs
+    const initialConfig: {
+      source?: { entry?: Record<string, string> };
+    } = {};
+    
+    // Simulate entryPlugin adding entries first
+    const configAfterEntryPlugin = {
+      source: {
+        entry: {
+          background: "/app/background.ts",
+          popup: "/app/popup.ts",
+        },
+      },
+    };
+    
+    const api = {
+      modifyRsbuildConfig: (fn: (c: unknown) => void) => {
+        // Run with config after entryPlugin has modified it
+        fn(configAfterEntryPlugin);
+        
+        // Verify monitorPlugin successfully injected snippets
+        const src = (configAfterEntryPlugin as Record<string, unknown>).source as Record<string, unknown>;
+        const entry = src.entry as Record<string, { import: string[]; html?: boolean }>;
+        
+        // Should have injected data:text/javascript snippet for both entries
+        expect(entry.background.import).toBeDefined();
+        expect(Array.isArray(entry.background.import)).toBe(true);
+        expect(entry.background.import[0]).toContain("data:text/javascript");
+        expect(entry.background.import[0]).toContain("setupAddfoxMonitor");
+        
+        expect(entry.popup.import).toBeDefined();
+        expect(Array.isArray(entry.popup.import)).toBe(true);
+        expect(entry.popup.import[0]).toContain("data:text/javascript");
+        expect(entry.popup.import[0]).toContain("setupAddfoxMonitor");
+      },
+      onBeforeCreateCompiler: () => {},
+    };
+    
+    plugin.setup!(api as never);
+  });
 });

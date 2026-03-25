@@ -10,6 +10,7 @@ import {
   getExecCommand,
   getAddCommand,
   isPackageInstalled,
+  getMissingPackages,
 } from "../src/index.ts";
 
 describe("detectPackageManager", () => {
@@ -30,6 +31,14 @@ describe("detectPackageManager", () => {
   });
   it("falls back to npm for unknown agent", () => {
     expect(detectPackageManager("unknown/1.0")).toBe("npm");
+  });
+
+  it("uses process.env.npm_config_user_agent when no argument provided", () => {
+    const original = process.env.npm_config_user_agent;
+    process.env.npm_config_user_agent = "pnpm/9.0.0";
+    const { detectPackageManager: detect } = require("../src/index.ts");
+    expect(detect()).toBe("pnpm");
+    process.env.npm_config_user_agent = original;
   });
 });
 
@@ -139,5 +148,70 @@ describe("isPackageInstalled", () => {
     writeFileSync(resolve(pkgRoot, "index.js"), "export default 1;\n");
 
     expect(isPackageInstalled(testRoot, "virtual-pkg")).toBe(true);
+  });
+
+  it("returns false when package is not installed", () => {
+    expect(isPackageInstalled(testRoot, "non-existent-package")).toBe(false);
+  });
+
+  it("detects package via package.json subpath when main entry is blocked", () => {
+    const pkgRoot = resolve(testRoot, "node_modules", "pkg-json-only");
+    mkdirSync(pkgRoot, { recursive: true });
+    writeFileSync(
+      resolve(pkgRoot, "package.json"),
+      JSON.stringify({
+        name: "pkg-json-only",
+        version: "1.0.0",
+        exports: {
+          "./package.json": "./package.json",
+        },
+      }),
+    );
+
+    expect(isPackageInstalled(testRoot, "pkg-json-only")).toBe(true);
+  });
+});
+
+describe("getMissingPackages", () => {
+  let testRoot: string;
+
+  beforeEach(() => {
+    testRoot = resolve(tmpdir(), `pkg-missing-test-${Date.now()}`);
+    mkdirSync(testRoot, { recursive: true });
+  });
+
+  afterEach(() => {
+    if (existsSync(testRoot)) rmSync(testRoot, { recursive: true, force: true });
+  });
+
+  it("returns empty array when all packages are installed", () => {
+    const pkgRoot = resolve(testRoot, "node_modules", "installed-pkg");
+    mkdirSync(pkgRoot, { recursive: true });
+    writeFileSync(
+      resolve(pkgRoot, "package.json"),
+      JSON.stringify({ name: "installed-pkg", version: "1.0.0" }),
+    );
+    writeFileSync(resolve(pkgRoot, "index.js"), "module.exports = 1;\n");
+
+    expect(getMissingPackages(testRoot, ["installed-pkg"])).toEqual([]);
+  });
+
+  it("returns package names that are not installed", () => {
+    expect(getMissingPackages(testRoot, ["missing-pkg-1", "missing-pkg-2"])).toEqual([
+      "missing-pkg-1",
+      "missing-pkg-2",
+    ]);
+  });
+
+  it("returns only missing packages when some are installed", () => {
+    const pkgRoot = resolve(testRoot, "node_modules", "installed-pkg");
+    mkdirSync(pkgRoot, { recursive: true });
+    writeFileSync(
+      resolve(pkgRoot, "package.json"),
+      JSON.stringify({ name: "installed-pkg", version: "1.0.0" }),
+    );
+    writeFileSync(resolve(pkgRoot, "index.js"), "module.exports = 1;\n");
+
+    expect(getMissingPackages(testRoot, ["installed-pkg", "missing-pkg"])).toEqual(["missing-pkg"]);
   });
 });

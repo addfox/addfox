@@ -33,5 +33,3 @@ root.appendChild(myContent);
 - **attr**：元素属性（`id`、`class`、`style`、`data-*` 等）。
 - **injectMode**：`"append"`（默认）或 `"prepend"`。
 - **wrapper**：`"none"`（默认）、`"shadow"`（Shadow DOM）或 `"iframe"`。
-
-如需 `browser` API（如 `browser.runtime`），请自行安装 [webextension-polyfill](https://github.com/mozilla/webextension-polyfill) 并从该包导入。

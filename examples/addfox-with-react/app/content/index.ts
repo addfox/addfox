@@ -1,13 +1,21 @@
-﻿import browser from "webextension-polyfill";
+import browser from "webextension-polyfill";
 
 let lastMessage: unknown = null;
 
-console.log("Content script loaded123.456", fff);
+type FromBackgroundMessage = { type: "FROM_BACKGROUND"; payload?: unknown };
+
+function isFromBackgroundMessage(message: unknown): message is FromBackgroundMessage {
+  if (!message || typeof message !== "object") return false;
+  const m = message as { type?: unknown; payload?: unknown };
+  return m.type === "FROM_BACKGROUND";
+}
 
 browser.runtime.onMessage.addListener(
-  (msg: { type: string; payload?: unknown }) => {
-    if (msg.type === "FROM_BACKGROUND") {
-      lastMessage = msg.payload;
+  (message: unknown) => {
+    if (isFromBackgroundMessage(message)) {
+      lastMessage = message.payload;
+      // lastMessage is unknown; access it only after casting for logging.
+      console.log("Last message:", lastMessage);
       updateBadge();
       return Promise.resolve({ received: true, at: new Date().toISOString() });
     }

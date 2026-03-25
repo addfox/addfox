@@ -11,6 +11,6 @@ export default defineConfig({
     exclude: [],
     reporters: [["text", { skipFull: true }], "html", "json", "lcov"],
     reportsDirectory: "./coverage",
-    thresholds: { statements: 90, branches: 86, functions: 90, lines: 90 },
+    thresholds: { statements: 90, branches: 90, functions: 90, lines: 90 },
   },
 });

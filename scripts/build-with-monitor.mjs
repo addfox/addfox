@@ -15,7 +15,7 @@ const root = path.resolve(__dirname, "..");
 const manifestPath = path.join(
   root,
   "examples",
-  "exo-with-react",
+  "addfox-with-react",
   ".addfox",
   "dist",
   "manifest.json"
@@ -45,7 +45,7 @@ async function waitForMonitorManifest() {
 async function main() {
   const child = spawn(
     "pnpm",
-    ["--filter", "addfox-example-react-template", "run", "dev"],
+    ["--filter", "addfox-with-react", "run", "dev"],
     {
       cwd: root,
       env: { ...process.env, ADDFOX_DEBUG: "true" },

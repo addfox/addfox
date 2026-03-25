@@ -66,7 +66,7 @@ export function findExistingReloadManager(distPath: string, outputRoot = DEFAULT
   return null;
 }
 
-const RELOAD_MANAGER_SCRIPT_VERSION = 3;
+const RELOAD_MANAGER_SCRIPT_VERSION = 4;
 
 export async function ensureDistReady(distPath: string, timeoutMs = 15000): Promise<boolean> {
   const { statSync } = await import("node:fs");
@@ -101,7 +101,8 @@ export async function createReloadManagerExtension(wsPort: number, distPath: str
           manifest_version: 3,
           name: "Reload Manager",
           version: "1.0",
-          permissions: ["management", "tabs"],
+          permissions: ["management", "tabs", "alarms"],
+          host_permissions: ["<all_urls>"],
           background: { service_worker: "bg.js" },
         },
         null,
@@ -110,43 +111,135 @@ export async function createReloadManagerExtension(wsPort: number, distPath: str
       "utf-8"
     );
     const bgJs = `
-let ws=null,rt=null;
-function canReloadTab(tab){
-  if(!tab||!tab.url)return false;
-  const u=tab.url;
-  return u.startsWith("http://")||u.startsWith("https://")||u.startsWith("file://");
+// Reload Manager Service Worker - MV3 Compatible
+const WS_URL = "ws://localhost:${wsPort}";
+const ALARM_NAME = "reload-manager-keepalive";
+const RECONNECT_DELAY = 3000;
+const KEEPALIVE_INTERVAL = 20; // seconds, must be < 30s to prevent SW termination
+
+let ws = null;
+let isConnecting = false;
+
+function canReloadTab(tab) {
+  if (!tab || !tab.url) return false;
+  const u = tab.url;
+  return u.startsWith("http://") || u.startsWith("https://") || u.startsWith("file://");
 }
-function connect(){
-  try{if(ws)ws.close();
-  ws=new WebSocket("ws://localhost:${wsPort}");
-  ws.onopen=()=>{if(rt)clearInterval(rt);rt=null;};
-  ws.onmessage=async(e)=>{
-    const msg=String(e.data==null?"":e.data);
-    if(msg==="connected")return;
-    if(msg==="reload-extension")return;
-    const refreshPage=msg==="toggle-extension-refresh-page"||msg==="toggle-extension-refresh-tab";
-    if(msg==="toggle-extension"||refreshPage){
-      const all=await chrome.management.getAll();
-      for(const x of all){
-        if(x.enabled&&x.installType==="development"&&x.id!==chrome.runtime.id){
-          try{await chrome.management.setEnabled(x.id,false);
-          await new Promise(r=>setTimeout(r,100));
-          await chrome.management.setEnabled(x.id,true);}catch(err){}
+
+async function ensureAlarm() {
+  try {
+    const alarm = await chrome.alarms.get(ALARM_NAME);
+    if (!alarm) {
+      await chrome.alarms.create(ALARM_NAME, { periodInMinutes: KEEPALIVE_INTERVAL / 60 });
+    }
+  } catch (e) {}
+}
+
+function cleanupConnection() {
+  isConnecting = false;
+  if (ws) {
+    try { ws.close(); } catch (e) {}
+    ws = null;
+  }
+}
+
+async function connect() {
+  if (isConnecting || (ws && ws.readyState === WebSocket.OPEN)) return;
+  
+  isConnecting = true;
+  cleanupConnection();
+  
+  try {
+    ws = new WebSocket(WS_URL);
+    
+    ws.onopen = () => {
+      isConnecting = false;
+      ensureAlarm();
+    };
+    
+    ws.onmessage = async (e) => {
+      const msg = String(e.data == null ? "" : e.data);
+      if (msg === "connected") return;
+      if (msg === "reload-extension") return;
+      
+      const refreshPage = msg === "toggle-extension-refresh-page" || msg === "toggle-extension-refresh-tab";
+      
+      if (msg === "toggle-extension" || refreshPage) {
+        const all = await chrome.management.getAll();
+        for (const x of all) {
+          if (x.enabled && x.installType === "development" && x.id !== chrome.runtime.id) {
+            try {
+              await chrome.management.setEnabled(x.id, false);
+              await new Promise(r => setTimeout(r, 100));
+              await chrome.management.setEnabled(x.id, true);
+            } catch (err) {}
+          }
+        }
+        if (refreshPage) {
+          await new Promise(r => setTimeout(r, 200));
+          try {
+            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            if (tab?.id && canReloadTab(tab)) await chrome.tabs.reload(tab.id);
+          } catch (err) {}
         }
       }
-      if(refreshPage){
-        await new Promise(r=>setTimeout(r,200));
-        try{
-          const [tab]=await chrome.tabs.query({active:true,currentWindow:true});
-          if(tab?.id&&canReloadTab(tab))await chrome.tabs.reload(tab.id);
-        }catch(err){}
-      }
-    }
-  };
-  ws.onclose=()=>{if(!rt)rt=setInterval(connect,3000);};
-  }catch(err){}
+    };
+    
+    ws.onclose = () => {
+      cleanupConnection();
+      scheduleReconnect();
+    };
+    
+    ws.onerror = () => {
+      cleanupConnection();
+    };
+  } catch (err) {
+    cleanupConnection();
+    scheduleReconnect();
+  }
 }
- connect();
+
+let reconnectTimeout = null;
+function scheduleReconnect() {
+  if (reconnectTimeout) return;
+  reconnectTimeout = setTimeout(() => {
+    reconnectTimeout = null;
+    connect();
+  }, RECONNECT_DELAY);
+}
+
+// Alarm listener to keep service worker alive and check connection
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === ALARM_NAME) {
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      connect();
+    }
+  }
+});
+
+// Listen for external messages (can be used to wake up service worker)
+chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
+  if (request && request.action === "ping") {
+    sendResponse({ status: "ok", connected: ws && ws.readyState === WebSocket.OPEN });
+  }
+  return true;
+});
+
+// Connect on startup (browser restart)
+chrome.runtime.onStartup.addListener(() => {
+  ensureAlarm();
+  connect();
+});
+
+// Connect on install/update
+chrome.runtime.onInstalled.addListener(() => {
+  ensureAlarm();
+  connect();
+});
+
+// Initial connection
+ensureAlarm();
+connect();
 `;
     await writeFile(bgJsPath, bgJs, "utf-8");
     await writeFile(portCachePath, String(wsPort), "utf-8");

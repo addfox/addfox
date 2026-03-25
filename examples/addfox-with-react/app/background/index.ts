@@ -5,7 +5,7 @@ function openWelcomePage(): void {
   browser.tabs.create({ url }).catch(() => {});
 }
 
-browser.runtime.onInstalled.addListener((details) => {
+chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === "install" || details.reason === "update") {
     openWelcomePage();
   }

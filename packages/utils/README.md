@@ -33,5 +33,3 @@ root.appendChild(myContent);
 - **attr**: Attributes for the element (`id`, `class`, `style`, `data-*`, etc.).
 - **injectMode**: `"append"` (default) or `"prepend"`.
 - **wrapper**: `"none"` (default), `"shadow"` (attach shadow root), or `"iframe"`.
-
-If you need the `browser` API (e.g. `browser.runtime`), install [webextension-polyfill](https://github.com/mozilla/webextension-polyfill) yourself and import from it.

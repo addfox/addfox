@@ -8,9 +8,10 @@ export default defineConfig({
   coverage: {
     enabled: true,
     include: ["src/**/*.ts"],
-    exclude: ["**/cli.ts"],
+    // Exclude CLI entry point and UI-heavy files
+    exclude: ["**/cli/index.ts", "**/template/spinner.ts"],
     reporters: [["text", { skipFull: true }], "html", "json", "lcov"],
     reportsDirectory: "./coverage",
-    thresholds: { statements: 25, branches: 30, functions: 15, lines: 25 },
+    thresholds: { statements: 80, branches: 70, functions: 80, lines: 80 },
   },
 });

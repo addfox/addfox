@@ -1,6 +1,47 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
 # Content-UI
 
 Addfox は `@addfox/utils` に Content-UI ユーティリティメソッドを組み込んでおり、content script で直接使用することをお勧めします。マウントフローを手動で書くよりも効率的です。
+
+## インストール
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @addfox/utils
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @addfox/utils
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @addfox/utils
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @addfox/utils
+```
+
+  </Tab>
+</Tabs>
+
+## インポート
+
+```ts
+import { defineContentUI, defineShadowContentUI, defineIframeContentUI } from "@addfox/utils";
+```
 
 ## 注入位置
 
@@ -13,7 +54,7 @@ Content-UI は **content エントリーファイル**（例：`app/content/inde
 ネイティブコンテナモードで、マウント関数を返します。
 
 ```ts
-// app/content/index.ts または app/content/index.tsx
+// app/content/index.ts
 import { defineContentUI } from "@addfox/utils";
 
 const mount = defineContentUI({

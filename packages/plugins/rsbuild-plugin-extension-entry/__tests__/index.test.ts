@@ -68,6 +68,16 @@ describe("plugin-extension-entry", () => {
     expect(typeof plugin.setup).toBe("function");
   });
 
+  it("should have enforce: 'post' to ensure correct plugin execution order", () => {
+    const config = createMockConfig("/app");
+    const entries = createMockEntries("/app");
+    const plugin = entryPlugin(config, entries, mockChromiumDist("/app"));
+    
+    // Verify enforce is set to "post" to ensure it runs before monitorPlugin
+    // monitorPlugin also uses "post" and relies on entry being set first
+    expect(plugin.enforce).toBe("post");
+  });
+
   it("setup modifyRsbuildConfig merges entry and html config", () => {
     const config = createMockConfig(testRoot);
     const entries = createMockEntries(testRoot);

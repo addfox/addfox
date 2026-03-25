@@ -8,6 +8,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./content-ui": {
+      "types": "./dist/content-ui.d.ts",
+      "import": "./dist/content-ui.js"
     }
   },
   "files": [
@@ -19,6 +23,9 @@
     "dev": "rslib build --watch",
     "test": "rstest run",
     "test:coverage": "rstest run --coverage"
+  },
+  "dependencies": {
+    "@addfox/common": "workspace:*"
   },
   "devDependencies": {
     "@rslib/core": "^0.20.0",

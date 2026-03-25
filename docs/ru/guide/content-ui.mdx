@@ -1,6 +1,47 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
 # Content-UI
 
 Addfox включает в `@addfox/utils` методы Content-UI, рекомендуется использовать их напрямую в content script вместо ручного написания процесса монтирования.
+
+## Установка
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @addfox/utils
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @addfox/utils
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @addfox/utils
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @addfox/utils
+```
+
+  </Tab>
+</Tabs>
+
+## Импорт
+
+```ts
+import { defineContentUI, defineShadowContentUI, defineIframeContentUI } from "@addfox/utils";
+```
 
 ## Место внедрения
 
@@ -13,7 +54,7 @@ Content-UI необходимо внедрять в **entry файл content** (
 Режим нативного контейнера, возвращает функцию монтирования.
 
 ```ts
-// app/content/index.ts или app/content/index.tsx
+// app/content/index.ts
 import { defineContentUI } from "@addfox/utils";
 
 const mount = defineContentUI({

@@ -8,15 +8,11 @@ export default defineConfig({
   coverage: {
     enabled: true,
     include: ["src/**/*.ts"],
-    exclude: [],
+    // Exclude browser files that require webextension-polyfill
+    // These will be tested in E2E tests
+    exclude: ["**/browser.ts", "**/content-ui.ts"],
     reporters: [["text", { skipFull: true }], "html", "json", "lcov"],
     reportsDirectory: "./coverage",
-    thresholds: {
-      statements: 1,
-      branches: 1,
-      functions: 1,
-      lines: 1,
-      perFile: true,
-    },
+    thresholds: { statements: 90, branches: 90, functions: 90, lines: 90 },
   },
 });

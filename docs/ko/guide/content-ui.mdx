@@ -1,6 +1,47 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
 # Content-UI
 
 Addfox는 `@addfox/utils`에 Content-UI 유틸리티 메서드를 내장하여 content script에서 직접 사용하는 것을 권장하며, 수동 마운트 프로세스를 작성하는 대신 사용하세요.
+
+## 설치
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @addfox/utils
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @addfox/utils
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @addfox/utils
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @addfox/utils
+```
+
+  </Tab>
+</Tabs>
+
+## 가져오기
+
+```ts
+import { defineContentUI, defineShadowContentUI, defineIframeContentUI } from "@addfox/utils";
+```
 
 ## 주입 위치
 
@@ -13,7 +54,7 @@ Content-UI는 **content Entry 파일**에서 주입해야 합니다 (예: `app/c
 네이티브 컨테이너 모드로, 마운트 함수를 반환합니다.
 
 ```ts
-// app/content/index.ts 또는 app/content/index.tsx
+// app/content/index.ts
 import { defineContentUI } from "@addfox/utils";
 
 const mount = defineContentUI({

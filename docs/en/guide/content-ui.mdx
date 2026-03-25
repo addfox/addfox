@@ -1,19 +1,60 @@
+import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
+
 # Content-UI
 
-Addfox 在 `@addfox/utils` 内置了 Content-UI 工具方法，推荐在 content script 中直接使用，而不是手写挂载流程。
+Addfox provides built-in Content-UI helpers in `@addfox/utils`. Use these APIs in content scripts instead of hand-writing DOM mount logic.
 
-## 注入位置
+## Installation
 
-Content-UI 需要在 **content 入口文件**中注入（例如 `app/content/index.ts` 或 `app/content/index.tsx`），而不是在 popup/options/background 中调用。
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
 
-## 内置方法
+```bash
+pnpm add @addfox/utils
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @addfox/utils
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @addfox/utils
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @addfox/utils
+```
+
+  </Tab>
+</Tabs>
+
+## Import
+
+```ts
+import { defineContentUI, defineShadowContentUI, defineIframeContentUI } from "@addfox/utils";
+```
+
+## Injection location
+
+Content-UI should be injected in the **content entry file** (for example `app/content/index.ts` or `app/content/index.tsx`), not in popup/options/background entries.
+
+## Built-in methods
 
 ### `defineContentUI(options)`
 
-原生容器模式，返回一个挂载函数。
+Native container mode. Returns a mount function.
 
 ```ts
-// app/content/index.ts 或 app/content/index.tsx
+// app/content/index.ts
 import { defineContentUI } from "@addfox/utils";
 
 const mount = defineContentUI({
@@ -37,7 +78,7 @@ if (document.readyState === "loading") {
 
 ### `defineShadowContentUI(options)`
 
-Shadow DOM 模式，适合做样式隔离。
+Shadow DOM mode for style isolation.
 
 ```ts
 // app/content/index.ts
@@ -50,7 +91,7 @@ const mount = defineShadowContentUI({
 });
 
 function mountUI() {
-  const root = mount(); // ShadowRoot 内 mount 节点
+  const root = mount(); // mount node inside ShadowRoot
   const title = document.createElement("div");
   title.textContent = "Content UI (addfox)";
   root.appendChild(title);
@@ -65,7 +106,7 @@ if (document.readyState === "loading") {
 
 ### `defineIframeContentUI(options)`
 
-iframe 模式，隔离级别最高。
+iframe mode with the strongest isolation.
 
 ```ts
 // app/content/index.ts
@@ -77,7 +118,7 @@ const mount = defineIframeContentUI({
 });
 
 function mountUI() {
-  const root = mount(); // iframe 文档中的根节点
+  const root = mount(); // root node inside iframe document
   root.textContent = "Hello from iframe content-ui";
 }
 
@@ -88,17 +129,17 @@ if (document.readyState === "loading") {
 }
 ```
 
-## 常用参数
+## Common options
 
-- `target`: 目标挂载位置（CSS 选择器或 Element）
-- `attr`: 注入节点属性（`id`、`class`、`style`、`data-*` 等）
-- `injectMode`: 注入方式，`append | prepend`
-- `tag`: 仅 `defineContentUI` 需要
-- `name`: 仅 `defineShadowContentUI` 需要（自定义元素名）
+- `target`: mount target (CSS selector or Element)
+- `attr`: injected node attributes (`id`, `class`, `style`, `data-*`, etc.)
+- `injectMode`: insertion mode, `append | prepend`
+- `tag`: required by `defineContentUI`
+- `name`: required by `defineShadowContentUI` (custom element name)
 
-## 示例
+## Examples
 
 - [addfox-with-content-ui](https://github.com/addfox/addfox/tree/main/examples/addfox-with-content-ui)  
-  使用 `defineShadowContentUI` 注入页面面板
+  Uses `defineShadowContentUI` to inject a panel
 - [addfox-with-content-ui-react](https://github.com/addfox/addfox/tree/main/examples/addfox-with-content-ui-react)  
-  使用 `defineContentUI` + React + Tailwind
+  Uses `defineContentUI` + React + Tailwind

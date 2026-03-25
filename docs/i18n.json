@@ -383,6 +383,46 @@
     "ru": "Расширяемые Skills с поддержкой Agent и автоматизации.",
     "es": "Skills extensibles, con soporte para Agent y automatización."
   },
+  "homeFooterFriendlyLinks": {
+    "en": "Friendly links",
+    "zh": "友情链接",
+    "ja": "関連リンク",
+    "ko": "관련 링크",
+    "ru": "Дружественные ссылки",
+    "es": "Sitios amigos"
+  },
+  "homeFooterGithub": {
+    "en": "GitHub",
+    "zh": "GitHub",
+    "ja": "GitHub",
+    "ko": "GitHub",
+    "ru": "GitHub",
+    "es": "GitHub"
+  },
+  "homeFooterWxt": {
+    "en": "WXT",
+    "zh": "WXT 官网",
+    "ja": "WXT",
+    "ko": "WXT",
+    "ru": "WXT",
+    "es": "WXT"
+  },
+  "homeFooterPlasmo": {
+    "en": "Plasmo",
+    "zh": "Plasmo 官网",
+    "ja": "Plasmo",
+    "ko": "Plasmo",
+    "ru": "Plasmo",
+    "es": "Plasmo"
+  },
+  "homeFooterAgentWorkAlt": {
+    "en": "Featured on AgentWork.Tools",
+    "zh": "Featured on AgentWork.Tools",
+    "ja": "Featured on AgentWork.Tools",
+    "ko": "Featured on AgentWork.Tools",
+    "ru": "Featured on AgentWork.Tools",
+    "es": "Featured on AgentWork.Tools"
+  },
   "guide": {
     "en": "Guide",
     "zh": "指南",
