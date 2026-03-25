@@ -10,28 +10,32 @@ Add `@addfox/rsbuild-plugin-vue` to **plugins** in `addfox.config.ts` to enable 
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-pnpm add vue @addfox/rsbuild-plugin-vue -D
+pnpm add vue
+pnpm add @addfox/rsbuild-plugin-vue -D
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-npm install vue @addfox/rsbuild-plugin-vue -D
+npm install vue
+npm install @addfox/rsbuild-plugin-vue -D
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-yarn add vue @addfox/rsbuild-plugin-vue -D
+yarn add vue
+yarn add @addfox/rsbuild-plugin-vue -D
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-bun add vue @addfox/rsbuild-plugin-vue -D
+bun add vue
+bun add @addfox/rsbuild-plugin-vue -D
 ```
 
   </Tab>
@@ -44,6 +48,61 @@ import vue from "@addfox/rsbuild-plugin-vue";
 
 export default defineConfig({
   plugins: [vue()],
+});
+```
+
+## TSX/JSX Support
+
+`@addfox/rsbuild-plugin-vue` supports both Vue SFC (`.vue`) and TSX/JSX out of the box. No additional configuration needed.
+
+### Manual Setup (if not using @addfox/rsbuild-plugin-vue)
+
+If you prefer to use the official Rsbuild plugins manually, you need to install additional dependencies:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @rsbuild/plugin-babel @rsbuild/plugin-vue @rsbuild/plugin-vue-jsx -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @rsbuild/plugin-babel @rsbuild/plugin-vue @rsbuild/plugin-vue-jsx -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @rsbuild/plugin-babel @rsbuild/plugin-vue @rsbuild/plugin-vue-jsx -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @rsbuild/plugin-babel @rsbuild/plugin-vue @rsbuild/plugin-vue-jsx -D
+```
+
+  </Tab>
+</Tabs>
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import pluginBabel from "@rsbuild/plugin-babel";
+import pluginVue from "@rsbuild/plugin-vue";
+import pluginVueJsx from "@rsbuild/plugin-vue-jsx";
+
+export default defineConfig({
+  plugins: [
+    pluginBabel({ include: /\.(?:jsx|tsx)$/ }),
+    pluginVue(),
+    pluginVueJsx(),
+  ],
 });
 ```
 

@@ -18,28 +18,32 @@ pnpm create addfox-app --framework vue
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-pnpm add @addfox/rsbuild-plugin-vue
+pnpm add vue
+pnpm add @addfox/rsbuild-plugin-vue -D
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-npm install @addfox/rsbuild-plugin-vue
+npm install vue
+npm install @addfox/rsbuild-plugin-vue -D
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-yarn add @addfox/rsbuild-plugin-vue
+yarn add vue
+yarn add @addfox/rsbuild-plugin-vue -D
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-bun add @addfox/rsbuild-plugin-vue
+bun add vue
+bun add @addfox/rsbuild-plugin-vue -D
 ```
 
   </Tab>
@@ -54,6 +58,61 @@ import { pluginVue } from "@addfox/rsbuild-plugin-vue";
 
 export default defineConfig({
   plugins: [pluginVue()],
+});
+```
+
+## TSX/JSX 支持
+
+`@addfox/rsbuild-plugin-vue` 插件**同时支持 Vue SFC (`.vue`) 和 TSX/JSX**，无需额外配置。
+
+### 手动配置（如果不使用 @addfox/rsbuild-plugin-vue）
+
+如果你希望手动使用 Rsbuild 官方插件，需要安装额外的依赖：
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @rsbuild/plugin-babel @rsbuild/plugin-vue @rsbuild/plugin-vue-jsx -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @rsbuild/plugin-babel @rsbuild/plugin-vue @rsbuild/plugin-vue-jsx -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @rsbuild/plugin-babel @rsbuild/plugin-vue @rsbuild/plugin-vue-jsx -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @rsbuild/plugin-babel @rsbuild/plugin-vue @rsbuild/plugin-vue-jsx -D
+```
+
+  </Tab>
+</Tabs>
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import pluginBabel from "@rsbuild/plugin-babel";
+import pluginVue from "@rsbuild/plugin-vue";
+import pluginVueJsx from "@rsbuild/plugin-vue-jsx";
+
+export default defineConfig({
+  plugins: [
+    pluginBabel({ include: /\.(?:jsx|tsx)$/ }),
+    pluginVue(),
+    pluginVueJsx(),
+  ],
 });
 ```
 

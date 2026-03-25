@@ -57,6 +57,61 @@ export default defineConfig({
 });
 ```
 
+## Поддержка TSX/JSX
+
+Плагин `@addfox/rsbuild-plugin-vue` **поддерживает как Vue SFC (`.vue`), так и TSX/JSX** без дополнительной конфигурации.
+
+### Ручная настройка (если не используете @addfox/rsbuild-plugin-vue)
+
+Если вы предпочитаете использовать официальные плагины Rsbuild вручную, вам необходимо установить дополнительные зависимости:
+
+<Tabs>
+  <Tab label={<TabLabelPnpm />}>
+
+```bash
+pnpm add @rsbuild/plugin-babel @rsbuild/plugin-vue @rsbuild/plugin-vue-jsx -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelNpm />}>
+
+```bash
+npm install @rsbuild/plugin-babel @rsbuild/plugin-vue @rsbuild/plugin-vue-jsx -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelYarn />}>
+
+```bash
+yarn add @rsbuild/plugin-babel @rsbuild/plugin-vue @rsbuild/plugin-vue-jsx -D
+```
+
+  </Tab>
+  <Tab label={<TabLabelBun />}>
+
+```bash
+bun add @rsbuild/plugin-babel @rsbuild/plugin-vue @rsbuild/plugin-vue-jsx -D
+```
+
+  </Tab>
+</Tabs>
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+import pluginBabel from "@rsbuild/plugin-babel";
+import pluginVue from "@rsbuild/plugin-vue";
+import pluginVueJsx from "@rsbuild/plugin-vue-jsx";
+
+export default defineConfig({
+  plugins: [
+    pluginBabel({ include: /\.(?:jsx|tsx)$/ }),
+    pluginVue(),
+    pluginVueJsx(),
+  ],
+});
+```
+
 ## Структура проекта
 
 ```
