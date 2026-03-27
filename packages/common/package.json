@@ -1,6 +1,6 @@
 {
   "name": "@addfox/common",
-  "version": "0.1.1-beta.8",
+  "version": "0.1.1-beta.9",
   "description": "Shared utilities for Addfox packages",
   "license": "MIT",
   "type": "module",
@@ -27,9 +27,6 @@
     "build": "rslib build",
     "dev": "rslib build --watch",
     "test": "rstest run"
-  },
-  "dependencies": {
-    "cli-table3": "^0.6.5"
   },
   "devDependencies": {
     "@rsbuild/core": "^1.0.0",

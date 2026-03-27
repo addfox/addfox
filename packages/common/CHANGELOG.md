@@ -1,5 +1,11 @@
 ﻿# @addfox/common
 
+## 0.1.1-beta.9
+
+### Patch Changes
+
+- perf: Optimize processes and improve startup speed
+
 ## 0.1.1-beta.8
 
 ### Patch Changes

@@ -73,7 +73,6 @@ export function getModifiedFilesFromCompiler(compiler: Compiler | null): Set<str
 // ==================== Plugin Factory ====================
 
 const LAUNCH_PLUGIN_NAME = "rsbuild-plugin-extension-hmr:launch";
-const LAUNCH_DELAY_MS = 1000;
 
 /**
  * Creates the HMR Rspack plugin that handles browser launch on first successful compilation.
@@ -97,7 +96,8 @@ export function createHmrRspackPlugin(
         if (!autoOpen || getBrowserLaunched()) return;
         if (statsHasErrors(stats)) return;
         setBrowserLaunched(true);
-        await new Promise(r => setTimeout(r, LAUNCH_DELAY_MS));
+        // Launch browser immediately - WebSocket server is already started in parallel
+        // Reload manager extension will auto-connect via its reconnection mechanism
         try {
           await launchBrowser(
             options,

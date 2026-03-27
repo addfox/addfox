@@ -37,7 +37,8 @@ import {
   resolveAddfoxConfig,
 } from "@addfox/core";
 import type { PipelineContext, AddfoxResolvedConfig, BrowserTarget, LaunchTarget } from "@addfox/core";
-import { launchBrowserOnly } from "@addfox/rsbuild-plugin-extension-hmr";
+import { launchBrowserOnly, startWebSocketServer, isChromiumBrowser, type DebugServerOpts, type WsServerMode } from "@addfox/rsbuild-plugin-extension-hmr";
+import { HMR_WS_PORT } from "@addfox/core";
 
 const root = process.cwd();
 
@@ -191,6 +192,22 @@ async function runDev(root: string, argv: string[]): Promise<void> {
   const rsbuild = await createRsbuildInstance(ctx);
   logDoneTimed("Rsbuild ready", Math.round(performance.now() - rsbuildReadyStart));
 
+  // Start WebSocket server immediately (parallel with dev server), don't wait for first compile
+  const wsStartTime = performance.now();
+  const hotReload = ctx.config.hotReload;
+  const hotReloadEnabled = hotReload !== false;
+  const hotReloadOpts = typeof hotReload === "object" && hotReload !== null ? hotReload : undefined;
+  const wsPort = hotReloadOpts?.port ?? HMR_WS_PORT;
+  const wsMode: WsServerMode = hotReloadEnabled && isChromiumBrowser(ctx.browser) ? "full" : "httpOnly";
+  const wsDebugOpts: DebugServerOpts | undefined = ctx.config.debug ? {
+    debug: true,
+    root: ctx.root,
+    outputRoot: ctx.config.outputRoot,
+    distPath: ctx.distPath,
+  } : undefined;
+  // Fire-and-forget: WebSocket server starts immediately, reload manager will auto-connect when ready
+  startWebSocketServer(wsPort, wsStartTime, wsDebugOpts, wsMode).catch(() => {});
+
   const configPath = getResolvedConfigFilePath(ctx.root);
   let devServerRef: Awaited<ReturnType<typeof rsbuild.startDevServer>> | null = null;
   let watcherRef: { close: () => void } | null = null;
@@ -215,7 +232,7 @@ async function runDev(root: string, argv: string[]): Promise<void> {
   logDoneTimed("Dev server " + mainUrl, Math.round(performance.now() - devServerStart));
 
   const devDistDir = (rsbuild.context as { distPath?: string } | undefined)?.distPath ?? ctx.distPath;
-  setTimeout(() => logExtensionSize(devDistDir, ctx.rsbuild), 2500);
+  setTimeout(() => logExtensionSize(devDistDir, ctx.rsbuild), 1000);
 }
 
 /** Build mode: compile + optional zip + auto browser launch. */
