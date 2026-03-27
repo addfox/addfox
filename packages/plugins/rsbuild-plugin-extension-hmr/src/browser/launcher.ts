@@ -370,10 +370,14 @@ export async function launchBrowserCore(ctx: LaunchContext): Promise<void> {
   lastDistPath = ctx.distPath;
   lastOutputRoot = ctx.outputRoot;
   const browserBinary = (ctx.getBrowserPathOverride ?? getBrowserPath)(ctx.browser, ctx.pathOpts);
+  
+  // Quick check: dist should be ready since first compile is done (done hook triggered)
+  // No need for long polling - reload manager extension will auto-connect when ready
   const readyFn = ctx.ensureDistReadyOverride ?? (() => ensureDistReady(ctx.distPath));
   await readyFn(ctx.distPath).catch((e: Error) => { error(e.message); });
 
   const plan = computeReloadServerPlan(ctx);
+  // WebSocket server is already started in parallel by CLI, this is idempotent
   await startReloadServersForPlan(ctx, plan);
   if (plan.mode === "full") {
     reloadManagerPath = await createReloadManagerExtension(ctx.wsPort, ctx.distPath);

@@ -6,7 +6,6 @@
 import { format } from "node:util";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import Table from "cli-table3";
 
 // ============================================================================
 // Types & Interfaces
@@ -282,7 +281,7 @@ export class Logger {
   }
 
   /**
-   * Log entries table
+   * Log entries tree
    */
   logEntriesTable(
     entries: EntryTableRow[],
@@ -291,32 +290,23 @@ export class Logger {
     if (entries.length === 0) return;
     
     const root = options?.root;
-    const headColor = this.useColors ? ANSI_COLORS.PURPLE : "";
+    const titleColor = this.useColors ? ANSI_COLORS.PURPLE : "";
+    const entryColor = this.useColors ? ANSI_COLORS.PURPLE : "";
+    const fileColor = this.useColors ? ANSI_COLORS.TIME : "";
     const resetColor = this.useColors ? ANSI_COLORS.RESET : "";
 
-    const table = new Table({
-      head: [headColor + "Entry" + resetColor, headColor + "File" + resetColor],
-      style: { head: [], border: [] },
-      chars: {
-        top: "╌",
-        "top-mid": "┬",
-        "top-left": "┌",
-        "top-right": "┐",
-        bottom: "╌",
-        "bottom-mid": "┴",
-        "bottom-left": "└",
-        "bottom-right": "┘",
-        left: "│",
-        "left-mid": "├",
-        mid: "╌",
-        "mid-mid": "┼",
-        right: "│",
-        "right-mid": "┤",
-        middle: "│",
-      },
-    });
+    const w = this.getWrites().stdout;
+    const lines: string[] = [];
 
-    for (const e of entries) {
+    // Tree root title
+    lines.push(titleColor + "Entry" + resetColor);
+
+    for (let i = 0; i < entries.length; i++) {
+      const e = entries[i];
+      const isLast = i === entries.length - 1;
+      const branchPrefix = isLast ? "└── " : "├── ";
+
+      // File path display
       const fileDisplay =
         root !== undefined
           ? this.fileLink(
@@ -324,11 +314,17 @@ export class Logger {
               path.relative(root, e.scriptPath).replace(/\\/g, "/")
             )
           : e.scriptPath;
-      table.push([e.name, fileDisplay]);
+
+      // Entry line: name -> file path
+      const entryLine = 
+        branchPrefix + 
+        entryColor + e.name + resetColor +
+        " -> " +
+        fileColor + fileDisplay + resetColor;
+      lines.push(entryLine);
     }
 
-    const w = this.getWrites().stdout;
-    w(table.toString() + "\n", "utf8");
+    w(lines.join("\n") + "\n", "utf8");
   }
 
   /**

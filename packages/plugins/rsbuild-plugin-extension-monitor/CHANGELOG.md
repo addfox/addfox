@@ -1,5 +1,13 @@
 # @addfox/rsbuild-plugin-extension-monitor
 
+## 0.1.1-beta.9
+
+### Patch Changes
+
+- Updated dependencies
+  - @addfox/common@0.1.1-beta.9
+  - @addfox/core@0.1.1-beta.9
+
 ## 0.1.1-beta.8
 
 ### Patch Changes

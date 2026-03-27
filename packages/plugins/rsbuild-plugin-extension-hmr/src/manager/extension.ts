@@ -68,13 +68,13 @@ export function findExistingReloadManager(distPath: string, outputRoot = DEFAULT
 
 const RELOAD_MANAGER_SCRIPT_VERSION = 4;
 
-export async function ensureDistReady(distPath: string, timeoutMs = 15000): Promise<boolean> {
+export async function ensureDistReady(distPath: string, timeoutMs = 2000): Promise<boolean> {
   const { statSync } = await import("node:fs");
   const manifestPath = resolve(distPath, "manifest.json");
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     if (existsSync(manifestPath) && statSync(manifestPath).size > 0) return true;
-    await new Promise((r) => setTimeout(r, 300));
+    await new Promise((r) => setTimeout(r, 50));
   }
   throw new Error(`dist not ready: ${manifestPath}`);
 }
