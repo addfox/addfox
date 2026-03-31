@@ -402,6 +402,3 @@ export function setAddfoxLoggerRawWrites(
 ): void {
   logger.setRawWrites(writes);
 }
-
-// Re-export types
-export type { Table } from "cli-table3";

@@ -7,6 +7,7 @@ export {
   getBuildOutputSize,
   formatBytes,
   isSourceMapEnabled,
+  getSourceMapLabel,
 } from "./buildStats.ts";
 
 export {

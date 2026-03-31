@@ -5,6 +5,7 @@ packages:
   - "packages/core"
   - "packages/utils"
   - "packages/pkg-manager"
+  - "packages/hub"
   - "packages/plugins/rsbuild-plugin-extension-entry"
   - "packages/plugins/rsbuild-plugin-extension-manifest"
   - "packages/plugins/rsbuild-plugin-extension-hmr"

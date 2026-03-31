@@ -22,14 +22,44 @@ export function formatBytes(bytes: number): string {
 
 /** Whether the Rsbuild config has JS source map enabled (any format). */
 export function isSourceMapEnabled(
-  rsbuildConfig: { output?: { sourceMap?: unknown } }
+  rsbuildConfig: { 
+    output?: { sourceMap?: unknown };
+    tools?: { rspack?: { plugins?: unknown[] } };
+  }
 ): boolean {
+  // 1. 检查 output.sourceMap 配置
   const sm = rsbuildConfig?.output?.sourceMap;
   if (sm === true) return true;
   if (sm && typeof sm === "object" && typeof (sm as { js?: string }).js === "string") {
     return true;
   }
+  
+  // 2. 检查是否使用了 SourceMapDevToolPlugin（dev 模式下排除 vendor sourcemap 的情况）
+  const plugins = rsbuildConfig?.tools?.rspack?.plugins;
+  if (Array.isArray(plugins)) {
+    for (const plugin of plugins) {
+      if (plugin && typeof plugin === "object") {
+        const name = (plugin as { name?: string; constructor?: { name?: string } }).name;
+        const ctorName = (plugin as { constructor?: { name?: string } }).constructor?.name;
+        if (name === "SourceMapDevToolPlugin" || ctorName === "SourceMapDevToolPlugin") {
+          return true;
+        }
+      }
+    }
+  }
+  
   return false;
+}
+
+/** Source-map label shown in the CLI size log. */
+export function getSourceMapLabel(
+  rsbuildConfig: { 
+    output?: { sourceMap?: unknown };
+    tools?: { rspack?: { plugins?: unknown[] } };
+  }
+): string {
+  if (!isSourceMapEnabled(rsbuildConfig)) return "";
+  return " (with inline-source-map, vendor excluded)";
 }
 
 /** Get total size of build output from Rsbuild build result (stats.assets). */

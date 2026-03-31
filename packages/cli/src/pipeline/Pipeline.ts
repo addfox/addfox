@@ -19,6 +19,7 @@ import { Pipeline as CorePipeline } from '@addfox/core/pipeline';
 import { hmrPlugin, type HmrPluginOptions } from '@addfox/rsbuild-plugin-extension-hmr';
 import { getMissingPackages, getAddCommand, detectFromLockfile } from '@addfox/pkg-manager';
 import { buildFrameworkPluginList } from './frameworkPlugins.js';
+import { rspack } from '@rspack/core';
 
 type LoosePlugin = RsbuildConfig['plugins'] extends (infer P)[] ? P : never;
 type RuntimeEnvConfig = {
@@ -150,6 +151,22 @@ export class Pipeline {
     );
     if (scopedProcessEnvPlugin) plugins.push(scopedProcessEnvPlugin as LoosePlugin);
 
+    // Dev 模式下使用 SourceMapDevToolPlugin 排除第三方库的 sourcemap
+    // 策略：只给项目入口文件生成 sourcemap，排除 vendor chunk
+    const rspackPlugins = ctx.isDev
+      ? [
+          // 项目文件 sourcemap（排除 vendor）
+          new rspack.SourceMapDevToolPlugin({
+            filename: null,
+            append: '\n//# sourceMappingURL=[url]',
+            test: /\.(js|jsx|ts|tsx|mjs|cjs)$/,
+            exclude: [/vendor/, /node_modules/, /shared-vendor/],
+            module: true,
+            columns: true,
+          }),
+        ]
+      : [];
+
     return {
       root: ctx.root,
       plugins,
@@ -158,7 +175,13 @@ export class Pipeline {
       },
       output: {
         legalComments: 'none',
-        sourceMap: ctx.isDev ? { js: 'inline-source-map' } : false,
+        // Dev 模式下禁用默认 sourcemap，使用 SourceMapDevToolPlugin
+        sourceMap: false,
+      },
+      tools: {
+        rspack: {
+          plugins: rspackPlugins,
+        },
       },
     };
   }

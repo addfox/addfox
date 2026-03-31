@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@rsbuild/core": "^1.7.3",
+    "@rspack/core": "^1.7.8",
     "@addfox/common": "workspace:*",
     "@addfox/core": "workspace:*",
     "@addfox/pkg-manager": "workspace:*",

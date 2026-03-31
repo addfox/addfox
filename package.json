@@ -15,6 +15,7 @@
     "dev": "pnpm --filter @addfox/cli dev",
     "create": "pnpm --filter create-addfox-app start",
     "packages:build": "pnpm -r --filter \"./packages/**\" run build",
+    "packages:yalc": "pnpm run packages:build && node scripts/yalc-publish.mjs",
     "packages:test": "pnpm -r --filter \"./packages/**\" run test",
     "packages:test:coverage": "pnpm -r --filter \"./packages/**\" run test:coverage",
     "test": "pnpm run packages:test",
@@ -35,12 +36,18 @@
     "version": "changeset version",
     "release": "pnpm run packages:build && pnpm publish -r",
     "ci:publish": "pnpm publish -r --access public",
-    "test:cross-pm": "pnpm run packages:build && node scripts/test-cross-pm.mjs"
+    "test:cross-pm": "pnpm run packages:build && node scripts/test-cross-pm.mjs",
+    "hub:build": "pnpm --filter @addfox/hub run build:all",
+    "hub:start": "pnpm --filter @addfox/hub hub start",
+    "hub:dev": "pnpm run hub:build && pnpm --filter @addfox/hub hub start",
+    "hub:test": "pnpm run hub:build && node packages/hub/dist/cli.js scan --add ./examples && node packages/hub/dist/cli.js start",
+    "hub:stop": "npx kill-port 3040 || taskkill /F /IM node.exe /FI \"WINDOWTITLE eq hub*\" 2>nul || echo Hub stopped or not running"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.0",
     "@addfox/rsbuild-plugin-extension-hmr": "workspace:*",
     "@playwright/test": "^1.58.2",
+    "@rspack/core": "^1.7.8",
     "lcov-result-merger": "^5.0.1",
     "ws": "^8.18.0"
   },
