@@ -22,6 +22,10 @@ const TOOL_PATTERNS: Record<ExtensionTool, { configFiles: string[]; dependencies
     configFiles: [],
     dependencies: [],
   },
+  generic: {
+    configFiles: [],
+    dependencies: [],
+  },
   unknown: {
     configFiles: [],
     dependencies: [],
@@ -89,13 +93,15 @@ function readManifest(dir: string): ExtensionManifest | undefined {
 }
 
 function detectTool(dir: string, pkgJson?: any): ExtensionTool {
+  // First check for framework config files (highest priority)
   for (const [tool, patterns] of Object.entries(TOOL_PATTERNS)) {
-    if (tool === 'unknown' || tool === 'vanilla') continue;
+    if (tool === 'unknown' || tool === 'vanilla' || tool === 'generic') continue;
     if (hasConfigFile(dir, patterns.configFiles)) {
       return tool as ExtensionTool;
     }
   }
 
+  // Check for framework dependencies
   if (pkgJson) {
     const allDeps = {
       ...pkgJson.dependencies,
@@ -103,21 +109,26 @@ function detectTool(dir: string, pkgJson?: any): ExtensionTool {
     };
 
     for (const [tool, patterns] of Object.entries(TOOL_PATTERNS)) {
-      if (tool === 'unknown' || tool === 'vanilla') continue;
+      if (tool === 'unknown' || tool === 'vanilla' || tool === 'generic') continue;
       if (patterns.dependencies.some(dep => allDeps[dep])) {
         return tool as ExtensionTool;
       }
     }
   }
 
+  // Check for manifest.json - could be vanilla or generic
   if (readManifest(dir)) {
+    // Check if it has a dev script - treat as generic if so
+    if (pkgJson?.scripts?.dev || pkgJson?.scripts?.start) {
+      return 'generic';
+    }
     return 'vanilla';
   }
 
   return 'unknown';
 }
 
-export async function scanProject(dir: string): Promise<Project | null> {
+export async function scanProject(dir: string, source?: 'scan' | 'manual'): Promise<Project | null> {
   const resolvedPath = resolve(dir);
   
   if (!existsSync(resolvedPath)) return null;
@@ -144,10 +155,11 @@ export async function scanProject(dir: string): Promise<Project | null> {
     lastModified: stat.mtime.toISOString(),
     buildCount: 0,
     devSessionCount: 0,
+    source,
   };
 }
 
-export async function scanPaths(options: ScanOptions): Promise<ScanResult> {
+export async function scanPaths(options: ScanOptions & { source?: 'scan' | 'manual' }): Promise<ScanResult> {
   const projects: Project[] = [];
   const errors: Array<{ path: string; error: string }> = [];
   let scanned = 0;
@@ -156,6 +168,7 @@ export async function scanPaths(options: ScanOptions): Promise<ScanResult> {
   const maxDepth = options.maxDepth || 3;
   const excludePatterns = options.excludePatterns || ['**/node_modules/**', '**/.git/**'];
   const dirsToScan = new Set<string>();
+  const source = options.source;
 
   for (const scanPath of paths) {
     const resolvedPath = resolve(scanPath);
@@ -173,7 +186,7 @@ export async function scanPaths(options: ScanOptions): Promise<ScanResult> {
       continue;
     }
 
-    const singleProject = await scanProject(resolvedPath);
+    const singleProject = await scanProject(resolvedPath, source);
     if (singleProject) {
       projects.push(singleProject);
       continue;
@@ -239,6 +252,7 @@ export async function fullScan(settings: HubSettings, onProgress?: (msg: string)
     const manualResult = await scanPaths({
       paths: settings.manualProjects,
       maxDepth: 1,
+      source: 'manual',
     });
     allProjects.push(...manualResult.projects);
     errors.push(...manualResult.errors);
@@ -255,6 +269,7 @@ export async function fullScan(settings: HubSettings, onProgress?: (msg: string)
       paths: configuredPaths,
       maxDepth: settings.scan.maxDepth,
       excludePatterns: settings.scan.excludePatterns,
+      source: 'scan',
     });
     
     for (const project of configResult.projects) {
@@ -279,7 +294,7 @@ export async function fullScan(settings: HubSettings, onProgress?: (msg: string)
     
     for (const projectPath of projects) {
       try {
-        const project = await scanProject(projectPath);
+        const project = await scanProject(projectPath, 'scan');
         if (project && !allProjects.find(p => p.id === project.id)) {
           project.workspace = {
             root: wsPath,
@@ -303,7 +318,7 @@ export async function fullScan(settings: HubSettings, onProgress?: (msg: string)
           
           for (const projectPath of ws.projects) {
             try {
-              const project = await scanProject(projectPath);
+              const project = await scanProject(projectPath, 'scan');
               if (project && !allProjects.find(p => p.id === project.id)) {
                 project.workspace = {
                   root: ws.root,

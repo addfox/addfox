@@ -2,9 +2,10 @@
 // Hub Core Types
 // ============================================
 
-export type ExtensionTool = 'addfox' | 'wxt' | 'plasmo' | 'vanilla' | 'unknown';
+export type ExtensionTool = 'addfox' | 'wxt' | 'plasmo' | 'vanilla' | 'generic' | 'unknown';
 export type BrowserType = 'chrome' | 'edge' | 'brave' | 'chromium';
-export type SessionStatus = 'starting' | 'building' | 'running' | 'stopping' | 'error' | 'stopped';
+export type ProcessStatus = SessionStatus;
+export type SessionStatus = 'starting' | 'building' | 'running' | 'stopping' | 'error' | 'stopped' | 'crashed';
 export type CliOutputMode = 'pretty' | 'json' | 'silent';
 
 // ============================================
@@ -47,6 +48,14 @@ export interface Project {
     version?: string;
     dependencies?: Record<string, string>;
     devDependencies?: Record<string, string>;
+    scripts?: Record<string, string>;
+    hub?: {
+      dev?: {
+        command?: string;
+        entrypointsDir?: string;
+        outDir?: string;
+      };
+    };
   };
   workspace?: {
     root: string;
@@ -58,6 +67,9 @@ export interface Project {
   buildCount: number;
   devSessionCount: number;
   tags?: string[];
+  source?: 'scan' | 'manual';
+  devCommand?: string;
+  buildCommand?: string;
 }
 
 // ============================================
@@ -68,9 +80,14 @@ export interface LogEntry {
   id: string;
   timestamp: string;
   level: 'debug' | 'info' | 'warn' | 'error';
-  source: 'build' | 'browser' | 'extension' | 'system';
+  source: 'build' | 'browser' | 'extension' | 'system' | 'stdout' | 'stderr';
   message: string;
   details?: any;
+  metadata?: {
+    processId?: number;
+    tag?: string;
+    [key: string]: any;
+  };
 }
 
 export interface Session {
@@ -150,6 +167,7 @@ export interface CreateSessionRequest {
   browser?: BrowserType;
   headless?: boolean;
   noLaunch?: boolean;
+  devCommand?: string; // Optional custom dev command override
 }
 
 export interface ScanRequest {
@@ -204,7 +222,11 @@ export interface DevOptions {
   browser?: BrowserType;
   port?: number;
   headless?: boolean;
+  command?: string;
+  onProgress?: (progress: number, message: string, stage?: BuildStage) => void;
 }
+
+export type BuildStage = 'init' | 'install' | 'build' | 'launch' | 'ready' | 'error';
 
 export interface DevHandle {
   pid: number;
@@ -212,11 +234,13 @@ export interface DevHandle {
   serverUrl?: string;
   close: () => Promise<void>;
   onBuildComplete?: (callback: (result: BuildResult) => void) => void;
+  onProgress?: (callback: (progress: number, message: string, stage?: BuildStage) => void) => () => void;
 }
 
 export interface BuildOptions {
   target?: 'chromium' | 'firefox';
   mode?: 'development' | 'production';
+  command?: string;
 }
 
 export interface BuildResult {
@@ -225,4 +249,133 @@ export interface BuildResult {
   errors: string[];
   warnings: string[];
   duration: number;
+}
+
+// ============================================
+// WebSocket Event Types
+// ============================================
+
+/**
+ * Server -> Client event types
+ */
+export type ServerToClientEventType = 
+  | 'session.created'
+  | 'session.updated'
+  | 'session.log'
+  | 'session.build-progress'
+  | 'project.updated'
+  | 'stats.updated'
+  | 'connection.established'
+  | 'connection.error'
+  | 'pong';
+
+/**
+ * Client -> Server event types
+ */
+export type ClientToServerEventType = 
+  | 'ping'
+  | 'subscribe'
+  | 'unsubscribe'
+  | 'auth';
+
+/**
+ * WebSocket message base interface
+ */
+export interface WebSocketMessage<T = unknown> {
+  type: string;
+  data?: T;
+  timestamp?: string;
+  connectionId?: string;
+}
+
+/**
+ * Server to client event payload definitions
+ */
+export interface ServerToClientEvents {
+  'session.created': { session: Session };
+  'session.updated': { sessionId: string; updates: Partial<Session> };
+  'session.log': { sessionId: string; entry: LogEntry };
+  'session.build-progress': { 
+    sessionId: string; 
+    progress: number; 
+    message: string;
+    stage?: 'init' | 'build' | 'launch' | 'ready';
+  };
+  'project.updated': { projectId: string; project: Project };
+  'stats.updated': { 
+    stats: { 
+      projects: number; 
+      activeSessions: number; 
+      totalSessions: number;
+    };
+  };
+  'connection.established': { 
+    connectionId: string;
+    initialData: {
+      stats: { projects: number; activeSessions: number; totalSessions: number };
+      sessions: Session[];
+    };
+  };
+  'connection.error': { 
+    code: string;
+    message: string;
+  };
+  'pong': { timestamp: number };
+}
+
+/**
+ * Client to server event payload definitions
+ */
+export interface ClientToServerEvents {
+  'ping': { timestamp?: number };
+  'subscribe': { 
+    channels: ('all' | `session:${string}` | `project:${string}` | 'stats')[];
+  };
+  'unsubscribe': { 
+    channels: ('all' | `session:${string}` | `project:${string}` | 'stats')[];
+  };
+  'auth': { token: string };
+}
+
+/**
+ * Typed WebSocket message for server to client communication
+ */
+export type ServerToClientMessage<T extends keyof ServerToClientEvents = keyof ServerToClientEvents> = {
+  type: T;
+  data: ServerToClientEvents[T];
+  timestamp: string;
+  connectionId?: string;
+};
+
+/**
+ * Typed WebSocket message for client to server communication
+ */
+export type ClientToServerMessage<T extends keyof ClientToServerEvents = keyof ClientToServerEvents> = {
+  type: T;
+  data: ClientToServerEvents[T];
+  timestamp?: string;
+};
+
+/**
+ * WebSocket subscription channels
+ */
+export type SubscriptionChannel = 
+  | 'all'
+  | `session:${string}`
+  | `project:${string}`
+  | 'stats';
+
+/**
+ * WebSocket connection metadata
+ */
+export interface WebSocketConnectionMeta {
+  connectionId: string;
+  connectedAt: Date;
+  lastPingAt: Date;
+  isAuthenticated: boolean;
+  subscriptions: Set<SubscriptionChannel>;
+  clientInfo?: {
+    userAgent?: string;
+    ip?: string;
+  };
 }

@@ -79,7 +79,7 @@ export const scanCommand = wrapHandler(async (options: {
       stopSpinner(true, `Found ${projects.length} packages in workspace`);
       
       for (const projectPath of projects) {
-        const project = await scanProject(projectPath);
+        const project = await scanProject(projectPath, 'scan');
         if (project) {
           await db.addProject(project);
         }
@@ -95,7 +95,8 @@ export const scanCommand = wrapHandler(async (options: {
 
     // Single project scan
     startSpinner('Scanning project...');
-    const project = await scanProject(path);
+    const isManual = db.settings.manualProjects.includes(path);
+    const project = await scanProject(path, isManual ? 'manual' : 'scan');
     stopSpinner(true, project ? 'Project found' : 'No project found');
     
     if (project) {

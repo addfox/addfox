@@ -1,22 +1,33 @@
 import { useState } from 'react';
-import { useProjects, useScan, useDeleteProject, useCreateSession } from '@/hooks/use-api';
+import { useProjects, useScan, useDeleteProject, useCreateSession, useBuildProject, useUpdateProjectCommands, useProjectDevInfo } from '@/hooks/use-api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { 
   FolderKanban, 
-  Search, 
   RefreshCw, 
   Play, 
   Trash2,
   Plus,
-  FolderOpen,
-  Github
+  Hammer,
+  Settings,
+  Loader2,
+  Terminal,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { Project } from '@/hooks/use-api';
+import { useTerminalDrawer } from '@/components/TerminalDrawer';
 
 const TOOL_ICONS: Record<string, string> = {
   addfox: '🔥',
@@ -25,79 +36,199 @@ const TOOL_ICONS: Record<string, string> = {
   vanilla: '📦',
 };
 
+function CommandDialog({
+  project,
+  open,
+  onOpenChange,
+}: {
+  project: Project;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const { data: devInfo } = useProjectDevInfo(project.id);
+  const updateCommands = useUpdateProjectCommands();
+  const [devCommand, setDevCommand] = useState(project.devCommand || '');
+  const [buildCommand, setBuildCommand] = useState(project.buildCommand || '');
+
+  const handleSave = async () => {
+    await updateCommands.mutateAsync({
+      id: project.id,
+      devCommand: devCommand.trim() || undefined,
+      buildCommand: buildCommand.trim() || undefined,
+    });
+    onOpenChange(false);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Command Settings</DialogTitle>
+          <DialogDescription>
+            Customize dev and build commands for {project.name}. Leave blank to use auto-detected commands.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="dev-command">Dev Command</Label>
+            <Input
+              id="dev-command"
+              value={devCommand}
+              onChange={(e) => setDevCommand(e.target.value)}
+              placeholder={devInfo?.resolvedDevCommand || 'Auto-detected'}
+            />
+            <p className="text-xs text-muted-foreground">
+              Default: {devInfo?.resolvedDevCommand || 'None'}
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="build-command">Build Command</Label>
+            <Input
+              id="build-command"
+              value={buildCommand}
+              onChange={(e) => setBuildCommand(e.target.value)}
+              placeholder={devInfo?.resolvedBuildCommand || 'Auto-detected'}
+            />
+            <p className="text-xs text-muted-foreground">
+              Default: {devInfo?.resolvedBuildCommand || 'None'}
+            </p>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave} disabled={updateCommands.isPending}>
+            {updateCommands.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Save
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function ProjectCard({ project }: { project: Project }) {
   const deleteProject = useDeleteProject();
   const createSession = useCreateSession();
+  const buildProject = useBuildProject();
+  const { openTerminal } = useTerminalDrawer();
+  const [showSettings, setShowSettings] = useState(false);
 
   return (
-    <Card className="group">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <span>{TOOL_ICONS[project.tool] || '📦'}</span>
-              {project.name}
-            </CardTitle>
-            <CardDescription className="line-clamp-1">
-              {project.manifest?.description || 'No description'}
-            </CardDescription>
+    <>
+      <Card className="group">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between">
+            <div className="space-y-1">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <span>{TOOL_ICONS[project.tool] || '📦'}</span>
+                {project.name}
+              </CardTitle>
+              <CardDescription className="line-clamp-1">
+                {project.manifest?.description || 'No description'}
+              </CardDescription>
+            </div>
+            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => openTerminal(project.id, project.name, project.path)}
+                title="Open Terminal"
+              >
+                <Terminal className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setShowSettings(true)}
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => createSession.mutate({ projectId: project.id })}
+                disabled={createSession.isPending}
+              >
+                <Play className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-destructive"
+                onClick={() => deleteProject.mutate(project.id)}
+                disabled={deleteProject.isPending}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => createSession.mutate({ projectId: project.id })}
-              disabled={createSession.isPending}
-            >
-              <Play className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 text-destructive"
-              onClick={() => deleteProject.mutate(project.id)}
-              disabled={deleteProject.isPending}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="space-y-3">
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline">{project.tool}</Badge>
-            {project.workspace && (
-              <Badge variant="secondary">{project.workspace.name}</Badge>
-            )}
-            {project.lastDevAt && (
-              <Badge className="bg-green-500">Active</Badge>
-            )}
-          </div>
-          
-          <p className="text-xs text-muted-foreground truncate">
-            {project.path}
-          </p>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="space-y-3">
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="outline">{project.tool}</Badge>
+              {project.workspace && (
+                <Badge variant="secondary">{project.workspace.name}</Badge>
+              )}
+              {project.source === 'manual' && (
+                <Badge variant="outline" className="text-blue-500 border-blue-500">Manual</Badge>
+              )}
+              {project.lastDevAt && (
+                <Badge className="bg-green-500">Active</Badge>
+              )}
+            </div>
+            
+            <p className="text-xs text-muted-foreground truncate">
+              {project.path}
+            </p>
 
-          <div className="flex gap-2 pt-2">
-            <Button size="sm" className="flex-1" asChild>
-              <Link to={`/projects/${project.id}`}>Details</Link>
-            </Button>
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="flex-1"
-              onClick={() => createSession.mutate({ projectId: project.id })}
-              disabled={createSession.isPending}
-            >
-              <Play className="mr-1 h-3 w-3" />
-              Dev
-            </Button>
+            <div className="flex gap-2 pt-2">
+              <Button size="sm" className="flex-1" asChild>
+                <Link to={`/projects/${project.id}`}>Details</Link>
+              </Button>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => createSession.mutate({ projectId: project.id })}
+                disabled={createSession.isPending}
+              >
+                <Play className="mr-1 h-3 w-3" />
+                Dev
+              </Button>
+              <Button 
+                size="sm" 
+                variant="secondary"
+                onClick={() => openTerminal(project.id, project.name, project.path)}
+                title="Open Terminal"
+              >
+                <Terminal className="h-3 w-3" />
+              </Button>
+              <Button 
+                size="sm" 
+                variant="secondary" 
+                className="flex-1"
+                onClick={() => buildProject.mutate(project.id)}
+                disabled={buildProject.isPending}
+              >
+                {buildProject.isPending ? (
+                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                ) : (
+                  <Hammer className="mr-1 h-3 w-3" />
+                )}
+                Build
+              </Button>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+      <CommandDialog project={project} open={showSettings} onOpenChange={setShowSettings} />
+    </>
   );
 }
 
@@ -128,7 +259,7 @@ export function Projects() {
         <div className="flex items-center gap-2">
           <Button 
             variant="outline" 
-            onClick={() => scan.mutate()}
+            onClick={() => scan.mutate(undefined)}
             disabled={scan.isPending}
           >
             <RefreshCw className={`mr-2 h-4 w-4 ${scan.isPending ? 'animate-spin' : ''}`} />
@@ -172,7 +303,7 @@ export function Projects() {
                     : 'No projects match the current filter'}
                 </p>
                 <div className="mt-4 flex gap-2">
-                  <Button variant="outline" onClick={() => scan.mutate()}>
+                  <Button variant="outline" onClick={() => scan.mutate(undefined)}>
                     <RefreshCw className="mr-2 h-4 w-4" />
                     Scan Now
                   </Button>

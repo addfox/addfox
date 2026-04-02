@@ -14,19 +14,7 @@ export default defineConfig({
   html: {
     template: './index.html',
   },
-  server: {
-    port: 3041,
-    proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:3040',
-        changeOrigin: true,
-      },
-      '/api/ws': {
-        target: 'ws://127.0.0.1:3040',
-        ws: true,
-      },
-    },
-  },
+
   output: {
     distPath: {
       root: '../dist-ui',

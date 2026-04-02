@@ -6,8 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
   FolderKanban, 
   Activity, 
-  Play, 
-  Square, 
+  Play,
   RefreshCw,
   Plus,
   Terminal
@@ -28,7 +27,7 @@ export function Dashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">
+          <p className="text-dark-400">
             Manage your browser extension projects
           </p>
         </div>
@@ -47,11 +46,11 @@ export function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
-            <FolderKanban className="h-4 w-4 text-muted-foreground" />
+            <FolderKanban className="h-4 w-4 text-fox-400" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.projects || 0}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-dark-500">
               Extension projects discovered
             </p>
           </CardContent>
@@ -60,11 +59,11 @@ export function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Sessions</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <Activity className="h-4 w-4 text-green-400" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.activeSessions || 0}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-dark-500">
               Currently running dev servers
             </p>
           </CardContent>
@@ -73,11 +72,11 @@ export function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Sessions</CardTitle>
-            <Terminal className="h-4 w-4 text-muted-foreground" />
+            <Terminal className="h-4 w-4 text-blue-400" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.totalSessions || 0}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-dark-500">
               All-time dev sessions
             </p>
           </CardContent>
@@ -86,10 +85,10 @@ export function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Quick Actions</CardTitle>
-            <RefreshCw className="h-4 w-4 text-muted-foreground" />
+            <RefreshCw className="h-4 w-4 text-dark-400" />
           </CardHeader>
           <CardContent className="space-y-2">
-            <Button variant="secondary" size="sm" className="w-full" asChild>
+            <Button variant="outline" size="sm" className="w-full border-dark-700 hover:bg-dark-800" asChild>
               <Link to="/projects">Scan Projects</Link>
             </Button>
           </CardContent>
@@ -101,7 +100,7 @@ export function Dashboard() {
         <Card>
           <CardHeader>
             <CardTitle>Active Sessions</CardTitle>
-            <CardDescription>
+            <CardDescription className="text-dark-500">
               Currently running development servers
             </CardDescription>
           </CardHeader>
@@ -110,11 +109,11 @@ export function Dashboard() {
               {activeSessions.map((session) => (
                 <div
                   key={session.id}
-                  className="flex items-center justify-between rounded-lg border p-4"
+                  className="flex items-center justify-between rounded-lg border border-dark-800 bg-dark-900/50 p-4"
                 >
                   <div className="space-y-1">
                     <p className="font-medium">{session.projectName}</p>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2 text-sm text-dark-400">
                       <Badge variant="outline">{session.browser}</Badge>
                       <span>Session: {session.id.slice(0, 8)}</span>
                     </div>
@@ -155,9 +154,9 @@ export function Dashboard() {
             <div className="space-y-4">
               {recentProjects.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <FolderKanban className="h-12 w-12 text-muted-foreground" />
+                  <FolderKanban className="h-12 w-12 text-dark-600" />
                   <h3 className="mt-4 text-lg font-semibold">No projects yet</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-dark-500">
                     Scan your directories to discover extension projects
                   </p>
                   <Button className="mt-4" asChild>
@@ -168,7 +167,7 @@ export function Dashboard() {
                 recentProjects.map((project) => (
                   <div
                     key={project.id}
-                    className="flex items-center justify-between rounded-lg border p-4"
+                    className="flex items-center justify-between rounded-lg border border-dark-800 bg-dark-900/50 p-4 hover:border-dark-700 transition-colors"
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
@@ -178,18 +177,18 @@ export function Dashboard() {
                           <Badge variant="secondary">{project.workspace.name}</Badge>
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground truncate max-w-[400px]">
+                      <p className="text-sm text-dark-500 truncate max-w-[400px]">
                         {project.path}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
                       {project.lastDevAt ? (
-                        <Badge variant="default" className="gap-1">
+                        <Badge className="gap-1 bg-green-500/20 text-green-400 border-green-500/30">
                           <Play className="h-3 w-3" />
                           Active
                         </Badge>
                       ) : (
-                        <Badge variant="secondary">Inactive</Badge>
+                        <Badge className="bg-dark-800 text-dark-400">Inactive</Badge>
                       )}
                       <Button size="sm" asChild>
                         <Link to={`/projects/${project.id}`}>Open</Link>

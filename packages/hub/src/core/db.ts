@@ -4,6 +4,7 @@ import { join } from 'path';
 import { homedir } from 'os';
 import { existsSync, mkdirSync } from 'fs';
 import type { HubDatabase, HubSettings, Project, Session, LogEntry } from '../types.js';
+import { getEventBus } from './event-bus.js';
 
 const DEFAULT_SETTINGS: HubSettings = {
   version: 1,
@@ -40,6 +41,7 @@ const DEFAULT_DATA: HubDatabase = {
 export class HubDB {
   private db: Low<HubDatabase>;
   private configDir: string;
+  private eventBus = getEventBus();
 
   constructor(configDir?: string) {
     this.configDir = configDir || join(homedir(), '.addfox-hub');
@@ -123,21 +125,49 @@ export class HubDB {
     return this.db.data.projects;
   }
 
-  async addProject(project: Project): Promise<void> {
-    const existing = this.db.data.projects.findIndex(p => p.id === project.id);
-    if (existing >= 0) {
-      this.db.data.projects[existing] = project;
-    } else {
+  async addProject(
+    project: Project,
+    options?: { refresh?: boolean }
+  ): Promise<Project> {
+    const existingIdx = this.db.data.projects.findIndex(p => p.id === project.id);
+    const isNew = existingIdx < 0;
+
+    if (isNew) {
       this.db.data.projects.push(project);
+    } else if (options?.refresh) {
+      // Refresh: update metadata but preserve the original source field
+      const existing = this.db.data.projects[existingIdx];
+      const preservedSource = existing.source;
+      this.db.data.projects[existingIdx] = { ...project, id: existing.id, source: preservedSource };
+    } else {
+      // Skip duplicate: return existing project without changes
+      return this.db.data.projects[existingIdx];
     }
+
     await this.db.write();
+
+    // Emit event
+    if (isNew) {
+      this.eventBus.emit('project:created', { project: this.db.data.projects[this.db.data.projects.length - 1] });
+    } else if (options?.refresh) {
+      const updatedProject = this.db.data.projects[existingIdx];
+      this.eventBus.emit('project:updated', { projectId: project.id, updates: project, project: updatedProject });
+    }
+
+    return isNew
+      ? this.db.data.projects[this.db.data.projects.length - 1]
+      : this.db.data.projects[existingIdx];
   }
 
   async updateProject(id: string, updates: Partial<Project>): Promise<void> {
     const idx = this.db.data.projects.findIndex(p => p.id === id);
     if (idx >= 0) {
-      this.db.data.projects[idx] = { ...this.db.data.projects[idx], ...updates };
+      const updatedProject = { ...this.db.data.projects[idx], ...updates };
+      this.db.data.projects[idx] = updatedProject;
       await this.db.write();
+      
+      // Emit event
+      this.eventBus.emit('project:updated', { projectId: id, updates, project: updatedProject });
     }
   }
 
@@ -145,6 +175,9 @@ export class HubDB {
     this.db.data.projects = this.db.data.projects.filter(p => p.id !== id);
     this.db.data.sessions = this.db.data.sessions.filter(s => s.projectId !== id);
     await this.db.write();
+    
+    // Emit event
+    this.eventBus.emit('project:deleted', { projectId: id });
   }
 
   getProjectById(id: string): Project | undefined {
@@ -168,19 +201,29 @@ export class HubDB {
   async addSession(session: Session): Promise<void> {
     this.db.data.sessions.push(session);
     await this.db.write();
+    
+    // Emit event
+    this.eventBus.emit('session:created', { session });
   }
 
   async updateSession(id: string, updates: Partial<Session>): Promise<void> {
     const idx = this.db.data.sessions.findIndex(s => s.id === id);
     if (idx >= 0) {
-      this.db.data.sessions[idx] = { ...this.db.data.sessions[idx], ...updates };
+      const updatedSession = { ...this.db.data.sessions[idx], ...updates };
+      this.db.data.sessions[idx] = updatedSession;
       await this.db.write();
+      
+      // Emit event
+      this.eventBus.emit('session:updated', { sessionId: id, updates, session: updatedSession });
     }
   }
 
   async removeSession(id: string): Promise<void> {
     this.db.data.sessions = this.db.data.sessions.filter(s => s.id !== id);
     await this.db.write();
+    
+    // Emit event
+    this.eventBus.emit('session:deleted', { sessionId: id });
   }
 
   getSessionById(id: string): Session | undefined {
@@ -206,6 +249,9 @@ export class HubDB {
     }
 
     await this.db.write();
+    
+    // Emit event for real-time log streaming
+    this.eventBus.emit('session:log', { sessionId, log: entry });
   }
 
   getStats(): { projects: number; activeSessions: number; totalSessions: number } {

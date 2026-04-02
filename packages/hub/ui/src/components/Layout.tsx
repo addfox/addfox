@@ -6,13 +6,14 @@ import {
   Settings,
   Terminal,
   Menu,
-  X
+  X,
+  Settings2,
+  ScrollText,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { TerminalNavButton } from './TerminalDrawer';
 
 const sidebarNavItems = [
   {
@@ -29,6 +30,11 @@ const sidebarNavItems = [
     title: 'Sessions',
     href: '/sessions',
     icon: Activity,
+  },
+  {
+    title: 'Logs',
+    href: '/logs',
+    icon: ScrollText,
   },
   {
     title: 'Terminal',
@@ -51,23 +57,25 @@ export function Layout({ children }: LayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
+    <div className="flex h-screen overflow-hidden bg-dark-950">
+      {/* Sidebar - Fixed on left with dark styling */}
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 transform border-r bg-background transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static",
+        "fixed inset-y-0 left-0 z-50 w-64 border-r border-dark-800 bg-dark-900 flex flex-col transition-transform duration-200 ease-in-out lg:translate-x-0",
         mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="flex h-16 items-center border-b px-6">
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold">H</span>
+        {/* Logo - Fixed height with fox branding */}
+        <div className="flex h-16 items-center border-b border-dark-800 px-6 shrink-0">
+          <Link to="/" className="flex items-center gap-3 font-bold text-xl">
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-fox-500 to-fox-600 flex items-center justify-center shadow-lg shadow-fox-500/20">
+              <span className="text-white font-bold text-lg">F</span>
             </div>
-            <span>Hub</span>
+            <span className="text-white">Addfox Hub</span>
           </Link>
         </div>
         
-        <ScrollArea className="flex-1 py-4">
-          <nav className="space-y-1 px-3">
+        {/* Navigation - Scrollable if needed */}
+        <nav className="flex-1 overflow-y-auto py-4 px-3">
+          <div className="space-y-1">
             {sidebarNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.href || 
@@ -79,64 +87,70 @@ export function Layout({ children }: LayoutProps) {
                   to={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
                     isActive 
-                      ? "bg-primary text-primary-foreground" 
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      ? "bg-fox-500/10 text-fox-400 border-l-2 border-fox-500" 
+                      : "text-dark-400 hover:bg-dark-800 hover:text-dark-200"
                   )}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className={cn("h-4 w-4", isActive && "text-fox-400")} />
                   {item.title}
                 </Link>
               );
             })}
-          </nav>
-        </ScrollArea>
+          </div>
+        </nav>
 
-        <div className="border-t p-4">
-          <div className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <span className="text-xs font-medium text-primary">AD</span>
+        {/* Bottom actions - Fixed at bottom */}
+        <div className="border-t border-dark-800 p-4 space-y-2 shrink-0">
+          <TerminalNavButton />
+          <Link to="/settings" className="flex items-center gap-3 rounded-lg bg-dark-800/50 px-3 py-2 hover:bg-dark-800 transition-colors">
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-fox-500/20 to-fox-600/20 flex items-center justify-center">
+              <Settings2 className="h-4 w-4 text-fox-400" />
             </div>
             <div className="flex-1 overflow-hidden">
-              <p className="text-sm font-medium truncate">Addfox Hub</p>
-              <p className="text-xs text-muted-foreground truncate">v0.1.0</p>
+              <p className="text-sm font-medium text-dark-200 truncate">Settings</p>
+              <p className="text-xs text-dark-500 truncate">v0.1.0</p>
             </div>
-          </div>
+          </Link>
         </div>
       </aside>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* Main content - Scrollable area */}
+      <main className={cn(
+        "flex-1 flex flex-col min-w-0 bg-dark-950",
+        "lg:ml-64"
+      )}>
         {/* Mobile header */}
-        <header className="lg:hidden flex h-16 items-center justify-between border-b px-4">
+        <header className="lg:hidden flex h-16 items-center justify-between border-b border-dark-800 bg-dark-900 px-4 shrink-0">
           <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold">H</span>
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-fox-500 to-fox-600 flex items-center justify-center">
+              <span className="text-white font-bold">F</span>
             </div>
-            <span>Hub</span>
+            <span className="text-white">Addfox</span>
           </Link>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="text-dark-400 hover:text-white hover:bg-dark-800"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </header>
 
-        {/* Page content */}
-        <main className="flex-1 overflow-auto p-6 lg:p-8">
+        {/* Page content - Scrollable */}
+        <div className="flex-1 overflow-auto p-6 lg:p-8">
           <div className="mx-auto max-w-7xl">
             {children}
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
 
       {/* Mobile overlay */}
       {mobileMenuOpen && (
         <div 
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}

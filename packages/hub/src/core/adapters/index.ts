@@ -3,18 +3,21 @@ import { AddfoxAdapter } from './addfox.js';
 import { WxtAdapter } from './wxt.js';
 import { PlasmoAdapter } from './plasmo.js';
 import { VanillaAdapter } from './vanilla.js';
+import { GenericAdapter } from './generic.js';
 
 export * from './base.js';
 export * from './addfox.js';
 export * from './wxt.js';
 export * from './plasmo.js';
 export * from './vanilla.js';
+export * from './generic.js';
 
 const adapters: ToolAdapter[] = [
   new AddfoxAdapter(),
   new WxtAdapter(),
   new PlasmoAdapter(),
   new VanillaAdapter(),
+  new GenericAdapter(), // Generic adapter as fallback
 ];
 
 export async function detectAdapter(projectPath: string): Promise<ToolAdapter | null> {
