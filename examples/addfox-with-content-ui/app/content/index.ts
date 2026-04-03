@@ -4,6 +4,9 @@
  */
 import { defineShadowContentUI } from "@addfox/utils";
 
+let uiRoot: HTMLElement | null = null;
+let uiVisible = true;
+
 const mountContentUI = defineShadowContentUI({
   name: "addfox-content-ui-root",
   target: "body",
@@ -16,7 +19,7 @@ const mountContentUI = defineShadowContentUI({
 });
 
 function mountUI(): void {
-  const root = mountContentUI();
+  uiRoot = mountContentUI();
   const title = document.createElement("div");
   title.textContent = "Content UI (addfox)";
   title.style.fontWeight = "600";
@@ -25,9 +28,25 @@ function mountUI(): void {
   desc.textContent = "This panel is mounted with defineShadowContentUI.";
   desc.style.fontSize = "12px";
   desc.style.color = "#aaa";
-  root.appendChild(title);
-  root.appendChild(desc);
+  uiRoot.appendChild(title);
+  uiRoot.appendChild(desc);
 }
+
+function toggleUI(): boolean {
+  if (uiRoot) {
+    uiVisible = !uiVisible;
+    uiRoot.style.display = uiVisible ? "block" : "none";
+  }
+  return uiVisible;
+}
+
+// 监听来自 popup 的消息
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.from === "popup" && message.action === "toggleUI") {
+    const visible = toggleUI();
+    sendResponse({ success: true, visible });
+  }
+});
 
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", mountUI);

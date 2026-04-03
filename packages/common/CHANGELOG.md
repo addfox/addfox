@@ -1,5 +1,11 @@
 ﻿# @addfox/common
 
+## 0.1.1-beta.10
+
+### Patch Changes
+
+- chore: update docs and plugins
+
 ## 0.1.1-beta.9
 
 ### Patch Changes

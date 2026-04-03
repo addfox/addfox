@@ -64,12 +64,12 @@
     "es": "Configuración"
   },
   "homeHeroViewOnGithub": {
-    "en": "View on GitHub",
-    "zh": "在 GitHub 查看",
-    "ja": "GitHub で見る",
-    "ko": "GitHub에서 보기",
-    "ru": "Смотреть на GitHub",
-    "es": "Ver en GitHub"
+    "en": "Star us",
+    "zh": "Star us",
+    "ja": "Star us",
+    "ko": "Star us",
+    "ru": "Star us",
+    "es": "Star us"
   },
   "homeHeroCopyCreate": {
     "en": "Copy: pnpm create addfox-app",
@@ -383,6 +383,62 @@
     "ru": "Расширяемые Skills с поддержкой Agent и автоматизации.",
     "es": "Skills extensibles, con soporte para Agent y automatización."
   },
+  "reallyFastTitle": {
+    "en": "Really Fast",
+    "zh": "极速体验",
+    "ja": "超高速",
+    "ko": "정말 빠름",
+    "ru": "Очень быстро",
+    "es": "Realmente rápido"
+  },
+  "reallyFastSubtitle": {
+    "en": "Start your business, instant startup and optimized builds",
+    "zh": "开始你的业务，即时启动和优化构建",
+    "ja": "ビジネスを開始し、即座の起動と最適化されたビルド",
+    "ko": "비즈니스를 시작하고, 즉각적인 시작과 최적화된 빌드",
+    "ru": "Начните свой бизнес, мгновенный запуск и оптимизированная сборка",
+    "es": "Comience su negocio, inicio instantáneo y builds optimizados"
+  },
+  "reallyFastDevTitle": {
+    "en": "Dev Server Startup",
+    "zh": "开发服务器启动",
+    "ja": "開発サーバー起動",
+    "ko": "개발 서버 시작",
+    "ru": "Запуск Dev-сервера",
+    "es": "Inicio del servidor de desarrollo"
+  },
+  "reallyFastBuildTitle": {
+    "en": "Build Time",
+    "zh": "构建时间",
+    "ja": "ビルド時間",
+    "ko": "빌드 시간",
+    "ru": "Время сборки",
+    "es": "Tiempo de construcción"
+  },
+  "reallyFastDevDesc": {
+    "en": "Minimum time to start dev server (lower is better)",
+    "zh": "启动开发服务器的最短时间（越短越好）",
+    "ja": "開発サーバー起動の最小時間（短い方が良い）",
+    "ko": "개발 서버 시작 최소 시간 (짧을수록 좋음)",
+    "ru": "Минимальное время запуска dev-сервера (меньше - лучше)",
+    "es": "Tiempo mínimo para iniciar el servidor de desarrollo (menor es mejor)"
+  },
+  "reallyFastBuildDesc": {
+    "en": "Minimum time to build extension (lower is better)",
+    "zh": "构建扩展的最短时间（越短越好）",
+    "ja": "拡張機能ビルドの最小時間（短い方が良い）",
+    "ko": "확장 프로그램 빌드 최소 시간 (짧을수록 좋음)",
+    "ru": "Минимальное время сборки расширения (меньше - лучше)",
+    "es": "Tiempo mínimo para construir la extensión (menor es mejor)"
+  },
+  "reallyFastFootnote": {
+    "en": "Benchmarked on identical projects. Results may vary based on project complexity.",
+    "zh": "在相同项目上进行的基准测试。结果可能因项目复杂度而异。",
+    "ja": "同一プロジェクトでのベンチマーク結果。プロジェクトの複雑さにより結果は異なる場合があります。",
+    "ko": "동일한 프로젝트에서 벤치마크됨. 프로젝트 복잡도에 따라 결과가 다를 수 있습니다.",
+    "ru": "Тестирование проводилось на идентичных проектах. Результаты могут отличаться в зависимости от сложности проекта.",
+    "es": "Evaluado en proyectos idénticos. Los resultados pueden variar según la complejidad del proyecto."
+  },
   "homeFooterFriendlyLinks": {
     "en": "Friendly links",
     "zh": "友情链接",
@@ -422,6 +478,22 @@
     "ko": "Featured on AgentWork.Tools",
     "ru": "Featured on AgentWork.Tools",
     "es": "Featured on AgentWork.Tools"
+  },
+  "homeFooterResources": {
+    "en": "Resources",
+    "zh": "资源",
+    "ja": "リソース",
+    "ko": "리소스",
+    "ru": "Ресурсы",
+    "es": "Recursos"
+  },
+  "homeFooterTools": {
+    "en": "Tools",
+    "zh": "工具",
+    "ja": "ツール",
+    "ko": "도구",
+    "ru": "Инструменты",
+    "es": "Herramientas"
   },
   "guide": {
     "en": "Guide",

@@ -14,6 +14,8 @@ const docRouteExclude = [
 export default {
   root: ".",
   llms: true,
+  title: "AddFox - Browser Extension Development Framework",
+  description: "AddFox is a browser extension development framework built on Rsbuild, it provides a comprehensive set of tools and features for developing browser extensions.",
   route: { exclude: docRouteExclude },
   plugins: [fileTree()],
   builderConfig: {

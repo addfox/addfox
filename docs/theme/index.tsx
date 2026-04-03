@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation } from "@rspress/core/runtime";
 import { getLocalePrefix } from "./utils";
 import { HeroSection } from "./HeroSection";
+import { ReallyFastSection } from "./ReallyFastSection";
 import { FeaturesGrid } from "./FeaturesGrid";
 import { FAQSection } from "./FAQSection";
 import { HomeFooter } from "./HomeFooter";
@@ -15,16 +16,19 @@ function CustomHomeContent() {
   const configLink = `${base}/config/manifest`;
 
   return (
-    <div className="addfox-home min-h-screen bg-[var(--addfox-home-bg)] py-12 pb-24 box-border">
-      <HeroSection
-        getStartedLink={getStartedLink}
-        configLink={configLink}
-        githubLink="https://github.com/addfox/addfox"
-      />
-      <FeaturesGrid />
-      <FAQSection />
+    <>
+      <div className="addfox-home min-h-screen bg-[var(--addfox-home-bg)] py-12 pb-24 box-border">
+        <HeroSection
+          getStartedLink={getStartedLink}
+          configLink={configLink}
+          githubLink="https://github.com/addfox/addfox"
+        />
+        <ReallyFastSection />
+        <FeaturesGrid />
+        <FAQSection />
+      </div>
       <HomeFooter />
-    </div>
+    </>
   );
 }
 

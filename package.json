@@ -36,12 +36,7 @@
     "version": "changeset version",
     "release": "pnpm run packages:build && pnpm publish -r",
     "ci:publish": "pnpm publish -r --access public",
-    "test:cross-pm": "pnpm run packages:build && node scripts/test-cross-pm.mjs",
-    "hub:build": "pnpm --filter @addfox/hub run build:all",
-    "hub:start": "pnpm --filter @addfox/hub hub start",
-    "hub:dev": "pnpm run hub:build && pnpm --filter @addfox/hub hub start",
-    "hub:test": "pnpm run hub:build && node packages/hub/dist/cli.js scan --add ./examples && node packages/hub/dist/cli.js start",
-    "hub:stop": "npx kill-port 3040 || taskkill /F /IM node.exe /FI \"WINDOWTITLE eq hub*\" 2>nul || echo Hub stopped or not running"
+    "test:cross-pm": "pnpm run packages:build && node scripts/test-cross-pm.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.0",

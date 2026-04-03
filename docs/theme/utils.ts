@@ -1,9 +1,9 @@
 export function getLocalePrefix(pathname: string): string {
-  if (pathname.startsWith("/zh") || pathname === "/zh" || pathname === "/zh/") {
-    return "/zh";
-  }
-  if (pathname.startsWith("/en") || pathname === "/en" || pathname === "/en/") {
-    return "/en";
+  const locales = ["/zh", "/en", "/ja", "/ko", "/ru", "/es"];
+  for (const locale of locales) {
+    if (pathname.startsWith(locale) || pathname === locale || pathname === `${locale}/`) {
+      return locale;
+    }
   }
   return "";
 }
