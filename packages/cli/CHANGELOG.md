@@ -1,5 +1,19 @@
 ﻿# @addfox/cli
 
+## 0.1.1-beta.13
+
+### Patch Changes
+
+- chore: update manifest function
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-manifest@0.1.1-beta.11
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.11
+  - @addfox/rsbuild-plugin-extension-entry@0.1.1-beta.12
+  - @addfox/rsbuild-plugin-extension-hmr@0.1.1-beta.11
+  - @addfox/rsbuild-plugin-vue@0.1.1-beta.9
+  - @addfox/common@0.1.1-beta.11
+  - @addfox/core@0.1.1-beta.11
+
 ## 0.1.1-beta.12
 
 ### Patch Changes

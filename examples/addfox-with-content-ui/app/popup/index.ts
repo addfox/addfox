@@ -3,13 +3,13 @@
  */
 import "./style.css";
 
-// 获取当前标签页信息
+// Get the current tab information
 async function getCurrentTab() {
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
   return tabs[0];
 }
 
-// 显示当前页面信息
+// Display the current page information
 async function displayPageInfo() {
   const tab = await getCurrentTab();
   const titleEl = document.getElementById("page-title");
@@ -27,7 +27,7 @@ async function displayPageInfo() {
   }
 }
 
-// 发送消息给 content script
+// Send a message to the content script
 async function sendMessageToContent(message: unknown) {
   const tab = await getCurrentTab();
   if (tab.id) {
@@ -40,12 +40,12 @@ async function sendMessageToContent(message: unknown) {
   }
 }
 
-// 初始化 popup
+// Initialize the popup
 async function init() {
-  // 显示当前页面信息
+  // Display the current page information
   await displayPageInfo();
 
-  // 绑定按钮事件
+  // Bind button events
   const toggleBtn = document.getElementById("btn-toggle-ui");
   const refreshBtn = document.getElementById("btn-refresh");
 

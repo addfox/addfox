@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.0.3-beta.14
+
+### Patch Changes
+
+- chore: update manifest function
+
 ## 0.0.3-beta.13
 
 ### Patch Changes

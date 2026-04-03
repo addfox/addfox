@@ -64,6 +64,13 @@ export {
   ManifestLoader,
 } from "./manifest/loader.js";
 export type { ManifestValidationTarget } from "./manifest/loader.js";
+export {
+  generateManifestFromEntries,
+  autoFillManifestFields,
+  generateManifestConfig,
+  mergeWithGeneratedManifest,
+  hasRequiredFields,
+} from "./manifest/generator.js";
 
 // Constants
 export {

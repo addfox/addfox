@@ -1,6 +1,6 @@
-# Codecov 配置：用于生成覆盖率 badge
-# 使用方式：CI 中执行 pnpm run test:coverage:report 后上传 coverage/lcov.info
-# 例如：codecov -f coverage/lcov.info
+# Codecov config for generating the coverage badge
+# Usage: in CI, run pnpm run test:coverage:report and upload coverage/lcov.info
+# Example: codecov -f coverage/lcov.info
 
 coverage:
   range: "70..100"

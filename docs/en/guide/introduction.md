@@ -58,12 +58,13 @@ The extension development ecosystem has been greatly enriched by excellent frame
 
 Addfox stands on the shoulders of these giants while carving its own path:
 
-| Solution | Build Tool | Dev Experience | Flexibility |
-|----------|------------|----------------|-------------|
-| Hand-written Webpack/Vite | Self-configured | Manual HMR handling | Fully controllable |
-| Plasmo | Parcel | Out-of-the-box | Convention-based with cloud features |
-| WXT | Vite | Out-of-the-box | Convention-based with plugin ecosystem |
-| **Addfox** | **Rsbuild** | **Out-of-the-box** | **Minimal conventions + AI-native** |
+| Solution | Build Tool | Version | Dev Experience | Flexibility |
+|----------|------------|---------|----------------|-------------|
+| Hand-written Webpack/Vite | Self-configured | - | Manual HMR handling | Fully controllable |
+| Plasmo | Parcel | latest | Out-of-the-box | Convention-based with cloud features |
+| WXT | Vite | ^0.20.18 | Out-of-the-box | Convention-based with plugin ecosystem |
+| Extension.js | Rspack | latest | Out-of-the-box | Zero-config, minimal setup |
+| **Addfox** | **Rsbuild 1.7.5** | **0.1.1-beta.12** | **Out-of-the-box** | **Minimal conventions + AI-native** |
 
 **Addfox's unique advantages:**
 

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Addfox Options</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f3f4f6;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .logo {
+      font-size: 48px;
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-size: 28px;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: #6b7280;
+      font-size: 16px;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .feature-card {
+      background: #fef3c7;
+      border-radius: 12px;
+      padding: 20px;
+      border: 2px solid #f97316;
+    }
+    .feature-card h3 {
+      font-size: 16px;
+      color: #c2410c;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .feature-card p {
+      font-size: 14px;
+      color: #92400e;
+      line-height: 1.5;
+    }
+    .code-block {
+      background: #1f2937;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+      overflow-x: auto;
+    }
+    .code-block code {
+      color: #e5e7eb;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .highlight {
+      color: #f97316;
+    }
+    .highlight-green {
+      color: #22c55e;
+    }
+    .info-section {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+    .info-section h2 {
+      font-size: 18px;
+      color: #166534;
+      margin-bottom: 12px;
+    }
+    .info-section ul {
+      margin-left: 20px;
+      color: #374151;
+    }
+    .info-section li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">🦊</div>
+      <h1>Addfox - No Manifest Example</h1>
+      <p class="subtitle">Experience the power of auto-generated manifests</p>
+    </header>
+    
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>⚡ Zero Config</h3>
+        <p>No manifest.json needed. Just create entry folders and Addfox handles the rest.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🔍 Auto Discovery</h3>
+        <p>Entries are automatically discovered from app/background, app/content, app/popup folders.</p>
+      </div>
+      <div class="feature-card">
+        <h3>📋 Smart Fill</h3>
+        <p>Required fields like name, version, manifest_version are auto-filled with sensible defaults.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🎯 Type Aware</h3>
+        <p>Addfox detects MV2/MV3 and generates the correct field format for each browser.</p>
+      </div>
+    </div>
+    
+    <div class="code-block">
+      <code>
+<span class="highlight">// addfox.config.ts - No manifest needed!</span>
+export default defineConfig({
+  <span class="highlight-green">// Manifest will be auto-generated from entries</span>
+});
+
+<span class="highlight">// Auto-generated manifest.json:</span>
+{
+  "manifest_version": 3,
+  "name": "Extension",
+  "version": "1.0.0",
+  "background": {
+    "service_worker": "background/index.js"
+  },
+  "content_scripts": [{
+    "matches": ["&lt;all_urls&gt;"],
+    "js": ["content/index.js"]
+  }],
+  "action": {
+    "default_popup": "popup/index.html"
+  }
+}
+      </code>
+    </div>
+    
+    <div class="info-section">
+      <h2>📁 Entry Structure</h2>
+      <ul>
+        <li><strong>app/background/index.ts</strong> → Auto-added as <code>background.service_worker</code></li>
+        <li><strong>app/content/index.ts</strong> → Auto-added as <code>content_scripts[0]</code></li>
+        <li><strong>app/popup/index.html</strong> → Auto-added as <code>action.default_popup</code></li>
+        <li><strong>app/options/index.html</strong> → Auto-added as <code>options_ui.page</code></li>
+      </ul>
+    </div>
+  </div>
+  
+  <script type="module" src="./index.ts"></script>
+</body>
+</html>

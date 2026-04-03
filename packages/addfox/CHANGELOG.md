@@ -1,5 +1,15 @@
 ﻿# addfox
 
+## 0.1.1-beta.14
+
+### Patch Changes
+
+- chore: update manifest function
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.11
+  - @addfox/core@0.1.1-beta.11
+  - @addfox/cli@0.1.1-beta.13
+
 ## 0.1.1-beta.13
 
 ### Patch Changes

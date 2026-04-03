@@ -19,29 +19,29 @@ export function FeatureHmrFlow() {
           <stop offset="1" stopColor="var(--addfox-home-muted)" />
         </linearGradient>
       </defs>
-      {/* 连接线：Rsbuild→Extension/Addfox, Addfox→Reloader, Reloader→Extension，圆弧弯线 + 动画 */}
+      {/* Connection lines: Rsbuild -> Extension/Addfox, Addfox -> Reloader, Reloader -> Extension, with curved animated paths */}
       <g aria-hidden>
         <path d="M 160 98 Q 220 88 228 78" className="addfox-flow-gradient" />
         <path d="M 160 98 Q 155 68 150 50" className="addfox-flow-gradient" />
         <path d="M 228 60 Q 158 62 88 50" className="addfox-flow-gradient" />
         <path d="M 88 34 Q 103 28 118 34" className="addfox-flow-gradient" />
       </g>
-      {/* 第三层：Reloader、Extension（Addfox 左上方） */}
+      {/* Third layer: Reloader and Extension, above-left of Addfox */}
       <rect x="24" y="18" width="64" height="32" rx="4" fill="none" stroke="var(--addfox-home-border)" strokeWidth="1" />
       <text x="56" y="38" textAnchor="middle" fontSize="8" fontWeight="300" fill="var(--addfox-home-text)" stroke="none" fontFamily="system-ui, sans-serif">Reloader</text>
       <rect x="118" y="18" width="64" height="32" rx="4" fill="none" stroke="var(--addfox-home-border)" strokeWidth="1" />
       <text x="150" y="38" textAnchor="middle" fontSize="8" fontWeight="300" fill="var(--addfox-home-text)" stroke="none" fontFamily="system-ui, sans-serif">Extension</text>
-      {/* 第二层：Addfox（右上方） */}
+      {/* Second layer: Addfox, upper right */}
       <rect x="228" y="42" width="72" height="36" rx="4" fill="none" stroke="var(--rp-c-brand, #f97316)" strokeWidth="1" />
       <text x="264" y="63" textAnchor="middle" fontSize="9" fontWeight="300" fill="var(--addfox-home-text)" stroke="none" fontFamily="system-ui, sans-serif">Addfox</text>
-      {/* 第一层：Rsbuild（底部中间） */}
+      {/* First layer: Rsbuild, bottom center */}
       <rect x="124" y="98" width="72" height="36" rx="4" fill="none" stroke="var(--addfox-home-border)" strokeWidth="1" />
       <text x="160" y="120" textAnchor="middle" fontSize="9" fontWeight="300" fill="var(--addfox-home-text)" stroke="none" fontFamily="system-ui, sans-serif">Rsbuild</text>
     </svg>
   );
 }
 
-/** 线上免费图标：@browser-logos (jsDelivr)、simpleicons、GitHub 头像 */
+/** Free hosted icons from @browser-logos (jsDelivr), simpleicons, and GitHub avatars. */
 const BROWSER_ICONS: Record<string, string> = {
   Chrome: "https://cdn.jsdelivr.net/npm/@browser-logos/chrome/chrome.svg",
   Firefox: "https://cdn.jsdelivr.net/npm/@browser-logos/firefox/firefox.svg",

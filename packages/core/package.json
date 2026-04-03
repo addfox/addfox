@@ -1,6 +1,6 @@
 {
   "name": "@addfox/core",
-  "version": "0.1.1-beta.10",
+  "version": "0.1.1-beta.11",
   "description": "addfox core: types, config loading, entry discovery/resolution, manifest building",
   "license": "MIT",
   "type": "module",
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@addfox/common": "workspace:*",
-    "@rsbuild/core": "^1.7.3",
+    "@rsbuild/core": "^1.7.5",
     "cli-table3": "^0.6.5",
     "jiti": "^2.0.0"
   },

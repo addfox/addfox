@@ -22,7 +22,7 @@ export function HomeFooter() {
     >
       <div className="max-w-[var(--rp-content-max-width)] mx-auto px-[var(--rp-content-padding-x)] py-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* 资源模块 */}
+          {/* Resources section */}
           <div className="flex flex-col gap-3">
             <span className="text-sm font-semibold text-[var(--addfox-home-text)]">
               {t("homeFooterResources")}
@@ -39,7 +39,7 @@ export function HomeFooter() {
             </div>
           </div>
 
-          {/* 友情链接模块 */}
+          {/* Friendly links section */}
           <div className="flex flex-col gap-3">
             <span className="text-sm font-semibold text-[var(--addfox-home-text)]">
               {t("homeFooterFriendlyLinks")}
@@ -54,7 +54,7 @@ export function HomeFooter() {
             </div>
           </div>
 
-          {/* 工具模块 */}
+          {/* Tools section */}
           <div className="flex flex-col gap-3">
             <span className="text-sm font-semibold text-[var(--addfox-home-text)]">
               {t("homeFooterTools")}

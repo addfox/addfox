@@ -1,6 +1,6 @@
 import "./style.css";
 
-/** 与 manifest 中 devtools_page 一致，即本入口的 HTML，也是 Tab 中展示的页面 */
+/** Matches manifest.devtools_page: this entry HTML is also the page shown inside the DevTools tab. */
 const DEVTOOLS_ENTRY_HTML = "devtools/index.html";
 
 function createPanelAndInit(): void {

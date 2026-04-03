@@ -65,5 +65,36 @@ Use `-b chrome` or `-b firefox` to target a browser.
 
 ---
 
+## Development & Benchmark
+
+**Setup local links for benchmark:**
+
+When developing addfox and testing against the benchmark suite:
+
+```bash
+# In addfox monorepo root
+pnpm run setup:benchmark
+
+# In benchmark/addfox directory
+pnpm run link:addfox
+```
+
+**Run benchmark tests:**
+
+```bash
+# Dev startup time benchmark
+cd ../benchmark && pnpm run test:addfox
+
+# Build time & output size benchmark
+cd ../benchmark && pnpm run build:addfox
+
+# Batch benchmark all frameworks
+cd ../benchmark && node scripts/batch-benchmark.mjs
+```
+
+See [benchmark/README.md](../benchmark/README.md) for full benchmark documentation.
+
+---
+
 **Full docs, config reference, and examples:** [https://addfox.dev](https://addfox.dev)  
 **Skills (AI workflow modules):** [https://github.com/addfox/skills](https://github.com/addfox/skills)

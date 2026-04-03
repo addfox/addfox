@@ -3,17 +3,19 @@ import { useI18n } from "@rspress/core/runtime";
 
 interface BenchmarkData {
   name: string;
-  devTime: number; // 最小值
-  buildTime: number; // 最小值
+  devTime: number; // Lower is better
+  buildTime: number; // Lower is better
+  buildTool: string; // Build tool name
 }
 
 const BENCHMARK_DATA: BenchmarkData[] = [
-  { name: "addfox", devTime: 1.83, buildTime: 1.40 },
-  { name: "wxt", devTime: 2.10, buildTime: 1.86 },
-  { name: "plasmo", devTime: 3.18, buildTime: 2.75 },
+  { name: "addfox", devTime: 2.04, buildTime: 1.51, buildTool: "Rsbuild 1.7.5" },
+  { name: "extensionjs", devTime: 2.34, buildTime: 1.57, buildTool: "Rspack" },
+  { name: "wxt", devTime: 2.36, buildTime: 1.95, buildTool: "Vite" },
+  { name: "plasmo", devTime: 3.39, buildTime: 2.80, buildTool: "Parcel" },
 ];
 
-// 计算最大值用于百分比
+// Compute max values for percentage bars
 const MAX_DEV_TIME = Math.max(...BENCHMARK_DATA.map(d => d.devTime));
 const MAX_BUILD_TIME = Math.max(...BENCHMARK_DATA.map(d => d.buildTime));
 
@@ -31,7 +33,7 @@ function BenchmarkBarChart({
   valueKey
 }: BarChartProps) {
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex flex-col gap-3 w-full">
       {data.map((item, index) => {
         const isFirst = index === 0;
         const value = item[valueKey];
@@ -39,13 +41,16 @@ function BenchmarkBarChart({
         
         return (
           <div key={item.name} className="flex items-center gap-3">
-            {/* 框架名称 */}
-            <div className="w-16 text-sm font-medium text-[var(--addfox-home-text)] capitalize">
-              {item.name}
+            {/* Framework name */}
+            <div className="w-20 text-sm font-medium text-[var(--addfox-home-text)]">
+              <span className="capitalize">{item.name}</span>
+              <span className="block text-[10px] text-[var(--addfox-home-muted)] leading-tight">
+                {item.buildTool}
+              </span>
             </div>
-            {/* 条形图容器 */}
-            <div className="flex-1 h-6 bg-[var(--addfox-term-bg)] rounded-full overflow-hidden relative">
-              {/* 条形 */}
+            {/* Bar container */}
+            <div className="flex-1 h-7 bg-[var(--addfox-term-bg)] rounded-full overflow-hidden relative">
+              {/* Bar */}
               <div
                 className={`h-full rounded-full transition-all duration-700 ease-out ${
                   isFirst 
@@ -55,7 +60,7 @@ function BenchmarkBarChart({
                 style={{ width: `${percentage}%` }}
               />
             </div>
-            {/* 数值 */}
+            {/* Value */}
             <div className={`w-14 text-sm font-mono text-right ${
               isFirst ? "text-[#F97316] font-semibold" : "text-[var(--addfox-home-muted)]"
             }`}>
@@ -74,7 +79,7 @@ export function ReallyFastSection() {
   return (
     <section className="w-full mb-16">
       <div className="max-w-4xl mx-auto">
-        {/* 标题区域 */}
+        {/* Header section */}
         <div className="text-center mb-8">
           <h2 className="text-[1.75rem] font-bold text-[var(--addfox-home-text)] mb-2">
             {t("reallyFastTitle")}
@@ -84,17 +89,17 @@ export function ReallyFastSection() {
           </p>
         </div>
         
-        {/* 卡片 */}
+        {/* Card */}
         <div className="addfox-feature-card p-6 border border-[var(--addfox-home-border)]">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Dev 速度 */}
+            {/* Dev speed */}
             <div className="flex flex-col">
               <h3 className="text-sm font-semibold text-[var(--addfox-home-text)] mb-4 uppercase tracking-wide">
                 {t("reallyFastDevTitle")}
               </h3>
               <BenchmarkBarChart 
                 data={BENCHMARK_DATA} 
-                maxValue={MAX_DEV_TIME + 2}
+                maxValue={MAX_DEV_TIME + 0.5}
                 valueKey="devTime"
               />
               <p className="text-xs text-[var(--addfox-home-muted)] mt-3">
@@ -102,14 +107,14 @@ export function ReallyFastSection() {
               </p>
             </div>
             
-            {/* Build 速度 */}
+            {/* Build speed */}
             <div className="flex flex-col">
               <h3 className="text-sm font-semibold text-[var(--addfox-home-text)] mb-4 uppercase tracking-wide">
                 {t("reallyFastBuildTitle")}
               </h3>
               <BenchmarkBarChart 
                 data={BENCHMARK_DATA} 
-                maxValue={MAX_BUILD_TIME + 2}
+                maxValue={MAX_BUILD_TIME + 0.5}
                 valueKey="buildTime"
               />
               <p className="text-xs text-[var(--addfox-home-muted)] mt-3">
@@ -118,13 +123,13 @@ export function ReallyFastSection() {
             </div>
           </div>
           
-          {/* 底部说明 */}
+          {/* Footnote */}
           <div className="mt-6 pt-4 border-t border-[var(--addfox-home-border)] text-center relative">
             <p className="text-xs text-[var(--addfox-home-muted)] mb-2">
               {t("reallyFastFootnote")}
             </p>
             <a 
-              href="https://github.com/addfox/benchmark" 
+              href="https://github.com/addfox/addfox/blob/main/benchmark/README.md" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-block text-xs text-[var(--rp-c-brand)] hover:underline px-2 py-1"

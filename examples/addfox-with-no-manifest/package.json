@@ -1,0 +1,20 @@
+{
+  "name": "addfox-with-no-manifest",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Example: Auto-generated manifest from entrypoints - no manifest.json needed",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev",
+    "build": "addfox build",
+    "build:firefox": "addfox build -b firefox"
+  },
+  "dependencies": {
+    "@addfox/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.326",
+    "addfox": "workspace:*",
+    "typescript": "^5.0.0"
+  }
+}

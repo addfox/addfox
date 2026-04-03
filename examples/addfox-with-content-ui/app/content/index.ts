@@ -40,7 +40,7 @@ function toggleUI(): boolean {
   return uiVisible;
 }
 
-// 监听来自 popup 的消息
+// Listen for messages from the popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.from === "popup" && message.action === "toggleUI") {
     const visible = toggleUI();

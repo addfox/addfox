@@ -2,7 +2,7 @@ import { transformerNotationHighlight } from "@shikijs/transformers";
 import fileTree from "rspress-plugin-file-tree";
 import { pluginNodePolyfill } from "@rsbuild/plugin-node-polyfill";
 
-/** 自定义主题、构建产物与工程配置不应参与文档路由与 SSG */
+/** Custom theme files, build outputs, and tooling config should not be included in doc routes or SSG. */
 const docRouteExclude = [
   "theme/**",
   "doc_build/**",
@@ -11,11 +11,62 @@ const docRouteExclude = [
   "tailwind.config.js",
 ];
 
+const SITE_URL = (process.env.DOCS_SITE_URL ?? "https://addfox.dev").replace(/\/+$/, "");
+const SITE_TITLE = "AddFox - Browser Extension Development Framework";
+const SITE_DESCRIPTION =
+  "AddFox is a browser extension development framework built on Rsbuild, it provides a comprehensive set of tools and features for developing browser extensions.";
+const OG_IMAGE_PATH = "/og-image.png";
+const OG_IMAGE_URL = `${SITE_URL}${OG_IMAGE_PATH}`;
+const HOME_URL = `${SITE_URL}/`;
+const GUIDE_URL = `${SITE_URL}/guide/`;
+const CONFIG_URL = `${SITE_URL}/config/`;
+const EXAMPLES_URL = `${SITE_URL}/examples/`;
+const CLI_URL = `${SITE_URL}/guide/cli`;
+
+const jsonLdWebSite = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "AddFox",
+  url: HOME_URL,
+  description: SITE_DESCRIPTION,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${SITE_URL}/?q={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
+});
+
+const jsonLdSiteNavigation = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "SiteNavigationElement",
+  name: ["Guide", "Config", "Examples", "CLI"],
+  url: [GUIDE_URL, CONFIG_URL, EXAMPLES_URL, CLI_URL],
+});
+
+const jsonLdBreadcrumb = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: HOME_URL,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Guide",
+      item: GUIDE_URL,
+    },
+  ],
+});
+
 export default {
   root: ".",
   llms: true,
-  title: "AddFox - Browser Extension Development Framework",
-  description: "AddFox is a browser extension development framework built on Rsbuild, it provides a comprehensive set of tools and features for developing browser extensions.",
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   route: { exclude: docRouteExclude },
   plugins: [fileTree()],
   builderConfig: {
@@ -92,6 +143,7 @@ export default {
     },
   },
   head: [
+    ["link", { rel: "canonical", href: HOME_URL }],
     [
       "meta",
       {
@@ -100,5 +152,22 @@ export default {
           "browser extension, chrome extension, firefox, rsbuild, addfox",
       },
     ],
+    ["meta", { name: "robots", content: "index,follow,max-image-preview:large" }],
+    ["meta", { property: "og:type", content: "website" }],
+    ["meta", { property: "og:site_name", content: "AddFox" }],
+    ["meta", { property: "og:title", content: SITE_TITLE }],
+    ["meta", { property: "og:description", content: SITE_DESCRIPTION }],
+    ["meta", { property: "og:url", content: HOME_URL }],
+    ["meta", { property: "og:image", content: OG_IMAGE_URL }],
+    ["meta", { property: "og:image:secure_url", content: OG_IMAGE_URL }],
+    ["meta", { property: "og:image:type", content: "image/png" }],
+    ["meta", { property: "og:image:alt", content: "AddFox documentation cover image" }],
+    ["meta", { name: "twitter:card", content: "summary_large_image" }],
+    ["meta", { name: "twitter:title", content: SITE_TITLE }],
+    ["meta", { name: "twitter:description", content: SITE_DESCRIPTION }],
+    ["meta", { name: "twitter:image", content: OG_IMAGE_URL }],
+    ["script", { type: "application/ld+json" }, jsonLdWebSite],
+    ["script", { type: "application/ld+json" }, jsonLdSiteNavigation],
+    ["script", { type: "application/ld+json" }, jsonLdBreadcrumb],
   ],
 };

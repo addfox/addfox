@@ -45,7 +45,7 @@ function HeroTerminalBody({
           <span className={termLine.time}>84ms</span>
         </>
       ))}
-      {/* Entry 树状结构整体出现 */}
+      {/* Entry tree appears as one group */}
       {row(3, (
         <div className="flex flex-col leading-[1.4]">
           <span className={termLine.purple}>Entry</span>
@@ -55,7 +55,7 @@ function HeroTerminalBody({
           <span className={termLine.value}>{`└── `}<span className={termLine.purple}>options</span>{` -> app/options/index.tsx`}</span>
         </div>
       ), true)}
-      {/* 每两行作为一个整体出现 */}
+      {/* Each pair of lines appears as one group */}
       {row(4, (
         <div className="flex flex-col leading-[1.4]">
           <span>
@@ -125,7 +125,7 @@ function BrowserWindow({ show }: { show: boolean }) {
   const [mousePhase, setMousePhase] = React.useState<'idle' | 'appear' | 'moving' | 'clicking' | 'done'>('idle');
   const [mousePos, setMousePos] = React.useState({ right: 80, top: 120 });
 
-  // 模拟鼠标动画：弹窗出现后1秒开始
+  // Simulate the mouse animation starting 1 second before the popup appears
   React.useEffect(() => {
     if (!show) {
       setMousePhase('idle');
@@ -136,23 +136,23 @@ function BrowserWindow({ show }: { show: boolean }) {
 
     const timers: ReturnType<typeof setTimeout>[] = [];
     
-    // 1秒后出现鼠标
+    // Show the cursor after 1 second
     timers.push(setTimeout(() => {
       setMousePhase('appear');
     }, 1000));
 
-    // 短暂延迟后开始移动
+    // Start moving after a short delay
     timers.push(setTimeout(() => {
       setMousePhase('moving');
-      setMousePos({ right: 12, top: 8 }); // 目标位置：插件图标
+      setMousePos({ right: 12, top: 8 }); // Target position: extension icon
     }, 1100));
 
-    // 移动动画持续700ms后进入点击状态
+    // Enter the clicking state after 700 ms of movement
     timers.push(setTimeout(() => {
       setMousePhase('clicking');
     }, 1800));
 
-    // 点击后100ms弹出popup
+    // Show the popup 100 ms after the click
     timers.push(setTimeout(() => {
       setShowPopup(true);
       setMousePhase('done');
@@ -309,7 +309,7 @@ function BrowserWindow({ show }: { show: boolean }) {
         </p>
       </div>
 
-      {/* 模拟鼠标光标动画 */}
+      {/* Simulated mouse cursor animation */}
       {mousePhase !== 'idle' && (
         <div
           className="absolute pointer-events-none z-50"
@@ -323,7 +323,7 @@ function BrowserWindow({ show }: { show: boolean }) {
               : 'transform 0.1s ease, opacity 0.3s ease',
           }}
         >
-          {/* 鼠标指针 SVG */}
+          {/* Cursor SVG */}
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>
             <path 
               d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87a.5.5 0 0 0 .35-.85L6.35 2.85a.5.5 0 0 0-.85.35Z" 
@@ -374,7 +374,7 @@ export function HeroTerminalWithAnimation() {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
           }
-          // 终端动画完成后，延迟0.5s再弹出浏览器
+          // Show the browser 0.5 s after the terminal animation finishes
           const t1 = setTimeout(() => {
             setShowBrowser(true);
             const t2 = setTimeout(() => {

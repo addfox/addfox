@@ -1,5 +1,13 @@
 # @addfox/rsbuild-plugin-extension-entry
 
+## 0.1.1-beta.12
+
+### Patch Changes
+
+- chore: update manifest function
+- Updated dependencies
+  - @addfox/core@0.1.1-beta.11
+
 ## 0.1.1-beta.11
 
 ### Patch Changes
