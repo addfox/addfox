@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.0.3-beta.13
+
+### Patch Changes
+
+- chore: update docs and plugins
+
 ## 0.0.3-beta.12
 
 ### Patch Changes

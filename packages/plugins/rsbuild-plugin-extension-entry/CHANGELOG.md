@@ -1,5 +1,13 @@
 # @addfox/rsbuild-plugin-extension-entry
 
+## 0.1.1-beta.11
+
+### Patch Changes
+
+- chore: update docs and plugins
+- Updated dependencies
+  - @addfox/core@0.1.1-beta.10
+
 ## 0.1.1-beta.10
 
 ### Patch Changes

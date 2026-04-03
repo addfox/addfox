@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { resolve } from "path";
 import { existsSync, watch } from "fs";
+import type { RsbuildConfig } from "@rsbuild/core";
 import { runPipeline, type PipelineOptions } from "./pipeline/index.ts";
 import { getLoadEnvPrefixes } from "./pipeline/Pipeline.ts";
 import { parseCliArgs } from "./cli/index.ts";
@@ -15,6 +16,7 @@ import {
   getDistSizeSync,
   formatBytes,
   isSourceMapEnabled,
+  getSourceMapLabel,
   getBuildOutputSize,
 } from "./utils/index.ts";
 import { runTest } from "./commands/index.ts";
@@ -129,11 +131,11 @@ async function createRsbuildInstance(ctx: PipelineContext) {
 }
 
 /** Log extension size info to terminal. */
-function logExtensionSize(distDir: string, rsbuildConfig: { output?: { sourceMap?: unknown } }): void {
+function logExtensionSize(distDir: string, rsbuildConfig: RsbuildConfig): void {
   const size = getDistSizeSync(distDir);
   if (size < 0) return;
   const sizeStr = formatBytes(size);
-  const suffix = isSourceMapEnabled(rsbuildConfig) ? " (with inline-source-map)" : "";
+  const suffix = getSourceMapLabel(rsbuildConfig as Parameters<typeof getSourceMapLabel>[0]);
   logDoneWithValue("Extension size:", sizeStr + suffix);
 }
 

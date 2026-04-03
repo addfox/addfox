@@ -1,5 +1,14 @@
 # @addfox/rsbuild-plugin-extension-hmr
 
+## 0.1.1-beta.10
+
+### Patch Changes
+
+- chore: update docs and plugins
+- Updated dependencies
+  - @addfox/common@0.1.1-beta.10
+  - @addfox/core@0.1.1-beta.10
+
 ## 0.1.1-beta.9
 
 ### Patch Changes

@@ -3,6 +3,7 @@ import { describe, expect, it } from "@rstest/core";
 import {
   formatBytes,
   isSourceMapEnabled,
+  getSourceMapLabel,
   getBuildOutputSize,
 } from "../src/utils/buildStats.ts";
 
@@ -23,6 +24,46 @@ describe("buildStats utils", () => {
     ).toBe(false);
     expect(isSourceMapEnabled({ output: { sourceMap: false } })).toBe(false);
     expect(isSourceMapEnabled({})).toBe(false);
+  });
+
+  it("isSourceMapEnabled detects SourceMapDevToolPlugin", () => {
+    // 检测 SourceMapDevToolPlugin 通过 name 属性
+    expect(
+      isSourceMapEnabled({
+        output: { sourceMap: false },
+        tools: { rspack: { plugins: [{ name: "SourceMapDevToolPlugin" }] } },
+      })
+    ).toBe(true);
+    // 检测 SourceMapDevToolPlugin 通过 constructor.name
+    expect(
+      isSourceMapEnabled({
+        output: { sourceMap: false },
+        tools: { rspack: { plugins: [{ constructor: { name: "SourceMapDevToolPlugin" } }] } },
+      })
+    ).toBe(true);
+    // 没有插件时返回 false
+    expect(
+      isSourceMapEnabled({
+        output: { sourceMap: false },
+        tools: { rspack: { plugins: [] } },
+      })
+    ).toBe(false);
+  });
+
+  it("getSourceMapLabel returns label when source map enabled", () => {
+    expect(getSourceMapLabel({ output: { sourceMap: { js: "inline-source-map" } } }))
+      .toBe(" (with inline-source-map, vendor excluded)");
+    expect(getSourceMapLabel({ output: { sourceMap: false } })).toBe("");
+    expect(getSourceMapLabel({})).toBe("");
+  });
+
+  it("getSourceMapLabel returns label when SourceMapDevToolPlugin is used", () => {
+    expect(
+      getSourceMapLabel({
+        output: { sourceMap: false },
+        tools: { rspack: { plugins: [{ name: "SourceMapDevToolPlugin" }] } },
+      })
+    ).toBe(" (with inline-source-map, vendor excluded)");
   });
 
   it("getBuildOutputSize sums numeric asset sizes", () => {

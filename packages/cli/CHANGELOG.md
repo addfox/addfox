@@ -1,5 +1,18 @@
 ﻿# @addfox/cli
 
+## 0.1.1-beta.12
+
+### Patch Changes
+
+- chore: update docs and plugins
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-manifest@0.1.1-beta.10
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.10
+  - @addfox/rsbuild-plugin-extension-entry@0.1.1-beta.11
+  - @addfox/rsbuild-plugin-extension-hmr@0.1.1-beta.10
+  - @addfox/common@0.1.1-beta.10
+  - @addfox/core@0.1.1-beta.10
+
 ## 0.1.1-beta.11
 
 ### Patch Changes

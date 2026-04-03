@@ -283,7 +283,6 @@ function wrapChromeListenersForRoot(entry: string, root: Record<string, unknown>
 }
 
 function wrapChromeListeners(entry: string): void {
-  console.log('------runtime');
   const g = getGlobalObj() as Record<string, unknown>;
   // Wrap listeners for both chrome and browser namespaces
   const chromeRoot = g["chrome"];
@@ -291,7 +290,7 @@ function wrapChromeListeners(entry: string): void {
   if (isObjectLike(chromeRoot)) {
     wrapChromeListenersForRoot(entry, chromeRoot as Record<string, unknown>);
   }
-  console.log('browserRoot', browserRoot, chromeRoot)
+
   if (isObjectLike(browserRoot)) {
     
     wrapChromeListenersForRoot(entry, browserRoot as Record<string, unknown>);

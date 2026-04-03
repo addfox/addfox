@@ -11,7 +11,7 @@ export default defineConfig({
       format: "esm",
       dts: true,
       output: {
-        sourceMap: true,
+        sourceMap: false,
         cleanDistPath: true,
       },
     },

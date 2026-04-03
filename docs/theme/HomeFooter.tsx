@@ -17,51 +17,65 @@ export function HomeFooter() {
 
   return (
     <footer
-      className="mt-16 pt-10 pb-8 border-t border-[var(--addfox-home-border)] max-w-[var(--rp-content-max-width)] mx-auto px-[var(--addfox-home-padding-x)]"
+      className="mt-16 w-full bg-[var(--addfox-home-block-bg)] border-t border-[var(--addfox-home-border)]"
       role="contentinfo"
     >
-      <div className="flex flex-col gap-8 items-center text-center sm:items-start sm:text-left">
-        <div className="flex flex-col gap-6 w-full sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
-          <a
-            href={GITHUB_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={linkClass}
-          >
-            {t("homeFooterGithub")}
-          </a>
-          <div className="flex flex-col gap-2 sm:items-end sm:text-right">
-            <span className="text-sm font-medium text-[var(--addfox-home-text)]">
+      <div className="max-w-[var(--rp-content-max-width)] mx-auto px-[var(--rp-content-padding-x)] py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* 资源模块 */}
+          <div className="flex flex-col gap-3">
+            <span className="text-sm font-semibold text-[var(--addfox-home-text)]">
+              {t("homeFooterResources")}
+            </span>
+            <div className="flex flex-col gap-2">
+              <a
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={linkClass}
+              >
+                {t("homeFooterGithub")}
+              </a>
+            </div>
+          </div>
+
+          {/* 友情链接模块 */}
+          <div className="flex flex-col gap-3">
+            <span className="text-sm font-semibold text-[var(--addfox-home-text)]">
               {t("homeFooterFriendlyLinks")}
             </span>
-            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 sm:justify-end">
+            <div className="flex flex-col gap-2">
               <a href={WXT_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
                 {t("homeFooterWxt")}
               </a>
-              <span className="text-[var(--addfox-home-muted)] select-none" aria-hidden="true">
-                ·
-              </span>
               <a href={PLASMO_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
                 {t("homeFooterPlasmo")}
               </a>
             </div>
           </div>
+
+          {/* 工具模块 */}
+          <div className="flex flex-col gap-3">
+            <span className="text-sm font-semibold text-[var(--addfox-home-text)]">
+              {t("homeFooterTools")}
+            </span>
+            <a
+              href={AGENTWORK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rp-c-brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--addfox-home-block-bg)]"
+            >
+              <img
+                src={AGENTWORK_BADGE_SRC}
+                alt={t("homeFooterAgentWorkAlt")}
+                width={200}
+                height={54}
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          </div>
         </div>
-        <a
-          href={AGENTWORK_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--rp-c-brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--addfox-home-bg)] dark:focus-visible:ring-offset-[var(--addfox-home-bg)]"
-        >
-          <img
-            src={AGENTWORK_BADGE_SRC}
-            alt={t("homeFooterAgentWorkAlt")}
-            width={200}
-            height={54}
-            loading="lazy"
-            decoding="async"
-          />
-        </a>
       </div>
     </footer>
   );
