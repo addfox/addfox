@@ -28,7 +28,7 @@ function LabelWithIcon({ iconUrl, text }: { iconUrl: string; text: string }) {
   );
 }
 
-/** 供 MDX 用作 Tab label：图标 + 文字，如 label={<TabLabelPnpm />} */
+/** Used in MDX as a tab label: icon + text, for example label={<TabLabelPnpm />} */
 export function TabLabelPnpm() {
   return <LabelWithIcon iconUrl={PACKAGE_MANAGER_ICONS.pnpm} text="pnpm" />;
 }

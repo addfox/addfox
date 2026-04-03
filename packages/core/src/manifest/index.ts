@@ -1,7 +1,7 @@
-﻿/**
+/**
  * @addfox/core/manifest
  * 
- * Manifest loading and building
+ * Manifest loading, generation, and building
  */
 
 // Manifest builder
@@ -22,3 +22,12 @@ export {
 } from "./loader.ts";
 
 export type { ManifestValidationTarget } from "./loader.ts";
+
+// Manifest generator
+export {
+  generateManifestFromEntries,
+  autoFillManifestFields,
+  generateManifestConfig,
+  mergeWithGeneratedManifest,
+  hasRequiredFields,
+} from "./generator.ts";

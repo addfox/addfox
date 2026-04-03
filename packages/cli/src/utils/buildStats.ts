@@ -27,14 +27,14 @@ export function isSourceMapEnabled(
     tools?: { rspack?: { plugins?: unknown[] } };
   }
 ): boolean {
-  // 1. 检查 output.sourceMap 配置
+  // 1. Check the output.sourceMap setting
   const sm = rsbuildConfig?.output?.sourceMap;
   if (sm === true) return true;
   if (sm && typeof sm === "object" && typeof (sm as { js?: string }).js === "string") {
     return true;
   }
   
-  // 2. 检查是否使用了 SourceMapDevToolPlugin（dev 模式下排除 vendor sourcemap 的情况）
+  // 2. Check whether SourceMapDevToolPlugin is used to exclude vendor source maps in dev mode
   const plugins = rsbuildConfig?.tools?.rspack?.plugins;
   if (Array.isArray(plugins)) {
     for (const plugin of plugins) {

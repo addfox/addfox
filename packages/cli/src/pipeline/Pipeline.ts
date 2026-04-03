@@ -151,11 +151,11 @@ export class Pipeline {
     );
     if (scopedProcessEnvPlugin) plugins.push(scopedProcessEnvPlugin as LoosePlugin);
 
-    // Dev 模式下使用 SourceMapDevToolPlugin 排除第三方库的 sourcemap
-    // 策略：只给项目入口文件生成 sourcemap，排除 vendor chunk
+    // In dev mode, use SourceMapDevToolPlugin to exclude third-party source maps.
+    // The strategy is to generate source maps only for project entry files and exclude vendor chunks.
     const rspackPlugins = ctx.isDev
       ? [
-          // 项目文件 sourcemap（排除 vendor）
+          // Source maps for project files only, excluding vendor chunks
           new rspack.SourceMapDevToolPlugin({
             filename: null,
             append: '\n//# sourceMappingURL=[url]',
@@ -175,7 +175,7 @@ export class Pipeline {
       },
       output: {
         legalComments: 'none',
-        // Dev 模式下禁用默认 sourcemap，使用 SourceMapDevToolPlugin
+        // Disable the default source map in dev mode and use SourceMapDevToolPlugin instead
         sourceMap: false,
       },
       tools: {

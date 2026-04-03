@@ -1,5 +1,13 @@
 ﻿# @addfox/core
 
+## 0.1.1-beta.11
+
+### Patch Changes
+
+- chore: update manifest function
+- Updated dependencies
+  - @addfox/common@0.1.1-beta.11
+
 ## 0.1.1-beta.10
 
 ### Patch Changes

@@ -1,8 +1,8 @@
 import { defineConfig } from "addfox";
 
 /**
- * 示例：完全通过 manifest 声明所有内置入口，不使用 config.entry。
- * 各字段使用源文件路径（.ts/.tsx），addfox 会从中解析入口并替换为构建产物路径。
+ * Example: declare all built-in entries through the manifest without using config.entry.
+ * Each field uses source file paths (.ts/.tsx), and addfox resolves them to built output paths.
  */
 const manifest = {
   name: "Addfox Manifest Entries",

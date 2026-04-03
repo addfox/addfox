@@ -27,21 +27,21 @@ describe("buildStats utils", () => {
   });
 
   it("isSourceMapEnabled detects SourceMapDevToolPlugin", () => {
-    // 检测 SourceMapDevToolPlugin 通过 name 属性
+    // Detect SourceMapDevToolPlugin via the name property
     expect(
       isSourceMapEnabled({
         output: { sourceMap: false },
         tools: { rspack: { plugins: [{ name: "SourceMapDevToolPlugin" }] } },
       })
     ).toBe(true);
-    // 检测 SourceMapDevToolPlugin 通过 constructor.name
+    // Detect SourceMapDevToolPlugin via constructor.name
     expect(
       isSourceMapEnabled({
         output: { sourceMap: false },
         tools: { rspack: { plugins: [{ constructor: { name: "SourceMapDevToolPlugin" } }] } },
       })
     ).toBe(true);
-    // 没有插件时返回 false
+    // Return false when the plugin is absent
     expect(
       isSourceMapEnabled({
         output: { sourceMap: false },

@@ -1,6 +1,6 @@
 {
   "name": "@addfox/cli",
-  "version": "0.1.1-beta.12",
+  "version": "0.1.1-beta.13",
   "description": "addfox CLI: addfox dev / build, parses argv and drives Rsbuild",
   "license": "MIT",
   "type": "module",
@@ -18,7 +18,7 @@
     "test:coverage": "rstest run --coverage"
   },
   "dependencies": {
-    "@rsbuild/core": "^1.7.3",
+    "@rsbuild/core": "^1.7.5",
     "@rspack/core": "^1.7.8",
     "@addfox/common": "workspace:*",
     "@addfox/core": "workspace:*",

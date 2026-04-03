@@ -58,12 +58,13 @@ El ecosistema de desarrollo de extensiones de navegador es más rico gracias a e
 
 Addfox aprende de estas excelentes prácticas mientras sigue su propio camino:
 
-| Solución | Herramienta de construcción | Experiencia de desarrollo | Flexibilidad |
-|------|----------|----------|--------|
-| Webpack/Vite manual | Configuración manual | Requiere manejo manual de HMR | Control total |
-| Plasmo | Parcel | Listo para usar | Basado en convenciones, incluye servicios en la nube |
-| WXT | Vite | Listo para usar | Basado en convenciones, rico ecosistema de plugins |
-| **Addfox** | **Rsbuild** | **Listo para usar** | **Mínimas convenciones + Nativo para IA** |
+| Solución | Herramienta de construcción | Versión | Experiencia de desarrollo | Flexibilidad |
+|------|----------|---------|----------|--------|
+| Webpack/Vite manual | Configuración manual | - | Requiere manejo manual de HMR | Control total |
+| Plasmo | Parcel | latest | Listo para usar | Basado en convenciones, incluye servicios en la nube |
+| WXT | Vite | ^0.20.18 | Listo para usar | Basado en convenciones, rico ecosistema de plugins |
+| Extension.js | Rspack | latest | Listo para usar | Configuración cero, minimalista |
+| **Addfox** | **Rsbuild 1.7.5** | **0.1.1-beta.12** | **Listo para usar** | **Mínimas convenciones + Nativo para IA** |
 
 **Ventajas únicas de Addfox:**
 
