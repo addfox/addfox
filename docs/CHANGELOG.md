@@ -1,5 +1,12 @@
 ﻿# addfox-docs
 
+## 0.0.3-beta.15
+
+### Patch Changes
+
+- fix: export the monitor file
+- fix: fixed package.json files
+
 ## 0.0.3-beta.14
 
 ### Patch Changes

@@ -129,7 +129,7 @@ export function ReallyFastSection() {
               {t("reallyFastFootnote")}
             </p>
             <a 
-              href="https://github.com/addfox/addfox/blob/main/benchmark/README.md" 
+              href="https://github.com/addfox/benchmark" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-block text-xs text-[var(--rp-c-brand)] hover:underline px-2 py-1"

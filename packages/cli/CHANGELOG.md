@@ -1,5 +1,22 @@
 ﻿# @addfox/cli
 
+## 0.1.1-beta.14
+
+### Patch Changes
+
+- fix: export the monitor file
+- fix: fixed package.json files
+- Updated dependencies
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-manifest@0.1.1-beta.12
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.12
+  - @addfox/rsbuild-plugin-extension-entry@0.1.1-beta.13
+  - @addfox/rsbuild-plugin-extension-hmr@0.1.1-beta.12
+  - @addfox/rsbuild-plugin-vue@0.1.1-beta.10
+  - @addfox/pkg-manager@0.1.1-beta.10
+  - @addfox/common@0.1.1-beta.12
+  - @addfox/core@0.1.1-beta.12
+
 ## 0.1.1-beta.13
 
 ### Patch Changes

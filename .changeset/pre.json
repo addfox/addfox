@@ -41,7 +41,8 @@
     "@addfox/rsbuild-plugin-vue": "0.1.1-beta.0",
     "@addfox/utils": "0.1.1-beta.0",
     "addfox-with-env-vars": "0.0.1",
-    "addfox-with-no-manifest": "0.0.1"
+    "addfox-with-no-manifest": "0.0.1",
+    "my-extension": "1.0.0"
   },
   "changesets": [
     "chubby-pans-make",
@@ -59,7 +60,9 @@
     "loose-pigs-press",
     "loud-buttons-cough",
     "major-canyons-eat",
+    "pink-shrimps-build",
     "pink-states-call",
+    "silent-seals-study",
     "six-clouds-rhyme",
     "small-hounds-help",
     "spicy-oranges-design",

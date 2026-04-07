@@ -1,6 +1,6 @@
 {
   "name": "addfox",
-  "version": "0.1.1-beta.14",
+  "version": "0.1.1-beta.15",
   "description": "Build tool for browser extensions — one install, addfox dev / build",
   "license": "MIT",
   "type": "module",
@@ -26,8 +26,18 @@
     "bin",
     "index.mjs",
     "index.d.ts",
+    "monitor.mjs",
+    "monitor.d.ts",
     "LICENSE"
   ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/addfox/addfox.git"
+  },
+  "homepage": "https://addfox.dev",
   "scripts": {
     "build": "echo 'No build step'",
     "test": "node -e \"process.exit(0)\"",
