@@ -1,5 +1,17 @@
 ﻿# addfox
 
+## 0.1.1-beta.15
+
+### Patch Changes
+
+- fix: export the monitor file
+- fix: fixed package.json files
+- Updated dependencies
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.12
+  - @addfox/core@0.1.1-beta.12
+  - @addfox/cli@0.1.1-beta.14
+
 ## 0.1.1-beta.14
 
 ### Patch Changes

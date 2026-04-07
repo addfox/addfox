@@ -1,6 +1,6 @@
 {
   "name": "create-addfox-app",
-  "version": "0.1.1-beta.16",
+  "version": "0.1.1-beta.17",
   "description": "Interactive scaffolder for addfox extension projects",
   "license": "MIT",
   "type": "module",
@@ -26,11 +26,14 @@
     "kolorist": "^1.8.0",
     "minimist": "^1.2.8"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "devDependencies": {
-    "@rslib/core": "^0.20.0",
-    "@rstest/core": "^0.9.4",
-    "@rstest/coverage-istanbul": "^0.3.0",
-    "@types/node": "^20.0.0",
-    "typescript": "^5.0.0"
+    "@rslib/core": "catalog:",
+    "@rstest/core": "catalog:",
+    "@rstest/coverage-istanbul": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
   }
 }

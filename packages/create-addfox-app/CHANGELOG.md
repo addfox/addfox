@@ -1,5 +1,14 @@
 # create-addfox-app
 
+## 0.1.1-beta.17
+
+### Patch Changes
+
+- fix: export the monitor file
+- Updated dependencies
+- Updated dependencies
+  - @addfox/pkg-manager@0.1.1-beta.10
+
 ## 0.1.1-beta.16
 
 ### Patch Changes

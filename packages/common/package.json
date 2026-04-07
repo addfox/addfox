@@ -1,6 +1,6 @@
 {
   "name": "@addfox/common",
-  "version": "0.1.1-beta.11",
+  "version": "0.1.1-beta.12",
   "description": "Shared utilities for Addfox packages",
   "license": "MIT",
   "type": "module",
@@ -28,14 +28,14 @@
     "dev": "rslib build --watch",
     "test": "rstest run"
   },
-  "devDependencies": {
-    "@rsbuild/core": "^1.7.5",
-    "@rslib/core": "^0.20.0",
-    "@rstest/core": "^0.9.2",
-    "@types/node": "^20.0.0",
-    "typescript": "^5.6.0"
+  "engines": {
+    "node": ">=18.0.0"
   },
-  "peerDependencies": {
-    "@rsbuild/core": "^1.7.5"
+  "devDependencies": {
+    "@rsbuild/core": "catalog:",
+    "@rslib/core": "catalog:",
+    "@rstest/core": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
   }
 }

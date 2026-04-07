@@ -1,5 +1,15 @@
 # @addfox/rsbuild-plugin-extension-entry
 
+## 0.1.1-beta.13
+
+### Patch Changes
+
+- fix: export the monitor file
+- fix: fixed package.json files
+- Updated dependencies
+- Updated dependencies
+  - @addfox/core@0.1.1-beta.12
+
 ## 0.1.1-beta.12
 
 ### Patch Changes

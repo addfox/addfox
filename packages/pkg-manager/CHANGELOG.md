@@ -1,5 +1,12 @@
 ﻿# @addfox/pkg-manager
 
+## 0.1.1-beta.10
+
+### Patch Changes
+
+- fix: export the monitor file
+- fix: fixed package.json files
+
 ## 0.1.1-beta.9
 
 ### Patch Changes

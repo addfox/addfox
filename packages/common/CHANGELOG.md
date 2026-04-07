@@ -1,5 +1,12 @@
 ﻿# @addfox/common
 
+## 0.1.1-beta.12
+
+### Patch Changes
+
+- fix: export the monitor file
+- fix: fixed package.json files
+
 ## 0.1.1-beta.11
 
 ### Patch Changes
