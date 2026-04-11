@@ -4,6 +4,7 @@ import { useI18n } from "@rspress/core/runtime";
 const GITHUB_URL = "https://github.com/addfox/addfox";
 const WXT_URL = "https://wxt.dev";
 const PLASMO_URL = "https://www.plasmo.com";
+const CRXSOSO_URL = "https://www.crxsoso.com";
 const AGENTWORK_URL = "https://agentwork.tools";
 const AGENTWORK_BADGE_SRC = "https://agentwork.tools/badge/badge_dark.svg";
 
@@ -50,6 +51,9 @@ export function HomeFooter() {
               </a>
               <a href={PLASMO_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
                 {t("homeFooterPlasmo")}
+              </a>
+              <a href={CRXSOSO_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                {t("crxsoso")}
               </a>
             </div>
           </div>
