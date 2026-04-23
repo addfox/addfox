@@ -1,5 +1,17 @@
 ﻿# @addfox/common
 
+## 0.1.1-beta.14
+
+### Patch Changes
+
+- chore: update lib
+
+## 0.1.1-beta.13
+
+### Patch Changes
+
+- chore: update libs version
+
 ## 0.1.1-beta.12
 
 ### Patch Changes

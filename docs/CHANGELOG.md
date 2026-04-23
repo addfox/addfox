@@ -1,5 +1,17 @@
 ﻿# addfox-docs
 
+## 0.0.3-beta.17
+
+### Patch Changes
+
+- chore: update lib
+
+## 0.0.3-beta.16
+
+### Patch Changes
+
+- chore: update libs version
+
 ## 0.0.3-beta.15
 
 ### Patch Changes

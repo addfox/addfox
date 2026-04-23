@@ -1,5 +1,21 @@
 # @addfox/rsbuild-plugin-extension-manifest
 
+## 0.1.1-beta.14
+
+### Patch Changes
+
+- chore: update lib
+- Updated dependencies
+  - @addfox/core@0.1.1-beta.14
+
+## 0.1.1-beta.13
+
+### Patch Changes
+
+- chore: update libs version
+- Updated dependencies
+  - @addfox/core@0.1.1-beta.13
+
 ## 0.1.1-beta.12
 
 ### Patch Changes

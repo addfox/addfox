@@ -1,5 +1,21 @@
 # create-addfox-app
 
+## 0.1.1-beta.19
+
+### Patch Changes
+
+- chore: update lib
+- Updated dependencies
+  - @addfox/pkg-manager@0.1.1-beta.12
+
+## 0.1.1-beta.18
+
+### Patch Changes
+
+- chore: update libs version
+- Updated dependencies
+  - @addfox/pkg-manager@0.1.1-beta.11
+
 ## 0.1.1-beta.17
 
 ### Patch Changes

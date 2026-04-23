@@ -1,5 +1,25 @@
 ﻿# addfox
 
+## 0.1.1-beta.17
+
+### Patch Changes
+
+- chore: update lib
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.14
+  - @addfox/core@0.1.1-beta.14
+  - @addfox/cli@0.1.1-beta.16
+
+## 0.1.1-beta.16
+
+### Patch Changes
+
+- chore: update libs version
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.13
+  - @addfox/core@0.1.1-beta.13
+  - @addfox/cli@0.1.1-beta.15
+
 ## 0.1.1-beta.15
 
 ### Patch Changes
