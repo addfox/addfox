@@ -1,5 +1,35 @@
 ﻿# @addfox/cli
 
+## 0.1.1-beta.16
+
+### Patch Changes
+
+- chore: update lib
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-manifest@0.1.1-beta.14
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.14
+  - @addfox/rsbuild-plugin-extension-entry@0.1.1-beta.15
+  - @addfox/rsbuild-plugin-extension-hmr@0.1.1-beta.14
+  - @addfox/rsbuild-plugin-vue@0.1.1-beta.12
+  - @addfox/pkg-manager@0.1.1-beta.12
+  - @addfox/common@0.1.1-beta.14
+  - @addfox/core@0.1.1-beta.14
+
+## 0.1.1-beta.15
+
+### Patch Changes
+
+- chore: update libs version
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-manifest@0.1.1-beta.13
+  - @addfox/rsbuild-plugin-extension-monitor@0.1.1-beta.13
+  - @addfox/rsbuild-plugin-extension-entry@0.1.1-beta.14
+  - @addfox/rsbuild-plugin-extension-hmr@0.1.1-beta.13
+  - @addfox/rsbuild-plugin-vue@0.1.1-beta.11
+  - @addfox/pkg-manager@0.1.1-beta.11
+  - @addfox/common@0.1.1-beta.13
+  - @addfox/core@0.1.1-beta.13
+
 ## 0.1.1-beta.14
 
 ### Patch Changes

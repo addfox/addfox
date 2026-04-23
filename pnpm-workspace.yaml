@@ -16,18 +16,18 @@ packages:
 
 catalog:
   # Rsbuild 生态 - 使用正式版
-  "@rsbuild/core": "^1.7.5"
-  "@rspack/core": "^1.3.0"
-  "@rsbuild/plugin-babel": "^1.1.0"
-  "@rsbuild/plugin-vue": "^1.2.0"
-  "@rsbuild/plugin-vue-jsx": "^1.1.0"
+  "@rsbuild/core": "2.0.0"
+  "@rspack/core": "2.0.0"
+  "@rsbuild/plugin-babel": "^1.1.2"
+  "@rsbuild/plugin-vue": "^1.2.7"
+  "@rsbuild/plugin-vue-jsx": "^2.0.0"
   
   # Rslib 构建工具
-  "@rslib/core": "^0.6.0"
+  "@rslib/core": "^0.21.3"
   
   # 测试工具
-  "@rstest/core": "^0.9.0"
-  "@rstest/coverage-istanbul": "^0.3.0"
+  "@rstest/core": "^0.9.9"
+  "@rstest/coverage-istanbul": "^0.3.2"
   
   # TypeScript
   "typescript": "^5.0.0"

@@ -1,6 +1,6 @@
 {
   "name": "@addfox/rsbuild-plugin-vue",
-  "version": "0.1.1-beta.10",
+  "version": "0.1.1-beta.12",
   "description": "addfox plugin: enable Vue 3 (SFC, JSX via @rsbuild/plugin-vue-jsx) for the project",
   "license": "MIT",
   "type": "module",
