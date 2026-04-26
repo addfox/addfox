@@ -3,8 +3,6 @@ function setStatus(text: string): void {
   if (statusEl) statusEl.textContent = text;
 }
 
-console.log('---', fff);
-
 function bindPing(): void {
   const button = document.getElementById("ping");
   if (!button) return;
@@ -28,5 +26,5 @@ init();
 
 const dom = document.querySelector("#root");
 if (dom) {
-  dom.innerHTML = "Hello, World!";
+  dom.innerHTML = "Hello, World123!";
 }
