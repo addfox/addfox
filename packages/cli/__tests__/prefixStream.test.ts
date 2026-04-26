@@ -1,5 +1,4 @@
 import { describe, expect, it, beforeEach, afterEach } from "@rstest/core";
-import { pushWebExtStdoutOrigin, popWebExtStdoutOrigin } from "@addfox/common";
 import {
   wrapAddfoxOutput,
   createPrefixedWrite,
@@ -166,17 +165,6 @@ describe("prefixStream", () => {
     const addfoxOut = stdoutChunks.join("");
     expect(addfoxOut).toContain(PREFIX);
     expect(addfoxOut).toContain("addfox-line");
-  });
-
-  it("setOutputPrefixRsbuild uses [Web-ext] when web-ext stdout origin depth > 0", () => {
-    wrapAddfoxOutput();
-    setOutputPrefixRsbuild();
-    pushWebExtStdoutOrigin();
-    (process.stdout as NodeJS.WriteStream).write("any line from web-ext pino\n");
-    popWebExtStdoutOrigin();
-    const out = stdoutChunks.join("");
-    expect(out).toContain("[Web-ext]");
-    expect(out).toContain("any line from web-ext pino");
   });
 
   it("getRawWrites after wrap returns raw write functions", () => {

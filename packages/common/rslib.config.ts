@@ -1,4 +1,14 @@
 import { defineConfig } from '@rslib/core';
+import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
+
+const rsdoctorPlugin = process.env.RSDOCTOR === 'true'
+  ? [new RsdoctorRspackPlugin({
+      output: {
+        mode: 'brief',
+        reportDir: './.rsdoctor',
+      },
+    })]
+  : [];
 
 export default defineConfig({
   lib: [
@@ -30,5 +40,10 @@ export default defineConfig({
   output: {
     target: 'node',
     cleanDistPath: true,
+  },
+  tools: {
+    rspack: {
+      plugins: rsdoctorPlugin as unknown as import('rspack').Configuration['plugins'],
+    },
   },
 });

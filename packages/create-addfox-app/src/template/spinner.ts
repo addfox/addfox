@@ -1,4 +1,4 @@
-import { yellow } from "kolorist";
+import { yellow } from "../lib/ansiColors.ts";
 
 const FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 const INTERVAL_MS = 80;

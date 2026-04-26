@@ -1,5 +1,5 @@
 import { createServer } from "node:http";
-import { WebSocketServer, WebSocket } from "ws";
+import { WebSocketServer, WebSocket, OPEN } from "../lib/ws";
 
 /** Test helper: minimal WebSocket server with notifyReload. */
 export function createTestWsServer(
@@ -11,7 +11,7 @@ export function createTestWsServer(
   const http = createServer();
   const wss = new WebSocketServer({ server: http });
   wss.on("connection", (ws: WebSocket) => {
-    if (ws.readyState === WebSocket.OPEN) ws.send("connected");
+    if (ws.readyState === OPEN) ws.send("connected");
   });
   return new Promise((resolve, reject) => {
     http.listen(port, () => {
@@ -22,7 +22,7 @@ export function createTestWsServer(
           }),
         notifyReload() {
           wss.clients.forEach((client: WebSocket) => {
-            if (client.readyState === WebSocket.OPEN) client.send("reload-extension");
+            if (client.readyState === OPEN) client.send("reload-extension");
           });
         },
       });

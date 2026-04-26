@@ -6,6 +6,7 @@ packages:
   - "packages/core"
   - "packages/utils"
   - "packages/pkg-manager"
+  - "packages/launcher"
   - "packages/plugins/rsbuild-plugin-extension-entry"
   - "packages/plugins/rsbuild-plugin-extension-manifest"
   - "packages/plugins/rsbuild-plugin-extension-hmr"
@@ -24,6 +25,9 @@ catalog:
   
   # Rslib 构建工具
   "@rslib/core": "^0.21.3"
+  
+  # Rsdoctor 构建分析
+  "@rsdoctor/rspack-plugin": "^1.5.3"
   
   # 测试工具
   "@rstest/core": "^0.9.9"

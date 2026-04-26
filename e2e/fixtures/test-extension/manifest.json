@@ -1,0 +1,9 @@
+{
+  "manifest_version": 3,
+  "name": "Launcher Test Extension",
+  "version": "1.0.0",
+  "description": "Minimal extension for launcher E2E tests",
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

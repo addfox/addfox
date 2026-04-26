@@ -15,8 +15,8 @@ import {
   magenta,
   gray,
   lightBlue,
-} from "kolorist";
-import { trueColor } from "kolorist";
+  trueColor,
+} from "../lib/ansiColors.ts";
 
 const require = createRequire(import.meta.url);
 try {
@@ -26,7 +26,7 @@ try {
 } catch {
   /* use defaults */
 }
-import minimist from "minimist";
+import minimist from "../lib/minimist.ts";
 import { copyBundledTemplate, hasLocalTemplate } from "../template/bundledCopy.ts";
 import { runWithTemplateSpinner } from "../template/spinner.ts";
 import {

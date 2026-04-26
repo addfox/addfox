@@ -1,11 +1,7 @@
-import { getWebExtStdoutOriginDepth } from "@addfox/common";
-
 /** ANSI: orange (256 color 208), then reset. Exported for tests. */
 export const ADDFOX_PREFIX = "\x1b[38;5;208m[Addfox]\x1b[0m ";
 /** Light purple [Rsbuild] for rsbuild-origin lines (256 color 141) */
 const RSBUILD_PREFIX = "\x1b[38;5;141m[Rsbuild]\x1b[0m ";
-/** Cyan [Web-ext] for web-ext-origin lines (256 color 45) */
-const WEBEXT_PREFIX = "\x1b[38;5;45m[Web-ext]\x1b[0m ";
 
 let rawStdoutWrite: NodeJS.WriteStream["write"] | null = null;
 let rawStderrWrite: NodeJS.WriteStream["write"] | null = null;
@@ -94,9 +90,6 @@ export function wrapAddfoxOutput(): void {
   rawStderrWrite = process.stderr.write.bind(process.stderr);
 
   const getPrefix = (_line: string): string => {
-    if (outputPrefix === "rsbuild" && getWebExtStdoutOriginDepth() > 0) {
-      return WEBEXT_PREFIX;
-    }
     return outputPrefix === "rsbuild" ? RSBUILD_PREFIX : ADDFOX_PREFIX;
   };
   const stdoutWrite = createPrefixedWrite(process.stdout, getPrefix);

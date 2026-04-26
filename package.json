@@ -42,6 +42,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.27.0",
     "@addfox/rsbuild-plugin-extension-hmr": "workspace:*",
+    "@addfox/launcher": "workspace:*",
     "@playwright/test": "^1.58.2",
     "@rspack/core": "2.0.0",
     "lcov-result-merger": "^5.0.1",

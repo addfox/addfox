@@ -12,6 +12,7 @@
 | [addfox-with-react-shadcn](./addfox-with-react-shadcn) | React + shadcn/ui：popup、options、content、background、sidepanel |
 | [addfox-with-devtools](./addfox-with-devtools) | 纯原生 TS：background + devtools_page，无 React/Vue |
 | [addfox-with-firefox](./addfox-with-firefox) | Firefox 模板：popup、content、background + 简单消息通信 |
+| [addfox-with-firefox-react](./addfox-with-firefox-react) | Firefox + React 模板：popup、options、content、background + 简单消息通信 |
 | [addfox-with-content-ui](./addfox-with-content-ui) | **Content UI**：使用 `@addfox/utils` 的 `defineContentUI` / `mountContentUI` 在 content script 中注入 UI（支持 shadow/iframe） |
 | [addfox-with-content-ui-react](./addfox-with-content-ui-react) | **Content UI + React + Tailwind**：content script 使用 defineContentUI/mountContentUI 挂载 React + Tailwind 面板 |
 | [addfox-with-react-entry-false](./addfox-with-react-entry-false) | React 模板（entry 关闭）：popup、options、content、background |
