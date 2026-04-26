@@ -72,34 +72,20 @@ describe("zipDist", () => {
     await expect(zipDist(distPath, testRoot, outDir, undefined, deps)).rejects.toThrow("Zip output stream failed");
   });
 
-  it("rejects with AddfoxError when archive errors (Error instance)", async () => {
+  it("rejects with AddfoxError when zipDirectory errors (Error instance)", async () => {
     const deps: ZipDistDeps = {
-      archiver: () =>
-        ({
-          on(ev: string, fn: (err?: Error) => void) {
-            if (ev === "error") setImmediate(() => fn(new Error("archive failed")));
-            return this;
-          },
-          pipe: () => this,
-          directory: () => {},
-          finalize: () => {},
-        }) as never,
+      zipDirectory: async () => {
+        throw new Error("archive failed");
+      },
     };
     await expect(zipDist(distPath, testRoot, outDir, undefined, deps)).rejects.toThrow("Zip archive failed");
   });
 
-  it("rejects when archive errors with non-Error", async () => {
+  it("rejects when zipDirectory errors with non-Error", async () => {
     const deps: ZipDistDeps = {
-      archiver: () =>
-        ({
-          on(ev: string, fn: (err?: unknown) => void) {
-            if (ev === "error") setImmediate(() => fn("string err"));
-            return this;
-          },
-          pipe: () => this,
-          directory: () => {},
-          finalize: () => {},
-        }) as never,
+      zipDirectory: async () => {
+        throw "string err";
+      },
     };
     await expect(zipDist(distPath, testRoot, outDir, undefined, deps)).rejects.toThrow("Zip archive failed");
   });

@@ -34,6 +34,7 @@
   "devDependencies": {
     "@rspack/core": "catalog:",
     "@rsbuild/core": "catalog:",
+    "@rsdoctor/rspack-plugin": "catalog:",
     "@rslib/core": "catalog:",
     "@rstest/core": "catalog:",
     "@rstest/coverage-istanbul": "catalog:",

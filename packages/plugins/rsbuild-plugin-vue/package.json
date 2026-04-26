@@ -34,6 +34,7 @@
     "@rsbuild/plugin-babel": "catalog:",
     "@rsbuild/plugin-vue": "catalog:",
     "@rsbuild/plugin-vue-jsx": "catalog:",
+    "@rsdoctor/rspack-plugin": "catalog:",
     "@rslib/core": "catalog:",
     "@rstest/core": "catalog:",
     "@rstest/coverage-istanbul": "catalog:",

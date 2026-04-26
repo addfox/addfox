@@ -1,0 +1,52 @@
+{
+  "name": "@addfox/launcher",
+  "version": "0.1.0",
+  "description": "Browser launcher for extension development — Chromium & Gecko (Firefox, Zen, etc.)",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "addfox-launcher": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./chromium": {
+      "types": "./dist/chromium/index.d.ts",
+      "import": "./dist/chromium/index.js",
+      "default": "./dist/chromium/index.js"
+    },
+    "./gecko": {
+      "types": "./dist/gecko/index.d.ts",
+      "import": "./dist/gecko/index.js",
+      "default": "./dist/gecko/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "dev": "rslib build --watch",
+    "test": "rstest run",
+    "test:coverage": "rstest run --coverage"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@rslib/core": "catalog:",
+    "@rsdoctor/rspack-plugin": "catalog:",
+    "@rstest/core": "catalog:",
+    "@rstest/coverage-istanbul": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}

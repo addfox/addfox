@@ -1,0 +1,27 @@
+{
+  "name": "addfox-with-firefox-react",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Firefox React extension template: popup, options, content, background + messaging",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev -b firefox --debug",
+    "build": "addfox build -b firefox"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "webextension-polyfill": "^0.10.0",
+    "@addfox/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@rsbuild/plugin-react": "^1.2.0",
+    "@rsdoctor/rspack-plugin": "^1.5.3",
+    "@types/chrome": "^0.0.326",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/webextension-polyfill": "^0.10.0",
+    "addfox": "workspace:*",
+    "typescript": "^5.0.0"
+  }
+}

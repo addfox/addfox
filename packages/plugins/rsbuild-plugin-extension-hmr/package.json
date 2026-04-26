@@ -28,8 +28,8 @@
   "dependencies": {
     "@addfox/common": "workspace:*",
     "@addfox/core": "workspace:*",
-    "chrome-launcher": "^1.0.0",
-    "web-ext": "^9.0.0"
+    "@addfox/launcher": "workspace:*",
+    "chrome-launcher": "^1.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -37,11 +37,11 @@
   "devDependencies": {
     "@rspack/core": "catalog:",
     "@rsbuild/core": "catalog:",
+    "@rsdoctor/rspack-plugin": "catalog:",
     "@rslib/core": "catalog:",
     "@rstest/core": "catalog:",
     "@rstest/coverage-istanbul": "catalog:",
     "@types/node": "catalog:",
-    "@types/ws": "^8.5.0",
     "typescript": "catalog:"
   },
   "peerDependencies": {
@@ -55,8 +55,5 @@
     "@rspack/core": {
       "optional": false
     }
-  },
-  "optionalDependencies": {
-    "ws": "^8.18.0"
   }
 }

@@ -2,7 +2,7 @@ import { createServer } from "node:http";
 import { join } from "node:path";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { WebSocketServer, WebSocket } from "ws";
+import { WebSocketServer, WebSocket, OPEN } from "../lib/ws";
 import { logDone, logDoneTimed, writeExtensionErrorBlock } from "@addfox/common";
 import { detectFrontendFramework } from "@addfox/core";
 import type { ReloadKind } from "../hmr/scope";
@@ -268,7 +268,7 @@ export async function startWebSocketServer(
   httpServer = createServer(handleHttpRequest);
   wsServer = new WebSocketServer({ server: httpServer });
   wsServer.on("connection", (ws: WebSocket) => {
-    if (ws.readyState === WebSocket.OPEN) ws.send("connected");
+    if (ws.readyState === OPEN) ws.send("connected");
   });
   await bindHttpListen(httpServer, port);
   const ms = Math.round(performance.now() - t0);
@@ -281,7 +281,7 @@ export type { ReloadKind } from "../hmr/scope";
 export function notifyReload(kind: ReloadKind): void {
   if (!wsServer) return;
   wsServer.clients.forEach((client: WebSocket) => {
-    if (client.readyState === WebSocket.OPEN) client.send(kind);
+    if (client.readyState === OPEN) client.send(kind);
   });
   logDone("hotreload success", kind, new Date().toLocaleString());
 }

@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@rsbuild/core": "catalog:",
+    "@rsdoctor/rspack-plugin": "catalog:",
     "@rslib/core": "catalog:",
     "@rstest/core": "catalog:",
     "@types/node": "catalog:",

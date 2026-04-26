@@ -32,4 +32,3 @@ export type {
 export * from './hooks/index.js';
 
 // Process output origin (web-ext embedded run)
-export * from './webExtStdoutOrigin.js';

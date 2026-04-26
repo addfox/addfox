@@ -21,15 +21,13 @@
   },
   "dependencies": {
     "@addfox/pkg-manager": "workspace:*",
-    "chalk": "^5.3.0",
-    "prompts": "^2.4.2",
-    "kolorist": "^1.8.0",
-    "minimist": "^1.2.8"
+    "prompts": "^2.4.2"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "devDependencies": {
+    "@rsdoctor/rspack-plugin": "catalog:",
     "@rslib/core": "catalog:",
     "@rstest/core": "catalog:",
     "@rstest/coverage-istanbul": "catalog:",

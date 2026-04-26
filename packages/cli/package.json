@@ -25,7 +25,6 @@
     "@addfox/common": "workspace:*",
     "@addfox/core": "workspace:*",
     "@addfox/pkg-manager": "workspace:*",
-    "archiver": "^7.0.0",
     "@addfox/rsbuild-plugin-extension-entry": "workspace:*",
     "@addfox/rsbuild-plugin-extension-manifest": "workspace:*",
     "@addfox/rsbuild-plugin-extension-hmr": "workspace:*",
@@ -34,10 +33,10 @@
   },
   "devDependencies": {
     "@rsbuild/core": "catalog:",
+    "@rsdoctor/rspack-plugin": "catalog:",
     "@rslib/core": "catalog:",
     "@rstest/core": "catalog:",
     "@rstest/coverage-istanbul": "catalog:",
-    "@types/archiver": "^6.0.0",
     "@types/node": "catalog:",
     "typescript": "catalog:"
   },
