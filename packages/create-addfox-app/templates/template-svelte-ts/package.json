@@ -8,11 +8,11 @@
     "build": "addfox build"
   },
   "dependencies": {
-    "@addfox/utils": "^0.1.1-beta.5",
+    "@addfox/utils": "^0.1.1",
     "svelte": "^5.54.1"
   },
   "devDependencies": {
-    "addfox": "^0.1.1-beta.7",
+    "addfox": "^0.1.1",
     "@rsbuild/plugin-svelte": "^1.1.1",
     "typescript": "^5.9.3",
     "@types/chrome": "^0.1.38"

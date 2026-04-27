@@ -8,11 +8,11 @@
     "build": "addfox build"
   },
   "dependencies": {
-    "@addfox/utils": "^0.1.1-beta.5",
+    "@addfox/utils": "^0.1.1",
     "vue": "^3.5.30"
   },
   "devDependencies": {
-    "addfox": "^0.1.1-beta.7",
+    "addfox": "^0.1.1",
     "@rsbuild/plugin-vue": "^1.2.7",
     "typescript": "^5.9.3",
     "@types/chrome": "^0.1.38"
