@@ -1,6 +1,6 @@
 {
   "name": "@addfox/rsbuild-plugin-extension-hmr",
-  "version": "0.1.1-beta.14",
+  "version": "0.1.1",
   "description": "Rsbuild plugin: launch browser and HMR in dev (internal)",
   "license": "MIT",
   "type": "module",

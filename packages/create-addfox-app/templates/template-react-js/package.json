@@ -8,12 +8,12 @@
     "build": "addfox build"
   },
   "dependencies": {
-    "@addfox/utils": "^0.1.1-beta.5",
+    "@addfox/utils": "^0.1.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "addfox": "^0.1.1-beta.7",
+    "addfox": "^0.1.1",
     "@rsbuild/plugin-react": "^2.0.0"
   }
 }

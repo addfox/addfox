@@ -1,6 +1,6 @@
 {
   "name": "@addfox/common",
-  "version": "0.1.1-beta.14",
+  "version": "0.1.1",
   "description": "Shared utilities for Addfox packages",
   "license": "MIT",
   "type": "module",
