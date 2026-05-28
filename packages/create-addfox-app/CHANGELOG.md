@@ -1,5 +1,16 @@
 # create-addfox-app
 
+## 0.2.0
+
+### Minor Changes
+
+- refactor: update browser launcher
+
+### Patch Changes
+
+- Updated dependencies
+  - @addfox/pkg-manager@0.2.0
+
 ## 0.1.1-beta.19
 
 ### Patch Changes

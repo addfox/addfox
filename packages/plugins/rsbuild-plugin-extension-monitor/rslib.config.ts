@@ -13,7 +13,10 @@ export default defineConfig({
       dts: true,
       output: {
         sourceMap: true,
-        cleanDistPath: true,
+        // Keep sibling entry outputs stable in watch mode. The public
+        // `addfox/monitor` facade re-exports `./dist/runtime.js`, so removing
+        // it while `index` is rebuilding breaks dev consumers.
+        cleanDistPath: false,
       },
     },
   ],

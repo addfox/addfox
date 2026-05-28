@@ -13,5 +13,10 @@
     "text": "Examples",
     "link": "/examples/index",
     "activeMatch": "^/examples/"
+  },
+  {
+    "text": "Blog",
+    "link": "/blog",
+    "activeMatch": "^/blog/"
   }
 ]

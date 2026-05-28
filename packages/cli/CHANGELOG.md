@@ -1,5 +1,23 @@
 ﻿# @addfox/cli
 
+## 0.2.0
+
+### Minor Changes
+
+- refactor: update browser launcher
+
+### Patch Changes
+
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-manifest@0.2.0
+  - @addfox/rsbuild-plugin-extension-monitor@0.2.0
+  - @addfox/rsbuild-plugin-extension-entry@0.2.0
+  - @addfox/rsbuild-plugin-extension-hmr@0.2.0
+  - @addfox/core@0.2.0
+  - @addfox/common@0.2.0
+  - @addfox/pkg-manager@0.2.0
+  - @addfox/rsbuild-plugin-vue@0.2.0
+
 ## 0.1.1-beta.16
 
 ### Patch Changes

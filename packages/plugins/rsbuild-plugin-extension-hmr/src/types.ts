@@ -18,6 +18,7 @@ export interface HmrPluginOptions {
   browserosPath?: string;
   customPath?: string;
   firefoxPath?: string;
+  zenPath?: string;
   cache?: boolean;
   wsPort?: number;
   enableReload?: boolean;

@@ -18,6 +18,7 @@ export interface BrowserPathConfig {
   /** Required when launch target is "custom" */
   custom?: string;
   firefox?: string;
+  zen?: string;
 }
 
 /** Single manifest as JSON object (nested unknown allowed) */

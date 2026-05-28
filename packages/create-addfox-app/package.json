@@ -1,6 +1,6 @@
 {
   "name": "create-addfox-app",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Interactive scaffolder for addfox extension projects",
   "license": "MIT",
   "type": "module",
@@ -21,10 +21,7 @@
   },
   "dependencies": {
     "@addfox/pkg-manager": "workspace:*",
-    "chalk": "^5.3.0",
-    "prompts": "^2.4.2",
-    "kolorist": "^1.8.0",
-    "minimist": "^1.2.8"
+    "prompts": "^2.4.2"
   },
   "engines": {
     "node": ">=18.0.0"

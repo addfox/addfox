@@ -61,6 +61,9 @@ export const DEFAULT_ENV_PREFIXES = ["ADDFOX_PUBLIC_"] as const;
 /** Dev mode HMR WebSocket port */
 export const HMR_WS_PORT = 23333;
 
+/** Default Rsbuild dev server port */
+export const DEFAULT_DEV_SERVER_PORT = 3000;
+
 /** Default build target browser (manifest target) */
 export const DEFAULT_BROWSER = "chromium" as const;
 
@@ -94,6 +97,7 @@ export const SUPPORTED_LAUNCH_TARGETS = [
   "browseros",
   "custom",
   "firefox",
+  "zen",
 ] as const;
 
 export type LaunchTarget = (typeof SUPPORTED_LAUNCH_TARGETS)[number];
@@ -146,5 +150,5 @@ export const MANIFEST_ENTRY_KEYS: readonly EntryKey[] = Object.keys(
   MANIFEST_ENTRY_PATHS
 ) as EntryKey[];
 
-/** Chromium-family only (excludes firefox); used for HMR etc. */
-export type ChromiumLaunchTarget = Exclude<LaunchTarget, "firefox">;
+/** Chromium-family only (excludes Gecko targets); used for HMR etc. */
+export type ChromiumLaunchTarget = Exclude<LaunchTarget, "firefox" | "zen">;

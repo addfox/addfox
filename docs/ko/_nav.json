@@ -13,5 +13,10 @@
     "text": "예시",
     "link": "/examples/index",
     "activeMatch": "^/ko/examples/"
+  },
+  {
+    "text": "블로그",
+    "link": "/blog",
+    "activeMatch": "^/ko/blog/"
   }
 ]

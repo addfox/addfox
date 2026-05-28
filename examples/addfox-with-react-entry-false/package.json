@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "addfox": "workspace:*",
-    "@rsbuild/plugin-react": "^1.2.0",
+    "@rsbuild/plugin-react": "2.0.0",
     "@types/chrome": "^0.0.326",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",

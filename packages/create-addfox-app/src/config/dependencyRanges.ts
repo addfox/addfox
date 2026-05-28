@@ -9,10 +9,10 @@
  *
  * `ADDFOX_0_1_SCAFFOLD_RANGE` is a semver range for tooling/docs that must accept 0.1.x prereleases.
  */
-export const ADDFOX_CLI_PACKAGE_VERSION = "^0.1.1" as const;
-export const ADDFOX_UTILS_PACKAGE_VERSION = "^0.1.1" as const;
+export const ADDFOX_CLI_PACKAGE_VERSION = "0.1.1" as const;
+export const ADDFOX_UTILS_PACKAGE_VERSION = "0.1.1" as const;
 /** `@rsbuild/plugin-vue` range in `template-vue-ts` / `template-vue-js` (aligned across JS/TS). */
-export const RSBUILD_PLUGIN_VUE_PACKAGE_VERSION = "^1.2.7" as const;
+export const RSBUILD_PLUGIN_VUE_PACKAGE_VERSION = "^1.2.8" as const;
 
 /**
  * `^0.1.1` matches stable releases in the 0.1.x line.

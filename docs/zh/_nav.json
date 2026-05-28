@@ -13,5 +13,10 @@
     "text": "示例",
     "link": "/examples/index",
     "activeMatch": "^/zh/examples/"
+  },
+  {
+    "text": "博客",
+    "link": "/blog",
+    "activeMatch": "^/zh/blog/"
   }
 ]

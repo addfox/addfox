@@ -30,6 +30,12 @@ describe("CliParser", () => {
       expect(r2.launch).toBe("firefox");
     });
 
+    it("maps zen to firefox manifest target but preserves zen launch target", () => {
+      const r = parseCliArgs(["dev", "-b", "zen"]);
+      expect(r.browser).toBe("firefox");
+      expect(r.launch).toBe("zen");
+    });
+
     it("maps chrome/brave/edge/etc to chromium but preserves launch target", () => {
       const r1 = parseCliArgs(["build", "-b", "chrome"]);
       expect(r1.browser).toBe("chromium");
@@ -137,6 +143,7 @@ describe("CliParser", () => {
       expect(() => assertSupportedBrowser("chromium")).not.toThrow();
       expect(() => assertSupportedBrowser("chrome")).not.toThrow();
       expect(() => assertSupportedBrowser("firefox")).not.toThrow();
+      expect(() => assertSupportedBrowser("zen")).not.toThrow();
     });
   });
 });

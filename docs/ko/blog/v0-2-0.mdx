@@ -1,0 +1,92 @@
+---
+description: '최신 아키텍처 리팩토링 심층 분석. 새로운 @addfox/launcher, 의존성 감소, 공급망 리스크 완화, 성능 개선에 대해 알아봅니다.'
+date: 2026-05-25 12:00:00
+sidebar: false
+authors:
+  - name: Gomi
+    avatar: 'https://github.com/gxy5202.png'
+    github: 'gxy5202'
+---
+
+import { BlogAuthors } from '@theme';
+
+# AddFox 0.2.0: 아키텍처 리팩토링 및 의존성 경량화
+
+_2026년 5월 25일_
+
+<BlogAuthors />
+
+AddFox 프레임워크의 최신 진행 상황을 공유하게 되어 기쁩니다. 현재 npm의 안정 버전은 여전히 `0.1.1`이지만, `dev-launch` 브랜치에서 상당한 규모의 아키텍처 리팩토링이 완료되었습니다. 이번 업데이트는 세 가지 핵심 목표를 중심으로 이루어졌습니다: **의존성 줄이기**, **블랙박스 도구를 자체 솔루션으로 교체하기**, 그리고 **브라우저 확장 프로그램 개발 경험 향상**입니다.
+
+## 의존성 대폭 경량화와 공급망 보안
+
+이번 리팩토링에서 가장 큰 변화 중 하나는 방대한 전이 의존성을 끌어안던 서드파티 패키지를 과감히 제거한 것입니다. 모든 외부 의존성은 잠재적인 공급망 리스크입니다. 폐기, 악의적 인수, 또는 전이 패키지의 하위 호환성이 깨지는 변경 등이 그것입니다. 대규모 서드파티 도구를 집중적인 자체 유틸리티로 교체함으로써 AddFox 사용자의 공격 표면을 크게 줄였습니다.
+
+제거한 의존성은 다음과 같습니다:
+
+- **`web-ext`** (약 586KB + **26개 전이 의존성**) — 완전히 제거.
+- **`chrome-launcher`** — 제거.
+- **`archiver`** (약 40KB + **9개 전이 의존성**) — 자체 zip 유틸리티로 교체.
+- **`cli-table3`** (약 46KB + 1개 전이 의존성) — `@addfox/core`에서 제거.
+- **`chalk`** (약 44KB), **`kolorist`**, **`minimist`** — `create-addfox-app`에서 제거하고 경량 자체 유틸리티로 교체.
+
+그 결과 `pnpm-lock.yaml`은 약 **2,156줄** 감소하여 사용자의 설치 속도가 빨라지고, `node_modules`가 작아지며, 최종 사용자의 공급망 리스크도 줄었습니다.
+
+### 전후 비교: 서드파티 런타임 의존성
+
+| 패키지 | 0.1.1 서드파티 의존성 | dev-launch 서드파티 의존성 |
+|---|---|---|
+| `@addfox/cli` | `archiver` | *（없음）* |
+| `@addfox/core` | `cli-table3`, `jiti` | `jiti` |
+| `create-addfox-app` | `chalk`, `kolorist`, `minimist`, `prompts` | `prompts` |
+| `@addfox/rsbuild-plugin-extension-hmr` | `chrome-launcher`, `web-ext` | *（없음）* |
+| `@addfox/launcher` | *N/A（신규 패키지）* | *（없음）* |
+| `@addfox/common` | *（없음）* | *（없음）* |
+| `@addfox/pkg-manager` | *（없음）* | *（없음）* |
+| `@addfox/utils` | `@addfox/common` | `@addfox/common` |
+| `rsbuild-plugin-extension-entry` | `@addfox/core` | `@addfox/core` |
+| `rsbuild-plugin-extension-manifest` | `@addfox/core` | `@addfox/core` |
+| `rsbuild-plugin-extension-monitor` | `@addfox/common`, `@addfox/core` | `@addfox/common`, `@addfox/core` |
+
+**남아있는 것은 무엇인가?** 성숙하고 극도로 작은 서드파티 런타임 의존성은 단 2개뿐입니다:
+
+- **`jiti`** — 경량 TypeScript 설정 로더 (약 50KB, 전이 의존성 제로).
+- **`prompts`** — 최소한의 CLI 프롬프트 라이브러리 (약 30KB, 전이 의존성 제로).
+
+나머지는 모두 내장 모듈 (`@addfox/*`)이거나 빌드 툴체인에 의해 처리됩니다 (`@rspack/core`는 개발 의존성).
+
+## `@addfox/launcher` 소개
+
+기존에는 Firefox 개발에 `web-ext run`에 의존했는데, 이는 강력하지만 무겁고 난해한 도구였습니다. 우리는 **`@addfox/launcher`**를 처음부터 구축했습니다:
+
+- **런타임 의존성 제로**.
+- **Chromium 계열** (Chrome, Edge 등)과 **Gecko 계열** (Firefox, Zen 등)을 통합 지원.
+- Firefox HMR은 이제 **RDP 프로토콜**을 통해 임시 부가 기능을 직접 다시 로드하므로, `web-ext`의 복잡한 프로세스 관리가 필요 없습니다.
+- `web-ext.d.ts`, `web-ext-logger.d.ts`, `web-ext-console-stream-hook.ts` 등의 호환 파일 제거.
+
+이제 개발 서버가 더 빠르게 시작되고, 디버깅이 쉬워지며, 완전히 우리의 통제 아래 있습니다.
+
+## HMR 플러그인 리팩토링
+
+`@addfox/rsbuild-plugin-extension-hmr` 패키지에서 가장 큰 코드 감소가 이루어졌습니다:
+
+- `web-ext`를 제거한 후 `launcher.ts`와 `runner.ts`가 대폭 간소화되었습니다.
+- 확장 프로그램 관리자가 프로필 디렉터리와 리로드 로직을 더 깔끔하게 처리합니다.
+- 키보드 리로드와 WebSocket 서버 경로도 최적화되었습니다.
+
+전체적으로 워크스페이스 diff는 약 **50개 파일 변경**, **순 감소 약 1,641줄**의 코드입니다. 유지보수 부담이 줄고, 엣지 케이스가 줄며, 신뢰성이 높아졌습니다.
+
+## 테스트 커버리지 강화
+
+코드를 삭제하는 데만 집중한 것이 아니라 품질에도 투자했습니다:
+
+- `rsbuild-plugin-extension-entry`: 테스트 +260줄
+- `rsbuild-plugin-extension-hmr`: 테스트 +114줄
+- `rsbuild-plugin-extension-manifest`: 테스트 +101줄
+- `rsbuild-plugin-extension-monitor`: 테스트 +112줄
+
+## 다음 단계
+
+이러한 변경 사항은 현재 `dev-launch` 브랜치에 있으며 곧 새 버전으로 릴리즈될 예정입니다. 아키텍처 변경의 범위 — 특히 HMR 엔진 교체 — 를 고려할 때, 다음 릴리즈는 최소한 마이너 버전 업이 될 것으로 예상하며, 아마도 `0.2.0`이 될 것입니다.
+
+계속 지켜봐 주세요. AddFox를 사용해 주셔서 감사합니다!

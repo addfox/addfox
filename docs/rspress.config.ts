@@ -22,6 +22,7 @@ const GUIDE_URL = `${SITE_URL}/guide/`;
 const CONFIG_URL = `${SITE_URL}/config/`;
 const EXAMPLES_URL = `${SITE_URL}/examples/`;
 const CLI_URL = `${SITE_URL}/guide/cli`;
+const BLOG_URL = `${SITE_URL}/blog/`;
 
 const jsonLdWebSite = JSON.stringify({
   "@context": "https://schema.org",
@@ -39,8 +40,8 @@ const jsonLdWebSite = JSON.stringify({
 const jsonLdSiteNavigation = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "SiteNavigationElement",
-  name: ["Guide", "Config", "Examples", "CLI"],
-  url: [GUIDE_URL, CONFIG_URL, EXAMPLES_URL, CLI_URL],
+  name: ["Guide", "Config", "Examples", "Blog", "CLI"],
+  url: [GUIDE_URL, CONFIG_URL, EXAMPLES_URL, BLOG_URL, CLI_URL],
 });
 
 const jsonLdBreadcrumb = JSON.stringify({

@@ -83,7 +83,7 @@ describe("resolveAddfoxConfig with invalid config", () => {
     try {
       resolveAddfoxConfig(noManifestDir);
     } catch (e) {
-      expect((e as AddfoxError).code).toBe(ADDFOX_ERROR_CODES.MANIFEST_MISSING);
+      expect((e as AddfoxError).code).toBe(ADDFOX_ERROR_CODES.APP_DIR_MISSING);
     }
   });
 

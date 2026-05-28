@@ -1,11 +1,17 @@
 import React from "react";
-import { useLocation } from "@rspress/core/runtime";
+import { useLocation, usePage, useLang } from "@rspress/core/runtime";
+import {
+  Layout as BaseLayout,
+  DocLayout as BasicDocLayout,
+  type DocLayoutProps,
+} from "@rspress/core/theme-original";
 import { getLocalePrefix } from "./utils";
 import { HeroSection } from "./HeroSection";
 import { ReallyFastSection } from "./ReallyFastSection";
 import { FeaturesGrid } from "./FeaturesGrid";
 import { FAQSection } from "./FAQSection";
 import { HomeFooter } from "./HomeFooter";
+import { BlogBackButton } from "./components/BlogBackButton";
 import "./index.css";
 import "../styles/theme.css";
 
@@ -36,5 +42,31 @@ export function HomeLayout() {
   return <CustomHomeContent />;
 }
 
+const DocLayout = (props: DocLayoutProps) => {
+  const { page } = usePage();
+  const lang = useLang();
+
+  return (
+    <BasicDocLayout
+      {...props}
+      beforeDocContent={
+        <>
+          <BlogBackButton pathname={page.routePath} lang={lang} />
+          {props.beforeDocContent}
+        </>
+      }
+    />
+  );
+};
+
+const Layout = () => {
+  return (
+    <BaseLayout />
+  );
+};
+
+export { Layout, DocLayout };
 export * from "@rspress/core/theme-original";
 export { Tab, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from "./PackageManagerTab";
+export { BlogList } from "./components/BlogList";
+export { BlogAuthors } from "./components/BlogAuthors";

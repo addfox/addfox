@@ -1,4 +1,4 @@
-import type { RsbuildPluginAPI } from "@rsbuild/core";
+import type { RsbuildPlugin, RsbuildPluginAPI } from "@rsbuild/core";
 import type { AddfoxResolvedConfig, EntryInfo, BrowserTarget } from "@addfox/core";
 import { HTML_ENTRY_NAMES } from "@addfox/core";
 
@@ -13,8 +13,10 @@ function shouldInjectAddfoxWsReload(
   browser: BrowserTarget,
   hotReload: AddfoxResolvedConfig["hotReload"]
 ): boolean {
-  if (browser !== "chromium") return false;
-  return hotReload !== false;
+  if (hotReload === false) return false;
+  // Firefox reloads via reload-manager extension; background doesn't need WS client
+  if (browser === "firefox") return false;
+  return true;
 }
 
 /** Build the inline injection code for an entry */
@@ -65,7 +67,7 @@ export class AddfoxMonitorPlugin {
     this.entryNames = entries.map((e) => e.name);
   }
 
-  toRsbuildPlugin(): { name: string; enforce: "post"; setup: (api: RsbuildPluginAPI) => void } {
+  toRsbuildPlugin(): RsbuildPlugin {
     const self = this;
     
     return {
@@ -82,38 +84,32 @@ export class AddfoxMonitorPlugin {
           const namesToInject =
             self.entryNames.length > 0 ? self.entryNames : Object.keys(entry);
           
-          // Store injection snippets for each entry
-          const injectionSnippets: Record<string, string> = {};
           const injectAddfoxWsReload = shouldInjectAddfoxWsReload(
             self._browser,
             self._resolvedConfig.hotReload
           );
-          for (const entryName of namesToInject) {
-            const opts = getMonitorEntryOpts(entryName);
-            injectionSnippets[entryName] = buildInjectionSnippet(entryName, {
-              ...opts,
-              injectAddfoxWsReload,
-            });
-          }
-          
-          // Use BannerPlugin to inject code at the top of each entry chunk
-          // We need to use a different approach - modify the entry to prepend the injection
+
+          // Prepend monitor code while preserving the original entry imports.
+          // The HMR plugin relies on Rsbuild/Rspack keeping those files attached
+          // to their entrypoints so modifiedFiles can trigger reload manager/RDP.
           const nextEntry: Record<string, RsbuildEntryValue> = {};
           for (const [key, value] of Object.entries(entry)) {
-            const snippet = injectionSnippets[key];
-
-            if (!snippet) {
+            if (!namesToInject.includes(key)) {
               nextEntry[key] = value;
               continue;
             }
 
-            // Create a virtual module path using webpack's inline loader syntax
-            // This creates a virtual module without needing VirtualModulesPlugin
+            const opts = getMonitorEntryOpts(key);
+            const snippet = buildInjectionSnippet(key, {
+              ...opts,
+              injectAddfoxWsReload,
+            });
             const needsHtml = (HTML_ENTRY_NAMES as readonly string[]).includes(key);
+            const monitorImport = `data:text/javascript,${encodeURIComponent(snippet)}`;
             
             if (typeof value === "string") {
               nextEntry[key] = { 
-                import: [`data:text/javascript,${encodeURIComponent(snippet)}`, value], 
+                import: [monitorImport, value], 
                 html: needsHtml 
               };
               continue;
@@ -121,14 +117,14 @@ export class AddfoxMonitorPlugin {
             if (value && typeof value === "object" && Array.isArray(value.import)) {
               nextEntry[key] = { 
                 ...value, 
-                import: [`data:text/javascript,${encodeURIComponent(snippet)}`, ...value.import] 
+                import: [monitorImport, ...value.import] 
               };
               continue;
             }
             if (value && typeof value === "object" && typeof value.import === "string") {
               nextEntry[key] = { 
                 ...value, 
-                import: [`data:text/javascript,${encodeURIComponent(snippet)}`, value.import] 
+                import: [monitorImport, value.import] 
               };
               continue;
             }
@@ -147,7 +143,7 @@ export function monitorPlugin(
   resolvedConfig: AddfoxResolvedConfig,
   entries: EntryInfo[],
   browser: BrowserTarget = "chromium"
-) {
+): RsbuildPlugin {
   const plugin = new AddfoxMonitorPlugin(resolvedConfig, entries, browser);
   return plugin.toRsbuildPlugin();
 }

@@ -1,9 +1,10 @@
 import { createWriteStream, mkdirSync, existsSync } from "fs";
 import { resolve } from "path";
-import archiver from "archiver";
+import type { Writable } from "stream";
 import type { AddfoxErrorCode } from "@addfox/common";
 import { AddfoxError } from "@addfox/common";
 import { ADDFOX_OUTPUT_ROOT, type BrowserTarget, getBrowserOutputDir } from "@addfox/core";
+import { zipDirectory } from "../lib/zip";
 
 /** Error codes for zip operations; match core ADDFOX_ERROR_CODES */
 const ZIP_OUTPUT_CODE = "ADDFOX_ZIP_OUTPUT" as AddfoxErrorCode;
@@ -12,10 +13,10 @@ const ZIP_ARCHIVE_CODE = "ADDFOX_ZIP_ARCHIVE" as AddfoxErrorCode;
 /** Default zlib level for zip compression */
 const ZIP_LEVEL = 9;
 
-/** Optional for tests: inject stream/archiver to trigger error paths */
+/** Optional for tests: inject stream/zipper to trigger error paths */
 export type ZipDistDeps = {
   createWriteStream?: typeof createWriteStream;
-  archiver?: typeof archiver;
+  zipDirectory?: typeof zipDirectory;
   mkdirSync?: typeof mkdirSync;
   existsSync?: typeof existsSync;
 };
@@ -33,7 +34,7 @@ export function zipDist(
   deps?: ZipDistDeps
 ): Promise<string> {
   const createStream = deps?.createWriteStream ?? createWriteStream;
-  const archiverFn = deps?.archiver ?? archiver;
+  const zipFn = deps?.zipDirectory ?? zipDirectory;
   const mkdir = deps?.mkdirSync ?? mkdirSync;
   const exists = deps?.existsSync ?? existsSync;
   const outputRoot = ADDFOX_OUTPUT_ROOT;
@@ -43,7 +44,6 @@ export function zipDist(
   const browserSuffix = browser ? `-${browser}` : "";
   const zipPath = resolve(zipDir, `${outDir}${browserSuffix}.zip`);
   const output = createStream(zipPath);
-  const archive = archiverFn("zip", { zlib: { level: ZIP_LEVEL } });
 
   return new Promise((resolvePromise, reject) => {
     output.on("error", (err) =>
@@ -56,20 +56,18 @@ export function zipDist(
         })
       )
     );
-    output.on("close", () => resolvePromise(zipPath));
 
-    archive.on("error", (err: unknown) =>
-      reject(
-        new AddfoxError({
-          message: "Zip archive failed",
-          code: ZIP_ARCHIVE_CODE,
-          details: err instanceof Error ? err.message : String(err),
-          cause: err,
-        })
-      )
-    );
-    archive.pipe(output);
-    archive.directory(distPath, false);
-    archive.finalize();
+    zipFn(distPath, output as Writable, { level: ZIP_LEVEL })
+      .then(() => resolvePromise(zipPath))
+      .catch((err: unknown) =>
+        reject(
+          new AddfoxError({
+            message: "Zip archive failed",
+            code: ZIP_ARCHIVE_CODE,
+            details: err instanceof Error ? err.message : String(err),
+            cause: err instanceof Error ? err : undefined,
+          })
+        )
+      );
   });
 }

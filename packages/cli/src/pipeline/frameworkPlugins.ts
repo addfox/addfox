@@ -4,6 +4,7 @@
 
 import type { RsbuildConfig } from "@rsbuild/core";
 import type { PipelineContext } from "@addfox/core";
+import { resolveDevConnectPorts } from "@addfox/core";
 import { entryPlugin } from "@addfox/rsbuild-plugin-extension-entry";
 import { extensionPlugin } from "@addfox/rsbuild-plugin-extension-manifest";
 import { monitorPlugin } from "@addfox/rsbuild-plugin-extension-monitor";
@@ -47,6 +48,9 @@ export function buildFrameworkPluginList(ctx: PipelineContext): LoosePlugin[] {
   if (useMonitor) {
     list.push(monitorPlugin(ctx.config, ctx.entries, ctx.browser) as LoosePlugin);
   }
-  list.push(extensionPlugin(ctx.config, ctx.entries, ctx.browser, ctx.distPath) as LoosePlugin);
+  const devConnectPorts = ctx.isDev
+    ? resolveDevConnectPorts(ctx.config.hotReload, ctx.config.rsbuild)
+    : undefined;
+  list.push(extensionPlugin(ctx.config, ctx.entries, ctx.browser, ctx.distPath, devConnectPorts) as LoosePlugin);
   return list;
 }
