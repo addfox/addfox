@@ -100,7 +100,10 @@ describe("plugin-extension-entry", () => {
     expect(rsbuildConfig.source).toBeDefined();
     expect((rsbuildConfig.source as Record<string, unknown>).entry).toBeDefined();
     const entry = (rsbuildConfig.source as Record<string, unknown>).entry as Record<string, unknown>;
-    expect(entry.background).toEqual({ import: resolve(testRoot, "src/background/index.ts"), html: false });
+    expect(entry.background).toEqual({
+      import: resolve(testRoot, "src/background/index.ts"),
+      html: false,
+    });
     expect(entry.popup).toBe(resolve(testRoot, "src/popup/index.ts"));
 
     expect(rsbuildConfig.html).toBeDefined();
@@ -164,6 +167,35 @@ describe("plugin-extension-entry", () => {
     expect(popupHtml.mountId).toBeUndefined();
     expect(popupHtml.title).toBe("My Extension");
     expect(popupHtml.favicon).toBe(false);
+  });
+
+  it("setup tools.htmlPlugin uses manifest icon URL directly when icon is absolute http URL", () => {
+    const config = createMockConfig(testRoot, {
+      manifest: { name: "My Extension", icons: { "16": "https://example.com/icon.png" } },
+    });
+    const entries = createMockEntriesAutoHtml(testRoot);
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot));
+
+    let modifyCb: ((c: Record<string, unknown>) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: (cb: (c: Record<string, unknown>) => void) => {
+        modifyCb = cb;
+      },
+      onBeforeCreateCompiler: () => {},
+    };
+
+    plugin.setup(api as never);
+    const rsbuildConfig: Record<string, unknown> = {};
+    modifyCb!(rsbuildConfig);
+
+    const htmlPlugin = (rsbuildConfig.tools as Record<string, unknown>).htmlPlugin as (
+      htmlConfig: Record<string, unknown>,
+      ctx: { entryName: string; entryValue: unknown }
+    ) => void;
+
+    const popupHtml: Record<string, unknown> = {};
+    htmlPlugin(popupHtml, { entryName: "popup", entryValue: {} });
+    expect(popupHtml.favicon).toBe("https://example.com/icon.png");
   });
 
   it("setup tools.htmlPlugin does not apply manifest HTML defaults when entry has user template file", () => {
@@ -237,6 +269,78 @@ describe("plugin-extension-entry", () => {
       tag: "link",
       attrs: { rel: "icon", href: "../icons/16.png" },
     });
+  });
+
+  it("modifyHTMLTags does not inject icon when headTags already contains an icon link", () => {
+    const config = createMockConfig(testRoot, {
+      manifest: { name: "My Extension", icons: { "16": "icons/16.png" } },
+    });
+    const entries = createMockEntriesAutoHtml(testRoot);
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot));
+
+    let modifyCb: ((c: Record<string, unknown>) => void) | null = null;
+    let htmlTagsHandler: ((tags: unknown, ctx: unknown) => unknown) | null = null;
+    const api = {
+      modifyRsbuildConfig: (cb: (c: Record<string, unknown>) => void) => {
+        modifyCb = cb;
+      },
+      modifyHTMLTags: (opts: { handler: (tags: unknown, ctx: unknown) => unknown }) => {
+        htmlTagsHandler = opts.handler;
+      },
+      onBeforeCreateCompiler: () => {},
+    };
+    plugin.setup(api as never);
+
+    const rsbuildConfig: Record<string, unknown> = {};
+    modifyCb!(rsbuildConfig);
+
+    const tags = { headTags: [{ tag: "link", attrs: { rel: "shortcut icon", href: "/favicon.ico" } }], bodyTags: [] };
+    const out = htmlTagsHandler!(tags, {
+      filename: "popup/index.html",
+      assetPrefix: "/",
+      environment: {},
+      compilation: {},
+      compiler: {},
+    } as never) as { headTags: unknown[] };
+    expect(out.headTags.length).toBe(1);
+    expect(out.headTags[0]).toMatchObject({
+      tag: "link",
+      attrs: { rel: "shortcut icon", href: "/favicon.ico" },
+    });
+  });
+
+  it("modifyHTMLTags does not inject icon for unknown html filename", () => {
+    const config = createMockConfig(testRoot, {
+      manifest: { name: "My Extension", icons: { "16": "icons/16.png" } },
+    });
+    const entries = createMockEntriesAutoHtml(testRoot);
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot));
+
+    let modifyCb: ((c: Record<string, unknown>) => void) | null = null;
+    let htmlTagsHandler: ((tags: unknown, ctx: unknown) => unknown) | null = null;
+    const api = {
+      modifyRsbuildConfig: (cb: (c: Record<string, unknown>) => void) => {
+        modifyCb = cb;
+      },
+      modifyHTMLTags: (opts: { handler: (tags: unknown, ctx: unknown) => unknown }) => {
+        htmlTagsHandler = opts.handler;
+      },
+      onBeforeCreateCompiler: () => {},
+    };
+    plugin.setup(api as never);
+
+    const rsbuildConfig: Record<string, unknown> = {};
+    modifyCb!(rsbuildConfig);
+
+    const tags = { headTags: [] as unknown[], bodyTags: [] };
+    const out = htmlTagsHandler!(tags, {
+      filename: "unknown.html",
+      assetPrefix: "/",
+      environment: {},
+      compilation: {},
+      compiler: {},
+    } as never) as { headTags: unknown[] };
+    expect(out.headTags.length).toBe(0);
   });
 
   it("modifyHTMLTags does not inject icon when user htmlPlugin sets favicon to false", () => {
@@ -750,7 +854,7 @@ describe("plugin-extension-entry", () => {
       optimization: { splitChunks: {} },
     };
     await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
-    expect((bundlerConfig.plugins as unknown[]).length).toBe(2);
+    expect((bundlerConfig.plugins as unknown[]).length).toBe(3);
     expect((bundlerConfig.plugins as { constructor?: { name?: string } }[])[0].constructor?.name).toBe("HotModuleReplacementPlugin");
     expect(bundlerConfig.devServer).toEqual({ hot: true });
   });
@@ -776,8 +880,158 @@ describe("plugin-extension-entry", () => {
       optimization: { splitChunks: {} },
     };
     await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
-    expect((bundlerConfig.plugins as unknown[]).length).toBe(2);
+    expect((bundlerConfig.plugins as unknown[]).length).toBe(3);
     expect((bundlerConfig.plugins as { constructor?: { name?: string } }[])[0].constructor?.name).toBe("HotModuleReplacementPlugin");
+    expect(bundlerConfig.devServer).toEqual({ hot: true });
+  });
+
+  it("setup onBeforeCreateCompiler hmr-noop plugin injects WebSocket noop into content/background chunks", async () => {
+    const config = createMockConfig(testRoot, { hotReload: true });
+    const entries = createMockEntries(testRoot);
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot));
+    let onBeforeCb: ((arg: { bundlerConfigs: unknown[] }) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: () => {},
+      onBeforeCreateCompiler: (cb: (arg: { bundlerConfigs: unknown[] }) => void) => {
+        onBeforeCb = cb;
+      },
+    };
+    plugin.setup(api as never);
+    const bundlerConfig = {
+      plugins: [] as unknown[],
+      devServer: { hot: true },
+      watchOptions: {},
+      output: {},
+      optimization: { splitChunks: {} },
+    };
+    await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
+
+    const noopPlugin = (bundlerConfig.plugins as { name?: string; apply?: Function }[])
+      .find(p => p.name === "rsbuild-plugin-extension-entry:hmr-noop");
+    expect(noopPlugin).toBeDefined();
+
+    const mockAsset = { source: () => 'console.log("bg");' };
+    const assets: Record<string, any> = { "background/index.js": mockAsset };
+
+    class MockRawSource {
+      constructor(private _source: string) {}
+      source() { return this._source; }
+      size() { return this._source.length; }
+    }
+
+    const mockCompiler = {
+      webpack: { sources: { RawSource: MockRawSource } },
+      hooks: {
+        compilation: {
+          tap: (_name: string, fn: (compilation: any) => void) => {
+            fn({
+              PROCESS_ASSETS_STAGE_ADDITIONS: -100,
+              outputOptions: { uniqueName: "test-ext", hotUpdateGlobal: "rspackHotUpdatetest-ext" },
+              hooks: {
+                processAssets: {
+                  tap: (_opts: any, handler: (a: Record<string, any>) => void) => {
+                    handler(assets);
+                  },
+                },
+              },
+              entrypoints: new Map([
+                ["background", { chunks: [{ files: ["background/index.js"] }] }],
+                ["popup", { chunks: [{ files: ["popup/index.js"] }] }],
+              ]),
+            });
+          },
+        },
+      },
+    };
+
+    noopPlugin!.apply(mockCompiler);
+    expect(assets["background/index.js"].source()).toContain("addfox-hmr-noop");
+    expect(assets["background/index.js"].source()).toContain('rspackHotUpdatetest-ext');
+    expect(assets["popup/index.js"]).toBeUndefined();
+  });
+
+  it("setup onBeforeCreateCompiler hmr-noop plugin skips non-js assets", async () => {
+    const config = createMockConfig(testRoot, { hotReload: true });
+    const entries = createMockEntries(testRoot);
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot));
+    let onBeforeCb: ((arg: { bundlerConfigs: unknown[] }) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: () => {},
+      onBeforeCreateCompiler: (cb: (arg: { bundlerConfigs: unknown[] }) => void) => {
+        onBeforeCb = cb;
+      },
+    };
+    plugin.setup(api as never);
+    const bundlerConfig = {
+      plugins: [] as unknown[],
+      devServer: { hot: true },
+      watchOptions: {},
+      output: {},
+      optimization: { splitChunks: {} },
+    };
+    await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
+
+    const noopPlugin = (bundlerConfig.plugins as { name?: string; apply?: Function }[])
+      .find(p => p.name === "rsbuild-plugin-extension-entry:hmr-noop");
+    expect(noopPlugin).toBeDefined();
+
+    const originalSource = 'console.log("bg");';
+    const mockAsset = { source: () => originalSource };
+    const assets: Record<string, any> = { "background/index.css": mockAsset };
+
+    const mockCompiler = {
+      webpack: { sources: { RawSource: class { constructor(public s: string) {} source() { return this.s; } } } },
+      hooks: {
+        compilation: {
+          tap: (_name: string, fn: (compilation: any) => void) => {
+            fn({
+              PROCESS_ASSETS_STAGE_ADDITIONS: -100,
+              outputOptions: { uniqueName: "test-ext", hotUpdateGlobal: "rspackHotUpdatetest-ext" },
+              hooks: {
+                processAssets: {
+                  tap: (_opts: any, handler: (a: Record<string, any>) => void) => {
+                    handler(assets);
+                  },
+                },
+              },
+              entrypoints: new Map([
+                ["background", { chunks: [{ files: ["background/index.css"] }] }],
+              ]),
+            });
+          },
+        },
+      },
+    };
+
+    noopPlugin!.apply(mockCompiler);
+    expect(assets["background/index.css"].source()).toBe(originalSource);
+  });
+
+  it("setup onBeforeCreateCompiler keeps HMR plugin for Firefox and injects noop so HMR runtime is blocked at chunk level", async () => {
+    const config = createMockConfig(testRoot, { hotReload: true });
+    const entries = createMockEntries(testRoot);
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot), { browser: "firefox" });
+    let onBeforeCb: ((arg: { bundlerConfigs: unknown[] }) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: () => {},
+      onBeforeCreateCompiler: (cb: (arg: { bundlerConfigs: unknown[] }) => void) => {
+        onBeforeCb = cb;
+      },
+    };
+    plugin.setup(api as never);
+    const hmrPlugin = { constructor: { name: "HotModuleReplacementPlugin" } };
+    const bundlerConfig = {
+      plugins: [hmrPlugin],
+      devServer: { hot: true },
+      watchOptions: {},
+      output: {},
+      optimization: { splitChunks: {} },
+    };
+    await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
+    // HMR plugin is kept so rsbuild still re-compiles on change; noop plugin
+    // is injected into content/background chunks to stop HMR runtime WS.
+    // watch-templates plugin is also added because mock entries have HTML.
+    expect((bundlerConfig.plugins as unknown[]).length).toBe(3);
     expect(bundlerConfig.devServer).toEqual({ hot: true });
   });
 

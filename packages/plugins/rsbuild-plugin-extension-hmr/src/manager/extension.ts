@@ -66,7 +66,7 @@ export function findExistingReloadManager(distPath: string, outputRoot = DEFAULT
   return null;
 }
 
-const RELOAD_MANAGER_SCRIPT_VERSION = 4;
+const RELOAD_MANAGER_SCRIPT_VERSION = 12;
 
 export async function ensureDistReady(distPath: string, timeoutMs = 2000): Promise<boolean> {
   const { statSync } = await import("node:fs");
@@ -79,11 +79,16 @@ export async function ensureDistReady(distPath: string, timeoutMs = 2000): Promi
   throw new Error(`dist not ready: ${manifestPath}`);
 }
 
-export async function createReloadManagerExtension(wsPort: number, distPath: string): Promise<string> {
+export async function createReloadManagerExtension(
+  wsPort: number,
+  distPath: string,
+  browser?: string
+): Promise<string> {
   const extPath = getReloadManagerPath(distPath);
   const bgJsPath = resolve(extPath, "bg.js");
   const portCachePath = resolve(extPath, ".port-cache");
   const scriptVersionPath = resolve(extPath, ".script-version");
+  const isGecko = browser === "firefox" || browser === "zen";
   let needsUpdate = true;
   if (existsSync(portCachePath) && existsSync(scriptVersionPath)) {
     try {
@@ -103,16 +108,59 @@ export async function createReloadManagerExtension(wsPort: number, distPath: str
           version: "1.0",
           permissions: ["management", "tabs", "alarms"],
           host_permissions: ["<all_urls>"],
-          background: { service_worker: "bg.js" },
+          background: isGecko ? { scripts: ["bg.js"] } : { service_worker: "bg.js" },
+          content_security_policy: {
+            extension_pages: `script-src 'self'; object-src 'self'; connect-src 'self' ws://127.0.0.1:${wsPort};`,
+          },
+          browser_specific_settings: {
+            gecko: {
+              id: "reload-manager@addfox.local",
+            },
+          },
         },
         null,
         2
       ),
       "utf-8"
     );
+    const toggleLogic = isGecko
+      ? `// Gecko: setEnabled is blocked for temporary addons.
+        // Request the CLI to reload the addon via RDP (re-install) instead.
+        try {
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            console.log("[ReloadManager] Requesting CLI RDP reload");
+            ws.send("firefox-reload-addon");
+          }
+        } catch (err) {
+          console.error("[ReloadManager] RDP reload request failed:", err);
+        }`
+      : `// Chromium: Toggle extensions via management API.
+        const all = await chrome.management.getAll();
+        console.log("[ReloadManager] Found extensions:", all.length);
+        let toggled = 0;
+        for (const x of all) {
+          if (!x.enabled || x.id === chrome.runtime.id) continue;
+          console.log("[ReloadManager] Checking:", x.name, "installType:", x.installType);
+          if (x.installType !== "development") {
+            console.log("[ReloadManager] Skipping (not development):", x.name);
+            continue;
+          }
+          try {
+            console.log("[ReloadManager] Toggling:", x.name);
+            await chrome.management.setEnabled(x.id, false);
+            await new Promise(r => setTimeout(r, 100));
+            await chrome.management.setEnabled(x.id, true);
+            toggled++;
+            console.log("[ReloadManager] Toggled:", x.name);
+          } catch (err) {
+            console.error("[ReloadManager] Toggle failed:", x.name, err);
+          }
+        }
+        console.log("[ReloadManager] Total toggled:", toggled);`;
+
     const bgJs = `
 // Reload Manager Service Worker - MV3 Compatible
-const WS_URL = "ws://localhost:${wsPort}";
+const WS_URL = "ws://127.0.0.1:${wsPort}";
 const ALARM_NAME = "reload-manager-keepalive";
 const RECONNECT_DELAY = 3000;
 const KEEPALIVE_INTERVAL = 20; // seconds, must be < 30s to prevent SW termination
@@ -145,51 +193,70 @@ function cleanupConnection() {
 
 async function connect() {
   if (isConnecting || (ws && ws.readyState === WebSocket.OPEN)) return;
-  
+
   isConnecting = true;
   cleanupConnection();
-  
+
   try {
     ws = new WebSocket(WS_URL);
-    
+
     ws.onopen = () => {
       isConnecting = false;
       ensureAlarm();
     };
-    
+
     ws.onmessage = async (e) => {
       const msg = String(e.data == null ? "" : e.data);
       if (msg === "connected") return;
-      if (msg === "reload-extension") return;
-      
-      const refreshPage = msg === "toggle-extension-refresh-page" || msg === "toggle-extension-refresh-tab";
-      
-      if (msg === "toggle-extension" || refreshPage) {
-        const all = await chrome.management.getAll();
-        for (const x of all) {
-          if (x.enabled && x.installType === "development" && x.id !== chrome.runtime.id) {
-            try {
-              await chrome.management.setEnabled(x.id, false);
-              await new Promise(r => setTimeout(r, 100));
-              await chrome.management.setEnabled(x.id, true);
-            } catch (err) {}
+
+      // HTML entry (popup/options) changes: only refresh extension pages, do NOT reload the extension.
+      if (msg === "reload-extension") {
+        try {
+          const allTabs = await chrome.tabs.query({});
+          for (const tab of allTabs) {
+            if (tab.url && (tab.url.startsWith("moz-extension://") || tab.url.startsWith("chrome-extension://"))) {
+              console.log("[ReloadManager] Reloading extension page:", tab.url);
+              await chrome.tabs.reload(tab.id, { bypassCache: true });
+            }
           }
+        } catch (err) {
+          console.error("[ReloadManager] Extension pages reload failed:", err);
         }
-        if (refreshPage) {
-          await new Promise(r => setTimeout(r, 200));
-          try {
-            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-            if (tab?.id && canReloadTab(tab)) await chrome.tabs.reload(tab.id);
-          } catch (err) {}
+        return;
+      }
+
+      // Content/background script changes: reload the extension itself.
+      const isContentBgChange = msg === "toggle-extension" || msg === "toggle-extension-refresh-page" || msg === "toggle-extension-refresh-tab";
+      if (!isContentBgChange) return;
+
+      console.log("[ReloadManager] Received:", msg);
+
+      ${toggleLogic}
+
+      // Refresh active tab if requested.
+      if (msg === "toggle-extension-refresh-page" || msg === "toggle-extension-refresh-tab") {
+        await new Promise(r => setTimeout(r, 200));
+        try {
+          const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+          console.log("[ReloadManager] Active tab:", tab?.url);
+          if (tab?.id && canReloadTab(tab)) {
+            console.log("[ReloadManager] Reloading tab with bypassCache");
+            await chrome.tabs.reload(tab.id, { bypassCache: true });
+            console.log("[ReloadManager] Tab reloaded");
+          } else {
+            console.log("[ReloadManager] Skipping tab reload (not reloadable)");
+          }
+        } catch (err) {
+          console.error("[ReloadManager] Tab reload failed:", err);
         }
       }
     };
-    
+
     ws.onclose = () => {
       cleanupConnection();
       scheduleReconnect();
     };
-    
+
     ws.onerror = () => {
       cleanupConnection();
     };

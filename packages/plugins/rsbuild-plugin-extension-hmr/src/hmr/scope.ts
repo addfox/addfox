@@ -54,7 +54,7 @@ export interface ReloadManagerDecision {
   shouldNotify: boolean;
   /** True when content entry changed (for toggle-extension-refresh-page). */
   contentChanged: boolean;
-  /** True when background entry changed (for reload-extension). */
+  /** True when background entry changed (for extension reload via reload manager). */
   backgroundChanged: boolean;
 }
 
@@ -483,7 +483,7 @@ export function getReloadManagerDecision(
 
 /**
  * Choose reload kind from decision and config.
- * - backgroundChanged → reload-extension (browser reload API).
+ * - backgroundChanged → toggle-extension (reload manager reloads the installed extension).
  * - contentChanged + autoRefreshContentPage → toggle-extension-refresh-page (toggle + refresh current page).
  * - else → toggle-extension (toggle only).
  */
@@ -492,8 +492,8 @@ export function getReloadKindFromDecision(
   backgroundChanged: boolean,
   autoRefreshContentPage: boolean
 ): ReloadKind {
-  if (backgroundChanged) return "reload-extension";
   if (contentChanged && autoRefreshContentPage) return "toggle-extension-refresh-page";
+  if (backgroundChanged) return "toggle-extension";
   return "toggle-extension";
 }
 

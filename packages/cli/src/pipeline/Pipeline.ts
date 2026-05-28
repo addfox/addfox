@@ -226,6 +226,7 @@ export class Pipeline {
       browserosPath: browserPathConfig.browseros,
       customPath: browserPathConfig.custom,
       firefoxPath: browserPathConfig.firefox,
+      zenPath: browserPathConfig.zen,
       cache: ctx.cache,
       wsPort: hotReloadOpts?.port ?? HMR_WS_PORT,
       enableReload: hotReloadEnabled,
@@ -233,7 +234,7 @@ export class Pipeline {
       reloadManagerEntries,
     };
 
-    const useRsbuildClientHmr = ctx.browser !== 'firefox' && hotReloadEnabled;
+    const useRsbuildClientHmr = hotReloadEnabled;
     const devConfig = useRsbuildClientHmr
       ? {
           hmr: true,

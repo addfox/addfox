@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.1.0
+
+### Minor Changes
+
+- refactor: update browser launcher
+
 ## 0.0.3-beta.17
 
 ### Patch Changes

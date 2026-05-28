@@ -1,6 +1,6 @@
 import { resolve, basename, extname, dirname, relative } from "path";
 import { dirname as posixDirname, relative as posixRelative } from "path/posix";
-import { existsSync } from "fs";
+import { existsSync, writeFileSync, mkdirSync } from "fs";
 import type { HtmlBasicTag, ModifyHTMLTagsFn, RsbuildConfig, RsbuildPluginAPI } from "@rsbuild/core";
 import type { AddfoxResolvedConfig, EntryInfo, ScriptInjectPosition, BrowserTarget } from "@addfox/core";
 import { getManifestRecordForTarget, parseAddfoxEntryFromHtml } from "@addfox/core";
@@ -13,6 +13,31 @@ function isHotReloadDisabled(value: HotReloadConfig): boolean {
 }
 
 const NO_HTML_ENTRIES = new Set(["background", "content"]);
+
+/** Script injected before content/background entries to prevent rsbuild HMR client
+ *  from attempting WebSocket connections (content scripts run in https pages where
+ *  ws:// is blocked by mixed-content policy). */
+const HMR_NOOP_SCRIPT = `// addfox-hmr-noop
+(function(){
+  if(typeof WebSocket==="undefined")return;
+  var OriginalWebSocket=WebSocket;
+  globalThis.WebSocket=function(url,protocols){
+    if(typeof url==="string"&&url.indexOf("rsbuild-hmr")!==-1){
+      var fake={close:function(){},send:function(){},addEventListener:function(){},removeEventListener:function(){}};
+      Object.defineProperty(fake,"readyState",{get:function(){return 1}});
+      Object.defineProperty(fake,"protocol",{value:protocols||""});
+      Object.defineProperty(fake,"bufferedAmount",{value:0});
+      Object.defineProperty(fake,"extensions",{value:""});
+      setTimeout(function(){if(fake.onopen)fake.onopen()},0);
+      return fake;
+    }
+    return new OriginalWebSocket(url,protocols);
+  };
+  globalThis.WebSocket.prototype=OriginalWebSocket.prototype;
+  Object.setPrototypeOf(globalThis.WebSocket,OriginalWebSocket);
+})();`;
+
+
 
 /** Same rule as {@link needsHtmlGeneration} — kept near path builders that depend on it. */
 function entryBuildsHtmlPage(entry: EntryInfo): boolean {
@@ -454,13 +479,17 @@ function needsHtmlGeneration(entry: EntryInfo): boolean {
 }
 
 /** Build the source entry configuration. */
-function buildSourceEntry(entries: EntryInfo[]): Record<string, string | { import: string; html?: boolean }> {
-  const entry: Record<string, string | { import: string; html?: boolean }> = {};
+function buildSourceEntry(
+  entries: EntryInfo[]
+): Record<string, string | { import: string | string[]; html?: boolean }> {
+  const entry: Record<string, string | { import: string | string[]; html?: boolean }> = {};
 
   for (const e of entries) {
-    entry[e.name] = needsHtmlGeneration(e)
-      ? e.scriptPath
-      : { import: e.scriptPath, html: false };
+    if (needsHtmlGeneration(e)) {
+      entry[e.name] = e.scriptPath;
+    } else {
+      entry[e.name] = { import: e.scriptPath, html: false };
+    }
   }
 
   return entry;
@@ -671,6 +700,58 @@ function setupRspackConfig(
 
   if (hotReloadDisabled) {
     disableRspackHmrInPlace(bundlerConfig);
+  } else {
+    // Inject HMR noop code at the top of content/background entry chunks.
+    // HMR runtime lives in the chunk bootstrap (before any module code), so
+    // prepending via entry.import is too late. processAssets lets us inject
+    // before the bootstrap, reliably intercepting WebSocket creation.
+    const rspackConfig = bundlerConfig as { plugins?: unknown[] };
+    rspackConfig.plugins = rspackConfig.plugins ?? [];
+    rspackConfig.plugins.push({
+      name: "rsbuild-plugin-extension-entry:hmr-noop",
+      apply(compiler: any) {
+        compiler.hooks.compilation.tap(
+          "rsbuild-plugin-extension-entry:hmr-noop",
+          (compilation: any) => {
+            compilation.hooks.processAssets.tap(
+              {
+                name: "rsbuild-plugin-extension-entry:hmr-noop",
+                stage: compilation.PROCESS_ASSETS_STAGE_ADDITIONS ?? -100,
+              },
+              (assets: Record<string, any>) => {
+                const noopEntryNames = Array.from(entryNames).filter((n) =>
+                  NO_HTML_ENTRIES.has(n)
+                );
+                for (const [entryName, entrypoint] of compilation.entrypoints) {
+                  if (!noopEntryNames.includes(entryName)) continue;
+                  for (const chunk of entrypoint.chunks) {
+                    for (const file of chunk.files) {
+                      if (typeof file !== "string") continue;
+                      if (!file.endsWith(".js")) continue;
+                      const asset = assets[file];
+                      if (!asset) continue;
+                      try {
+                        const original = asset.source();
+                        const uniqueName = compilation.outputOptions?.uniqueName || "";
+                        const hotUpdateGlobal = compilation.outputOptions?.hotUpdateGlobal || `rspackHotUpdate${uniqueName}`;
+                        const safeHotUpdateGlobal = hotUpdateGlobal.replace(/["\\]/g, "\\$&");
+                        const hotUpdateNoop = `(function(){var g=typeof globalThis!=="undefined"?globalThis:(typeof self!=="undefined"?self:(typeof window!=="undefined"?window:this));var w=typeof window!=="undefined"?window:null;if(g&&typeof g["${safeHotUpdateGlobal}"]==="undefined"){g["${safeHotUpdateGlobal}"]=function(){};}if(w&&w!==g&&typeof w["${safeHotUpdateGlobal}"]==="undefined"){w["${safeHotUpdateGlobal}"]=function(){};}})();`;
+                        const RawSource = compiler.webpack.sources.RawSource;
+                        assets[file] = new RawSource(
+                          HMR_NOOP_SCRIPT + "\n" + hotUpdateNoop + "\n" + original
+                        );
+                      } catch {
+                        /* ignore asset modification errors */
+                      }
+                    }
+                  }
+                }
+              }
+            );
+          }
+        );
+      },
+    });
   }
 
   // Add watch templates plugin
@@ -747,7 +828,7 @@ function ensureToolsConfig(config: RsbuildConfig): ToolsConfig {
 function modifyRsbuildConfig(
   config: RsbuildConfig,
   context: {
-    entry: Record<string, string | { import: string; html?: boolean }>;
+    entry: Record<string, string | { import: string | string[]; html?: boolean }>;
     templateMap: Record<string, string>;
     scriptInjectMap: Record<string, ScriptInjectPosition>;
     outputMap: EntryOutputMap;
@@ -818,11 +899,14 @@ export type EntryPluginDevOptions = {
 };
 
 function shouldDisableRspackHmrForFirefox(
-  browser: BrowserTarget | undefined,
-  hotReload: AddfoxResolvedConfig["hotReload"]
+  _browser: BrowserTarget | undefined,
+  _hotReload: AddfoxResolvedConfig["hotReload"]
 ): boolean {
-  if (browser !== "firefox") return false;
-  return hotReload !== false;
+  // Previously disabled HMR entirely for Firefox, but that prevented rsbuild
+  // from re-compiling and writing files on change. Keep HMR plugin active
+  // so compilation still happens; content/background chunks get noop-injected
+  // to stop the HMR runtime from opening WebSocket connections.
+  return false;
 }
 
 export function entryPlugin(

@@ -94,11 +94,22 @@ const BROWSER_DEFAULT_PATHS: Record<LaunchTarget, PlatformPaths> = {
     darwin: ["/Applications/Firefox.app/Contents/MacOS/firefox"],
     linux: ["/usr/bin/firefox", "/usr/bin/firefox-esr"],
   },
+  zen: {
+    win32: [
+      "C:\\Program Files\\Zen Browser\\zen.exe",
+      "C:\\Program Files (x86)\\Zen Browser\\zen.exe",
+    ],
+    darwin: [
+      "/Applications/Zen Browser.app/Contents/MacOS/zen",
+      "/Applications/Zen.app/Contents/MacOS/zen",
+    ],
+    linux: ["/usr/bin/zen", "/usr/bin/zen-browser", "/opt/zen/zen"],
+  },
 };
 
 export type LaunchPathOptions = Pick<
   Record<string, string | undefined>,
-  "chromePath" | "chromiumPath" | "edgePath" | "bravePath" | "vivaldiPath" | "operaPath" | "santaPath" | "arcPath" | "yandexPath" | "browserosPath" | "customPath" | "firefoxPath"
+  "chromePath" | "chromiumPath" | "edgePath" | "bravePath" | "vivaldiPath" | "operaPath" | "santaPath" | "arcPath" | "yandexPath" | "browserosPath" | "customPath" | "firefoxPath" | "zenPath"
 >;
 
 export function getLaunchPathFromOptions(browser: LaunchTarget, options: LaunchPathOptions): string | undefined {
@@ -115,6 +126,7 @@ export function getLaunchPathFromOptions(browser: LaunchTarget, options: LaunchP
     browseros: options.browserosPath,
     custom: options.customPath,
     firefox: options.firefoxPath,
+    zen: options.zenPath,
   };
   return map[browser];
 }
@@ -132,6 +144,14 @@ export function buildDefaultPaths(browser: LaunchTarget, platform: string): stri
     }
     if (browser === "yandex" && localAppData) {
       return [resolve(localAppData, "Yandex\\YandexBrowser\\Application\\browser.exe"), ...(basePaths ?? [])];
+    }
+    if (browser === "zen" && localAppData) {
+      return [
+        resolve(localAppData, "Zen Browser\\zen.exe"),
+        resolve(localAppData, "Programs\\Zen Browser\\zen.exe"),
+        resolve(localAppData, "Programs\\Zen\\zen.exe"),
+        ...(basePaths ?? []),
+      ];
     }
   }
   return basePaths;
@@ -153,5 +173,5 @@ export function getBrowserPath(browser: LaunchTarget, options: LaunchPathOptions
 }
 
 export function isChromiumBrowser(browser: LaunchTarget): browser is ChromiumLaunchTarget {
-  return browser !== "firefox";
+  return browser !== "firefox" && browser !== "zen";
 }

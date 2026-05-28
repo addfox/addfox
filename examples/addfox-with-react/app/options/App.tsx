@@ -28,7 +28,7 @@ export default function App() {
 
   return (
     <div style={{ padding: 24, fontFamily: "system-ui, sans-serif" }}>
-      <h1 style={{ margin: "0 0 16px" }}>Options</h1>
+      <h1 style={{ margin: "0 0 16px" }}>Options123</h1>
       <p style={{ margin: "0 0 12px", color: "#666" }}>{status}</p>
       <button type="button" onClick={pingBackground} style={{ marginRight: 8, padding: "6px 12px", cursor: "pointer" }}>
         Ping Background

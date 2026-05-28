@@ -1,0 +1,92 @@
+---
+description: '深入解析最新的架构重构，包括全新的 @addfox/launcher、依赖削减、供应链风险降低和性能提升。'
+date: 2026-05-25 12:00:00
+sidebar: false
+authors:
+  - name: Gomi
+    avatar: 'https://github.com/gxy5202.png'
+    github: 'gxy5202'
+---
+
+import { BlogAuthors } from '@theme';
+
+# AddFox 0.2.0：架构重构与依赖精简
+
+_2026 年 5 月 25 日_
+
+<BlogAuthors />
+
+我们很高兴与大家分享 AddFox 框架的最新进展。目前 npm 上的稳定版本仍为 `0.1.1`，但 `dev-launch` 分支已经完成了一次重要的架构重构。本次更新围绕三大核心目标展开：**精简依赖**、**以自研方案替代黑盒工具**、**提升浏览器扩展开发体验**。
+
+## 依赖精简与供应链安全
+
+本次重构最显著的变化之一，就是果断移除了携带大量传递依赖的第三方包。每一个外部依赖都是潜在的供应链风险——无论是废弃、恶意接管，还是传递包的破坏性更新。通过用精简的自研工具替代大型第三方工具，我们大幅缩小了 AddFox 用户的攻击面。
+
+以下是已移除的依赖：
+
+- **`web-ext`**（约 586 KB + **26 个传递依赖**）—— 完全移除。
+- **`chrome-launcher`** —— 移除。
+- **`archiver`**（约 40 KB + **9 个传递依赖**）—— 替换为自研 zip 工具。
+- **`cli-table3`**（约 46 KB + 1 个传递依赖）—— 从 `@addfox/core` 中移除。
+- **`chalk`**（约 44 KB）、**`kolorist`**、**`minimist`** —— 从 `create-addfox-app` 中移除，替换为轻量级自研工具。
+
+结果是：`pnpm-lock.yaml` 减少了约 **2,156 行**，意味着用户安装更快、`node_modules` 更小、供应链风险更低。
+
+### 前后对比：第三方运行时依赖
+
+| 包名 | 0.1.1 第三方依赖 | dev-launch 第三方依赖 |
+|---|---|---|
+| `@addfox/cli` | `archiver` | *（无）* |
+| `@addfox/core` | `cli-table3`、`jiti` | `jiti` |
+| `create-addfox-app` | `chalk`、`kolorist`、`minimist`、`prompts` | `prompts` |
+| `@addfox/rsbuild-plugin-extension-hmr` | `chrome-launcher`、`web-ext` | *（无）* |
+| `@addfox/launcher` | *N/A（新增包）* | *（无）* |
+| `@addfox/common` | *（无）* | *（无）* |
+| `@addfox/pkg-manager` | *（无）* | *（无）* |
+| `@addfox/utils` | `@addfox/common` | `@addfox/common` |
+| `rsbuild-plugin-extension-entry` | `@addfox/core` | `@addfox/core` |
+| `rsbuild-plugin-extension-manifest` | `@addfox/core` | `@addfox/core` |
+| `rsbuild-plugin-extension-monitor` | `@addfox/common`、`@addfox/core` | `@addfox/common`、`@addfox/core` |
+
+**保留的第三方依赖是什么？** 只有两个成熟且极小的运行时依赖：
+
+- **`jiti`** —— 轻量级 TypeScript 配置加载器（约 50 KB，零传递依赖）。
+- **`prompts`** —— 极简 CLI 交互提示库（约 30 KB，零传递依赖）。
+
+其余全部是内部模块（`@addfox/*`）或由构建工具链处理（`@rspack/core` 作为开发依赖）。
+
+## 全新自研启动器 `@addfox/launcher`
+
+此前，Firefox 开发依赖 `web-ext run`，这是一个功能强大但笨重且封闭的工具。我们从头构建了 **`@addfox/launcher`**：
+
+- **零运行时依赖**。
+- 统一支持 **Chromium 系**（Chrome、Edge 等）和 **Gecko 系**（Firefox、Zen 等）。
+- Firefox HMR 改用 **RDP 协议**直接 reload 临时插件，不再需要 `web-ext` 复杂的进程管理。
+- 移除了 `web-ext.d.ts`、`web-ext-logger.d.ts`、`web-ext-console-stream-hook.ts` 等兼容文件。
+
+这使得开发服务器启动更快、调试更容易、且完全可控。
+
+## HMR 插件重构
+
+`@addfox/rsbuild-plugin-extension-hmr` 包的代码量减少最多：
+
+- 放弃 `web-ext` 后，`launcher.ts` 和 `runner.ts` 被大幅简化。
+- 扩展管理器对配置文件目录和 reload 逻辑的处理更加清晰。
+- 键盘重载和 WebSocket 服务器路径也得到了精简。
+
+整体来看，工作区 diff 显示约 **50 个文件变更**，**净减少约 1,641 行代码**——维护负担更轻、边界情况更少、可靠性更高。
+
+## 测试覆盖增强
+
+我们不只是删代码，还加大了对质量的投入：
+
+- `rsbuild-plugin-extension-entry`：增加 260 行测试
+- `rsbuild-plugin-extension-hmr`：增加 114 行测试
+- `rsbuild-plugin-extension-manifest`：增加 101 行测试
+- `rsbuild-plugin-extension-monitor`：增加 112 行测试
+
+## 下一步
+
+这些变更目前位于 `dev-launch` 分支，即将发布新版本。考虑到架构变更的范围——尤其是 HMR 引擎的替换——我们预计下一个版本至少是一次 minor 版本升级，很可能是 `0.2.0`。
+
+敬请期待，感谢使用 AddFox！

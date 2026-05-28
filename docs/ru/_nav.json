@@ -13,5 +13,10 @@
     "text": "Примеры",
     "link": "/examples/index",
     "activeMatch": "^/ru/examples/"
+  },
+  {
+    "text": "Блог",
+    "link": "/blog",
+    "activeMatch": "^/ru/blog/"
   }
 ]

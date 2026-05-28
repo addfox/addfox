@@ -79,6 +79,7 @@ export {
   DEFAULT_ENV_PREFIXES,
   ADDFOX_OUTPUT_ROOT,
   HMR_WS_PORT,
+  DEFAULT_DEV_SERVER_PORT,
   DEFAULT_BROWSER,
   SUPPORTED_BROWSERS,
   SUPPORTED_LAUNCH_TARGETS,
@@ -97,6 +98,8 @@ export {
   BROWSER_OUTPUT_PREFIX,
   getBrowserOutputDir,
 } from "./constants.js";
+
+export { resolveDevConnectPorts, resolveRsbuildDevServerPort } from "./devPorts.js";
 
 export { toReloadManagerEntries } from "./reloadManager.js";
 

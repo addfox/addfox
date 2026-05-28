@@ -1,8 +1,8 @@
 import { mkdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { rm } from "node:fs/promises";
-import { once } from "node:events";
-import type { ChildProcess } from "node:child_process";
+import { resolve } from "node:path";
+
 import type { LaunchTarget, ChromiumLaunchTarget } from "@addfox/core";
 import { log, logDoneTimed, warn, error, ANSI_COLORS } from "@addfox/common";
 import { runChromiumRunner } from "./runner";
@@ -20,11 +20,9 @@ import {
   createReloadManagerExtension,
   getChromiumUserDataDir,
   getReloadManagerPath,
+  getBrowserProfileDir,
 } from "../manager/extension";
-import {
-  installWebExtConsoleStreamHook,
-  removeWebExtConsoleStreamHook,
-} from "./web-ext-console-stream-hook";
+import { launchGecko, reinstallTemporaryAddonViaRDP } from "@addfox/launcher";
 
 type ReloadServerPlan = { mode: WsServerMode | "none"; debugOpts?: DebugServerOpts };
 
@@ -35,9 +33,7 @@ function buildDebugServerOpts(ctx: LaunchContext): DebugServerOpts | undefined {
 
 function computeReloadServerPlan(ctx: LaunchContext): ReloadServerPlan {
   const debugOpts = buildDebugServerOpts(ctx);
-  const full = ctx.enableReload && isChromiumBrowser(ctx.browser);
-  if (full) return { mode: "full", debugOpts };
-  // Start HTTP server for error reporting in debug mode (Firefox or when reload is disabled)
+  if (ctx.enableReload) return { mode: "full", debugOpts };
   if (ctx.debug && debugOpts) return { mode: "httpOnly", debugOpts };
   return { mode: "none" };
 }
@@ -50,8 +46,6 @@ async function startReloadServersForPlan(ctx: LaunchContext, plan: ReloadServerP
 
 type ExtensionRunnerLike = {
   exit: () => Promise<void>;
-  reloadAllExtensions?: () => Promise<unknown>;
-  registerCleanup?: (fn: () => void) => void;
 };
 
 let extensionRunner: ExtensionRunnerLike | null = null;
@@ -65,21 +59,12 @@ let chromiumUserDataDirPath: string | null = null;
 let lastChromiumBrowser: ChromiumLaunchTarget = "chrome";
 let cacheEnabled = false;
 let keyboardReloadCleanup: (() => void) | null = null;
-/** Idempotent tail of {@link cleanup} (WS, keyboard, profile dirs) without touching extensionRunner. */
+/** Firefox RDP port for reloading temporary addons. */
+let firefoxRdpPort: number | null = null;
+/** Idempotent tail of cleanup (WS, keyboard, profile dirs) without touching extensionRunner. */
 let addfoxDevResourcesTornDown = false;
-/** True after `web-ext run` (Firefox) has started in this process. */
-let firefoxWebExtSessionActive = false;
-/** First SIGINT hint for Firefox dev; second SIGINT performs cleanup. */
-let firefoxSigintHintConsumed = false;
-
-const MSG_FIREFOX_CLOSE_BROWSER_THEN_CTRL_C =
-  "Please close the browser first, then press Ctrl+C again to exit.";
 
 const EXIT_TIMEOUT_MS = 2000;
-/** web-ext `exit()` only calls kill(); wait for child `close` so firefox-profile can delete temp dir (Windows EBUSY). */
-const FIREFOX_CHILD_CLOSE_MAX_MS = 8000;
-const WIN32_PROFILE_UNLOCK_MS = 250;
-
 async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | undefined> {
   let timer: ReturnType<typeof setTimeout> | null = null;
   try {
@@ -92,43 +77,6 @@ async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | unde
   } finally {
     if (timer) clearTimeout(timer);
   }
-}
-
-function getFirefoxChildFromWebExtRunner(runner: ExtensionRunnerLike): ChildProcess | undefined {
-  const multi = runner as unknown as {
-    extensionRunners?: Array<{ runningInfo?: { firefox?: ChildProcess } }>;
-  };
-  return multi.extensionRunners?.[0]?.runningInfo?.firefox;
-}
-
-function isFirefoxChildLikelyRunning(): boolean {
-  if (!extensionRunner) return false;
-  const firefox = getFirefoxChildFromWebExtRunner(extensionRunner);
-  if (!firefox) return false;
-  return firefox.exitCode === null;
-}
-
-function delayMs(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function yieldForWindowsProfileUnlock(): Promise<void> {
-  if (process.platform !== "win32") return;
-  await delayMs(WIN32_PROFILE_UNLOCK_MS);
-}
-
-async function waitForFirefoxChildAfterWebExtExit(runner: ExtensionRunnerLike): Promise<void> {
-  const firefox = getFirefoxChildFromWebExtRunner(runner);
-  if (!firefox) return;
-  if (firefox.exitCode !== null) {
-    await yieldForWindowsProfileUnlock();
-    return;
-  }
-  await Promise.race([
-    once(firefox, "close"),
-    delayMs(FIREFOX_CHILD_CLOSE_MAX_MS),
-  ]);
-  await yieldForWindowsProfileUnlock();
 }
 
 export type ChromiumRunnerOverride = (
@@ -154,16 +102,16 @@ export interface LaunchContext {
 async function teardownAddfoxDevResources(): Promise<void> {
   if (addfoxDevResourcesTornDown) return;
   addfoxDevResourcesTornDown = true;
-  firefoxWebExtSessionActive = false;
-  removeWebExtConsoleStreamHook();
   const userDataDir =
     chromiumUserDataDirPath ??
     (lastDistPath ? getChromiumUserDataDir(lastDistPath, lastChromiumBrowser, lastOutputRoot) : null);
   if (!cacheEnabled && userDataDir && existsSync(userDataDir)) {
-    await rm(userDataDir, { recursive: true, force: true }).catch(() => {});
+    // Fire-and-forget: don't block process exit waiting for directory removal
+    rm(userDataDir, { recursive: true, force: true }).catch(() => {});
   }
   chromiumUserDataDirPath = null;
   reloadManagerPath = null;
+  firefoxRdpPort = null;
   if (keyboardReloadCleanup) {
     keyboardReloadCleanup();
     keyboardReloadCleanup = null;
@@ -173,89 +121,49 @@ async function teardownAddfoxDevResources(): Promise<void> {
 
 export async function cleanup(): Promise<void> {
   if (isCleaningUp) return;
-  restoreStdinAfterWebExt();
   isCleaningUp = true;
   if (extensionRunner) {
     const er = extensionRunner;
     try {
       await withTimeout(er.exit(), EXIT_TIMEOUT_MS);
-      await waitForFirefoxChildAfterWebExtExit(er);
     } catch {
-      /* Runner already stopped (e.g. Firefox closed via web-ext). */
+      /* Runner already stopped (e.g. browser closed externally). */
     }
     extensionRunner = null;
   }
   await teardownAddfoxDevResources();
-}
-
-/**
- * web-ext leaves stdin in raw mode; Ctrl+C is delivered as keypress bytes, not SIGINT.
- * Always restore TTY before relying on SIGINT or exiting.
- */
-function restoreStdinAfterWebExt(): void {
-  const stdin = process.stdin;
-  if (!stdin.isTTY || typeof stdin.setRawMode !== "function") return;
-  try {
-    stdin.setRawMode(false);
-  } catch {
-    /* ignore */
-  }
-  try {
-    stdin.pause();
-  } catch {
-    /* ignore */
+  // Ensure stdin is restored after cleanup so process can exit cleanly
+  if (keyboardReloadCleanup) {
+    keyboardReloadCleanup();
+    keyboardReloadCleanup = null;
   }
 }
 
-/**
- * web-ext keypress Ctrl+C calls `extensionRunner.exit()` but never `process.exit()`; when Firefox
- * closes, `registerCleanup` runs after web-ext (watcher + stdin). We teardown and must exit the
- * dev server; `finally` ensures exit even if teardown throws or hangs were avoided.
- */
-async function exitProcessAfterWebExtFirefoxClosed(): Promise<void> {
-  restoreStdinAfterWebExt();
-  try {
-    if (isCleaningUp) {
-      await teardownAddfoxDevResources();
-      return;
-    }
-    isCleaningUp = true;
-    extensionRunner = null;
-    await teardownAddfoxDevResources();
-  } catch {
-    /* teardown best-effort */
-  } finally {
-    process.exit(0);
-  }
-}
-
-function registerWebExtFirefoxResourceTeardown(runner: ExtensionRunnerLike): void {
-  const reg = runner.registerCleanup;
-  if (typeof reg !== "function") return;
-  reg.call(runner, () => {
-    void exitProcessAfterWebExtFirefoxClosed();
-  });
-}
-
-/** Same as SIGINT handler: stdin raw mode often delivers Ctrl+C as \\x03 instead of raising SIGINT (notably on Windows). */
+/** Same as SIGINT handler. */
 function handleTerminalExitRequest(signal: NodeJS.Signals): void {
-  restoreStdinAfterWebExt();
   if (isCleaningUp) {
-    log("Force exit (cleanup in progress).");
     process.exit(0);
     return;
   }
-  if (
-    signal === "SIGINT" &&
-    firefoxWebExtSessionActive &&
-    !firefoxSigintHintConsumed &&
-    isFirefoxChildLikelyRunning()
-  ) {
-    firefoxSigintHintConsumed = true;
-    log(MSG_FIREFOX_CLOSE_BROWSER_THEN_CTRL_C);
-    return;
+  isCleaningUp = true;
+
+  // Kill browser synchronously (non-blocking taskkill/spawn) so the
+  // process tree is torn down before we exit.  On Windows this avoids
+  // the "Terminate batch job (Y/N)?" prompt from CMD.
+  if (extensionRunner) {
+    void extensionRunner.exit();
+    extensionRunner = null;
   }
-  void cleanup().then(() => process.exit(0)).catch(() => process.exit(1));
+
+  // Synchronous teardown (profile deletion is fire-and-forget)
+  addfoxDevResourcesTornDown = true;
+  if (keyboardReloadCleanup) {
+    keyboardReloadCleanup();
+    keyboardReloadCleanup = null;
+  }
+  closeWebSocketServer();
+
+  process.exit(0);
 }
 
 function stdinChunkHasCtrlC(chunk: Buffer | string): boolean {
@@ -268,13 +176,14 @@ function stdinChunkHasCtrlC(chunk: Buffer | string): boolean {
   return chunk.includes(3);
 }
 
-function registerStdinRShortcut(onPressR: () => void): void {
+function registerStdinRShortcut(onPressR: (() => void) | null, showHint = true): void {
   const stdin = process.stdin;
   const onData = (chunk: Buffer | string): void => {
     if (stdinChunkHasCtrlC(chunk)) {
       handleTerminalExitRequest("SIGINT");
       return;
     }
+    if (!onPressR) return;
     const s = typeof chunk === "string" ? chunk : chunk.toString("utf8");
     if (!s) return;
     const c = s.trim().toLowerCase();
@@ -286,7 +195,9 @@ function registerStdinRShortcut(onPressR: () => void): void {
   }
   stdin.resume();
   stdin.on("data", onData);
-  log("Press R to reload extension (and Ctrl-C to quit)");
+  if (showHint) {
+    log("Press R to reload extension (and Ctrl-C to quit)");
+  }
   keyboardReloadCleanup = () => {
     stdin.off("data", onData);
     if (typeof stdin.setRawMode === "function") {
@@ -296,13 +207,12 @@ function registerStdinRShortcut(onPressR: () => void): void {
   };
 }
 
-function registerManualReloadShortcut(enableReload: boolean, browser: LaunchTarget): void {
-  if (!enableReload || !isChromiumBrowser(browser) || !process.stdin.isTTY) return;
-  if (keyboardReloadCleanup) return;
-  registerStdinRShortcut(() => {
-    // Manual terminal shortcut must use direct extension reload path.
-    notifyReload("reload-extension");
-  });
+function registerTerminalShortcuts(enableReload: boolean, _browser: LaunchTarget): void {
+  if (!process.stdin.isTTY || keyboardReloadCleanup) return;
+  registerStdinRShortcut(
+    enableReload ? () => notifyReload("reload-extension") : null,
+    enableReload
+  );
 }
 
 export function registerCleanupHandlers(): void {
@@ -312,60 +222,34 @@ export function registerCleanupHandlers(): void {
   process.on("SIGTERM", () => handleTerminalExitRequest("SIGTERM"));
 }
 
-async function runFirefoxWebExt(
+async function runGecko(
+  browser: "firefox" | "zen",
   distPath: string,
   browserBinary: string | undefined,
   onExit: () => void,
-  opts: { debug: boolean; reloadOnChange: boolean }
+  opts: { debug: boolean; reloadOnChange: boolean; reloadManagerPath?: string | null }
 ): Promise<void> {
-  const webExt = await import("web-ext");
-  const runOptions: {
-    sourceDir: string;
-    target: "firefox-desktop";
-    firefox?: string;
-    devtools?: boolean;
-    browserConsole?: boolean;
-    noReload?: boolean;
-    verbose?: boolean;
-  } = {
-    sourceDir: distPath,
-    target: "firefox-desktop" as const,
-    noReload: !opts.reloadOnChange,
-    // Omit noInput: use web-ext default (false) so R / Ctrl+C keypress loop matches CLI; teardown via registerCleanup.
-    verbose: opts.debug,
-  };
-  if (opts.debug) {
-    runOptions.devtools = true;
-    runOptions.browserConsole = true;
+  const userDataDir = resolve(getBrowserProfileDir(distPath), `${browser}-user-data`);
+  const extensionPaths = [distPath];
+  if (opts.reloadManagerPath) {
+    extensionPaths.push(opts.reloadManagerPath);
   }
-  if (browserBinary) runOptions.firefox = browserBinary;
-  await installWebExtConsoleStreamHook();
-  const runner = (await webExt.default.cmd.run(runOptions, {
-    shouldExitProgram: false,
-  })) as ExtensionRunnerLike;
-  extensionRunner = runner;
-  firefoxWebExtSessionActive = true;
-  registerWebExtFirefoxResourceTeardown(runner);
-  const firefoxExited = (): void => {
-    log(`${ANSI_COLORS.RED}Exiting because the browser was closed.${ANSI_COLORS.RESET}`);
-    onExit();
-  };
-  const r = runner as unknown as Record<string, unknown>;
-  if (typeof (r.exitPromise as Promise<void> | undefined)?.then === "function") {
-    (r.exitPromise as Promise<void>).then(firefoxExited).catch(() => {});
-    return;
-  }
-  const proc = r.browserProcess ?? r.process ?? r.firefoxProcess;
-  if (proc && typeof (proc as { on?: (e: string, h: () => void) => void }).on === "function") {
-    (proc as { on(event: string, handler: () => void): void }).on("exit", firefoxExited);
-  }
+  const { process, rdpPort } = await launchGecko({
+    target: browser,
+    binaryPath: browserBinary,
+    userDataDir,
+    extensionPaths,
+    args: opts.debug ? ["-jsconsole"] : [],
+    verbose: false,
+    onExit,
+  });
+  extensionRunner = process;
+  firefoxRdpPort = rdpPort;
 }
 
 export async function launchBrowserCore(ctx: LaunchContext): Promise<void> {
   const launchStart = performance.now();
   addfoxDevResourcesTornDown = false;
-  firefoxWebExtSessionActive = false;
-  firefoxSigintHintConsumed = false;
   cacheEnabled = ctx.cache;
   lastDistPath = ctx.distPath;
   lastOutputRoot = ctx.outputRoot;
@@ -380,9 +264,9 @@ export async function launchBrowserCore(ctx: LaunchContext): Promise<void> {
   // WebSocket server is already started in parallel by CLI, this is idempotent
   await startReloadServersForPlan(ctx, plan);
   if (plan.mode === "full") {
-    reloadManagerPath = await createReloadManagerExtension(ctx.wsPort, ctx.distPath);
-    registerManualReloadShortcut(ctx.enableReload, ctx.browser);
+    reloadManagerPath = await createReloadManagerExtension(ctx.wsPort, ctx.distPath, ctx.browser);
   }
+  registerTerminalShortcuts(ctx.enableReload, ctx.browser);
 
   if (isChromiumBrowser(ctx.browser)) {
     await launchChromiumBrowser(ctx, browserBinary, launchStart);
@@ -396,10 +280,6 @@ async function launchChromiumBrowser(
   browserBinary: string | null,
   launchStart: number
 ): Promise<void> {
-  if (!browserBinary) {
-    warn(ctx.browser, "path not found; set", `browserPath.${ctx.browser}`, "in addfox.config, or install the browser at a default location");
-    return;
-  }
   lastChromiumBrowser = ctx.browser as ChromiumLaunchTarget;
   chromiumUserDataDirPath = getChromiumUserDataDir(
     ctx.distPath,
@@ -410,10 +290,12 @@ async function launchChromiumBrowser(
   const extensions = [ctx.distPath, reloadManagerPath].filter(Boolean) as string[];
   const runnerFn = ctx.chromiumRunnerOverride ?? runChromiumRunner;
   extensionRunner = await runnerFn({
-    chromePath: browserBinary,
+    target: ctx.browser,
+    chromePath: browserBinary || undefined,
     userDataDir: chromiumUserDataDirPath,
     extensions,
     startUrl: "chrome://extensions",
+    verbose: false,
     onExit: ctx.onBrowserExit,
   });
   logDoneTimed(ctx.browser + " started, extensions loaded.", Math.round(performance.now() - launchStart));
@@ -424,11 +306,12 @@ async function launchFirefoxBrowser(
   browserBinary: string | null,
   launchStart: number
 ): Promise<void> {
-  await runFirefoxWebExt(ctx.distPath, browserBinary || undefined, ctx.onBrowserExit, {
+  await runGecko(ctx.browser as "firefox" | "zen", ctx.distPath, browserBinary || undefined, ctx.onBrowserExit, {
     debug: ctx.debug === true,
     reloadOnChange: ctx.enableReload,
+    reloadManagerPath,
   });
-  logDoneTimed("Firefox started via web-ext, extension loaded.", Math.round(performance.now() - launchStart));
+  logDoneTimed(ctx.browser + " started, extension loaded.", Math.round(performance.now() - launchStart));
 }
 
 export interface HmrPluginOptionsForLaunch {
@@ -452,6 +335,7 @@ export interface HmrPluginOptionsForLaunch {
   browserosPath?: string;
   customPath?: string;
   firefoxPath?: string;
+  zenPath?: string;
 }
 
 export async function launchBrowser(
@@ -493,6 +377,7 @@ export async function launchBrowser(
       browserosPath: options.browserosPath,
       customPath: options.customPath,
       firefoxPath: options.firefoxPath,
+      zenPath: options.zenPath,
     },
     cache,
     enableReload,
@@ -510,6 +395,18 @@ export function setBrowserLaunched(value: boolean): void {
 
 export function getBrowserLaunched(): boolean {
   return browserLaunched;
+}
+
+export function getFirefoxRdpPort(): number | null {
+  return firefoxRdpPort;
+}
+
+export async function reloadFirefoxAddonViaRdp(addonPath: string): Promise<void> {
+  const port = firefoxRdpPort;
+  if (!port) {
+    throw new Error("Firefox RDP port not available; browser may not have launched yet.");
+  }
+  await reinstallTemporaryAddonViaRDP(port, addonPath);
 }
 
 export function statsHasErrors(stats: unknown): boolean {
@@ -535,8 +432,6 @@ export async function launchBrowserOnly(
 ): Promise<void> {
   const { distPath, browser = "chrome", cache = false } = options;
   addfoxDevResourcesTornDown = false;
-  firefoxWebExtSessionActive = false;
-  firefoxSigintHintConsumed = false;
   cacheEnabled = cache;
   lastDistPath = distPath;
   lastOutputRoot = options.outputRoot;
@@ -563,6 +458,7 @@ export async function launchBrowserOnly(
       browserosPath: options.browserosPath,
       customPath: options.customPath,
       firefoxPath: options.firefoxPath,
+      zenPath: options.zenPath,
     });
     await ensureDistReady(distPath);
     if (isChromiumBrowser(browser)) {
@@ -574,20 +470,22 @@ export async function launchBrowserOnly(
       await mkdir(chromiumUserDataDirPath, { recursive: true });
       const runnerFn = chromiumRunnerOverride ?? runChromiumRunner;
       extensionRunner = await runnerFn({
+        target: browser,
         chromePath: browserBinary,
         userDataDir: chromiumUserDataDirPath,
         extensions: [distPath],
         startUrl: "chrome://extensions",
+        verbose: false,
         onExit: onBrowserExit,
       });
       logDoneTimed(browser + " started (build launch), extension loaded.", Math.round(performance.now()));
       return;
     }
-    await runFirefoxWebExt(distPath, browserBinary ?? undefined, onBrowserExit, {
+    await runGecko(browser as "firefox" | "zen", distPath, browserBinary ?? undefined, onBrowserExit, {
       debug: options.debug ?? false,
       reloadOnChange: options.enableReload ?? false,
     });
-    logDoneTimed("Firefox started (build launch), extension loaded.", 0);
+    logDoneTimed(browser + " started (build launch), extension loaded.", 0);
   };
   return doLaunch().then(() => closedPromise);
 }
@@ -608,6 +506,7 @@ export type LaunchOnlyOptions = Pick<
   | "browserosPath"
   | "customPath"
   | "firefoxPath"
+  | "zenPath"
   | "cache"
   | "outputRoot"
   | "debug"

@@ -23,12 +23,13 @@ const BROWSER_TO_TARGET: Record<string, BrowserTarget> = {
   browseros: "chromium",
   custom: "chromium",
   firefox: "firefox",
+  zen: "firefox",
 };
 
 /** Valid launch targets (browser names that can be launched) */
 const VALID_LAUNCH_TARGETS = new Set([
   "chrome", "chromium", "edge", "brave", "vivaldi", "opera",
-  "santa", "arc", "yandex", "browseros", "custom", "firefox",
+  "santa", "arc", "yandex", "browseros", "custom", "firefox", "zen",
 ]);
 
 export interface CliParseResult {
@@ -126,7 +127,7 @@ export class CliParser {
       message: "Unsupported browser argument",
       details: `Current value: "${value}"`,
       hint:
-        "Use -b chrome/chromium/edge/brave/vivaldi/opera/santa/arc/yandex/browseros/custom/firefox or --browser=...; use custom only with browser.custom in config",
+        "Use -b chrome/chromium/edge/brave/vivaldi/opera/santa/arc/yandex/browseros/custom/firefox/zen or --browser=...; use custom only with browser.custom in config",
     });
   }
 }

@@ -15,8 +15,8 @@ import {
   magenta,
   gray,
   lightBlue,
-} from "kolorist";
-import { trueColor } from "kolorist";
+  trueColor,
+} from "../lib/colors.ts";
 
 const require = createRequire(import.meta.url);
 try {
@@ -26,7 +26,7 @@ try {
 } catch {
   /* use defaults */
 }
-import minimist from "minimist";
+import { parseArgv } from "../lib/minimist.ts";
 import { copyBundledTemplate, hasLocalTemplate } from "../template/bundledCopy.ts";
 import { runWithTemplateSpinner } from "../template/spinner.ts";
 import {
@@ -322,7 +322,7 @@ function updatePackageName(destDir: string, projectName: string): void {
 }
 
 async function main(): Promise<void> {
-  const argv = minimist(process.argv.slice(2));
+  const argv = parseArgv(process.argv.slice(2));
 
   if (argv.help || argv.h) {
     printHelp();

@@ -1,5 +1,17 @@
 # @addfox/rsbuild-plugin-extension-monitor
 
+## 0.2.0
+
+### Minor Changes
+
+- refactor: update browser launcher
+
+### Patch Changes
+
+- Updated dependencies
+  - @addfox/core@0.2.0
+  - @addfox/common@0.2.0
+
 ## 0.1.1-beta.14
 
 ### Patch Changes

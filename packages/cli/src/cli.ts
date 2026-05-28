@@ -39,7 +39,7 @@ import {
   resolveAddfoxConfig,
 } from "@addfox/core";
 import type { PipelineContext, AddfoxResolvedConfig, BrowserTarget, LaunchTarget } from "@addfox/core";
-import { launchBrowserOnly, startWebSocketServer, isChromiumBrowser, type DebugServerOpts, type WsServerMode } from "@addfox/rsbuild-plugin-extension-hmr";
+import { launchBrowserOnly, startWebSocketServer, setFirefoxReloadHandler, getFirefoxRdpPort, reloadFirefoxAddonViaRdp, type DebugServerOpts, type WsServerMode } from "@addfox/rsbuild-plugin-extension-hmr";
 import { HMR_WS_PORT } from "@addfox/core";
 
 const root = process.cwd();
@@ -68,7 +68,7 @@ function printHelp(): void {
     test                       Run tests with rstest (unit + optional E2E); forwards args to rstest
 
   Options:
-    -b, --browser <browser>    Target/launch browser (chromium | firefox | chrome | edge | brave | ...)
+    -b, --browser <browser>    Target/launch browser (chromium | firefox | zen | chrome | edge | brave | ...)
     -c, --cache                Cache browser profile between launches
     --no-cache                 Disable browser profile cache for current run
     -r, --report               Enable Rsdoctor build report (opens analysis after build)
@@ -200,7 +200,7 @@ async function runDev(root: string, argv: string[]): Promise<void> {
   const hotReloadEnabled = hotReload !== false;
   const hotReloadOpts = typeof hotReload === "object" && hotReload !== null ? hotReload : undefined;
   const wsPort = hotReloadOpts?.port ?? HMR_WS_PORT;
-  const wsMode: WsServerMode = hotReloadEnabled && isChromiumBrowser(ctx.browser) ? "full" : "httpOnly";
+  const wsMode: WsServerMode = hotReloadEnabled ? "full" : "httpOnly";
   const wsDebugOpts: DebugServerOpts | undefined = ctx.config.debug ? {
     debug: true,
     root: ctx.root,
@@ -208,7 +208,26 @@ async function runDev(root: string, argv: string[]): Promise<void> {
     distPath: ctx.distPath,
   } : undefined;
   // Fire-and-forget: WebSocket server starts immediately, reload manager will auto-connect when ready
-  startWebSocketServer(wsPort, wsStartTime, wsDebugOpts, wsMode).catch(() => {});
+  startWebSocketServer(wsPort, wsStartTime, wsDebugOpts, wsMode).catch((err: unknown) => {
+    error("Failed to start WebSocket server:", err);
+  });
+
+  // Firefox: register RDP reload handler so reload manager can request addon reload via CLI
+  if (resolved.launch === "firefox" || resolved.launch === "zen") {
+    setFirefoxReloadHandler(async () => {
+      try {
+        const port = getFirefoxRdpPort();
+        if (!port) {
+          log(`${resolved.launch} RDP reload skipped: port not available yet`);
+          return;
+        }
+        await reloadFirefoxAddonViaRdp(ctx.distPath);
+        logDone(`${resolved.launch} addon reloaded via RDP`);
+      } catch (err: unknown) {
+        error(`${resolved.launch} RDP reload failed:`, err);
+      }
+    });
+  }
 
   const configPath = getResolvedConfigFilePath(ctx.root);
   let devServerRef: Awaited<ReturnType<typeof rsbuild.startDevServer>> | null = null;
@@ -289,6 +308,7 @@ async function runBuild(root: string, argv: string[]): Promise<void> {
       browserosPath: browserPathConfig.browseros,
       customPath: browserPathConfig.custom,
       firefoxPath: browserPathConfig.firefox,
+      zenPath: browserPathConfig.zen,
     });
   }
 }

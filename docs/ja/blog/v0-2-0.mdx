@@ -1,0 +1,92 @@
+---
+description: '最新のアーキテクチャ再構築の深堀り。新しい @addfox/launcher、依存関係の削減、サプライチェーンリスクの軽減、パフォーマンス向上について。'
+date: 2026-05-25 12:00:00
+sidebar: false
+authors:
+  - name: Gomi
+    avatar: 'https://github.com/gxy5202.png'
+    github: 'gxy5202'
+---
+
+import { BlogAuthors } from '@theme';
+
+# AddFox 0.2.0：アーキテクチャの再構築と依存関係の削減
+
+_2026年5月25日_
+
+<BlogAuthors />
+
+AddFox フレームワークの最新の進捗をお伝えできることを嬉しく思います。現在 npm の安定版は `0.1.1` のままですが、`dev-launch` ブランチでは大規模なアーキテクチャの再構築が行われました。今回のアップデートは 3 つの核心目標に焦点を当てています。**依存関係の削減**、**ブラックボックスツールを自社ソリューションで置き換える**、そして**ブラウザ拡張機能開発の開発者体験を向上させる**ことです。
+
+## 依存関係の大幅な削減とサプライチェーンセキュリティ
+
+今回の再構築で最も大きな変更の一つは、膨大な推移的依存関係を抱えるサードパーティ製パッケージを積極的に削除したことです。外部の依存関係はそれぞれ潜在的なサプライチェーンリスクです。廃止、悪意のある乗っ取り、あるいは推移的パッケージの破壊的変更などが挙げられます。大規模なサードパーティツールを焦点を絞った自社ユーティリティに置き換えることで、AddFox ユーザーの攻撃対象領域を劇的に縮小しました。
+
+削除したものは以下の通りです：
+
+- **`web-ext`**（約 586 KB + **26 の推移的依存**）— 完全に削除。
+- **`chrome-launcher`** — 削除。
+- **`archiver`**（約 40 KB + **9 の推移的依存**）— 自製 zip ユーティリティに置き換え。
+- **`cli-table3`**（約 46 KB + 1 の推移的依存）— `@addfox/core` から削除。
+- **`chalk`**（約 44 KB）、**`kolorist`**、**`minimist`** — `create-addfox-app` から削除し、軽量な自製ユーティリティに置き換え。
+
+その結果、`pnpm-lock.yaml` は約 **2,156 行**削減され、インストール速度の向上、`node_modules` の縮小、エンドユーザーのサプライチェーンリスクの低減を実現しました。
+
+### 前後比較：サードパーティのランタイム依存関係
+
+| パッケージ | 0.1.1 のサードパーティ依存 | dev-launch のサードパーティ依存 |
+|---|---|---|
+| `@addfox/cli` | `archiver` | *（なし）* |
+| `@addfox/core` | `cli-table3`、`jiti` | `jiti` |
+| `create-addfox-app` | `chalk`、`kolorist`、`minimist`、`prompts` | `prompts` |
+| `@addfox/rsbuild-plugin-extension-hmr` | `chrome-launcher`、`web-ext` | *（なし）* |
+| `@addfox/launcher` | *N/A（新規パッケージ）* | *（なし）* |
+| `@addfox/common` | *（なし）* | *（なし）* |
+| `@addfox/pkg-manager` | *（なし）* | *（なし）* |
+| `@addfox/utils` | `@addfox/common` | `@addfox/common` |
+| `rsbuild-plugin-extension-entry` | `@addfox/core` | `@addfox/core` |
+| `rsbuild-plugin-extension-manifest` | `@addfox/core` | `@addfox/core` |
+| `rsbuild-plugin-extension-monitor` | `@addfox/common`、`@addfox/core` | `@addfox/common`、`@addfox/core` |
+
+**残っているものは何か？** 成熟しており、極めて小さなサードパーティのランタイム依存はたった 2 つだけです：
+
+- **`jiti`** — 軽量な TypeScript 設定ローダー（約 50 KB、推移的依存ゼロ）。
+- **`prompts`** — 最小限の CLI プロンプトライブラリ（約 30 KB、推移的依存ゼロ）。
+
+残りはすべて内部モジュール（`@addfox/*`）であるか、ビルドツールチェーンによって処理されます（`@rspack/core` は開発依存）。
+
+## `@addfox/launcher` の登場
+
+これまで、Firefox の開発は `web-ext run` に依存していました。これは強力ですが重く、内部が見えにくいツールでした。私たちは **`@addfox/launcher`** をゼロから構築しました：
+
+- **ランタイム依存関係ゼロ**。
+- **Chromium 系**（Chrome、Edge など）と **Gecko 系**（Firefox、Zen など）を統合サポート。
+- Firefox の HMR は **RDP プロトコル**を使用して一時アドオンを直接リロードするようになり、`web-ext` の複雑なプロセス管理が不要になりました。
+- `web-ext.d.ts`、`web-ext-logger.d.ts`、`web-ext-console-stream-hook.ts` などの互換ファイルを削除。
+
+これにより、開発サーバーの起動が速くなり、デバッグが容易になり、完全に制御可能になりました。
+
+## HMR プラグインの再構築
+
+`@addfox/rsbuild-plugin-extension-hmr` パッケージでは最も大きなコード削減が行われました：
+
+- `web-ext` を廃止したことで、`launcher.ts` と `runner.ts` が大幅に簡素化されました。
+- 拡張機能マネージャーがプロファイルディレクトリとリロードロジックをよりクリーンに処理するようになりました。
+- キーボードリロードと WebSocket サーバーのパスも合理化されました。
+
+全体として、ワークスペースの diff は約 **50 ファイルの変更**、**純減約 1,641 行**のコードとなりました。メンテナンスの負担が減り、エッジケースが減り、信頼性が向上しました。
+
+## テストカバレッジの強化
+
+コードを削除しただけでなく、品質への投資も行いました：
+
+- `rsbuild-plugin-extension-entry`：テスト +260 行
+- `rsbuild-plugin-extension-hmr`：テスト +114 行
+- `rsbuild-plugin-extension-manifest`：テスト +101 行
+- `rsbuild-plugin-extension-monitor`：テスト +112 行
+
+## 次のステップ
+
+これらの変更は現在 `dev-launch` ブランチにあり、まもなく新しいバージョンとして公開される予定です。アーキテクチャ変更の規模 — 特に HMR エンジンの置き換え — を考慮すると、次のリリースはマイナーバージョンの更新になると予想しており、おそらく `0.2.0` となります。
+
+今後もご期待ください。AddFox をご利用いただきありがとうございます！

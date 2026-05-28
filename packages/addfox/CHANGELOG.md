@@ -1,5 +1,18 @@
 ﻿# addfox
 
+## 0.2.0
+
+### Minor Changes
+
+- refactor: update browser launcher
+
+### Patch Changes
+
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-monitor@0.2.0
+  - @addfox/core@0.2.0
+  - @addfox/cli@0.2.0
+
 ## 0.1.1-beta.17
 
 ### Patch Changes

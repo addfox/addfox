@@ -1,5 +1,11 @@
 ﻿# @addfox/common
 
+## 0.2.0
+
+### Minor Changes
+
+- refactor: update browser launcher
+
 ## 0.1.1-beta.14
 
 ### Patch Changes

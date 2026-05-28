@@ -57,7 +57,8 @@ export function extensionPlugin(
   resolvedConfig: AddfoxResolvedConfig,
   entries: EntryInfo[],
   browser: BrowserTarget,
-  distPath: string
+  distPath: string,
+  devConnectPorts?: number[]
 ) {
   const { root, outputRoot, manifest } = resolvedConfig;
   const metaDir = resolve(root, outputRoot);
@@ -70,7 +71,7 @@ export function extensionPlugin(
         if (!config) return;
 
         config.plugins = config.plugins ?? [];
-        config.plugins.push(createManifestPlugin(distPath, metaDir, manifest, entries, browser));
+        config.plugins.push(createManifestPlugin(distPath, metaDir, manifest, entries, browser, devConnectPorts));
       });
     },
   };
@@ -81,13 +82,14 @@ function createManifestPlugin(
   metaDir: string,
   manifest: AddfoxResolvedConfig["manifest"],
   entries: EntryInfo[],
-  browser: BrowserTarget
+  browser: BrowserTarget,
+  devConnectPorts?: number[]
 ) {
   return {
     name: "rsbuild-plugin-extension-manifest:post-build",
     apply(compiler: Compiler) {
       compiler.hooks.afterEmit.tap("rsbuild-plugin-extension-manifest:post-build", (compilation) => {
-        emitManifest(distPath, metaDir, manifest, entries, browser, compilation);
+        emitManifest(distPath, metaDir, manifest, entries, browser, compilation, devConnectPorts);
       });
     },
   };
@@ -99,7 +101,8 @@ function emitManifest(
   manifest: AddfoxResolvedConfig["manifest"],
   entries: EntryInfo[],
   browser: BrowserTarget,
-  compilation?: CompilationLike
+  compilation?: CompilationLike,
+  devConnectPorts?: number[]
 ): void {
   ensureDir(distPath);
 
@@ -121,6 +124,10 @@ function emitManifest(
     browser,
     contentScriptOutput
   );
+
+  if (devConnectPorts != null && devConnectPorts.length > 0) {
+    injectDevCsp(finalManifest, devConnectPorts);
+  }
 
   validateEntryHtmlRules(entries, finalManifest);
   writeManifestJson(distPath, finalManifest);
@@ -879,4 +886,56 @@ function matchPattern(filename: string, pattern: string): boolean {
     .replace(/{{GLOBSTAR}}/g, ".*");
   const regex = new RegExp(`^${regexPattern}$`);
   return regex.test(filename);
+}
+
+/** Inject dev-mode CSP connect-src so extension pages can reach Addfox HMR WS and Rsbuild dev server. */
+function injectDevCsp(manifest: ManifestRecord, ports: number[]): void {
+  const devHosts = buildDevConnectHosts(ports);
+  const csp = manifest.content_security_policy;
+
+  if (typeof csp === "string") {
+    manifest.content_security_policy = mergeCspString(csp, devHosts);
+    return;
+  }
+
+  const cspObj = (typeof csp === "object" && csp !== null ? csp : {}) as Record<string, unknown>;
+  const extensionPages = typeof cspObj.extension_pages === "string" ? cspObj.extension_pages : "";
+  manifest.content_security_policy = {
+    ...cspObj,
+    extension_pages: extensionPages ? mergeCspString(extensionPages, devHosts) : buildDefaultCsp(devHosts),
+  };
+}
+
+function buildDevConnectHosts(ports: number[]): string[] {
+  const hosts: string[] = [];
+  const seen = new Set<string>();
+  const hostnames = ["127.0.0.1", "localhost"] as const;
+  for (const port of ports) {
+    for (const hostname of hostnames) {
+      for (const scheme of ["http", "ws"] as const) {
+        const host = `${scheme}://${hostname}:${port}`;
+        if (seen.has(host)) continue;
+        seen.add(host);
+        hosts.push(host);
+      }
+    }
+  }
+  return hosts;
+}
+
+function buildDefaultCsp(devHosts: string[]): string {
+  return `script-src 'self'; object-src 'self'; connect-src 'self' ${devHosts.join(" ")};`;
+}
+
+function mergeCspString(csp: string, devHosts: string[]): string {
+  const connectMatch = csp.match(/connect-src\s+([^;]*)/);
+  if (!connectMatch) {
+    return `${csp.trim().replace(/;?\s*$/, "")}; connect-src 'self' ${devHosts.join(" ")};`;
+  }
+  const existing = connectMatch[1].trim();
+  const parts = existing.split(/\s+/);
+  for (const host of devHosts) {
+    if (!parts.includes(host)) parts.push(host);
+  }
+  return csp.replace(/connect-src\s+[^;]*/, `connect-src ${parts.join(" ")}`);
 }

@@ -71,13 +71,18 @@ function safeSendMessage(entry: string, payload: ErrorPayload): void {
     forwardErrorToDevServer(msg);
     return;
   }
+  // For content/popup/etc: send directly via fetch (Firefox background relay may fail due to CSP or event-page lifecycle).
+  // Fallback to runtime.sendMessage for Chromium background relay.
+  forwardErrorToDevServer(msg);
   try {
     const runtime = getExtensionRuntime();
     if (!runtime || typeof runtime.sendMessage !== "function") return;
     const result = runtime.sendMessage(msg);
     const maybeCatch = result as { catch?: (cb: () => void) => void } | undefined;
     if (maybeCatch?.catch) maybeCatch.catch(() => {});
-  } catch {}
+  } catch (err: unknown) {
+    void err;
+  }
 }
 
 function sendListenerError(entry: string, err: { message: string; stack?: string; time: number }): void {
@@ -134,13 +139,27 @@ function buildRejectionPayload(event: { reason?: unknown }): ErrorPayload {
 
 function attachListeners(entry: string, target: typeof globalThis): void {
   const addListener = (target as { addEventListener?: (type: string, cb: (event: unknown) => void) => void }).addEventListener;
-  if (!addListener) return;
-  addListener("error", (event) => {
-    safeSendMessage(entry, buildErrorPayload(event as { error?: unknown; message?: unknown; filename?: unknown; lineno?: unknown; colno?: unknown }));
-  });
-  addListener("unhandledrejection", (event) => {
-    safeSendMessage(entry, buildRejectionPayload(event as { reason?: unknown }));
-  });
+  if (addListener) {
+    addListener("error", (event) => {
+      safeSendMessage(entry, buildErrorPayload(event as { error?: unknown; message?: unknown; filename?: unknown; lineno?: unknown; colno?: unknown }));
+    });
+    addListener("unhandledrejection", (event) => {
+      safeSendMessage(entry, buildRejectionPayload(event as { reason?: unknown }));
+    });
+  }
+  // Firefox content script fallback: onerror/onunhandledrejection properties may catch errors
+  // that addEventListener misses in the sandboxed global scope.
+  const targetRecord = target as Record<string, unknown>;
+  if (typeof targetRecord.onerror !== "function") {
+    targetRecord.onerror = (message: unknown, filename?: unknown, lineno?: unknown, colno?: unknown, error?: unknown) => {
+      safeSendMessage(entry, buildErrorPayload({ error, message, filename, lineno, colno }));
+    };
+  }
+  if (typeof targetRecord.onunhandledrejection !== "function") {
+    targetRecord.onunhandledrejection = (event: unknown) => {
+      safeSendMessage(entry, buildRejectionPayload(event as { reason?: unknown }));
+    };
+  }
 }
 
 function isObjectLike(value: unknown): value is Record<string, unknown> {
@@ -204,7 +223,9 @@ function forwardErrorToDevServer(payload: Record<string, unknown>): void {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     }).catch(() => {});
-  } catch {}
+  } catch (err: unknown) {
+    void err;
+  }
 }
 
 function registerErrorForwarderForRuntime(runtime: Record<string, unknown> | undefined): void {
@@ -400,7 +421,9 @@ export function startHmrReloadClient(): void {
     try {
       ws = new WebSocket(url);
       ws.onmessage = (e) => {
-        if (e.data === "reload-extension") reload();
+        if (e.data === "reload-extension" || e.data === "toggle-extension" || e.data === "toggle-extension-refresh-page" || e.data === "toggle-extension-refresh-tab") {
+          reload();
+        }
       };
       ws.onclose = () => {
         ws = null;

@@ -13,6 +13,14 @@ let httpServer: ReturnType<typeof createServer> | null = null;
 /** Stored when startWebSocketServer is called with debug opts; used by error handler. */
 let debugServerOpts: DebugServerOpts | null = null;
 
+/** Handler for Firefox addon reload via RDP (set by CLI). */
+let firefoxReloadHandler: (() => Promise<void>) | null = null;
+
+/** Register a handler that reloads a Firefox temporary addon via RDP when reload manager requests it. */
+export function setFirefoxReloadHandler(handler: (() => Promise<void>) | null): void {
+  firefoxReloadHandler = handler;
+}
+
 /** `full`: WebSocket + HTTP (reload + /addfox-error). `httpOnly`: HTTP only for monitor errors (Firefox / debug without Chromium reload). */
 export type WsServerMode = "full" | "httpOnly";
 
@@ -225,7 +233,7 @@ function bindHttpListen(
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     server.once("error", reject);
-    server.listen(port, () => {
+    server.listen(port, "127.0.0.1", () => {
       server.off("error", reject);
       resolve();
     });
@@ -243,7 +251,13 @@ async function startHttpServerOnly(
   }
   const t0 = startTime;
   httpServer = createServer(handleHttpRequest);
-  await bindHttpListen(httpServer, port);
+  try {
+    await bindHttpListen(httpServer, port);
+  } catch (err) {
+    httpServer.close();
+    httpServer = null;
+    throw err;
+  }
   const ms = Math.round(performance.now() - t0);
   logDoneTimed("Addfox debug HTTP (errors): http://127.0.0.1:" + port + "/addfox-error", ms);
 }
@@ -260,17 +274,38 @@ export async function startWebSocketServer(
     return null;
   }
   if (wsServer) return wsServer;
+  // If httpServer exists but wsServer is null, a previous launch failed mid-way
+  // (e.g. port already in use). Clean up and retry so we don't return a dead server.
+  if (httpServer) {
+    closeWebSocketServer();
+  }
   debugServerOpts = opts ?? null;
   if (opts?.debug && opts.root && opts.outputRoot) {
     deleteErrorMdOnStart(opts.root, opts.outputRoot);
   }
   const t0 = startTime ?? performance.now();
   httpServer = createServer(handleHttpRequest);
+  try {
+    await bindHttpListen(httpServer, port);
+  } catch (err) {
+    httpServer.close();
+    httpServer = null;
+    throw err;
+  }
   wsServer = new WebSocketServer({ server: httpServer });
   wsServer.on("connection", (ws: WebSocket) => {
     if (ws.readyState === WebSocket.OPEN) ws.send("connected");
+    ws.on("message", (data: Buffer) => {
+      const msg = data.toString("utf-8");
+      if (msg === "firefox-reload-addon") {
+        if (firefoxReloadHandler) {
+          firefoxReloadHandler().catch((err: Error) => {
+            logDone("Firefox RDP reload failed:", err.message);
+          });
+        }
+      }
+    });
   });
-  await bindHttpListen(httpServer, port);
   const ms = Math.round(performance.now() - t0);
   logDoneTimed("Hot reload WebSocket: ws://127.0.0.1:" + port, ms);
   return wsServer;

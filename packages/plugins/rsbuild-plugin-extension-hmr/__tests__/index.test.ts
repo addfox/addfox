@@ -23,6 +23,7 @@ import {
   isContentChanged,
   getReloadManagerDecision,
   createTestWsServer,
+  createReloadManagerExtension,
 } from "../src/index.ts";
 
 describe("plugin-extension-hmr", () => {
@@ -49,6 +50,7 @@ describe("plugin-extension-hmr", () => {
       operaPath: "/usr/bin/opera",
       santaPath: "/usr/bin/santa",
       firefoxPath: "/usr/bin/firefox",
+      zenPath: "/usr/bin/zen",
     };
     expect(getLaunchPathFromOptions("chrome", opts)).toBe(opts.chromePath);
     expect(getLaunchPathFromOptions("edge", opts)).toBe(opts.edgePath);
@@ -57,11 +59,13 @@ describe("plugin-extension-hmr", () => {
     expect(getLaunchPathFromOptions("opera", opts)).toBe(opts.operaPath);
     expect(getLaunchPathFromOptions("santa", opts)).toBe(opts.santaPath);
     expect(getLaunchPathFromOptions("firefox", opts)).toBe(opts.firefoxPath);
+    expect(getLaunchPathFromOptions("zen", opts)).toBe(opts.zenPath);
   });
 
   it("getBrowserPath returns user path when set", () => {
     expect(getBrowserPath("chrome", { chromePath: "  /custom/chrome  " })).toBe("/custom/chrome");
     expect(getBrowserPath("firefox", { firefoxPath: "C:\\ff\\firefox.exe" })).toBe("C:\\ff\\firefox.exe");
+    expect(getBrowserPath("zen", { zenPath: "C:\\Zen\\zen.exe" })).toBe("C:\\Zen\\zen.exe");
   });
 
   it("buildDefaultPaths returns arrays for each browser and platform", () => {
@@ -72,6 +76,7 @@ describe("plugin-extension-hmr", () => {
     expect(buildDefaultPaths("opera", "win32")).toBeDefined();
     expect(buildDefaultPaths("santa", "win32")).toBeDefined();
     expect(buildDefaultPaths("firefox", "linux")).toBeDefined();
+    expect(buildDefaultPaths("zen", "win32")).toBeDefined();
   });
 
   it("buildDefaultPaths vivaldi on win32 with USERPROFILE includes user path", () => {
@@ -89,6 +94,7 @@ describe("plugin-extension-hmr", () => {
     expect(isChromiumBrowser("edge")).toBe(true);
     expect(isChromiumBrowser("brave")).toBe(true);
     expect(isChromiumBrowser("firefox")).toBe(false);
+    expect(isChromiumBrowser("zen")).toBe(false);
   });
 
   it("getCacheRoot resolves to cache directory", () => {
@@ -307,10 +313,9 @@ describe("plugin-extension-hmr", () => {
     if (existsSync(cacheDir)) rmSync(cacheDir, { recursive: true, force: true });
   });
 
-  it("getReloadKindFromDecision returns reload-extension when backgroundChanged", () => {
-    expect(getReloadKindFromDecision(false, true, false)).toBe("reload-extension");
-    expect(getReloadKindFromDecision(false, true, true)).toBe("reload-extension");
-    expect(getReloadKindFromDecision(true, true, true)).toBe("reload-extension");
+  it("getReloadKindFromDecision returns toggle-extension when backgroundChanged", () => {
+    expect(getReloadKindFromDecision(false, true, false)).toBe("toggle-extension");
+    expect(getReloadKindFromDecision(false, true, true)).toBe("toggle-extension");
   });
 
   it("getReloadKindFromDecision returns toggle-extension-refresh-page when contentChanged and autoRefreshContentPage", () => {
@@ -323,8 +328,8 @@ describe("plugin-extension-hmr", () => {
     expect(getReloadKindFromDecision(true, false, false)).toBe("toggle-extension");
   });
 
-  it("getReloadKindFromDecision prefers reload-extension when both content and background changed", () => {
-    expect(getReloadKindFromDecision(true, true, true)).toBe("reload-extension");
+  it("getReloadKindFromDecision keeps content refresh when content and background changed", () => {
+    expect(getReloadKindFromDecision(true, true, true)).toBe("toggle-extension-refresh-page");
   });
 
   it("getReloadKindFromDecision returns toggle-extension when only content changed and autoRefresh off", () => {
@@ -428,5 +433,102 @@ describe("plugin-extension-hmr", () => {
     expect(getLaunchPathFromOptions("chrome", {})).toBeUndefined();
     expect(getLaunchPathFromOptions("firefox", {})).toBeUndefined();
     expect(getLaunchPathFromOptions("edge", {})).toBeUndefined();
+  });
+
+  it("createReloadManagerExtension writes valid MV3 manifest and bg.js for Chromium", async () => {
+    const distPath = resolve(tmpdir(), `hmr-rm-${Date.now()}`);
+    const wsPort = 23333;
+    const extPath = await createReloadManagerExtension(wsPort, distPath, "chrome");
+    try {
+      expect(existsSync(resolve(extPath, "manifest.json"))).toBe(true);
+      expect(existsSync(resolve(extPath, "bg.js"))).toBe(true);
+      const manifest = JSON.parse(
+        require("fs").readFileSync(resolve(extPath, "manifest.json"), "utf-8")
+      );
+      expect(manifest.manifest_version).toBe(3);
+      expect(manifest.name).toBe("Reload Manager");
+      expect(manifest.permissions).toContain("management");
+      expect(manifest.permissions).toContain("tabs");
+      expect(manifest.permissions).toContain("alarms");
+      expect(manifest.background.service_worker).toBe("bg.js");
+      const bgJs = require("fs").readFileSync(resolve(extPath, "bg.js"), "utf-8");
+      expect(bgJs).toContain("ws://127.0.0.1:" + wsPort);
+      expect(bgJs).toContain("chrome.management.getAll");
+      expect(bgJs).toContain("chrome.management.setEnabled");
+      expect(bgJs).toContain("chrome.alarms");
+    } finally {
+      const cacheDir = resolve(distPath, "..", "cache");
+      if (existsSync(cacheDir)) rmSync(cacheDir, { recursive: true, force: true });
+    }
+  });
+
+  it("createReloadManagerExtension caches manifest when port and version unchanged", async () => {
+    const distPath = resolve(tmpdir(), `hmr-rm-cache-${Date.now()}`);
+    const wsPort = 23334;
+    const extPath1 = await createReloadManagerExtension(wsPort, distPath);
+    const mtime1 = require("fs").statSync(resolve(extPath1, "bg.js")).mtimeMs;
+    const extPath2 = await createReloadManagerExtension(wsPort, distPath);
+    const mtime2 = require("fs").statSync(resolve(extPath2, "bg.js")).mtimeMs;
+    try {
+      expect(extPath1).toBe(extPath2);
+      expect(mtime1).toBe(mtime2);
+    } finally {
+      const cacheDir = resolve(distPath, "..", "cache");
+      if (existsSync(cacheDir)) rmSync(cacheDir, { recursive: true, force: true });
+    }
+  });
+
+  it("createReloadManagerExtension regenerates when port changes", async () => {
+    const distPath = resolve(tmpdir(), `hmr-rm-regen-${Date.now()}`);
+    const extPath1 = await createReloadManagerExtension(23335, distPath);
+    const extPath2 = await createReloadManagerExtension(23336, distPath);
+    try {
+      expect(extPath1).toBe(extPath2);
+      const bgJs = require("fs").readFileSync(resolve(extPath2, "bg.js"), "utf-8");
+      expect(bgJs).toContain("ws://127.0.0.1:23336");
+    } finally {
+      const cacheDir = resolve(distPath, "..", "cache");
+      if (existsSync(cacheDir)) rmSync(cacheDir, { recursive: true, force: true });
+    }
+  });
+
+  it("createReloadManagerExtension manifest uses scripts for Firefox", async () => {
+    const distPath = resolve(tmpdir(), `hmr-rm-ff-${Date.now()}`);
+    const extPath = await createReloadManagerExtension(23337, distPath, "firefox");
+    try {
+      const manifest = JSON.parse(
+        require("fs").readFileSync(resolve(extPath, "manifest.json"), "utf-8")
+      );
+      expect(manifest.manifest_version).toBe(3);
+      expect(Array.isArray(manifest.permissions)).toBe(true);
+      expect(manifest.background).toBeDefined();
+      expect(manifest.background.scripts).toEqual(["bg.js"]);
+      expect(manifest.background.service_worker).toBeUndefined();
+    } finally {
+      const cacheDir = resolve(distPath, "..", "cache");
+      if (existsSync(cacheDir)) rmSync(cacheDir, { recursive: true, force: true });
+    }
+  });
+
+  it("createReloadManagerExtension manifest uses scripts for Zen", async () => {
+    const distPath = resolve(tmpdir(), `hmr-rm-zen-${Date.now()}`);
+    const extPath = await createReloadManagerExtension(23338, distPath, "zen");
+    try {
+      const manifest = JSON.parse(
+        require("fs").readFileSync(resolve(extPath, "manifest.json"), "utf-8")
+      );
+      expect(manifest.background.scripts).toEqual(["bg.js"]);
+      expect(manifest.background.service_worker).toBeUndefined();
+    } finally {
+      const cacheDir = resolve(distPath, "..", "cache");
+      if (existsSync(cacheDir)) rmSync(cacheDir, { recursive: true, force: true });
+    }
+  });
+
+  it("isChromiumBrowser returns false for firefox", () => {
+    expect(isChromiumBrowser("firefox")).toBe(false);
+    expect(isChromiumBrowser("zen")).toBe(false);
+    expect(isChromiumBrowser("chrome")).toBe(true);
+    expect(isChromiumBrowser("edge")).toBe(true);
   });
 });

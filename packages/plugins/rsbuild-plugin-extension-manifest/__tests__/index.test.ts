@@ -399,9 +399,10 @@ describe("plugin-extension", () => {
     config: AddfoxResolvedConfig,
     entries: EntryInfo[],
     browser: "chromium" | "firefox" = "chromium",
-    distPath?: string
+    distPath?: string,
+    devConnectPorts?: number[]
   ): Promise<(compilation: unknown) => void> {
-    const plugin = extensionPlugin(config, entries, browser, distPath ?? resolve(config.root, "dist"));
+    const plugin = extensionPlugin(config, entries, browser, distPath ?? resolve(config.root, "dist"), devConnectPorts);
     let onBeforeCb: ((arg: { bundlerConfigs: unknown[] }) => void) | null = null;
     const api = {
       onBeforeCreateCompiler: (cb: (arg: { bundlerConfigs: unknown[] }) => void) => {
@@ -894,5 +895,101 @@ describe("plugin-extension", () => {
     expect(meta).toContain("- tabs");
     expect(meta).not.toContain("- 1");
     expect(meta).not.toContain("- null");
+  });
+
+  /** Dev CSP connect-src hosts for [23333, 3000] (127.0.0.1 + localhost for Rsbuild HMR fallback). */
+  const DEV_CONNECT_SRC_23333_3000 =
+    "connect-src 'self' http://127.0.0.1:23333 ws://127.0.0.1:23333 http://localhost:23333 ws://localhost:23333 http://127.0.0.1:3000 ws://127.0.0.1:3000 http://localhost:3000 ws://localhost:3000;";
+
+  describe("dev CSP injection", () => {
+    it("does not inject CSP when devConnectPorts is undefined", async () => {
+      const config = createMockConfig(testRoot);
+      config.manifest = { name: "NoCsp", version: "1.0.0", manifest_version: 3 };
+      const afterEmitFn = await getAfterEmitFn(config, createMockEntries());
+      afterEmitFn({});
+      const manifest = JSON.parse(readFileSync(resolve(testRoot, "dist", "manifest.json"), "utf-8"));
+      expect(manifest.content_security_policy).toBeUndefined();
+    });
+
+    it("injects default CSP when manifest has no CSP and devConnectPorts is provided", async () => {
+      const config = createMockConfig(testRoot);
+      config.manifest = { name: "DefaultCsp", version: "1.0.0", manifest_version: 3 };
+      const afterEmitFn = await getAfterEmitFn(config, createMockEntries(), "chromium", undefined, [23333, 3000]);
+      afterEmitFn({});
+      const manifest = JSON.parse(readFileSync(resolve(testRoot, "dist", "manifest.json"), "utf-8"));
+      expect(manifest.content_security_policy).toEqual({
+        extension_pages: `script-src 'self'; object-src 'self'; ${DEV_CONNECT_SRC_23333_3000}`,
+      });
+    });
+
+    it("merges connect-src into string CSP", async () => {
+      const config = createMockConfig(testRoot);
+      config.manifest = {
+        name: "StringCsp",
+        version: "1.0.0",
+        manifest_version: 3,
+        content_security_policy: "script-src 'self'; object-src 'self';",
+      };
+      const afterEmitFn = await getAfterEmitFn(config, createMockEntries(), "chromium", undefined, [23333, 3000]);
+      afterEmitFn({});
+      const manifest = JSON.parse(readFileSync(resolve(testRoot, "dist", "manifest.json"), "utf-8"));
+      expect(manifest.content_security_policy).toBe(
+        `script-src 'self'; object-src 'self'; ${DEV_CONNECT_SRC_23333_3000}`
+      );
+    });
+
+    it("merges connect-src into existing object CSP with extension_pages", async () => {
+      const config = createMockConfig(testRoot);
+      config.manifest = {
+        name: "ObjCsp",
+        version: "1.0.0",
+        manifest_version: 3,
+        content_security_policy: {
+          extension_pages: "script-src 'self'; connect-src 'self' https://example.com;",
+        },
+      };
+      const afterEmitFn = await getAfterEmitFn(config, createMockEntries(), "chromium", undefined, [23333, 3000]);
+      afterEmitFn({});
+      const manifest = JSON.parse(readFileSync(resolve(testRoot, "dist", "manifest.json"), "utf-8"));
+      expect(manifest.content_security_policy).toEqual({
+        extension_pages:
+          `script-src 'self'; connect-src 'self' https://example.com http://127.0.0.1:23333 ws://127.0.0.1:23333 http://localhost:23333 ws://localhost:23333 http://127.0.0.1:3000 ws://127.0.0.1:3000 http://localhost:3000 ws://localhost:3000;`,
+      });
+    });
+
+    it("adds extension_pages to object CSP when missing", async () => {
+      const config = createMockConfig(testRoot);
+      config.manifest = {
+        name: "MissingExtPages",
+        version: "1.0.0",
+        manifest_version: 3,
+        content_security_policy: { sandbox: "sandbox-src 'self';" },
+      };
+      const afterEmitFn = await getAfterEmitFn(config, createMockEntries(), "chromium", undefined, [23333, 3000]);
+      afterEmitFn({});
+      const manifest = JSON.parse(readFileSync(resolve(testRoot, "dist", "manifest.json"), "utf-8"));
+      expect(manifest.content_security_policy).toEqual({
+        sandbox: "sandbox-src 'self';",
+        extension_pages: `script-src 'self'; object-src 'self'; ${DEV_CONNECT_SRC_23333_3000}`,
+      });
+    });
+
+    it("does not duplicate dev hosts when already present", async () => {
+      const config = createMockConfig(testRoot);
+      config.manifest = {
+        name: "NoDup",
+        version: "1.0.0",
+        manifest_version: 3,
+        content_security_policy: {
+          extension_pages: "script-src 'self'; connect-src 'self' http://127.0.0.1:23333;",
+        },
+      };
+      const afterEmitFn = await getAfterEmitFn(config, createMockEntries(), "chromium", undefined, [23333, 3000]);
+      afterEmitFn({});
+      const manifest = JSON.parse(readFileSync(resolve(testRoot, "dist", "manifest.json"), "utf-8"));
+      expect(manifest.content_security_policy.extension_pages).toBe(
+        "script-src 'self'; connect-src 'self' http://127.0.0.1:23333 ws://127.0.0.1:23333 http://localhost:23333 ws://localhost:23333 http://127.0.0.1:3000 ws://127.0.0.1:3000 http://localhost:3000 ws://localhost:3000;"
+      );
+    });
   });
 });

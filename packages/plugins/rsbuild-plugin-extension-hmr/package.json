@@ -1,6 +1,6 @@
 {
   "name": "@addfox/rsbuild-plugin-extension-hmr",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Rsbuild plugin: launch browser and HMR in dev (internal)",
   "license": "MIT",
   "type": "module",
@@ -28,20 +28,19 @@
   "dependencies": {
     "@addfox/common": "workspace:*",
     "@addfox/core": "workspace:*",
-    "chrome-launcher": "^1.0.0",
-    "web-ext": "^9.0.0"
+    "@addfox/launcher": "workspace:*"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "devDependencies": {
-    "@rspack/core": "catalog:",
     "@rsbuild/core": "catalog:",
     "@rslib/core": "catalog:",
+    "@rspack/core": "catalog:",
     "@rstest/core": "catalog:",
     "@rstest/coverage-istanbul": "catalog:",
     "@types/node": "catalog:",
-    "@types/ws": "^8.5.0",
+    "@types/ws": "^8.18.1",
     "typescript": "catalog:"
   },
   "peerDependencies": {

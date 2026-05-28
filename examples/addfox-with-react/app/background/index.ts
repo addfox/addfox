@@ -9,7 +9,7 @@ chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === "install" || details.reason === "update") {
     openWelcomePage();
   }
-  console.log("[background] Extension installed123");
+  console.log("[background] Extension installed");
 });
 
 browser.runtime.onMessage.addListener(

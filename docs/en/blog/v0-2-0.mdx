@@ -1,0 +1,92 @@
+---
+description: 'A deep dive into the latest architecture refactoring, including the new @addfox/launcher, dependency reductions, supply chain risk mitigation, and performance improvements.'
+date: 2026-05-25 12:00:00
+sidebar: false
+authors:
+  - name: Gomi
+    avatar: 'https://github.com/gxy5202.png'
+    github: 'gxy5202'
+---
+
+import { BlogAuthors } from '@theme';
+
+# AddFox 0.2.0: Architecture Refactoring & Dependency Slimming
+
+_May 25, 2026_
+
+<BlogAuthors />
+
+We are excited to share the latest progress on the AddFox framework. While the current npm stable release remains at `0.1.1`, the `dev-launch` branch has undergone a significant architecture refactoring. This update focuses on three core goals: **reducing dependencies**, **replacing black-box tools with first-party solutions**, and **improving the developer experience** for browser extension development.
+
+## Dependency Slimming & Supply Chain Security
+
+One of the most impactful changes in this refactoring is the aggressive removal of third-party dependencies that carried large transitive trees. Every external dependency is a potential supply-chain risk—whether through deprecation, malicious takeover, or breaking changes in transitive packages. By replacing large third-party tools with focused, in-house utilities, we have drastically shrunk the attack surface for AddFox users.
+
+Here is what we removed:
+
+- **`web-ext`** (~586 KB + **26 transitive deps**) — completely removed.
+- **`chrome-launcher`** — removed.
+- **`archiver`** (~40 KB + **9 transitive deps**) — replaced with a custom zip utility.
+- **`cli-table3`** (~46 KB + 1 transitive dep) — removed from `@addfox/core`.
+- **`chalk`** (~44 KB), **`kolorist`**, **`minimist`** — removed from `create-addfox-app` and replaced with lightweight in-house utilities.
+
+The result? The `pnpm-lock.yaml` shrank by approximately **2,156 lines**, meaning faster installs, smaller `node_modules`, and fewer supply-chain risks for end users.
+
+### Before vs. After: Third-Party Runtime Dependencies
+
+| Package | 0.1.1 Third-Party Deps | Dev-Launch Third-Party Deps |
+|---|---|---|
+| `@addfox/cli` | `archiver` | *(none)* |
+| `@addfox/core` | `cli-table3`, `jiti` | `jiti` |
+| `create-addfox-app` | `chalk`, `kolorist`, `minimist`, `prompts` | `prompts` |
+| `@addfox/rsbuild-plugin-extension-hmr` | `chrome-launcher`, `web-ext` | *(none)* |
+| `@addfox/launcher` | *N/A (new package)* | *(none)* |
+| `@addfox/common` | *(none)* | *(none)* |
+| `@addfox/pkg-manager` | *(none)* | *(none)* |
+| `@addfox/utils` | `@addfox/common` | `@addfox/common` |
+| `rsbuild-plugin-extension-entry` | `@addfox/core` | `@addfox/core` |
+| `rsbuild-plugin-extension-manifest` | `@addfox/core` | `@addfox/core` |
+| `rsbuild-plugin-extension-monitor` | `@addfox/common`, `@addfox/core` | `@addfox/common`, `@addfox/core` |
+
+**What remains?** Only two mature, tiny third-party runtime dependencies:
+
+- **`jiti`** — a lightweight TypeScript config loader (~50 KB, zero transitive deps).
+- **`prompts`** — a minimal CLI prompt library (~30 KB, zero transitive deps).
+
+Everything else is either internal (`@addfox/*`) or handled by the build toolchain (`@rspack/core` as a dev dependency).
+
+## Introducing `@addfox/launcher`
+
+Previously, Firefox development relied on `web-ext run`, a powerful but heavy and opaque tool. We have built **`@addfox/launcher`** from the ground up:
+
+- **Zero runtime dependencies**.
+- Unified support for **Chromium** (Chrome, Edge, etc.) and **Gecko** (Firefox, Zen, etc.).
+- Firefox HMR now uses the **RDP protocol** to reload temporary add-ons directly, eliminating the need for `web-ext`'s complex process management.
+- Removed compatibility files such as `web-ext.d.ts`, `web-ext-logger.d.ts`, and `web-ext-console-stream-hook.ts`.
+
+This makes the dev server faster to start, easier to debug, and fully under our control.
+
+## HMR Plugin Refactoring
+
+The `@addfox/rsbuild-plugin-extension-hmr` package saw the largest code reduction:
+
+- `launcher.ts` and `runner.ts` were heavily simplified after dropping `web-ext`.
+- The extension manager now handles profile directories and reload logic more cleanly.
+- Keyboard reload and WebSocket server paths were streamlined.
+
+Overall, the workspace diff shows roughly **50 files changed**, with a **net reduction of ~1,641 lines** of code—less code to maintain, fewer edge cases, and better reliability.
+
+## Enhanced Test Coverage
+
+We did not just delete code; we also invested in quality:
+
+- `rsbuild-plugin-extension-entry`: +260 lines of tests
+- `rsbuild-plugin-extension-hmr`: +114 lines of tests
+- `rsbuild-plugin-extension-manifest`: +101 lines of tests
+- `rsbuild-plugin-extension-monitor`: +112 lines of tests
+
+## What Comes Next
+
+These changes are currently on the `dev-launch` branch and will be published as a new version soon. Given the scope of the architectural changes—especially the replacement of the HMR engine—we expect the next release to be at least a minor version bump, likely `0.2.0`.
+
+Stay tuned, and thank you for using AddFox!
