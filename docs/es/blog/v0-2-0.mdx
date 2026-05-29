@@ -10,25 +10,25 @@ authors:
 
 import { BlogAuthors } from '@theme';
 
-# AddFox 0.2.0: Refactorización de Arquitectura y Reducción de Dependencias
+# Addfox 0.2.0: Refactorización de Arquitectura y Reducción de Dependencias
 
 _25 de mayo de 2026_
 
 <BlogAuthors />
 
-Nos complace compartir los últimos avances del framework AddFox. Aunque la versión estable actual en npm sigue siendo la `0.1.1`, la rama `dev-launch` ha experimentado una refactorización arquitectónica significativa. Esta actualización se centra en tres objetivos principales: **reducir dependencias**, **reemplazar herramientas de caja negra con soluciones propias** y **mejorar la experiencia del desarrollador** para el desarrollo de extensiones de navegador.
+Nos complace compartir los últimos avances del framework Addfox. La versión `0.2.0` ya está oficialmente lanzada, un lanzamiento importante que incluye una refactorización arquitectónica. Esta actualización se centra en tres objetivos principales: **reducir dependencias**, **reemplazar herramientas de caja negra con alternativas integradas** y **mejorar la experiencia del desarrollador** para el desarrollo de extensiones de navegador.
 
 ## Reducción de Dependencias y Seguridad en la Cadena de Suministro
 
-Uno de los cambios más impactantes de esta refactorización es la eliminación agresiva de dependencias de terceros que arrastraban grandes árboles transitivos. Cada dependencia externa es un riesgo potencial en la cadena de suministro, ya sea por obsolescencia, toma de control maliciosa o cambios disruptivos en paquetes transitivos. Al reemplazar grandes herramientas de terceros con utilidades internas enfocadas, hemos reducido drásticamente la superficie de ataque para los usuarios de AddFox.
+Uno de los cambios más impactantes de esta refactorización es la eliminación agresiva de dependencias de terceros que arrastraban grandes árboles transitivos. Cada dependencia externa es un riesgo potencial en la cadena de suministro, ya sea por obsolescencia, toma de control maliciosa o cambios disruptivos en paquetes transitivos. Al reemplazar grandes herramientas de terceros con utilidades integradas enfocadas, hemos reducido drásticamente la superficie de ataque para los usuarios de Addfox.
 
 Esto es lo que eliminamos:
 
 - **`web-ext`** (~586 KB + **26 dependencias transitivas**) — eliminado por completo.
 - **`chrome-launcher`** — eliminado.
-- **`archiver`** (~40 KB + **9 dependencias transitivas**) — reemplazado por una utilidad zip propia.
+- **`archiver`** (~40 KB + **9 dependencias transitivas**) — reemplazado por una utilidad zip integrada.
 - **`cli-table3`** (~46 KB + 1 dependencia transitiva) — eliminado de `@addfox/core`.
-- **`chalk`** (~44 KB), **`kolorist`**, **`minimist`** — eliminados de `create-addfox-app` y reemplazados por utilidades ligeras internas.
+- **`chalk`** (~44 KB), **`kolorist`**, **`minimist`** — eliminados de `create-addfox-app` y reemplazados por utilidades ligeras integradas.
 
 El resultado: `pnpm-lock.yaml` se redujo en aproximadamente **2.156 líneas**, lo que significa instalaciones más rápidas, `node_modules` más pequeños y menos riesgos en la cadena de suministro para los usuarios finales.
 
@@ -57,7 +57,7 @@ Todo lo demás es interno (`@addfox/*`) o gestionado por la cadena de herramient
 
 ## Presentación de `@addfox/launcher`
 
-Anteriormente, el desarrollo en Firefox dependía de `web-ext run`, una herramienta potente pero pesada y opaca. Hemos construido **`@addfox/launcher`** desde cero:
+Anteriormente, el desarrollo en Firefox dependía de `web-ext run`, una herramienta potente pero con muchas dependencias. Hemos construido **`@addfox/launcher`** desde cero:
 
 - **Cero dependencias en tiempo de ejecución**.
 - Soporte unificado para **Chromium** (Chrome, Edge, etc.) y **Gecko** (Firefox, Zen, etc.).
@@ -85,8 +85,6 @@ No solo eliminamos código; también invertimos en calidad:
 - `rsbuild-plugin-extension-manifest`: +101 líneas de pruebas
 - `rsbuild-plugin-extension-monitor`: +112 líneas de pruebas
 
-## Qué Sigue
+## Lanzamiento Oficial
 
-Estos cambios se encuentran actualmente en la rama `dev-launch` y se publicarán como una nueva versión próximamente. Dado el alcance de los cambios arquitectónicos —especialmente el reemplazo del motor HMR— esperamos que la próxima versión sea al menos un incremento de versión menor, probablemente la `0.2.0`.
-
-¡Mantente atento y gracias por usar AddFox!
+La refactorización arquitectónica y la reducción de dependencias descritas anteriormente ya están oficialmente lanzadas en la versión `0.2.0`. Actualízate hoy y gracias por usar Addfox!

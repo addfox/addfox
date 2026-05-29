@@ -47,7 +47,7 @@ export function BlockBuildTerminal() {
           <span className={termLine.addfox}>[Addfox] </span>
           <span className={termLine.done}>● </span>
           <span className={termLine.value}>Zipped output to </span>
-          <span className={termLine.cyan}>dist/addfox-0.0.1.zip</span>
+          <span className={termLine.cyan}>dist/addfox-0.2.0.zip</span>
         </div>
         <div className="block">
           <span className={termLine.addfox}>[Addfox] </span>

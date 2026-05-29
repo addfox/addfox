@@ -12,8 +12,8 @@ export function BlockDevTerminal() {
         </div>
         <div className="block">
           <span className={termLine.addfox}>[Addfox] </span>
-          <span className={termLine.value}>Addfox 0.1.1-beta.11 with </span>
-          <span className={termLine.purple}>Rsbuild 1.7.3</span>
+          <span className={termLine.value}>Addfox 0.2.0 with </span>
+          <span className={termLine.purple}>Rsbuild 2.0.7</span>
         </div>
         <div className="block">
           <span className={termLine.addfox}>[Addfox] </span>
