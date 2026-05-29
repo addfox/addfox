@@ -487,6 +487,14 @@
     "ru": "Plasmo",
     "es": "Plasmo"
   },
+  "homeFooterExtensionJs": {
+    "en": "Extension.js",
+    "zh": "Extension.js 官网",
+    "ja": "Extension.js",
+    "ko": "Extension.js",
+    "ru": "Extension.js",
+    "es": "Extension.js"
+  },
   "crxsoso": {
     "en": "crxsoso",
     "zh": "crx搜搜",
