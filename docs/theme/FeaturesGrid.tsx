@@ -216,7 +216,7 @@ function CreatorSays() {
                 >
                   VideoRoll
                 </a>
-                {" "}and AddFox
+                {" "}and Addfox
               </div>
             </div>
           </div>

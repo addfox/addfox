@@ -12,9 +12,9 @@ const docRouteExclude = [
 ];
 
 const SITE_URL = (process.env.DOCS_SITE_URL ?? "https://addfox.dev").replace(/\/+$/, "");
-const SITE_TITLE = "AddFox - Browser Extension Development Framework";
+const SITE_TITLE = "Addfox - Browser Extension Development Framework";
 const SITE_DESCRIPTION =
-  "AddFox is a browser extension development framework built on Rsbuild, it provides a comprehensive set of tools and features for developing browser extensions.";
+  "Addfox is a browser extension development framework built on Rsbuild, it provides a comprehensive set of tools and features for developing browser extensions.";
 const OG_IMAGE_PATH = "/og-image.png";
 const OG_IMAGE_URL = `${SITE_URL}${OG_IMAGE_PATH}`;
 const HOME_URL = `${SITE_URL}/`;
@@ -27,7 +27,7 @@ const BLOG_URL = `${SITE_URL}/blog/`;
 const jsonLdWebSite = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "AddFox",
+  name: "Addfox",
   url: HOME_URL,
   description: SITE_DESCRIPTION,
   potentialAction: {
@@ -73,43 +73,43 @@ export default {
   builderConfig: {
     plugins: [pluginNodePolyfill()],
   },
-  logoText: "AddFox",
+  logoText: "Addfox",
   lang: "en",
   locales: [
     {
       lang: "zh",
       label: "简体中文",
-      title: "AddFox",
+      title: "Addfox",
       description: "基于 Rsbuild 的浏览器扩展开发框架",
     },
     {
       lang: "en",
       label: "English",
-      title: "AddFox",
+      title: "Addfox",
       description: "Browser extension development framework built on Rsbuild",
     },
     {
       lang: "ja",
       label: "日本語",
-      title: "AddFox",
+      title: "Addfox",
       description: "Rsbuild ベースのブラウザ拡張開発フレームワーク",
     },
     {
       lang: "ko",
       label: "한국어",
-      title: "AddFox",
+      title: "Addfox",
       description: "Rsbuild 기반 브라우저 확장 프로그램 개발 프레임워크",
     },
     {
       lang: "ru",
       label: "Русский",
-      title: "AddFox",
+      title: "Addfox",
       description: "Фреймворк разработки браузерных расширений на базе Rsbuild",
     },
     {
       lang: "es",
       label: "Español",
-      title: "AddFox",
+      title: "Addfox",
       description: "Framework de desarrollo de extensiones de navegador basado en Rsbuild",
     },
   ],
@@ -155,14 +155,14 @@ export default {
     ],
     ["meta", { name: "robots", content: "index,follow,max-image-preview:large" }],
     ["meta", { property: "og:type", content: "website" }],
-    ["meta", { property: "og:site_name", content: "AddFox" }],
+    ["meta", { property: "og:site_name", content: "Addfox" }],
     ["meta", { property: "og:title", content: SITE_TITLE }],
     ["meta", { property: "og:description", content: SITE_DESCRIPTION }],
     ["meta", { property: "og:url", content: HOME_URL }],
     ["meta", { property: "og:image", content: OG_IMAGE_URL }],
     ["meta", { property: "og:image:secure_url", content: OG_IMAGE_URL }],
     ["meta", { property: "og:image:type", content: "image/png" }],
-    ["meta", { property: "og:image:alt", content: "AddFox documentation cover image" }],
+    ["meta", { property: "og:image:alt", content: "Addfox documentation cover image" }],
     ["meta", { name: "twitter:card", content: "summary_large_image" }],
     ["meta", { name: "twitter:title", content: SITE_TITLE }],
     ["meta", { name: "twitter:description", content: SITE_DESCRIPTION }],

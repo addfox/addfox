@@ -384,12 +384,12 @@
     "es": "Skills extensibles, con soporte para Agent y automatización."
   },
   "reallyFastTitle": {
-    "en": "Really Fast",
-    "zh": "极速体验",
-    "ja": "超高速",
-    "ko": "정말 빠름",
-    "ru": "Очень быстро",
-    "es": "Realmente rápido"
+    "en": "Ultimate Experience",
+    "zh": "极致的体验",
+    "ja": "究極の体験",
+    "ko": "궁극적인 경험",
+    "ru": "Максимальный опыт",
+    "es": "Experiencia suprema"
   },
   "reallyFastSubtitle": {
     "en": "Start your business, instant startup and optimized builds",
@@ -422,6 +422,22 @@
     "ko": "개발 서버 시작 최소 시간 (짧을수록 좋음)",
     "ru": "Минимальное время запуска dev-сервера (меньше - лучше)",
     "es": "Tiempo mínimo para iniciar el servidor de desarrollo (menor es mejor)"
+  },
+  "reallyFastSizeTitle": {
+    "en": "Build Output Size",
+    "zh": "构建产物大小",
+    "ja": "ビルド出力サイズ",
+    "ko": "빌드 출력 크기",
+    "ru": "Размер сборки",
+    "es": "Tamaño de salida de build"
+  },
+  "reallyFastSizeDesc": {
+    "en": "Production build output size (lower is better)",
+    "zh": "生产构建产物大小（越小越好）",
+    "ja": "本番ビルドの出力サイズ（小さい方が良い）",
+    "ko": "프로덕션 빌드 출력 크기 (작을수록 좋음)",
+    "ru": "Размер выходных данных production-сборки (меньше - лучше)",
+    "es": "Tamaño de salida del build de producción (menor es mejor)"
   },
   "reallyFastBuildDesc": {
     "en": "Minimum time to build extension (lower is better)",

@@ -3,27 +3,37 @@ import { useI18n } from "@rspress/core/runtime";
 
 interface BenchmarkData {
   name: string;
+  version: string;
   devTime: number; // Lower is better
   buildTime: number; // Lower is better
+  size: number; // Lower is better (KB)
   buildTool: string; // Build tool name
 }
 
 const BENCHMARK_DATA: BenchmarkData[] = [
-  { name: "addfox", devTime: 2.04, buildTime: 1.51, buildTool: "Rsbuild 1.7.5" },
-  { name: "extensionjs", devTime: 2.34, buildTime: 1.57, buildTool: "Rspack" },
-  { name: "wxt", devTime: 2.36, buildTime: 1.95, buildTool: "Vite" },
-  { name: "plasmo", devTime: 3.39, buildTime: 2.80, buildTool: "Parcel" },
+  { name: "addfox", version: "0.2.0", devTime: 2.41, buildTime: 1.44, size: 836.8, buildTool: "Rsbuild 2.0.7" },
+  { name: "extensionjs", version: "3.17.0", devTime: 2.10, buildTime: 1.52, size: 1450.8, buildTool: "Rspack 2.0.x" },
+  { name: "wxt", version: "0.20.26", devTime: 2.18, buildTime: 1.82, size: 811.8, buildTool: "Vite 8.0.14" },
+  { name: "plasmo", version: "0.90.5", devTime: 3.02, buildTime: 2.62, size: 1364.8, buildTool: "Parcel 2.9.3" },
 ];
 
 // Compute max values for percentage bars
 const MAX_DEV_TIME = Math.max(...BENCHMARK_DATA.map(d => d.devTime));
 const MAX_BUILD_TIME = Math.max(...BENCHMARK_DATA.map(d => d.buildTime));
+const MAX_SIZE = Math.max(...BENCHMARK_DATA.map(d => d.size));
 
 interface BarChartProps {
   data: BenchmarkData[];
   maxValue: number;
   unit?: string;
-  valueKey: 'devTime' | 'buildTime';
+  valueKey: 'devTime' | 'buildTime' | 'size';
+}
+
+function formatSize(kb: number): string {
+  if (kb >= 1000) {
+    return `${(kb / 1000).toFixed(2)}MB`;
+  }
+  return `${kb.toFixed(0)}KB`;
 }
 
 function BenchmarkBarChart({ 
@@ -32,20 +42,23 @@ function BenchmarkBarChart({
   unit = "s",
   valueKey
 }: BarChartProps) {
+  // Sort by metric ascending (fastest / smallest first)
+  const sortedData = [...data].sort((a, b) => a[valueKey] - b[valueKey]);
+
   return (
     <div className="flex flex-col gap-3 w-full">
-      {data.map((item, index) => {
-        const isFirst = index === 0;
+      {sortedData.map((item) => {
+        const isFirst = item.name === "addfox";
         const value = item[valueKey];
         const percentage = (value / maxValue) * 100;
         
         return (
           <div key={item.name} className="flex items-center gap-3">
             {/* Framework name */}
-            <div className="w-20 text-sm font-medium text-[var(--addfox-home-text)]">
+            <div className="w-24 text-sm font-medium text-[var(--addfox-home-text)]">
               <span className="capitalize">{item.name}</span>
               <span className="block text-[10px] text-[var(--addfox-home-muted)] leading-tight">
-                {item.buildTool}
+                v{item.version} · {item.buildTool}
               </span>
             </div>
             {/* Bar container */}
@@ -61,10 +74,10 @@ function BenchmarkBarChart({
               />
             </div>
             {/* Value */}
-            <div className={`w-14 text-sm font-mono text-right ${
+            <div className={`w-16 text-sm font-mono text-right ${
               isFirst ? "text-[#F97316] font-semibold" : "text-[var(--addfox-home-muted)]"
             }`}>
-              {value}{unit}
+              {valueKey === 'size' ? formatSize(value) : `${value}${unit}`}
             </div>
           </div>
         );
@@ -78,10 +91,10 @@ export function ReallyFastSection() {
   
   return (
     <section className="w-full mb-16">
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto">
         {/* Header section */}
         <div className="text-center mb-8">
-          <h2 className="text-[1.75rem] font-bold text-[var(--addfox-home-text)] mb-2">
+          <h2 className="addfox-section-title text-[1.75rem] font-bold text-[var(--addfox-home-text)] mb-6">
             {t("reallyFastTitle")}
           </h2>
           <p className="text-[var(--addfox-home-muted)] text-base">
@@ -91,7 +104,7 @@ export function ReallyFastSection() {
         
         {/* Card */}
         <div className="addfox-feature-card p-6 border border-[var(--addfox-home-border)]">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Dev speed */}
             <div className="flex flex-col">
               <h3 className="text-sm font-semibold text-[var(--addfox-home-text)] mb-4 uppercase tracking-wide">
@@ -119,6 +132,22 @@ export function ReallyFastSection() {
               />
               <p className="text-xs text-[var(--addfox-home-muted)] mt-3">
                 {t("reallyFastBuildDesc")}
+              </p>
+            </div>
+
+            {/* Build size */}
+            <div className="flex flex-col">
+              <h3 className="text-sm font-semibold text-[var(--addfox-home-text)] mb-4 uppercase tracking-wide">
+                {t("reallyFastSizeTitle")}
+              </h3>
+              <BenchmarkBarChart 
+                data={BENCHMARK_DATA} 
+                maxValue={MAX_SIZE + 200}
+                unit="KB"
+                valueKey="size"
+              />
+              <p className="text-xs text-[var(--addfox-home-muted)] mt-3">
+                {t("reallyFastSizeDesc")}
               </p>
             </div>
           </div>
