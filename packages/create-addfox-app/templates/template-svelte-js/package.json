@@ -8,11 +8,11 @@
     "build": "addfox build"
   },
   "dependencies": {
-    "@addfox/utils": "0.1.1",
+    "@addfox/utils": "^0.2.0",
     "svelte": "^5.54.1"
   },
   "devDependencies": {
-    "addfox": "0.1.1",
+    "addfox": "^0.2.0",
     "@rsbuild/plugin-svelte": "1.1.1"
   }
 }

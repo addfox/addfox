@@ -1,5 +1,20 @@
 ﻿# @addfox/cli
 
+## 0.2.1
+
+### Patch Changes
+
+- fix: watchOptions.ignored .addfox dir
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-manifest@0.2.1
+  - @addfox/rsbuild-plugin-extension-monitor@0.2.1
+  - @addfox/rsbuild-plugin-extension-entry@0.2.1
+  - @addfox/rsbuild-plugin-extension-hmr@0.2.1
+  - @addfox/rsbuild-plugin-vue@0.2.1
+  - @addfox/pkg-manager@0.2.1
+  - @addfox/common@0.2.1
+  - @addfox/core@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
