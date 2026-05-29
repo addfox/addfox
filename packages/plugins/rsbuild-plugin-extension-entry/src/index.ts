@@ -765,10 +765,10 @@ function setupRspackConfig(
   const watchOpts = (bundlerConfig.watchOptions as WatchOptionsLike | undefined) ?? {};
   const existingIgnored = watchOpts.ignored;
   const ignoredList: (string | RegExp)[] = Array.isArray(existingIgnored)
-    ? [...existingIgnored, packagingWatchIgnoreRoot]
+    ? [...existingIgnored, packagingWatchIgnoreRoot, "**/.addfox/**"]
     : existingIgnored != null
-      ? [existingIgnored, packagingWatchIgnoreRoot]
-      : [packagingWatchIgnoreRoot];
+      ? [existingIgnored, packagingWatchIgnoreRoot, "**/.addfox/**"]
+      : [packagingWatchIgnoreRoot, "**/.addfox/**"];
   bundlerConfig.watchOptions = { ...watchOpts, ignored: ignoredList as string[] };
 
   // Setup output configuration

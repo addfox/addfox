@@ -1,5 +1,15 @@
 # @addfox/rsbuild-plugin-extension-hmr
 
+## 0.2.1
+
+### Patch Changes
+
+- fix: watchOptions.ignored .addfox dir
+- Updated dependencies
+  - @addfox/launcher@0.2.1
+  - @addfox/common@0.2.1
+  - @addfox/core@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes

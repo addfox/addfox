@@ -625,8 +625,9 @@ describe("plugin-extension-entry", () => {
     await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
     const ignored = (bundlerConfig.watchOptions as Record<string, unknown>).ignored;
     expect(Array.isArray(ignored)).toBe(true);
-    expect((ignored as unknown[]).length).toBe(1);
+    expect((ignored as unknown[]).length).toBe(2);
     expect((ignored as string[])[0]).toBe(mockAddfoxPackagingRoot(testRoot));
+    expect((ignored as string[])[1]).toBe("**/.addfox/**");
   });
 
   it("setup onBeforeCreateCompiler sets watchOptions and output", async () => {
@@ -1465,8 +1466,9 @@ describe("plugin-extension-entry", () => {
     await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
     const ignored = (bundlerConfig.watchOptions as Record<string, unknown>).ignored;
     expect(Array.isArray(ignored)).toBe(true);
-    expect((ignored as unknown[]).length).toBe(2);
+    expect((ignored as unknown[]).length).toBe(3);
     expect((ignored as string[])[1]).toBe(mockAddfoxPackagingRoot(testRoot));
+    expect((ignored as string[])[2]).toBe("**/.addfox/**");
   });
 
   it("setup onBeforeCreateCompiler with watchOptions.ignored as array", async () => {
@@ -1490,10 +1492,11 @@ describe("plugin-extension-entry", () => {
     await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
     const ignored = (bundlerConfig.watchOptions as Record<string, unknown>).ignored as unknown[];
     expect(Array.isArray(ignored)).toBe(true);
-    expect(ignored).toHaveLength(3);
+    expect(ignored).toHaveLength(4);
     expect(ignored[0]).toBe("/node_modules");
     expect(ignored[1]).toBe("/.git");
     expect(ignored[2]).toBe(mockAddfoxPackagingRoot(testRoot));
+    expect(ignored[3]).toBe("**/.addfox/**");
   });
 
   it("setup onBeforeCreateCompiler skips optimization when c.optimization is missing", async () => {

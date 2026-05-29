@@ -8,11 +8,11 @@
     "build": "addfox build"
   },
   "dependencies": {
-    "@addfox/utils": "0.1.1",
+    "@addfox/utils": "^0.2.0",
     "preact": "^10.29.0"
   },
   "devDependencies": {
-    "addfox": "0.1.1",
+    "addfox": "^0.2.0",
     "@rsbuild/plugin-preact": "1.7.2"
   }
 }

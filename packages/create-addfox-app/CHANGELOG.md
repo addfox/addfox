@@ -1,5 +1,13 @@
 # create-addfox-app
 
+## 0.2.1
+
+### Patch Changes
+
+- fix: watchOptions.ignored .addfox dir
+- Updated dependencies
+  - @addfox/pkg-manager@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes

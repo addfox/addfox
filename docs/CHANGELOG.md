@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.1.1
+
+### Patch Changes
+
+- fix: watchOptions.ignored .addfox dir
+
 ## 0.1.0
 
 ### Minor Changes
