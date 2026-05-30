@@ -44,8 +44,9 @@ Addfox 基于 Rsbuild（Rspack/Rstack）封装扩展能力；构建产物在 Chr
 **新项目：**
 
 ```bash
-pnpm create addfox-app
-# 或：npx create-addfox-app
+npx addfox@latest create
+# 或：pnpm dlx addfox@latest create
+# 或：pnpm create addfox-app（旧方式）
 ```
 
 按提示选择框架（Vanilla / Vue / React / Preact / Svelte / Solid）、语言、包管理工具、入口及可选 [Skills](https://github.com/addfox/skills)，会生成完整目录与 `addfox.config`。

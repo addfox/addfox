@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.1.2
+
+### Patch Changes
+
+- feat: add create arg
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,9 +1,14 @@
 {
   "name": "create-addfox-app",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Interactive scaffolder for addfox extension projects",
   "license": "MIT",
   "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./cli": "./dist/cli.js"
+  },
   "bin": {
     "create-addfox-app": "./dist/cli.js"
   },
@@ -31,6 +36,7 @@
     "@rstest/core": "catalog:",
     "@rstest/coverage-istanbul": "catalog:",
     "@types/node": "catalog:",
+    "@types/prompts": "^2.4.9",
     "typescript": "catalog:"
   }
 }

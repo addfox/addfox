@@ -77,7 +77,8 @@ Addfox aprende de estas excelentes prácticas mientras sigue su propio camino:
 
 ```bash
 # Crear proyecto con el scaffolding
-pnpm create addfox-app
+npx addfox@latest create
+# o: pnpm dlx addfox@latest create
 
 # Entrar al directorio del proyecto
 cd my-extension

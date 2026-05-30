@@ -1,4 +1,23 @@
-﻿# @addfox/cli
+# @addfox/cli
+
+## 0.2.2
+
+### Patch Changes
+
+- feat: add `create` subcommand routing to `create-addfox-app`
+- feat: update help text to include `create [project-name]`
+- deps: add `create-addfox-app` as dependency
+- test: add `create` command rejection test in cliParser
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-manifest@0.2.2
+  - @addfox/rsbuild-plugin-extension-monitor@0.2.2
+  - @addfox/rsbuild-plugin-extension-entry@0.2.2
+  - @addfox/rsbuild-plugin-extension-hmr@0.2.2
+  - @addfox/rsbuild-plugin-vue@0.2.2
+  - create-addfox-app@0.2.2
+  - @addfox/pkg-manager@0.2.2
+  - @addfox/common@0.2.2
+  - @addfox/core@0.2.2
 
 ## 0.2.1
 

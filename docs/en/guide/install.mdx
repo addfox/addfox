@@ -10,28 +10,28 @@ Use the official scaffold to quickly create a project with pre-configured dev en
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-pnpm create addfox-app
+pnpm dlx addfox@latest create
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-npx create-addfox-app
+npx addfox@latest create
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-yarn create addfox-app
+yarn dlx addfox@latest create
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-bun create addfox-app
+bunx addfox@latest create
 ```
 
   </Tab>
@@ -70,7 +70,7 @@ The scaffold will guide you through the following steps:
 You can also pass options directly (based on the current `create-addfox-app` CLI):
 
 ```bash
-create-addfox-app [project-name] [options]
+addfox create [project-name] [options]
 ```
 
 | Option | Description |
@@ -91,13 +91,13 @@ create-addfox-app [project-name] [options]
 
 ```bash
 # Create a React + TypeScript project
-pnpm create addfox-app my-extension --framework react --language ts
+pnpm dlx addfox@latest create my-extension --framework react --language ts
 
 # Create a Vue + JavaScript project with UnoCSS and unit tests
-npx create-addfox-app my-vue-ext --framework vue --language js --style unocss --unit
+npx addfox@latest create my-vue-ext --framework vue --language js --style unocss --unit
 
 # Create a Solid + TypeScript project with E2E and Rsdoctor
-pnpm create addfox-app my-solid-ext --framework solid --language ts --e2e --rsdoctor
+pnpm dlx addfox@latest create my-solid-ext --framework solid --language ts --e2e --rsdoctor
 ```
 
 After creation, the CLI will display the next steps:

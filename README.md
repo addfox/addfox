@@ -44,8 +44,9 @@ Addfox wraps Rsbuild (Rspack/Rstack) with extension-specific plugins; build outp
 **New project:**
 
 ```bash
-pnpm create addfox-app
-# or: npx create-addfox-app
+npx addfox@latest create
+# or: pnpm dlx addfox@latest create
+# or: pnpm create addfox-app (legacy)
 ```
 
 Choose framework (Vanilla / Vue / React / Preact / Svelte / Solid), language, package manager, entries, and optional [Skills](https://github.com/addfox/skills). A full layout and `addfox.config` are generated.

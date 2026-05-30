@@ -72,12 +72,12 @@
     "es": "Star us"
   },
   "homeHeroCopyCreate": {
-    "en": "Copy: pnpm create addfox-app",
-    "zh": "复制：pnpm create addfox-app",
-    "ja": "コピー: pnpm create addfox-app",
-    "ko": "복사: pnpm create addfox-app",
-    "ru": "Скопировать: pnpm create addfox-app",
-    "es": "Copiar: pnpm create addfox-app"
+    "en": "Copy: npx addfox@latest create",
+    "zh": "复制: npx addfox@latest create",
+    "ja": "コピー: npx addfox@latest create",
+    "ko": "복사: npx addfox@latest create",
+    "ru": "Скопировать: npx addfox@latest create",
+    "es": "Copiar: npx addfox@latest create"
   },
   "homeHeroCopied": {
     "en": "Copied",

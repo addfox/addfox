@@ -129,6 +129,16 @@ describe("CliParser", () => {
       }
     });
 
+    it("rejects create as unknown command (handled before parseCliArgs)", () => {
+      expect(() => parseCliArgs(["create"])).toThrow(AddfoxError);
+      try {
+        parseCliArgs(["create"]);
+      } catch (e) {
+        expect((e as AddfoxError).code).toBe(ADDFOX_ERROR_CODES.UNKNOWN_COMMAND);
+        expect((e as AddfoxError).details).toContain("create");
+      }
+    });
+
     it("throws on invalid browser via assertSupportedBrowser", () => {
       expect(() => assertSupportedBrowser("safari")).toThrow(AddfoxError);
       try {

@@ -1,5 +1,13 @@
 # @addfox/rsbuild-plugin-extension-entry
 
+## 0.2.2
+
+### Patch Changes
+
+- feat: add create arg
+- Updated dependencies
+  - @addfox/core@0.2.2
+
 ## 0.2.1
 
 ### Patch Changes

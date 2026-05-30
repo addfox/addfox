@@ -77,7 +77,8 @@ Addfox stands on the shoulders of these giants while carving its own path:
 
 ```bash
 # Create project with scaffold
-pnpm create addfox-app
+npx addfox@latest create
+# or: pnpm dlx addfox@latest create
 
 # Enter project directory
 cd my-extension
