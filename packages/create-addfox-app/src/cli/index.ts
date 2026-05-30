@@ -322,6 +322,54 @@ function updatePackageName(destDir: string, projectName: string): void {
   writeJsonFile(pkgPath, pkg);
 }
 
+function resolveLatestVersion(pkgName: string): string | null {
+  try {
+    const output = execSync(`npm view ${pkgName} version --registry https://registry.npmjs.org/`, {
+      encoding: "utf-8",
+      stdio: ["pipe", "pipe", "ignore"],
+      timeout: 3000,
+    });
+    const version = output.trim();
+    return version || null;
+  } catch {
+    return null;
+  }
+}
+
+function updatePackageVersions(destDir: string): void {
+  const pkgPath = resolve(destDir, "package.json");
+  if (!existsSync(pkgPath)) return;
+
+  const addfoxVersion = resolveLatestVersion("addfox");
+  const utilsVersion = resolveLatestVersion("@addfox/utils");
+
+  if (!addfoxVersion && !utilsVersion) return;
+
+  const pkg = readJsonFile<Record<string, unknown>>(pkgPath);
+
+  if (addfoxVersion && pkg.devDependencies && typeof pkg.devDependencies === "object") {
+    const devDeps = pkg.devDependencies as Record<string, string>;
+    if (devDeps["addfox"]) {
+      devDeps["addfox"] = `^${addfoxVersion}`;
+    }
+  }
+  if (utilsVersion) {
+    if (pkg.dependencies && typeof pkg.dependencies === "object") {
+      const deps = pkg.dependencies as Record<string, string>;
+      if (deps["@addfox/utils"]) {
+        deps["@addfox/utils"] = `^${utilsVersion}`;
+      }
+    }
+    if (pkg.devDependencies && typeof pkg.devDependencies === "object") {
+      const devDeps = pkg.devDependencies as Record<string, string>;
+      if (devDeps["@addfox/utils"]) {
+        devDeps["@addfox/utils"] = `^${utilsVersion}`;
+      }
+    }
+  }
+  writeJsonFile(pkgPath, pkg);
+}
+
 export async function runCreateApp(rawArgv: string[] = process.argv.slice(2)): Promise<void> {
   const argv = parseArgv(rawArgv);
 
@@ -427,6 +475,7 @@ export async function runCreateApp(rawArgv: string[] = process.argv.slice(2)): P
   writeFileSync(configPath, configContent, "utf-8");
 
   updatePackageName(root, targetDir);
+  updatePackageVersions(root);
 
   applyStyleEngine(root, options.framework, options.language, options.styleEngine);
 
