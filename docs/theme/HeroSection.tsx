@@ -8,7 +8,7 @@ function HeroActions({ getStartedLink, githubLink }: { getStartedLink: string; g
 
   const handleCopyCreateCommand = React.useCallback(async () => {
     try {
-      await navigator.clipboard.writeText("pnpm create addfox-app");
+      await navigator.clipboard.writeText("npx addfox@latest create");
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1200);
     } catch {
@@ -25,13 +25,13 @@ function HeroActions({ getStartedLink, githubLink }: { getStartedLink: string; g
         {t("homeHeroGetStarted")}
       </a>
       <div className="inline-flex items-center rounded-md border border-dashed border-orange-300/70 bg-orange-100/50 text-orange-600/80 dark:border-orange-400/30 dark:bg-orange-500/10 dark:text-orange-300/80">
-        <span className="px-3 py-2.5 text-sm font-medium tracking-tight select-text">pnpm create addfox-app</span>
+        <span className="px-3 py-2.5 text-sm font-medium tracking-tight select-text">npx addfox@latest create</span>
         <button
           type="button"
           onClick={handleCopyCreateCommand}
           className="inline-flex items-center justify-center w-10 h-10 border-l border-orange-300/60 text-orange-500/85 transition-all hover:bg-orange-100/65 hover:text-orange-600/95 dark:border-orange-400/30 dark:text-orange-300/80 dark:hover:bg-orange-500/15"
-          aria-label="Copy pnpm create addfox-app"
-          title="pnpm create addfox-app"
+          aria-label="Copy npx addfox@latest create"
+          title="npx addfox@latest create"
         >
           {copied ? (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

@@ -6,7 +6,7 @@ Interactive project creation for addfox: downloads a pre-built template from the
 
 ## When to use
 
-- When users need to **create a new** addfox project from scratch, use `pnpm create addfox-app` or `npx create-addfox-app`
+- When users need to **create a new** addfox project from scratch, use `npx addfox@latest create` or `pnpm dlx addfox@latest create` (subcommand mode); legacy: `pnpm create addfox-app` or `npx create-addfox-app`
 - In docs or scripts that onboard users, recommend the above; do not reimplement addfox's build flow here (build is handled by @addfox/cli)
 
 ## When changing this package

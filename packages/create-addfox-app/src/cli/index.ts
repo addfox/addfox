@@ -134,6 +134,7 @@ function printHelp(): void {
   Create a new addfox extension project
 
   Usage:
+    addfox create [project-name] [options]
     create-addfox-app [project-name] [options]
 
   Options:
@@ -321,8 +322,8 @@ function updatePackageName(destDir: string, projectName: string): void {
   writeJsonFile(pkgPath, pkg);
 }
 
-async function main(): Promise<void> {
-  const argv = parseArgv(process.argv.slice(2));
+export async function runCreateApp(rawArgv: string[] = process.argv.slice(2)): Promise<void> {
+  const argv = parseArgv(rawArgv);
 
   if (argv.help || argv.h) {
     printHelp();
@@ -334,10 +335,11 @@ async function main(): Promise<void> {
     return;
   }
 
-  const targetDir: string = argv._[0] ?? "my-extension";
+  const targetDir: string = String(argv._[0] ?? "my-extension");
   const cliFramework = argv.framework as Framework | undefined;
   const cliLanguage = argv.language as Language | undefined;
 
+  console.log(dim(`  create-addfox-app v${getVersion()}`));
   printAddfoxLogo();
   console.log(blue("\n  Create Addfox App\n"));
 
@@ -345,7 +347,7 @@ async function main(): Promise<void> {
 
   if (existsSync(root)) {
     const confirmed = await confirmOverwrite(targetDir);
-    if (!confirmed) process.exit(0);
+    if (!confirmed) return;
     rmSync(root, { recursive: true, force: true });
   }
 
@@ -359,12 +361,12 @@ async function main(): Promise<void> {
           entries: ["__all__"],
         }
       : await promptOptions();
-  if (!options) process.exit(0);
+  if (!options) return;
 
   const testSelection = cliFramework && cliLanguage
     ? resolveTestSelectionFromArgv(argv)
     : await promptTestAndReport();
-  if (!testSelection) process.exit(0);
+  if (!testSelection) return;
 
   const pm = options.packageManager;
 
@@ -388,8 +390,7 @@ async function main(): Promise<void> {
       templateReady ? { minVisibleMs: TEMPLATE_SPINNER_MIN_MS } : undefined,
     );
   } catch (err) {
-    console.error(red(`\n  Failed to copy template: ${(err as Error).message}\n`));
-    process.exit(1);
+    throw new Error(`Failed to copy template: ${(err as Error).message}`);
   }
 
   const useAllEntries = options.entries.includes("__all__");
@@ -464,7 +465,14 @@ async function main(): Promise<void> {
   console.log(`  ${devCmd}\n`);
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+async function main(): Promise<void> {
+  await runCreateApp();
+}
+
+const isCli = import.meta.url.startsWith("file://") && process.argv[1] === fileURLToPath(import.meta.url);
+if (isCli) {
+  main().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}

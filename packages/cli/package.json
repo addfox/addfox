@@ -1,6 +1,6 @@
 {
   "name": "@addfox/cli",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "addfox CLI: addfox dev / build, parses argv and drives Rsbuild",
   "license": "MIT",
   "type": "module",
@@ -29,7 +29,8 @@
     "@addfox/rsbuild-plugin-extension-manifest": "workspace:*",
     "@addfox/rsbuild-plugin-extension-hmr": "workspace:*",
     "@addfox/rsbuild-plugin-extension-monitor": "workspace:*",
-    "@addfox/rsbuild-plugin-vue": "workspace:*"
+    "@addfox/rsbuild-plugin-vue": "workspace:*",
+    "create-addfox-app": "workspace:*"
   },
   "devDependencies": {
     "@rsbuild/core": "catalog:",

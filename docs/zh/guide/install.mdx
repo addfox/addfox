@@ -10,28 +10,28 @@ import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from 
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-pnpm create addfox-app
+pnpm dlx addfox@latest create
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-npx create-addfox-app
+npx addfox@latest create
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-yarn create addfox-app
+yarn dlx addfox@latest create
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-bun create addfox-app
+bunx addfox@latest create
 ```
 
   </Tab>
@@ -70,7 +70,7 @@ bun create addfox-app
 你也可以通过参数跳过部分交互（以最新 `create-addfox-app` 为准）：
 
 ```bash
-create-addfox-app [项目名] [选项]
+addfox create [项目名] [选项]
 ```
 
 | 选项 | 说明 |
@@ -91,13 +91,13 @@ create-addfox-app [项目名] [选项]
 
 ```bash
 # 创建 React + TypeScript 项目
-pnpm create addfox-app my-extension --framework react --language ts
+pnpm dlx addfox@latest create my-extension --framework react --language ts
 
 # 创建 Vue + JavaScript + UnoCSS，并初始化单元测试
-npx create-addfox-app my-vue-ext --framework vue --language js --style unocss --unit
+npx addfox@latest create my-vue-ext --framework vue --language js --style unocss --unit
 
 # 创建 Solid + TypeScript，并启用 E2E 与 Rsdoctor
-pnpm create addfox-app my-solid-ext --framework solid --language ts --e2e --rsdoctor
+pnpm dlx addfox@latest create my-solid-ext --framework solid --language ts --e2e --rsdoctor
 ```
 
 创建完成后，CLI 会显示后续步骤：

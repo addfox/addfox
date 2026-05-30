@@ -77,7 +77,8 @@ Addfox 在借鉴这些优秀实践的同时，走出了自己的道路：
 
 ```bash
 # 使用脚手架创建项目
-pnpm create addfox-app
+npx addfox@latest create
+# 或：pnpm dlx addfox@latest create
 
 # 进入项目目录
 cd my-extension

@@ -10,7 +10,8 @@
 
 Interactive scaffolder: generates a addfox-based extension project from options (template, package manager, entries, skills).
 
-- Commands: `create-addfox-app` or `pnpm create addfox-app` (and npm/yarn/bun equivalents)
+- Commands: `addfox create` or `npx addfox@latest create` (subcommand mode)
+- Legacy: `create-addfox-app` or `pnpm create addfox-app` (and npm/yarn/bun equivalents)
 - Flow: (1) select framework (vanilla / vue / react / preact / svelte / solid), (2) language (TypeScript / JavaScript), (3) package manager (pnpm / npm / yarn / bun), (4) entries to include (multi-select), (5) whether to install addfox skills (yes/no). Output to cwd or a given directory. Generated project uses **addfox.config.ts** or **addfox.config.js** with minimal manifest (entry discovery; no built-in entry paths in manifest).
 
 ## Templates

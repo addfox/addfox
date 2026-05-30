@@ -1,5 +1,19 @@
 # create-addfox-app
 
+## 0.2.2
+
+### Patch Changes
+
+- feat: add `create` subcommand support via `runCreateApp` export
+- feat: export `runCreateApp` from package index for programmatic usage
+- feat: print version on first line of terminal output
+- fix: avoid double-execution via `isCli` guard when imported as library
+- fix: coerce `targetDir` to string for numeric argv values
+- test: add CLI quick-exit and package export tests
+- docs: update `printHelp()` to include `addfox create` usage
+- Updated dependencies
+  - @addfox/pkg-manager@0.2.2
+
 ## 0.2.1
 
 ### Patch Changes

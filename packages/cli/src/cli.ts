@@ -63,6 +63,7 @@ function printHelp(): void {
     addfox <command> [options]
 
   Commands:
+    create [project-name]      Create a new addfox extension project
     dev                        Start development server with HMR
     build                      Build for production
     test                       Run tests with rstest (unit + optional E2E); forwards args to rstest
@@ -316,6 +317,14 @@ async function runBuild(root: string, argv: string[]): Promise<void> {
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
 
+  const command = argv[0];
+
+  if (command === "create") {
+    const { runCreateApp } = await import("create-addfox-app");
+    await runCreateApp(argv.slice(1));
+    return;
+  }
+
   if (argv.includes("--help") || argv.includes("-h")) {
     printHelp();
     return;
@@ -330,7 +339,6 @@ async function main(): Promise<void> {
   setAddfoxLoggerRawWrites(getRawWrites());
   log("Addfox " + getVersion() + " with " + PURPLE + "Rsbuild " + getRsbuildVersion(root) + RESET);
 
-  const command = argv[0];
   if (command === "test") {
     await runTest(root, argv);
     return;

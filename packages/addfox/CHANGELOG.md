@@ -1,4 +1,16 @@
-﻿# addfox
+# addfox
+
+## 0.2.2
+
+### Patch Changes
+
+- feat: add `create` subcommand via `addfox create`
+- chore: update root `create` script to use subcommand mode
+- docs: update README and all docs to recommend `npx addfox@latest create`
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-monitor@0.2.2
+  - @addfox/core@0.2.2
+  - @addfox/cli@0.2.2
 
 ## 0.2.1
 

@@ -1,5 +1,11 @@
 # @addfox/rsbuild-plugin-vue
 
+## 0.2.2
+
+### Patch Changes
+
+- feat: add create arg
+
 ## 0.2.1
 
 ### Patch Changes
