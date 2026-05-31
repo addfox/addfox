@@ -323,7 +323,7 @@ function updatePackageName(destDir: string, projectName: string): void {
   writeJsonFile(pkgPath, pkg);
 }
 
-function resolveLatestVersion(pkgName: string): string | null {
+export function resolveLatestVersion(pkgName: string): string | null {
   try {
     const output = execSync(`npm view ${pkgName} version --registry https://registry.npmjs.org/`, {
       encoding: "utf-8",
@@ -337,12 +337,15 @@ function resolveLatestVersion(pkgName: string): string | null {
   }
 }
 
-function updatePackageVersions(destDir: string): void {
+export function updatePackageVersions(
+  destDir: string,
+  versions: { addfox?: string | null; utils?: string | null } = {},
+): void {
   const pkgPath = resolve(destDir, "package.json");
   if (!existsSync(pkgPath)) return;
 
-  const addfoxVersion = resolveLatestVersion("addfox");
-  const utilsVersion = resolveLatestVersion("@addfox/utils");
+  const addfoxVersion = versions.addfox ?? resolveLatestVersion("addfox");
+  const utilsVersion = versions.utils ?? resolveLatestVersion("@addfox/utils");
 
   if (!addfoxVersion && !utilsVersion) return;
 

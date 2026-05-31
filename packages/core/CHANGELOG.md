@@ -1,5 +1,13 @@
 ﻿# @addfox/core
 
+## 0.2.3
+
+### Patch Changes
+
+- chore: resolve latest addfox versions from npm registry to avoid pnpm lowest-direct resolution
+- Updated dependencies
+  - @addfox/common@0.2.3
+
 ## 0.2.2
 
 ### Patch Changes
