@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.1.3
+
+### Patch Changes
+
+- chore: resolve latest addfox versions from npm registry to avoid pnpm lowest-direct resolution
+
 ## 0.1.2
 
 ### Patch Changes
