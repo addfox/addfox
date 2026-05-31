@@ -175,11 +175,16 @@ export class Pipeline {
       },
       output: {
         legalComments: 'none',
-        // Disable the default source map in dev mode and use SourceMapDevToolPlugin instead
-        sourceMap: false,
+        // Enable sourceMap so loaders generate source-map data, then override devtool
+        // to disable default .map file output; SourceMapDevToolPlugin handles inline
+        // source maps for project files while excluding vendor chunks.
+        sourceMap: ctx.isDev ? true : false,
       },
       tools: {
         rspack: {
+          // Disable default devtool in dev mode to let SourceMapDevToolPlugin handle
+          // inline source maps exclusively.
+          devtool: ctx.isDev ? false : undefined,
           plugins: rspackPlugins,
         },
       },
