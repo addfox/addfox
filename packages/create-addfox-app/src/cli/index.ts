@@ -37,7 +37,7 @@ import {
   type Language,
   type StyleEngine,
 } from "../template/catalog.ts";
-import { PACKAGE_MANAGER_CHOICES } from "../prompts/packageManager.ts";
+import { PACKAGE_MANAGER_CHOICES, PACKAGE_MANAGER_ORDER } from "../prompts/packageManager.ts";
 import { ENTRY_CHOICES } from "../scaffold/entries.ts";
 import { filterAppEntries, getExistingAppEntryDirs } from "../template/filterEntries.ts";
 import { generateAddfoxConfig } from "../config/generate.ts";
@@ -223,6 +223,7 @@ async function promptOptions(): Promise<{
       name: "packageManager",
       message: "Select package manager",
       choices: getPackageManagerChoicesColored(),
+      initial: Math.max(0, PACKAGE_MANAGER_ORDER.indexOf(detectPackageManager())),
       hint: PROMPT_SELECT_HINT,
     },
     {
