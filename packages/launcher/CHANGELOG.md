@@ -1,5 +1,11 @@
 # @addfox/launcher
 
+## 0.2.4
+
+### Patch Changes
+
+- fix: recover sourcemap of content/background
+
 ## 0.2.3
 
 ### Patch Changes

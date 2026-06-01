@@ -1,5 +1,15 @@
 # addfox
 
+## 0.2.4
+
+### Patch Changes
+
+- fix: recover sourcemap of content/background
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-monitor@0.2.4
+  - @addfox/core@0.2.4
+  - @addfox/cli@0.2.4
+
 ## 0.2.3
 
 ### Patch Changes

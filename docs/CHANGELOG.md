@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.1.4
+
+### Patch Changes
+
+- fix: recover sourcemap of content/background
+
 ## 0.1.3
 
 ### Patch Changes

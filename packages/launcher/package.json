@@ -1,6 +1,6 @@
 {
   "name": "@addfox/launcher",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Browser launcher for extension development — Chromium & Gecko (Firefox, Zen, etc.)",
   "license": "MIT",
   "type": "module",

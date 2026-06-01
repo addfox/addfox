@@ -1,6 +1,6 @@
 {
   "name": "@addfox/cli",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "addfox CLI: addfox dev / build, parses argv and drives Rsbuild",
   "license": "MIT",
   "type": "module",

@@ -1,5 +1,21 @@
 # @addfox/cli
 
+## 0.2.4
+
+### Patch Changes
+
+- fix: recover sourcemap of content/background
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-manifest@0.2.4
+  - @addfox/rsbuild-plugin-extension-monitor@0.2.4
+  - @addfox/rsbuild-plugin-extension-entry@0.2.4
+  - @addfox/rsbuild-plugin-extension-hmr@0.2.4
+  - @addfox/rsbuild-plugin-vue@0.2.4
+  - create-addfox-app@0.2.4
+  - @addfox/pkg-manager@0.2.4
+  - @addfox/common@0.2.4
+  - @addfox/core@0.2.4
+
 ## 0.2.3
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @addfox/rsbuild-plugin-extension-entry
 
+## 0.2.4
+
+### Patch Changes
+
+- fix: recover sourcemap of content/background
+- Updated dependencies
+  - @addfox/core@0.2.4
+
 ## 0.2.3
 
 ### Patch Changes
