@@ -1,6 +1,6 @@
 {
   "name": "@addfox/utils",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Extension utils: content UI (defineContentUI / mountContentUI) for content scripts",
   "license": "MIT",
   "type": "module",

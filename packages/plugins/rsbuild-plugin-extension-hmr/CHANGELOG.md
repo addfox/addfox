@@ -1,5 +1,15 @@
 # @addfox/rsbuild-plugin-extension-hmr
 
+## 0.2.4
+
+### Patch Changes
+
+- fix: recover sourcemap of content/background
+- Updated dependencies
+  - @addfox/launcher@0.2.4
+  - @addfox/common@0.2.4
+  - @addfox/core@0.2.4
+
 ## 0.2.3
 
 ### Patch Changes

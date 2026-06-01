@@ -736,9 +736,10 @@ function setupRspackConfig(
                         const hotUpdateGlobal = compilation.outputOptions?.hotUpdateGlobal || `rspackHotUpdate${uniqueName}`;
                         const safeHotUpdateGlobal = hotUpdateGlobal.replace(/["\\]/g, "\\$&");
                         const hotUpdateNoop = `(function(){var g=typeof globalThis!=="undefined"?globalThis:(typeof self!=="undefined"?self:(typeof window!=="undefined"?window:this));var w=typeof window!=="undefined"?window:null;if(g&&typeof g["${safeHotUpdateGlobal}"]==="undefined"){g["${safeHotUpdateGlobal}"]=function(){};}if(w&&w!==g&&typeof w["${safeHotUpdateGlobal}"]==="undefined"){w["${safeHotUpdateGlobal}"]=function(){};}})();`;
-                        const RawSource = compiler.webpack.sources.RawSource;
-                        assets[file] = new RawSource(
-                          HMR_NOOP_SCRIPT + "\n" + hotUpdateNoop + "\n" + original
+                        const { ConcatSource, RawSource } = compiler.webpack.sources;
+                        assets[file] = new ConcatSource(
+                          new RawSource(HMR_NOOP_SCRIPT + "\n" + hotUpdateNoop + "\n"),
+                          asset
                         );
                       } catch {
                         /* ignore asset modification errors */

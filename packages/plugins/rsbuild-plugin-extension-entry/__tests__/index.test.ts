@@ -911,17 +911,13 @@ describe("plugin-extension-entry", () => {
       .find(p => p.name === "rsbuild-plugin-extension-entry:hmr-noop");
     expect(noopPlugin).toBeDefined();
 
-    const mockAsset = { source: () => 'console.log("bg");' };
+    const { ConcatSource, RawSource } = require("@rspack/core").sources;
+    const originalCode = 'console.log("bg");';
+    const mockAsset = new RawSource(originalCode);
     const assets: Record<string, any> = { "background/index.js": mockAsset };
 
-    class MockRawSource {
-      constructor(private _source: string) {}
-      source() { return this._source; }
-      size() { return this._source.length; }
-    }
-
     const mockCompiler = {
-      webpack: { sources: { RawSource: MockRawSource } },
+      webpack: { sources: { ConcatSource, RawSource } },
       hooks: {
         compilation: {
           tap: (_name: string, fn: (compilation: any) => void) => {
@@ -949,6 +945,79 @@ describe("plugin-extension-entry", () => {
     expect(assets["background/index.js"].source()).toContain("addfox-hmr-noop");
     expect(assets["background/index.js"].source()).toContain('rspackHotUpdatetest-ext');
     expect(assets["popup/index.js"]).toBeUndefined();
+  });
+
+  it("setup onBeforeCreateCompiler hmr-noop plugin preserves source map when injecting noop", async () => {
+    const config = createMockConfig(testRoot, { hotReload: true });
+    const entries = createMockEntries(testRoot);
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot));
+    let onBeforeCb: ((arg: { bundlerConfigs: unknown[] }) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: () => {},
+      onBeforeCreateCompiler: (cb: (arg: { bundlerConfigs: unknown[] }) => void) => {
+        onBeforeCb = cb;
+      },
+    };
+    plugin.setup(api as never);
+    const bundlerConfig = {
+      plugins: [] as unknown[],
+      devServer: { hot: true },
+      watchOptions: {},
+      output: {},
+      optimization: { splitChunks: {} },
+    };
+    await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
+
+    const noopPlugin = (bundlerConfig.plugins as { name?: string; apply?: Function }[])
+      .find(p => p.name === "rsbuild-plugin-extension-entry:hmr-noop");
+    expect(noopPlugin).toBeDefined();
+
+    const { SourceMapSource, ConcatSource, RawSource } = require("@rspack/core").sources;
+
+    const originalCode = 'console.log("bg");';
+    const mockMap = { version: 3, sources: ["original.ts"], mappings: "AAAA" };
+    const mockAsset = new SourceMapSource(originalCode, "background/index.js", mockMap);
+    const assets: Record<string, any> = { "background/index.js": mockAsset };
+
+    const mockCompiler = {
+      webpack: { sources: { ConcatSource, RawSource } },
+      hooks: {
+        compilation: {
+          tap: (_name: string, fn: (compilation: any) => void) => {
+            fn({
+              PROCESS_ASSETS_STAGE_ADDITIONS: -100,
+              outputOptions: { uniqueName: "test-ext", hotUpdateGlobal: "rspackHotUpdatetest-ext" },
+              hooks: {
+                processAssets: {
+                  tap: (_opts: any, handler: (a: Record<string, any>) => void) => {
+                    handler(assets);
+                  },
+                },
+              },
+              entrypoints: new Map([
+                ["background", { chunks: [{ files: ["background/index.js"] }] }],
+              ]),
+            });
+          },
+        },
+      },
+    };
+
+    noopPlugin!.apply(mockCompiler);
+
+    const resultAsset = assets["background/index.js"];
+    const source = resultAsset.source();
+    expect(source).toContain("addfox-hmr-noop");
+    expect(source).toContain(originalCode);
+    // Ensure noop is injected only once at the top, not repeated inside modules
+    const noopCount = (source.match(/addfox-hmr-noop/g) || []).length;
+    expect(noopCount).toBe(1);
+
+    // Verify source map is preserved after injection
+    expect(typeof resultAsset.sourceAndMap).toBe("function");
+    const result = resultAsset.sourceAndMap();
+    expect(result.map).toBeDefined();
+    expect(result.map).not.toBeNull();
   });
 
   it("setup onBeforeCreateCompiler hmr-noop plugin skips non-js assets", async () => {

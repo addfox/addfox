@@ -10,7 +10,7 @@ function isFromBackgroundMessage(message: unknown): message is FromBackgroundMes
   return m.type === "FROM_BACKGROUND";
 }
 
-console.log("Content script loadeda123ff", fff);
+console.log("Content script loadeda123ff");
 
 browser.runtime.onMessage.addListener(
   (message: unknown) => {
