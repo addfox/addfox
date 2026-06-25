@@ -1,11 +1,9 @@
 ---
 name: addfox-skills
-description: Installable skill library for Addfox extension development. This page is aligned with c:/programs/skills and covers install commands, available skills, and repository layout.
+description: Installable skill library for Addfox extension development. 
 ---
 
 # Skills
-
-This page is aligned with the standalone skill repository at `c:/programs/skills`.
 
 It provides installable skills focused on browser extension development with Addfox.
 
@@ -15,23 +13,23 @@ From your project root:
 
 ```bash
 # Install all skills from the repo
-npx skills add addmo-dev/skills
+npx skills add addfox/skills
 
 # Install only specific skills
-npx skills add addmo-dev/skills --skill migrate-to-addfox
-npx skills add addmo-dev/skills --skill addfox-best-practices
-npx skills add addmo-dev/skills --skill extension-functions-best-practices
-npx skills add addmo-dev/skills --skill addfox-debugging
-npx skills add addmo-dev/skills --skill addfox-testing
+npx skills add addfox/skills --skill migrate-to-addfox
+npx skills add addfox/skills --skill addfox-best-practices
+npx skills add addfox/skills --skill extension-functions-best-practices
+npx skills add addfox/skills --skill addfox-debugging
+npx skills add addfox/skills --skill addfox-testing
 
 # List available skills first
-npx skills add addmo-dev/skills --list
+npx skills add addfox/skills --list
 ```
 
 Or use the full GitHub URL:
 
 ```bash
-npx skills add https://github.com/addmo-dev/skills
+npx skills add https://github.com/addfox/skills
 ```
 
 ## Available Skills
