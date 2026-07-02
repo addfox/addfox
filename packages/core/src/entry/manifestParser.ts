@@ -23,9 +23,16 @@ interface ParsedEntryFromManifest {
 }
 
 /** Whether the path is a source file path (not a build output path) */
-function isSourceFilePath(path: string): boolean {
+function isSourceFilePath(path: string, allowHtml = false): boolean {
   const lower = path.trim().toLowerCase();
-  return /\.(ts|tsx|js|jsx)$/.test(lower) && !lower.includes("/dist/") && !lower.includes("\\dist\\");
+  if (lower.includes("/dist/") || lower.includes("\\dist\\")) return false;
+  if (/\.(ts|tsx|js|jsx)$/.test(lower)) return true;
+  return allowHtml && isHtmlSourcePath(lower);
+}
+
+function isHtmlSourcePath(path: string): boolean {
+  if (!path.endsWith(".html")) return false;
+  return !/^(\/|[a-z]:[\\/])/.test(path);
 }
 
 /** Extract entry name from path */
@@ -112,7 +119,7 @@ function extractPopup(
     }
   }
 
-  if (popupPath && isSourceFilePath(popupPath)) {
+  if (popupPath && isSourceFilePath(popupPath, true)) {
     const entryName = inferEntryNameFromPath(popupPath) ?? "popup";
     return {
       name: entryName,
@@ -146,7 +153,7 @@ function extractOptions(manifest: ManifestRecord): ExtractedEntry | null {
     }
   }
 
-  if (optionsPath && isSourceFilePath(optionsPath)) {
+  if (optionsPath && isSourceFilePath(optionsPath, true)) {
     const entryName = inferEntryNameFromPath(optionsPath) ?? "options";
     return {
       name: entryName,
@@ -161,7 +168,7 @@ function extractOptions(manifest: ManifestRecord): ExtractedEntry | null {
 /** Extract devtools_page path */
 function extractDevtools(manifest: ManifestRecord): ExtractedEntry | null {
   const devtoolsPage = manifest.devtools_page;
-  if (typeof devtoolsPage === "string" && isSourceFilePath(devtoolsPage)) {
+  if (typeof devtoolsPage === "string" && isSourceFilePath(devtoolsPage, true)) {
     const entryName = inferEntryNameFromPath(devtoolsPage) ?? "devtools";
     return {
       name: entryName,
@@ -177,7 +184,7 @@ function extractSidepanel(manifest: ManifestRecord): ExtractedEntry | null {
   const sidePanel = manifest.side_panel as Record<string, unknown> | undefined;
   const defaultPath = sidePanel?.default_path;
   
-  if (typeof defaultPath === "string" && isSourceFilePath(defaultPath)) {
+  if (typeof defaultPath === "string" && isSourceFilePath(defaultPath, true)) {
     const entryName = inferEntryNameFromPath(defaultPath) ?? "sidepanel";
     return {
       name: entryName,
@@ -195,7 +202,7 @@ function extractSandbox(manifest: ManifestRecord): ExtractedEntry | null {
   
   if (Array.isArray(pages) && pages.length > 0) {
     const firstPage = pages[0];
-    if (typeof firstPage === "string" && isSourceFilePath(firstPage)) {
+    if (typeof firstPage === "string" && isSourceFilePath(firstPage, true)) {
       const entryName = inferEntryNameFromPath(firstPage) ?? "sandbox";
       return {
         name: entryName,
@@ -218,7 +225,7 @@ function extractOverrides(manifest: ManifestRecord): ExtractedEntry[] {
   
   for (const key of overrideKeys) {
     const path = overrides[key];
-    if (typeof path === "string" && isSourceFilePath(path)) {
+    if (typeof path === "string" && isSourceFilePath(path, true)) {
       const entryName = inferEntryNameFromPath(path) ?? key;
       entries.push({
         name: entryName,
@@ -263,7 +270,8 @@ function extractContentScripts(manifest: ManifestRecord): ExtractedEntry | null 
 
 /**
  * Extract all entry config from manifest.
- * Only extracts fields that specify source file paths (.ts/.tsx/.js/.jsx).
+ * Only extracts fields that specify source file paths (.ts/.tsx/.js/.jsx),
+ * plus HTML files for manifest UI page fields.
  */
 export function extractEntriesFromManifest(
   manifest: ManifestRecord,

@@ -4,8 +4,8 @@
 
 ## 概述
 
-- **类型**：`{ port?: number; autoRefreshContentPage?: boolean }`
-- **默认值**：`{ port: 23333, autoRefreshContentPage: true }`
+- **类型**：`{ wsPort?: number; autoRefreshContentPage?: boolean }`
+- **默认值**：`{ wsPort: 23333, autoRefreshContentPage: true }`
 - **是否必需**：否
 
 ## 用法
@@ -16,7 +16,7 @@ import { defineConfig } from "addfox";
 
 export default defineConfig({
   hotReload: {
-    port: 23333,                    // WebSocket 端口
+    wsPort: 23333,                  // WebSocket 端口
     autoRefreshContentPage: false,   // content 变更时自动刷新页面
   },
 });

@@ -26,9 +26,19 @@ export class CDPClient {
   constructor(
     private incoming: NodeJS.ReadableStream,
     private outgoing: NodeJS.WritableStream,
+    private onClose?: () => void,
   ) {
     (incoming as Readable).setEncoding("utf8");
     incoming.on("data", (chunk: string) => this.onData(chunk));
+    incoming.on("close", () => this.emitClose());
+    incoming.on("end", () => this.emitClose());
+  }
+
+  private emitClose(): void {
+    if (!this.onClose) return;
+    const cb = this.onClose;
+    this.onClose = undefined;
+    cb();
   }
 
   private onData(chunk: string): void {
@@ -54,14 +64,26 @@ export class CDPClient {
     }
   }
 
-  sendCommand(method: string, params?: Record<string, unknown>): Promise<unknown> {
+  sendCommand(method: string, params?: Record<string, unknown>, timeoutMs = 5000): Promise<unknown> {
     if (this.closed) return Promise.reject(new Error("CDP client closed"));
     const id = ++this.id;
     const cmd: CDPCommand = { id, method, params };
-    const promise = new Promise<CDPResponse>((resolve) => {
+    const promise = new Promise<CDPResponse>((resolve, reject) => {
       this.pending.set(id, resolve);
+      if (timeoutMs > 0) {
+        setTimeout(() => {
+          if (this.pending.has(id)) {
+            this.pending.delete(id);
+            reject(new Error(`CDP command ${method} timed out after ${timeoutMs}ms`));
+          }
+        }, timeoutMs);
+      }
     });
-    this.outgoing.write(JSON.stringify(cmd) + "\0");
+    // Defer the pipe write to the next event loop tick so a blocked Chrome
+    // pipe cannot starve Ctrl+C/SIGINT handling on Windows.
+    setImmediate(() => {
+      this.outgoing.write(JSON.stringify(cmd) + "\0");
+    });
     return promise.then((res) => {
       if (res.error) {
         const err = new Error(res.error.message);
@@ -87,6 +109,7 @@ export function isLoadUnpackedUnsupported(err: unknown): boolean {
     err instanceof Error &&
     (err.message.includes("Extensions.loadUnpacked") ||
       err.message.includes("not found") ||
-      err.message.includes("Could not find method"))
+      err.message.includes("Could not find method") ||
+      err.message.includes("timed out"))
   );
 }

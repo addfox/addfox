@@ -18,6 +18,13 @@ export interface ChromiumLaunchOptions extends CommonLaunchOptions {
   remoteDebuggingPort?: number;
   /** Options for browser path resolution */
   pathOptions?: import("../types").PathOptions;
+  /**
+   * How Chromium should load unpacked extensions.
+   *
+   * - "cdp": start with remote-debugging-pipe and wait for Extensions.loadUnpacked.
+   * - "load-extension": pass --load-extension at startup and return once the browser process starts.
+   */
+  extensionLoadMode?: "cdp" | "load-extension";
 }
 
 function log(message: string, verbose?: boolean): void {
@@ -25,6 +32,21 @@ function log(message: string, verbose?: boolean): void {
 }
 
 const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
+async function waitForCDPReady(cdp: CDPClient, verbose: boolean, timeoutMs = 5000): Promise<void> {
+  const start = performance.now();
+  let attempt = 0;
+  while (performance.now() - start < timeoutMs) {
+    attempt++;
+    try {
+      await cdp.sendCommand("Target.getTargets", {}, 100);
+      log(`CDP ready after ${attempt} attempt(s), ${Math.round(performance.now() - start)}ms`, verbose);
+      return;
+    } catch {}
+    await delay(50);
+  }
+  throw new Error(`CDP not ready within ${timeoutMs}ms`);
+}
 
 /**
  * Build the chrome-launcher style flags for Chromium.
@@ -40,11 +62,16 @@ export function buildChromeFlags(
 
   // Stability flags (similar to ChromeLauncher.defaultFlags minus exclusions)
   flags.push(
-    "--disable-features=Translate,OptimizationHints,MediaRouter,DialMediaRouteProvider,InterestFeedContentSuggestions,CertificateTransparencyComponentUpdater,AutofillServerCommunication,PrivacySandboxAdsApiOverride",
+    "--disable-features=Translate,OptimizationHints,MediaRouter,DialMediaRouteProvider,InterestFeedContentSuggestions,CertificateTransparencyComponentUpdater,AutofillServerCommunication,PrivacySandboxAdsApiOverride,SafeBrowsingEnhancedProtection,SafeBrowsingPhishingProtection",
     "--disable-background-timer-throttling",
     "--disable-backgrounding-occluded-windows",
     "--disable-renderer-backgrounding",
     "--no-first-run",
+    "--disable-component-update",
+    "--safebrowsing-disable-auto-update",
+    "--disable-background-networking",
+    "--disable-client-side-phishing-detection",
+    "--no-default-browser-check",
   );
 
   // DevTools
@@ -83,14 +110,28 @@ function makeBrowserProcessFromProc(
   verbose: boolean,
   onExit?: (code: number | null, signal: NodeJS.Signals | null) => void,
 ): BrowserProcess {
+  let resolved = false;
   const exitPromise = new Promise<void>((resolve) => {
     proc.on("exit", (code, signal) => {
+      if (resolved) return;
+      resolved = true;
       log(`Process exited (code: ${code}, signal: ${signal})`, verbose);
-      onExit?.(code, signal);
+      try {
+        onExit?.(code, signal);
+      } catch {
+        // ignore callback errors
+      }
       resolve();
     });
     proc.on("error", (err) => {
+      if (resolved) return;
+      resolved = true;
       console.error(`Process error: ${err.message}`);
+      try {
+        onExit?.(null, null);
+      } catch {
+        // ignore callback errors
+      }
       resolve();
     });
   });
@@ -110,6 +151,67 @@ function makeBrowserProcessFromProc(
       await exitPromise;
     },
   };
+}
+
+function hasPageTarget(result: unknown): boolean {
+  const infos = (result as { targetInfos?: { type?: string }[] } | null)?.targetInfos;
+  return Array.isArray(infos) && infos.some((info) => info?.type === "page");
+}
+
+function killBrowserProcess(proc: ChildProcess): void {
+  try {
+    if (process.platform === "win32") {
+      killProcessTreeWindows(proc);
+      return;
+    }
+    process.kill(-proc.pid!, "SIGKILL");
+  } catch {
+    proc.kill("SIGKILL");
+  }
+}
+
+function startPageTargetWatcher(
+  cdp: CDPClient,
+  proc: ChildProcess,
+  verbose: boolean,
+  onWindowClosed: () => void,
+): () => void {
+  let stopped = false;
+  let sawPageTarget = false;
+  let timer: ReturnType<typeof setTimeout> | null = null;
+
+  const stop = (): void => {
+    stopped = true;
+    if (timer) clearTimeout(timer);
+    timer = null;
+  };
+
+  const schedule = (): void => {
+    if (stopped) return;
+    timer = setTimeout(() => { void check(); }, 1000);
+    if (typeof timer.unref === "function") timer.unref();
+  };
+
+  const check = async (): Promise<void> => {
+    try {
+      const result = await cdp.sendCommand("Target.getTargets", {}, 500);
+      const hasPage = hasPageTarget(result);
+      sawPageTarget = sawPageTarget || hasPage;
+      if (sawPageTarget && !hasPage) {
+        log("No browser page targets remain; treating browser window as closed", verbose);
+        stop();
+        onWindowClosed();
+        return;
+      }
+    } catch {
+      /* CDP may be closing; process exit handler covers that path. */
+    }
+    schedule();
+  };
+
+  proc.once("exit", stop);
+  schedule();
+  return stop;
 }
 
 /**
@@ -139,8 +241,8 @@ export async function launchChromium(options: ChromiumLaunchOptions): Promise<Br
   // Resolve extension paths
   const extensionPaths = (options.extensionPaths ?? []).map((p) => resolve(p));
 
-  // If no extensions to load, skip CDP and spawn directly
-  if (extensionPaths.length === 0) {
+  // If no extensions to load, or caller wants startup-flag loading, skip CDP and spawn directly.
+  if (extensionPaths.length === 0 || options.extensionLoadMode === "load-extension") {
     const flags = buildChromeFlags(options, userDataDir, extensionPaths, true);
     log(`Flags: ${flags.join(" ")}`, verbose);
     return spawnBrowserProcess({
@@ -161,13 +263,13 @@ export async function launchChromium(options: ChromiumLaunchOptions): Promise<Br
     detached: false,
   });
 
-  // Consume stderr to prevent buffer deadlock on Windows
+  // Consume stdout/stderr to prevent buffer deadlock on Windows
+  if (proc.stdout) {
+    proc.stdout.on("data", () => {});
+  }
   if (proc.stderr) {
     proc.stderr.on("data", () => {});
   }
-
-  // Wait for browser to initialize
-  await delay(800);
 
   const incoming = proc.stdio[4];
   const outgoing = proc.stdio[3];
@@ -175,22 +277,58 @@ export async function launchChromium(options: ChromiumLaunchOptions): Promise<Br
     throw new Error("Failed to create remote-debugging-pipe file descriptors");
   }
 
-  const cdp = new CDPClient(incoming as NodeJS.ReadableStream, outgoing as NodeJS.WritableStream);
+  // Create CDP client immediately so the incoming pipe is consumed and Chrome
+  // does not block writing its initial protocol messages.
+  let onExitCalled = false;
+  const callOnExit = () => {
+    if (onExitCalled) return;
+    onExitCalled = true;
+    options.onExit?.();
+  };
+  const cdp = new CDPClient(
+    incoming as NodeJS.ReadableStream,
+    outgoing as NodeJS.WritableStream,
+    () => {
+      log("CDP pipe closed", verbose);
+      callOnExit();
+    },
+  );
+
+  // Wait for browser to initialize
+  await waitForCDPReady(cdp, verbose, 5000);
+
   let needFallback = false;
 
   try {
     for (const extPath of extensionPaths) {
-      try {
-        await cdp.sendCommand("Extensions.loadUnpacked", { path: extPath });
-        log(`Loaded extension via CDP: ${extPath}`, verbose);
-      } catch (e) {
-        if (isLoadUnpackedUnsupported(e)) {
-          needFallback = true;
+      const loadStart = performance.now();
+      let lastErr: unknown = null;
+      let loaded = false;
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          await cdp.sendCommand("Extensions.loadUnpacked", { path: extPath }, 60000);
+          log(
+            `Loaded extension via CDP: ${extPath} (${Math.round(performance.now() - loadStart)}ms, attempt ${attempt})`,
+            verbose,
+          );
+          loaded = true;
           break;
+        } catch (e) {
+          lastErr = e;
+          if (isLoadUnpackedUnsupported(e)) {
+            needFallback = true;
+            break;
+          }
+          if (attempt < 3) {
+            log(`Extension load attempt ${attempt} failed for ${extPath}: ${e}, retrying...`, verbose);
+            await delay(500);
+          }
         }
-        // Log but continue for other errors (e.g., path not found)
-        console.error(`Failed to load extension ${extPath}: ${e}`);
       }
+      if (!loaded && !needFallback) {
+        console.error(`Failed to load extension ${extPath}: ${lastErr}`);
+      }
+      if (needFallback) break;
     }
   } catch {
     needFallback = true;
@@ -199,7 +337,18 @@ export async function launchChromium(options: ChromiumLaunchOptions): Promise<Br
   if (!needFallback) {
     // CDP mode succeeded
     log(`All extensions loaded via CDP`, verbose);
-    return makeBrowserProcessFromProc(proc, verbose, options.onExit);
+    const stopPageWatcher = startPageTargetWatcher(cdp, proc, verbose, () => {
+      killBrowserProcess(proc);
+      callOnExit();
+    });
+    const browserProcess = makeBrowserProcessFromProc(proc, verbose, callOnExit);
+    return {
+      process: browserProcess.process,
+      exit: async () => {
+        stopPageWatcher();
+        await browserProcess.exit();
+      },
+    };
   }
 
   // Attempt 2: Fallback to --load-extension

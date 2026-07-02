@@ -8,6 +8,7 @@ export type ChromiumRunnerOptions = {
   userDataDir?: string;
   args?: string[];
   verbose?: boolean;
+  extensionLoadMode?: "cdp" | "load-extension";
   onExit?: () => void;
 };
 
@@ -22,6 +23,7 @@ export async function runChromiumRunner(
     userDataDir: options.userDataDir,
     args: options.args,
     verbose: options.verbose,
+    extensionLoadMode: options.extensionLoadMode,
     onExit: options.onExit,
   });
   return {

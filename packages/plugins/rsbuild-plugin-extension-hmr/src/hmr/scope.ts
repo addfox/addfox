@@ -112,6 +112,33 @@ function getStatsFromCompilation(compilation: CompilationLike | null): StatsJson
 
 const normalizePath = (p: string): string => p.replace(/\\/g, "/");
 
+const PROJECT_METADATA_FILENAMES = new Set([
+  "package.json",
+  "pnpm-lock.yaml",
+  "package-lock.json",
+  "yarn.lock",
+  "bun.lock",
+  "bun.lockb",
+]);
+
+function basenameForPath(filePath: string): string {
+  const norm = normalizePath(filePath).replace(/^[a-zA-Z]:/, "");
+  const parts = norm.split("/");
+  return parts[parts.length - 1] ?? norm;
+}
+
+function isProjectMetadataPath(filePath: string): boolean {
+  return PROJECT_METADATA_FILENAMES.has(basenameForPath(filePath));
+}
+
+function filterSourceModifiedFiles(modifiedFiles: ReadonlySet<string>): Set<string> {
+  const sourceFiles = new Set<string>();
+  for (const filePath of modifiedFiles) {
+    if (!isProjectMetadataPath(filePath)) sourceFiles.add(filePath);
+  }
+  return sourceFiles;
+}
+
 function createPathMatcher(filePath: string) {
   const norm = normalizePath(filePath);
   return {
@@ -453,6 +480,7 @@ export function getReloadManagerDecision(
   context?: { compiler?: { modifiedFiles?: ReadonlySet<string> } }
 ): ReloadManagerDecision {
   const modifiedFiles = context?.compiler?.modifiedFiles;
+  const sourceModifiedFiles = modifiedFiles ? filterSourceModifiedFiles(modifiedFiles) : undefined;
   const entryToPaths = getEntryToModulePaths(stats);
   
   const compilation = getCompilationFromStats(stats);
@@ -463,14 +491,19 @@ export function getReloadManagerDecision(
   updateSignatures(contentSig, backgroundSig);
   
   const hasModifiedFiles = modifiedFiles != null && modifiedFiles.size > 0;
+  const hasSourceModifiedFiles = sourceModifiedFiles != null && sourceModifiedFiles.size > 0;
   const hasEntryMapping = entryToPaths.size > 0;
+
+  if (hasModifiedFiles && !hasSourceModifiedFiles) {
+    return { shouldNotify: false, contentChanged: false, backgroundChanged: false };
+  }
   
-  if (hasModifiedFiles && hasEntryMapping) {
-    const shouldNotify = doFilesAffectReloadManager(modifiedFiles, entryToPaths);
+  if (hasSourceModifiedFiles && hasEntryMapping) {
+    const shouldNotify = doFilesAffectReloadManager(sourceModifiedFiles, entryToPaths);
     return {
       shouldNotify,
-      contentChanged: shouldNotify && filesAffectEntry(modifiedFiles, entryToPaths, "content"),
-      backgroundChanged: shouldNotify && filesAffectEntry(modifiedFiles, entryToPaths, "background"),
+      contentChanged: shouldNotify && filesAffectEntry(sourceModifiedFiles, entryToPaths, "content"),
+      backgroundChanged: shouldNotify && filesAffectEntry(sourceModifiedFiles, entryToPaths, "background"),
     };
   }
   

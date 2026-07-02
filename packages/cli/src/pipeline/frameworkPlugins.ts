@@ -41,7 +41,7 @@ export function buildFrameworkPluginList(ctx: PipelineContext): LoosePlugin[] {
 
   const list: LoosePlugin[] = [];
   if (useEntry) {
-    list.push(entryPlugin(ctx.config, ctx.entries, ctx.distPath, { browser: ctx.browser }) as LoosePlugin);
+    list.push(entryPlugin(ctx.config, ctx.entries, ctx.distPath, { browser: ctx.browser, isDev: ctx.isDev }) as LoosePlugin);
   }
   list.push(...expanded);
 
@@ -49,7 +49,7 @@ export function buildFrameworkPluginList(ctx: PipelineContext): LoosePlugin[] {
     list.push(monitorPlugin(ctx.config, ctx.entries, ctx.browser) as LoosePlugin);
   }
   const devConnectPorts = ctx.isDev
-    ? resolveDevConnectPorts(ctx.config.hotReload, ctx.config.rsbuild)
+    ? resolveDevConnectPorts(ctx.config.hotReload, ctx.config.rsbuild, ctx.devServerPort)
     : undefined;
   list.push(extensionPlugin(ctx.config, ctx.entries, ctx.browser, ctx.distPath, devConnectPorts) as LoosePlugin);
   return list;

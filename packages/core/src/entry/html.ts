@@ -21,8 +21,13 @@ export function isScriptSrcRelative(src: string): boolean {
   return true;
 }
 
-const ENTRY_SCRIPT_REGEX =
+export const ENTRY_SCRIPT_REGEX =
   /<script\b[^>]*data-addfox-entry[^>]*>[\s\S]*?<\/script>/gi;
+
+/** Remove data-addfox-entry script tags from HTML content. */
+export function stripEntryScriptFromHtml(html: string): string {
+  return html.replace(ENTRY_SCRIPT_REGEX, "").trimEnd();
+}
 const HEAD_CLOSE_REGEX = /<\/head\s*>/i;
 
 /** Matches a single script tag with src attribute (for fallback). */

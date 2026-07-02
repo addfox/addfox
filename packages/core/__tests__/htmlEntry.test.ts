@@ -5,6 +5,7 @@ import { tmpdir } from "os";
 import { describe, expect, it, afterEach } from "@rstest/core";
 import {
   parseAddfoxEntryFromHtml,
+  stripEntryScriptFromHtml,
   getScriptInjectIfMatches,
   resolveScriptFromHtmlStrict,
   isScriptSrcRelative,
@@ -113,6 +114,14 @@ describe("htmlEntry", () => {
       expect(result).toBeDefined();
       expect(result!.src).toBe("./local.ts");
       expect(result!.inject).toBe("body");
+    });
+  });
+
+  describe("stripEntryScriptFromHtml", () => {
+    it("removes data-addfox-entry script tags from HTML string", () => {
+      const html =
+        '<html><body><h1>Hi</h1><script data-addfox-entry type="module" src="./main.ts"></script></body></html>';
+      expect(stripEntryScriptFromHtml(html)).toBe("<html><body><h1>Hi</h1></body></html>");
     });
   });
 

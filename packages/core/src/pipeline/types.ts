@@ -11,6 +11,7 @@ export interface PipelineContext {
   browser: BrowserTarget;
   cache?: boolean;
   report?: boolean | Record<string, unknown>;
+  devServerPort?: number;
   config: AddfoxResolvedConfig;
   baseEntries: EntryInfo[];
   entries: EntryInfo[];

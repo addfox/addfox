@@ -4,8 +4,8 @@
 
 ## 개요
 
-- **타입**: `{ port?: number; autoRefreshContentPage?: boolean }`
-- **기본값**: `{ port: 23333, autoRefreshContentPage: true }`
+- **타입**: `{ wsPort?: number; autoRefreshContentPage?: boolean }`
+- **기본값**: `{ wsPort: 23333, autoRefreshContentPage: true }`
 - **필수 여부**: 아니오
 
 ## 사용법
@@ -16,7 +16,7 @@ import { defineConfig } from "addfox";
 
 export default defineConfig({
   hotReload: {
-    port: 23333,                    // WebSocket 포트
+    wsPort: 23333,                  // WebSocket 포트
     autoRefreshContentPage: false,   // content 변경 시 페이지 자동 새로고침
   },
 });

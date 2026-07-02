@@ -3,5 +3,6 @@
   { "type": "dir", "name": "guide", "label": "Guía", "collapsible": true, "collapsed": false },
   { "type": "dir", "name": "config", "label": "Configuración", "collapsible": true, "collapsed": true },
   { "type": "dir", "name": "examples", "label": "Ejemplos", "collapsible": true, "collapsed": true },
-  { "type": "dir", "name": "blog", "label": "Blog", "collapsible": true, "collapsed": true }
+  { "type": "dir", "name": "blog", "label": "Blog", "collapsible": true, "collapsed": true },
+  { "type": "dir", "name": "gallery", "label": "Galería", "collapsible": true, "collapsed": true }
 ]

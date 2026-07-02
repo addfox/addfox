@@ -910,17 +910,25 @@ function buildDevConnectHosts(ports: number[]): string[] {
   const hosts: string[] = [];
   const seen = new Set<string>();
   const hostnames = ["127.0.0.1", "localhost"] as const;
+  for (const hostname of hostnames) {
+    for (const scheme of ["http", "ws"] as const) {
+      addDevHost(hosts, seen, `${scheme}://${hostname}:*`);
+    }
+  }
   for (const port of ports) {
     for (const hostname of hostnames) {
       for (const scheme of ["http", "ws"] as const) {
-        const host = `${scheme}://${hostname}:${port}`;
-        if (seen.has(host)) continue;
-        seen.add(host);
-        hosts.push(host);
+        addDevHost(hosts, seen, `${scheme}://${hostname}:${port}`);
       }
     }
   }
   return hosts;
+}
+
+function addDevHost(hosts: string[], seen: Set<string>, host: string): void {
+  if (seen.has(host)) return;
+  seen.add(host);
+  hosts.push(host);
 }
 
 function buildDefaultCsp(devHosts: string[]): string {

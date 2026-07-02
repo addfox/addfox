@@ -30,7 +30,7 @@ React-based browser extension using Addfox build tool. Uses `@rsbuild/plugin-rea
   - Only needed when auto-discovery fails or custom structure
 
 - **`hotReload`** - Dev server settings
-  - `port`: WebSocket port (default: 23333)
+  - `wsPort`: WebSocket port (default: 23333)
   - `autoRefreshContentPage`: Auto-refresh on content changes
 
 - **`debug`** - Enable debug logging (default: false)

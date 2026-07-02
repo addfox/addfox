@@ -1,0 +1,42 @@
+{
+  "name": "@addfox/message",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Schema-typed messaging for browser extensions with automatic context routing and RPC support",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.cjs",
+      "types": "./dist/esm/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "dev": "rslib build --watch",
+    "test": "rstest run",
+    "test:coverage": "rstest run --coverage"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@addfox/browser": "workspace:*"
+  },
+  "devDependencies": {
+    "@rsbuild/core": "catalog:",
+    "@rslib/core": "catalog:",
+    "@rstest/core": "catalog:",
+    "@rstest/coverage-istanbul": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}

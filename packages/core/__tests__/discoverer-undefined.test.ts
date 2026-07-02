@@ -47,8 +47,9 @@ describe("discoverer undefined branches", () => {
     fs.writeFileSync(path.join(dir, "popup.html"), "<html></html>", "utf-8");
     
     const entries = discoverEntries(dir);
-    // Should not find popup as entry since there's no script
-    expect(entries.find(e => e.name === "popup")).toBeUndefined();
+    const popup = entries.find(e => e.name === "popup");
+    expect(popup?.htmlOnly).toBe(true);
+    expect(popup?.scriptPath).toMatch(/popup\.html$/);
     
     fs.rmSync(dir, { recursive: true, force: true });
   });

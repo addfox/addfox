@@ -10,11 +10,11 @@
   },
   "dependencies": {
     "@addfox/utils": "workspace:*",
-    "svelte": "^4.2.0",
+    "svelte": "^5.56.4",
     "webextension-polyfill": "^0.10.0"
   },
   "devDependencies": {
-    "@rsbuild/plugin-svelte": "1.1.1",
+    "@rsbuild/plugin-svelte": "2.0.0",
     "@types/chrome": "^0.0.326",
     "addfox": "workspace:*",
     "typescript": "^5.0.0"

@@ -897,9 +897,9 @@ describe("plugin-extension", () => {
     expect(meta).not.toContain("- null");
   });
 
-  /** Dev CSP connect-src hosts for [23333, 3000] (127.0.0.1 + localhost for Rsbuild HMR fallback). */
+  /** Dev CSP connect-src hosts for [23333, 3000] plus localhost wildcard ports for Rsbuild fallback. */
   const DEV_CONNECT_SRC_23333_3000 =
-    "connect-src 'self' http://127.0.0.1:23333 ws://127.0.0.1:23333 http://localhost:23333 ws://localhost:23333 http://127.0.0.1:3000 ws://127.0.0.1:3000 http://localhost:3000 ws://localhost:3000;";
+    "connect-src 'self' http://127.0.0.1:* ws://127.0.0.1:* http://localhost:* ws://localhost:* http://127.0.0.1:23333 ws://127.0.0.1:23333 http://localhost:23333 ws://localhost:23333 http://127.0.0.1:3000 ws://127.0.0.1:3000 http://localhost:3000 ws://localhost:3000;";
 
   describe("dev CSP injection", () => {
     it("does not inject CSP when devConnectPorts is undefined", async () => {
@@ -953,7 +953,7 @@ describe("plugin-extension", () => {
       const manifest = JSON.parse(readFileSync(resolve(testRoot, "dist", "manifest.json"), "utf-8"));
       expect(manifest.content_security_policy).toEqual({
         extension_pages:
-          `script-src 'self'; connect-src 'self' https://example.com http://127.0.0.1:23333 ws://127.0.0.1:23333 http://localhost:23333 ws://localhost:23333 http://127.0.0.1:3000 ws://127.0.0.1:3000 http://localhost:3000 ws://localhost:3000;`,
+          `script-src 'self'; connect-src 'self' https://example.com http://127.0.0.1:* ws://127.0.0.1:* http://localhost:* ws://localhost:* http://127.0.0.1:23333 ws://127.0.0.1:23333 http://localhost:23333 ws://localhost:23333 http://127.0.0.1:3000 ws://127.0.0.1:3000 http://localhost:3000 ws://localhost:3000;`,
       });
     });
 
@@ -988,7 +988,7 @@ describe("plugin-extension", () => {
       afterEmitFn({});
       const manifest = JSON.parse(readFileSync(resolve(testRoot, "dist", "manifest.json"), "utf-8"));
       expect(manifest.content_security_policy.extension_pages).toBe(
-        "script-src 'self'; connect-src 'self' http://127.0.0.1:23333 ws://127.0.0.1:23333 http://localhost:23333 ws://localhost:23333 http://127.0.0.1:3000 ws://127.0.0.1:3000 http://localhost:3000 ws://localhost:3000;"
+        "script-src 'self'; connect-src 'self' http://127.0.0.1:23333 http://127.0.0.1:* ws://127.0.0.1:* http://localhost:* ws://localhost:* ws://127.0.0.1:23333 http://localhost:23333 ws://localhost:23333 http://127.0.0.1:3000 ws://127.0.0.1:3000 http://localhost:3000 ws://localhost:3000;"
       );
     });
   });

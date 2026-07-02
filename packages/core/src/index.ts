@@ -44,6 +44,7 @@ export type { EntryResolverOptions, EntryResolutionResult } from "./entry/resolv
 export type { ParsedEntryFromManifest, ExtractedEntry } from "./entry/manifestParser.js";
 export {
   parseAddfoxEntryFromHtml,
+  stripEntryScriptFromHtml,
   getScriptInjectIfMatches,
   resolveScriptFromHtmlStrict,
   isScriptSrcRelative,

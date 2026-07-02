@@ -10,12 +10,12 @@
   },
   "dependencies": {
     "@addfox/utils": "workspace:*",
-    "solid-js": "^1.8.0",
+    "solid-js": "^1.9.13",
     "webextension-polyfill": "^0.10.0"
   },
   "devDependencies": {
-    "@rsbuild/plugin-babel": "^1.2.0",
-    "@rsbuild/plugin-solid": "1.2.0",
+    "@rsbuild/plugin-babel": "^2.0.0",
+    "@rsbuild/plugin-solid": "1.2.2",
     "@types/chrome": "^0.0.326",
     "addfox": "workspace:*",
     "typescript": "^5.0.0"

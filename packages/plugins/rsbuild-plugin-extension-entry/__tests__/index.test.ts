@@ -625,9 +625,13 @@ describe("plugin-extension-entry", () => {
     await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
     const ignored = (bundlerConfig.watchOptions as Record<string, unknown>).ignored;
     expect(Array.isArray(ignored)).toBe(true);
-    expect((ignored as unknown[]).length).toBe(2);
-    expect((ignored as string[])[0]).toBe(mockAddfoxPackagingRoot(testRoot));
-    expect((ignored as string[])[1]).toBe("**/.addfox/**");
+    expect(ignored as string[]).toContain(mockAddfoxPackagingRoot(testRoot));
+    expect(ignored as string[]).toContain("**/.addfox/**");
+    expect(ignored as string[]).toContain(resolve(testRoot, "node_modules"));
+    expect(ignored as string[]).toContain("**/node_modules/**");
+    expect(ignored as string[]).toContain("**/.git/**");
+    expect(ignored as string[]).toContain("**/.turbo/**");
+    expect(ignored as string[]).toContain("**/.bun/**");
   });
 
   it("setup onBeforeCreateCompiler sets watchOptions and output", async () => {
@@ -861,7 +865,7 @@ describe("plugin-extension-entry", () => {
   });
 
   it("setup onBeforeCreateCompiler does not remove HMR plugin when hotReload is object (enabled)", async () => {
-    const config = createMockConfig(testRoot, { hotReload: { port: 23333 } });
+    const config = createMockConfig(testRoot, { hotReload: { wsPort: 23333 } });
     const entries = createMockEntries(testRoot);
     const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot));
     let onBeforeCb: ((arg: { bundlerConfigs: unknown[] }) => void) | null = null;
@@ -883,6 +887,85 @@ describe("plugin-extension-entry", () => {
     await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
     expect((bundlerConfig.plugins as unknown[]).length).toBe(3);
     expect((bundlerConfig.plugins as { constructor?: { name?: string } }[])[0].constructor?.name).toBe("HotModuleReplacementPlugin");
+    expect(bundlerConfig.devServer).toEqual({ hot: true });
+  });
+
+  it("setup onAfterDevCompile sends Rsbuild full-reload for changed HTML templates", async () => {
+    const config = createMockConfig(testRoot, { hotReload: true });
+    const entries = createMockEntries(testRoot);
+    const popupHtml = resolve(testRoot, "src/popup/index.html");
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot), { isDev: true });
+
+    const sockWrites: Array<{ type: string; data?: { path?: string } }> = [];
+    let onBeforeStartDevServerCb: ((arg: { server: { sockWrite: (type: string, data?: unknown) => void } }) => void) | null = null;
+    let onAfterCreateCompilerCb: ((arg: { compiler: { modifiedFiles: Set<string> } }) => void) | null = null;
+    let onAfterDevCompileCb: ((arg: { stats: { hasErrors: () => boolean }; isFirstCompile: boolean }) => Promise<void>) | null = null;
+
+    const api = {
+      modifyRsbuildConfig: () => {},
+      modifyHTMLTags: () => {},
+      onBeforeCreateCompiler: () => {},
+      onBeforeStartDevServer: (cb: (arg: { server: { sockWrite: (type: string, data?: unknown) => void } }) => void) => {
+        onBeforeStartDevServerCb = cb;
+      },
+      onAfterCreateCompiler: (cb: (arg: { compiler: { modifiedFiles: Set<string> } }) => void) => {
+        onAfterCreateCompilerCb = cb;
+      },
+      onAfterDevCompile: (cb: (arg: { stats: { hasErrors: () => boolean }; isFirstCompile: boolean }) => Promise<void>) => {
+        onAfterDevCompileCb = cb;
+      },
+    };
+    plugin.setup(api as never);
+
+    onBeforeStartDevServerCb!({
+      server: {
+        sockWrite: (type, data) => {
+          sockWrites.push({ type, data: data as { path?: string } | undefined });
+        },
+      },
+    });
+    onAfterCreateCompilerCb!({
+      compiler: { modifiedFiles: new Set([popupHtml]) },
+    });
+
+    await onAfterDevCompileCb!({
+      stats: { hasErrors: () => false },
+      isFirstCompile: true,
+    });
+    expect(sockWrites).toEqual([]);
+
+    await onAfterDevCompileCb!({
+      stats: { hasErrors: () => false },
+      isFirstCompile: false,
+    });
+    expect(sockWrites).toEqual([{ type: "full-reload", data: { path: "/popup/index.html" } }]);
+  });
+
+  it("setup onBeforeCreateCompiler keeps Rspack HMR and template fileDependencies in dev mode", async () => {
+    const config = createMockConfig(testRoot, { hotReload: true });
+    const entries = createMockEntries(testRoot);
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot), { isDev: true });
+    let onBeforeCb: ((arg: { bundlerConfigs: unknown[] }) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: () => {},
+      onBeforeCreateCompiler: (cb: (arg: { bundlerConfigs: unknown[] }) => void) => {
+        onBeforeCb = cb;
+      },
+    };
+    plugin.setup(api as never);
+    const hmrPlugin = { constructor: { name: "HotModuleReplacementPlugin" } };
+    const bundlerConfig = {
+      plugins: [hmrPlugin],
+      devServer: { hot: true },
+      watchOptions: {},
+      output: {},
+      optimization: { splitChunks: {} },
+    };
+    await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
+    const plugins = bundlerConfig.plugins as { name?: string }[];
+    expect((bundlerConfig.plugins as unknown[]).some((p) => p === hmrPlugin)).toBe(true);
+    expect(plugins.some((p) => p.name === "rsbuild-plugin-extension-entry:hmr-noop")).toBe(true);
+    expect(plugins.some((p) => p.name === "rsbuild-plugin-extension-entry:watch-templates")).toBe(true);
     expect(bundlerConfig.devServer).toEqual({ hot: true });
   });
 
@@ -1177,6 +1260,75 @@ describe("plugin-extension-entry", () => {
     expect(htmlConfig.filename).toBe("popup/index.html");
   });
 
+  it("setup source.entry uses internal stub and disables injection for html-only build entry", () => {
+    const popupDir = resolve(testRoot, "src", "popup");
+    mkdirSync(popupDir, { recursive: true });
+    const htmlPath = resolve(popupDir, "index.html");
+    writeFileSync(htmlPath, "<html><body>Popup</body></html>", "utf-8");
+    const config = createMockConfig(testRoot);
+    const entries: EntryInfo[] = [
+      { name: "popup", scriptPath: htmlPath, htmlPath, html: true, htmlOnly: true },
+    ];
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot));
+
+    let modifyCb: ((config: Record<string, unknown>) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: (cb: (config: Record<string, unknown>) => void) => {
+        modifyCb = cb;
+      },
+      onBeforeCreateCompiler: () => {},
+    };
+
+    plugin.setup(api as never);
+    const rsbuildConfig: Record<string, unknown> = {};
+    modifyCb!(rsbuildConfig);
+
+    const source = rsbuildConfig.source as { entry: Record<string, string> };
+    const html = rsbuildConfig.html as {
+      inject: (ctx: { entryName: string }) => false | "head" | "body";
+      template: (ctx: { entryName: string; value: string }) => string | void;
+    };
+    expect(source.entry.popup).toMatch(/html-entry-stubs[\\/]popup\.js$/);
+    expect(html.inject({ entryName: "popup" })).toBe(false);
+    expect(html.template({ entryName: "popup", value: "" })).toBe(htmlPath);
+  });
+
+  it("setup source.entry injects internal stub for html-only dev entry", () => {
+    const popupDir = resolve(testRoot, "src", "popup");
+    mkdirSync(popupDir, { recursive: true });
+    const htmlPath = resolve(popupDir, "index.html");
+    writeFileSync(htmlPath, "<html><body>Popup</body></html>", "utf-8");
+    const config = createMockConfig(testRoot);
+    const entries: EntryInfo[] = [
+      { name: "popup", scriptPath: htmlPath, htmlPath, html: true, htmlOnly: true },
+    ];
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot), {
+      browser: "chromium",
+      isDev: true,
+    });
+
+    let modifyCb: ((config: Record<string, unknown>) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: (cb: (config: Record<string, unknown>) => void) => {
+        modifyCb = cb;
+      },
+      onBeforeCreateCompiler: () => {},
+    };
+
+    plugin.setup(api as never);
+    const rsbuildConfig: Record<string, unknown> = {};
+    modifyCb!(rsbuildConfig);
+
+    const html = rsbuildConfig.html as {
+      inject: (ctx: { entryName: string }) => false | "head" | "body";
+      template: (ctx: { entryName: string; value: string }) => string | void;
+    };
+    const watchFiles = (rsbuildConfig.dev as Record<string, unknown>).watchFiles as { paths?: string[] };
+    expect(html.inject({ entryName: "popup" })).toBe("head");
+    expect(html.template({ entryName: "popup", value: "" })).toBe(htmlPath);
+    expect(watchFiles.paths).toContain(htmlPath);
+  });
+
   it("setup html.template returns undefined when entryName not in templateMap and no prevTemplate", () => {
     const config = createMockConfig(testRoot);
     const entries = createMockEntries(testRoot);
@@ -1305,6 +1457,75 @@ describe("plugin-extension-entry", () => {
     expect(htmlConfig.templateContent).toBeDefined();
     expect((htmlConfig.templateContent as string)).not.toContain("data-addfox-entry");
     expect((htmlConfig.templateContent as string)).toContain("<div id=\"root\">");
+  });
+
+  it("setup tools.htmlPlugin in dev mode keeps template file and skips templateContent for scriptInject", () => {
+    const popupDir = resolve(testRoot, "src", "popup");
+    mkdirSync(popupDir, { recursive: true });
+    const templatePath = resolve(popupDir, "index.html");
+    writeFileSync(
+      templatePath,
+      '<html><body><h1>Hi</h1><script data-addfox-entry src="./index.ts"></script></body></html>',
+      "utf-8"
+    );
+    const config = createMockConfig(testRoot);
+    const entries: EntryInfo[] = [
+      {
+        name: "popup",
+        scriptPath: resolve(popupDir, "index.ts"),
+        htmlPath: templatePath,
+        scriptInject: "body" as const,
+      },
+    ];
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot), { isDev: true });
+    let modifyCb: ((config: Record<string, unknown>) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: (cb: (config: Record<string, unknown>) => void) => {
+        modifyCb = cb;
+      },
+      onBeforeCreateCompiler: () => {},
+    };
+    plugin.setup(api as never);
+    const rsbuildConfig: Record<string, unknown> = {};
+    modifyCb!(rsbuildConfig);
+    const htmlPluginFn = (rsbuildConfig.tools as Record<string, unknown>).htmlPlugin as (
+      htmlConfig: Record<string, unknown>,
+      ctx: { entryName: string }
+    ) => void;
+    const htmlConfig: Record<string, unknown> = {};
+    htmlPluginFn(htmlConfig, { entryName: "popup" });
+    expect(htmlConfig.templateContent).toBeUndefined();
+  });
+
+  it("setup modifyHTML strips data-addfox-entry for scriptInject entries in dev mode", () => {
+    const popupDir = resolve(testRoot, "src", "popup");
+    mkdirSync(popupDir, { recursive: true });
+    const templatePath = resolve(popupDir, "index.html");
+    const entries: EntryInfo[] = [
+      {
+        name: "popup",
+        scriptPath: resolve(popupDir, "index.ts"),
+        htmlPath: templatePath,
+        scriptInject: "body" as const,
+      },
+    ];
+    const plugin = entryPlugin(createMockConfig(testRoot), entries, mockChromiumDist(testRoot), { isDev: true });
+
+    let htmlModifyHandler: ((html: string, ctx: { filename: string }) => string) | null = null;
+    const api = {
+      modifyRsbuildConfig: () => {},
+      modifyHTML: (opts: { handler: (html: string, ctx: { filename: string }) => string }) => {
+        htmlModifyHandler = opts.handler;
+      },
+      onBeforeCreateCompiler: () => {},
+    };
+    plugin.setup(api as never);
+
+    const input =
+      '<html><body><h1>Hi</h1><script data-addfox-entry src="./index.ts"></script><script defer src="/popup/main.js"></script></body></html>';
+    const out = htmlModifyHandler!(input, { filename: "popup/index.html" });
+    expect(out).not.toContain("data-addfox-entry");
+    expect(out).toContain("/popup/main.js");
   });
 
   it("setup tools.htmlPlugin when entry has scriptInject and HTML has no data-addfox-entry sets templateContent to full HTML", () => {
@@ -1535,9 +1756,13 @@ describe("plugin-extension-entry", () => {
     await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
     const ignored = (bundlerConfig.watchOptions as Record<string, unknown>).ignored;
     expect(Array.isArray(ignored)).toBe(true);
-    expect((ignored as unknown[]).length).toBe(3);
-    expect((ignored as string[])[1]).toBe(mockAddfoxPackagingRoot(testRoot));
-    expect((ignored as string[])[2]).toBe("**/.addfox/**");
+    expect((ignored as string[])[0]).toBe("foo");
+    expect(ignored as string[]).toContain(mockAddfoxPackagingRoot(testRoot));
+    expect(ignored as string[]).toContain("**/.addfox/**");
+    expect(ignored as string[]).toContain(resolve(testRoot, "node_modules"));
+    expect(ignored as string[]).toContain("**/node_modules/**");
+    expect(ignored as string[]).toContain("**/.cache/**");
+    expect(ignored as string[]).toContain("**/.parcel-cache/**");
   });
 
   it("setup onBeforeCreateCompiler with watchOptions.ignored as array", async () => {
@@ -1561,11 +1786,14 @@ describe("plugin-extension-entry", () => {
     await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
     const ignored = (bundlerConfig.watchOptions as Record<string, unknown>).ignored as unknown[];
     expect(Array.isArray(ignored)).toBe(true);
-    expect(ignored).toHaveLength(4);
     expect(ignored[0]).toBe("/node_modules");
     expect(ignored[1]).toBe("/.git");
-    expect(ignored[2]).toBe(mockAddfoxPackagingRoot(testRoot));
-    expect(ignored[3]).toBe("**/.addfox/**");
+    expect(ignored as string[]).toContain(mockAddfoxPackagingRoot(testRoot));
+    expect(ignored as string[]).toContain("**/.addfox/**");
+    expect(ignored as string[]).toContain(resolve(testRoot, "node_modules"));
+    expect(ignored as string[]).toContain("**/node_modules/**");
+    expect(ignored as string[]).toContain("**/.yarn/cache/**");
+    expect(ignored as string[]).toContain("**/.yarn/unplugged/**");
   });
 
   it("setup onBeforeCreateCompiler skips optimization when c.optimization is missing", async () => {
@@ -1920,9 +2148,13 @@ describe("plugin-extension-entry", () => {
       } as unknown as AddfoxResolvedConfig;
     }
 
-    function runEntryPluginForEntries(entries: EntryInfo[], manifest: Record<string, unknown>) {
+    function runEntryPluginForEntries(
+      entries: EntryInfo[],
+      manifest: Record<string, unknown>,
+      devOptions?: { isDev?: boolean }
+    ) {
       const config = pluginConfigWithManifest(manifest);
-      const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot));
+      const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot), devOptions);
       let modifyCb: ((c: Record<string, unknown>) => void) | null = null;
       const api = {
         modifyRsbuildConfig: (cb: (c: Record<string, unknown>) => void) => {
@@ -2059,6 +2291,47 @@ describe("plugin-extension-entry", () => {
       htmlPlugin(hc, { entryName: "options", entryValue: {} });
       expect(hc.mountId).toBeUndefined();
       expect(hc.title).toBe("Nested Options");
+    });
+
+    it("resolveEntries manifest HTML entries support script-backed and html-only pages", () => {
+      const base = appBase();
+      const popupDir = resolve(base, "popup");
+      const optionsDir = resolve(base, "options");
+      mkdirSync(popupDir, { recursive: true });
+      mkdirSync(optionsDir, { recursive: true });
+      const popupHtml = resolve(popupDir, "index.html");
+      const popupScript = resolve(popupDir, "main.ts");
+      const optionsHtml = resolve(optionsDir, "index.html");
+      writeFileSync(popupScript, "export {}\n", "utf-8");
+      writeFileSync(
+        popupHtml,
+        '<html><body><script data-addfox-entry type="module" src="./main.ts"></script></body></html>',
+        "utf-8"
+      );
+      writeFileSync(optionsHtml, "<html><body>Options</body></html>", "utf-8");
+
+      const manifest: ManifestRecord = {
+        name: "HTML Entries",
+        version: "1.0.0",
+        manifest_version: 3,
+        action: { default_popup: "./popup/index.html" },
+        options_ui: { page: "./options/index.html" },
+      };
+
+      const { entries } = resolveEntries({ entry: {} }, testRoot, base, manifest);
+      const popup = entries.find((e) => e.name === "popup");
+      const options = entries.find((e) => e.name === "options");
+      expect(popup?.scriptPath).toBe(popupScript);
+      expect(popup?.htmlPath).toBe(popupHtml);
+      expect(popup?.htmlOnly).toBeUndefined();
+      expect(options?.scriptPath).toBe(optionsHtml);
+      expect(options?.htmlPath).toBe(optionsHtml);
+      expect(options?.htmlOnly).toBe(true);
+
+      const { rsbuildConfig } = runEntryPluginForEntries(entries, manifest, { isDev: true });
+      const watchFiles = (rsbuildConfig.dev as Record<string, unknown>).watchFiles as { paths?: string[] };
+      expect(watchFiles.paths).toContain(popupHtml);
+      expect(watchFiles.paths).toContain(optionsHtml);
     });
 
     it("non-empty entry config skips manifest entry extraction (no replacement map)", () => {

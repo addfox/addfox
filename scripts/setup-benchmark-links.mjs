@@ -19,6 +19,8 @@ const packagesToLink = [
   'core',
   'common',
   'cli',
+  'launcher',
+  'pkg-manager',
 ];
 
 const pluginsToLink = [

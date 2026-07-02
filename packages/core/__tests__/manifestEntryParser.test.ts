@@ -57,6 +57,22 @@ describe("ManifestEntryParser", () => {
       expect(result.replacementMap.get("action.default_popup")).toBe("popup");
     });
 
+    it("extracts action.default_popup html path for MV3", () => {
+      const manifest: ManifestRecord = {
+        name: "Test",
+        version: "1.0",
+        manifest_version: 3,
+        action: {
+          default_popup: "./popup/index.html",
+        },
+      };
+
+      const result = extractEntriesFromManifest(manifest, "chromium");
+
+      expect(result.entries.popup).toBe("popup/index.html");
+      expect(result.replacementMap.get("action.default_popup")).toBe("popup");
+    });
+
     it("extracts browser_action.default_popup source path for MV2", () => {
       const manifest: ManifestRecord = {
         name: "Test",
@@ -187,7 +203,7 @@ describe("ManifestEntryParser", () => {
       expect(result.replacementMap.get("content_scripts[0].js[0]")).toBe("content");
     });
 
-    it("does not extract output paths (non-source files)", () => {
+    it("does not extract non-UI output paths as source entries", () => {
       const manifest: ManifestRecord = {
         name: "Test",
         version: "1.0",
@@ -195,16 +211,12 @@ describe("ManifestEntryParser", () => {
         background: {
           service_worker: "background/index.js",  // .js can be a source file too
         },
-        action: {
-          default_popup: "popup/index.html",  // HTML path, not a source file
-        },
       };
 
       const result = extractEntriesFromManifest(manifest, "chromium");
       
       // .js is treated as source (can be JS source)
       expect(result.entries.background).toBe("background/index.js");
-      // HTML path is not extracted as entry
       expect(result.entries.popup).toBeUndefined();
     });
 

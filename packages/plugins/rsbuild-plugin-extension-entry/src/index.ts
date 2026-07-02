@@ -1,9 +1,17 @@
 import { resolve, basename, extname, dirname, relative } from "path";
 import { dirname as posixDirname, relative as posixRelative } from "path/posix";
 import { existsSync, writeFileSync, mkdirSync } from "fs";
-import type { HtmlBasicTag, ModifyHTMLTagsFn, RsbuildConfig, RsbuildPluginAPI } from "@rsbuild/core";
+import type { Compiler as RspackCompiler } from "@rspack/core";
+import type { HtmlBasicTag, ModifyHTMLFn, ModifyHTMLTagsFn, RsbuildConfig, RsbuildPluginAPI } from "@rsbuild/core";
 import type { AddfoxResolvedConfig, EntryInfo, ScriptInjectPosition, BrowserTarget } from "@addfox/core";
-import { getManifestRecordForTarget, parseAddfoxEntryFromHtml } from "@addfox/core";
+import { getManifestRecordForTarget, parseAddfoxEntryFromHtml, stripEntryScriptFromHtml } from "@addfox/core";
+import {
+  buildHtmlTemplateReloadPathMap,
+  getModifiedFilesFromCompiler,
+  notifyHtmlTemplateFullReload,
+  statsHasErrors,
+  type HtmlFullReloadSender,
+} from "./htmlPageReload";
 
 /** hotReload: undefined = not set, object = enabled, false = explicitly disabled. Only when false do we disable Rspack HMR. */
 type HotReloadConfig = AddfoxResolvedConfig["hotReload"];
@@ -311,7 +319,7 @@ interface Compilation {
   fileDependencies: { add: (p: string) => void };
 }
 
-interface Compiler {
+interface WatchTemplatesCompiler {
   hooks: {
     compilation: {
       tap: (name: string, fn: (compilation: Compilation) => void) => void;
@@ -463,9 +471,18 @@ function createTemplateMap(entries: EntryInfo[]): Record<string, string> {
 }
 
 /** Create a map of entry names to their script inject positions. */
-function createScriptInjectMap(entries: EntryInfo[]): Record<string, ScriptInjectPosition> {
-  const map: Record<string, ScriptInjectPosition> = {};
+type HtmlInjectValue = ScriptInjectPosition | false;
+
+function createScriptInjectMap(
+  entries: EntryInfo[],
+  enableHtmlOnlyClient: boolean
+): Record<string, HtmlInjectValue> {
+  const map: Record<string, HtmlInjectValue> = {};
   for (const entry of entries) {
+    if (entry.htmlOnly) {
+      map[entry.name] = enableHtmlOnlyClient ? "head" : false;
+      continue;
+    }
     if (entry.scriptInject) {
       map[entry.name] = entry.scriptInject;
     }
@@ -479,14 +496,22 @@ function needsHtmlGeneration(entry: EntryInfo): boolean {
 }
 
 /** Build the source entry configuration. */
+function writeHtmlOnlyEntryStub(stubDir: string, entryName: string): string {
+  mkdirSync(stubDir, { recursive: true });
+  const stubPath = resolve(stubDir, `${entryName}.js`);
+  writeFileSync(stubPath, "export {};\n", "utf-8");
+  return stubPath;
+}
+
 function buildSourceEntry(
-  entries: EntryInfo[]
+  entries: EntryInfo[],
+  stubDir: string
 ): Record<string, string | { import: string | string[]; html?: boolean }> {
   const entry: Record<string, string | { import: string | string[]; html?: boolean }> = {};
 
   for (const e of entries) {
     if (needsHtmlGeneration(e)) {
-      entry[e.name] = e.scriptPath;
+      entry[e.name] = e.htmlOnly ? writeHtmlOnlyEntryStub(stubDir, e.name) : e.scriptPath;
     } else {
       entry[e.name] = { import: e.scriptPath, html: false };
     }
@@ -609,8 +634,8 @@ function createTemplateHandler(
 
 /** Create the HTML inject position handler. */
 function createInjectHandler(
-  scriptInjectMap: Record<string, ScriptInjectPosition>
-): ScriptInjectPosition | ((ctx: { entryName: string }) => ScriptInjectPosition) {
+  scriptInjectMap: Record<string, HtmlInjectValue>
+): HtmlInjectValue | ((ctx: { entryName: string }) => HtmlInjectValue) {
   const hasInjectMap = Object.keys(scriptInjectMap).length > 0;
 
   return hasInjectMap
@@ -619,12 +644,25 @@ function createInjectHandler(
 }
 
 /** Create the HTML plugin configuration handler. */
+function createStripEntryScriptModifyHTMLHandler(
+  outputMap: EntryOutputMap,
+  entryByName: Map<string, EntryInfo>
+): ModifyHTMLFn {
+  return (html, ctx) => {
+    const entryName = entryNameForHtmlOutputFile(outputMap, ctx.filename);
+    const entry = entryName ? entryByName.get(entryName) : undefined;
+    if (!entry?.scriptInject) return html;
+    return stripEntryScriptFromHtml(html);
+  };
+}
+
 function createHtmlPluginHandler(
   outputMap: EntryOutputMap,
   entryByName: Map<string, EntryInfo>,
   prevHtmlPlugin: unknown,
   manifestHtmlDefaults: ManifestHtmlDefaults,
-  entryNamesWithManifestRelativeFavicon: Set<string>
+  entryNamesWithManifestRelativeFavicon: Set<string>,
+  isDev: boolean
 ): (htmlConfig: Record<string, unknown>, ctx: HtmlPluginContext) => void {
   return (htmlConfig: Record<string, unknown>, ctx: HtmlPluginContext): void => {
     // Call previous handler if exists
@@ -647,8 +685,9 @@ function createHtmlPluginHandler(
       htmlConfig.filename = outputMap.html[ctx.entryName];
     }
 
-    // Apply stripped template content for scriptInject entries
-    if (entry?.scriptInject && entry.htmlPath && existsSync(entry.htmlPath)) {
+    // Dev: keep html.template as a file path so template edits re-read from disk.
+    // scriptInject entries strip data-addfox-entry via modifyHTML instead.
+    if (!isDev && entry?.scriptInject && entry.htmlPath && existsSync(entry.htmlPath)) {
       const content = getStrippedTemplateContent(entry.htmlPath);
       if (content) {
         htmlConfig.templateContent = content;
@@ -660,11 +699,11 @@ function createHtmlPluginHandler(
 /** Create rspack plugin for watching HTML template files. */
 function createWatchTemplatesPlugin(htmlPaths: string[]): {
   name: string;
-  apply: (compiler: Compiler) => void;
+  apply: (compiler: WatchTemplatesCompiler) => void;
 } {
   return {
     name: "rsbuild-plugin-extension-entry:watch-templates",
-    apply(compiler: Compiler): void {
+    apply(compiler: WatchTemplatesCompiler): void {
       compiler.hooks.compilation.tap("rsbuild-plugin-extension-entry:watch-templates", (compilation) => {
         for (const p of htmlPaths) {
           if (existsSync(p)) {
@@ -678,6 +717,28 @@ function createWatchTemplatesPlugin(htmlPaths: string[]): {
 
 interface WatchOptionsLike {
   ignored?: string | RegExp | Array<string | RegExp>;
+}
+
+function buildDefaultWatchIgnores(root: string, outputRoot: string): string[] {
+  const packagingRoot = resolve(root, outputRoot);
+  const nodeModulesRoot = resolve(root, "node_modules");
+  return [
+    packagingRoot,
+    "**/.addfox/**",
+    nodeModulesRoot,
+    "**/node_modules/**",
+    "**/.git/**",
+    "**/.turbo/**",
+    "**/.cache/**",
+    "**/.parcel-cache/**",
+    "**/.vite/**",
+    "**/.rsbuild/**",
+    "**/.rspack/**",
+    "**/.pnpm-store/**",
+    "**/.yarn/cache/**",
+    "**/.yarn/unplugged/**",
+    "**/.bun/**",
+  ];
 }
 
 /** Setup rspack configuration before compiler creation. */
@@ -696,7 +757,6 @@ function setupRspackConfig(
 ): void {
   const { root, outputRoot, outDir, htmlPaths, outputMap, entryNames, hotReloadDisabled } = context;
   const distPath = resolve(root, outputRoot, outDir);
-  const packagingWatchIgnoreRoot = resolve(root, outputRoot);
 
   if (hotReloadDisabled) {
     disableRspackHmrInPlace(bundlerConfig);
@@ -755,22 +815,24 @@ function setupRspackConfig(
     });
   }
 
-  // Add watch templates plugin
+  // Add template dependencies so HTML edits emit updated output files.
   if (htmlPaths.length > 0) {
     const rspackConfig = bundlerConfig as { plugins?: unknown[] };
     rspackConfig.plugins = rspackConfig.plugins ?? [];
     rspackConfig.plugins.push(createWatchTemplatesPlugin(htmlPaths));
   }
 
-  // Ignore the whole Addfox packaging dir (e.g. .addfox): browser outputs, zips, meta.md, report, etc.
+  // Ignore generated packaging output and dependencies. Large apps can emit
+  // dependency file events during writes/cleanup, which otherwise retrigger dev builds.
   const watchOpts = (bundlerConfig.watchOptions as WatchOptionsLike | undefined) ?? {};
   const existingIgnored = watchOpts.ignored;
+  const addfoxIgnored = buildDefaultWatchIgnores(root, outputRoot);
   const ignoredList: (string | RegExp)[] = Array.isArray(existingIgnored)
-    ? [...existingIgnored, packagingWatchIgnoreRoot, "**/.addfox/**"]
+    ? [...existingIgnored, ...addfoxIgnored]
     : existingIgnored != null
-      ? [existingIgnored, packagingWatchIgnoreRoot, "**/.addfox/**"]
-      : [packagingWatchIgnoreRoot, "**/.addfox/**"];
-  bundlerConfig.watchOptions = { ...watchOpts, ignored: ignoredList as string[] };
+      ? [existingIgnored, ...addfoxIgnored]
+      : addfoxIgnored;
+  bundlerConfig.watchOptions = { ...watchOpts, ignored: ignoredList };
 
   // Setup output configuration
   if (bundlerConfig.output) {
@@ -831,7 +893,7 @@ function modifyRsbuildConfig(
   context: {
     entry: Record<string, string | { import: string | string[]; html?: boolean }>;
     templateMap: Record<string, string>;
-    scriptInjectMap: Record<string, ScriptInjectPosition>;
+    scriptInjectMap: Record<string, HtmlInjectValue>;
     outputMap: EntryOutputMap;
     entryByName: Map<string, EntryInfo>;
     htmlPaths: string[];
@@ -840,6 +902,7 @@ function modifyRsbuildConfig(
     distPath: string;
     manifestHtmlDefaults: ManifestHtmlDefaults;
     entryNamesWithManifestRelativeFavicon: Set<string>;
+    isDev: boolean;
   }
 ): void {
   const {
@@ -854,6 +917,7 @@ function modifyRsbuildConfig(
     distPath,
     manifestHtmlDefaults,
     entryNamesWithManifestRelativeFavicon,
+    isDev,
   } = context;
 
   // Setup source entry
@@ -878,7 +942,8 @@ function modifyRsbuildConfig(
     entryByName,
     prevHtmlPlugin,
     manifestHtmlDefaults,
-    entryNamesWithManifestRelativeFavicon
+    entryNamesWithManifestRelativeFavicon,
+    isDev
   );
 
   // Watch HTML templates
@@ -897,6 +962,8 @@ function modifyRsbuildConfig(
 export type EntryPluginDevOptions = {
   /** When Firefox and hot reload is on, disable Rspack HMR (use web-ext reload instead). */
   browser?: BrowserTarget;
+  /** True for `addfox dev`; used to inject the Rsbuild client into HTML-only pages. */
+  isDev?: boolean;
 };
 
 function shouldDisableRspackHmrForFirefox(
@@ -920,10 +987,11 @@ export function entryPlugin(
   const publicDir = resolve(root, "public");
 
   // Build all lookup maps and configurations
-  const entry = buildSourceEntry(entries);
+  const entry = buildSourceEntry(entries, resolve(root, outputRoot, "html-entry-stubs"));
   const entryNames = new Set(Object.keys(entry));
   const templateMap = createTemplateMap(entries);
-  const scriptInjectMap = createScriptInjectMap(entries);
+  const enableHtmlOnlyClient = devOptions?.isDev === true && resolvedConfig.hotReload !== false;
+  const scriptInjectMap = createScriptInjectMap(entries, enableHtmlOnlyClient);
   const outputMap = buildEntryOutputMap(entries, appDir);
   const entryByName = new Map(entries.map((e) => [e.name, e]));
   const htmlPaths = entries.filter((e) => e.htmlPath).map((e) => e.htmlPath!);
@@ -931,6 +999,9 @@ export function entryPlugin(
   const browserTarget: BrowserTarget = devOptions?.browser ?? "chromium";
   const manifestHtmlDefaults = buildManifestHtmlDefaults(resolvedConfig.manifest, browserTarget);
   const entryNamesWithManifestRelativeFavicon = new Set<string>();
+
+  const isDev = devOptions?.isDev === true;
+  const hasScriptInjectEntry = entries.some((entry) => entry.scriptInject);
 
   const modifyConfigContext = {
     entry,
@@ -944,6 +1015,7 @@ export function entryPlugin(
     distPath,
     manifestHtmlDefaults,
     entryNamesWithManifestRelativeFavicon,
+    isDev,
   };
 
   return {
@@ -965,6 +1037,13 @@ export function entryPlugin(
         ),
       });
 
+      if (isDev && hasScriptInjectEntry) {
+        api.modifyHTML?.({
+          order: "post",
+          handler: createStripEntryScriptModifyHTMLHandler(outputMap, entryByName),
+        });
+      }
+
       api.onBeforeCreateCompiler(async ({ bundlerConfigs }) => {
         const bundlerConfig = bundlerConfigs[0];
         if (!bundlerConfig) return;
@@ -981,6 +1060,41 @@ export function entryPlugin(
             shouldDisableRspackHmrForFirefox(devOptions?.browser, resolvedConfig.hotReload),
         });
       });
+
+      const enableHtmlPageReload =
+        devOptions?.isDev === true &&
+        resolvedConfig.hotReload !== false &&
+        htmlPaths.length > 0;
+
+      if (enableHtmlPageReload) {
+        const templateReloadPaths = buildHtmlTemplateReloadPathMap(entries, outputMap);
+        let sockWrite: HtmlFullReloadSender | null = null;
+        let devCompiler: RspackCompiler | null = null;
+
+        api.onBeforeStartDevServer?.(({ server }) => {
+          sockWrite = server.sockWrite.bind(server) as HtmlFullReloadSender;
+        });
+
+        api.onAfterCreateCompiler?.(({ compiler }) => {
+          devCompiler =
+            typeof compiler === "object" &&
+            compiler != null &&
+            "compilers" in compiler &&
+            Array.isArray((compiler as { compilers?: RspackCompiler[] }).compilers)
+              ? ((compiler as { compilers: RspackCompiler[] }).compilers[0] ?? null)
+              : (compiler as RspackCompiler);
+        });
+
+        api.onAfterDevCompile?.(async ({ stats, isFirstCompile }) => {
+          if (isFirstCompile || !sockWrite || !devCompiler) return;
+          if (!stats || statsHasErrors(stats)) return;
+
+          const modifiedFiles = getModifiedFilesFromCompiler(devCompiler);
+          if (modifiedFiles.size === 0) return;
+
+          notifyHtmlTemplateFullReload(modifiedFiles, templateReloadPaths, sockWrite);
+        });
+      }
     },
   };
 }

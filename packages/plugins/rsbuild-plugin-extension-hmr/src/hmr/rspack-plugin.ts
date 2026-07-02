@@ -1,12 +1,4 @@
 import type { Compiler } from "@rspack/core";
-import {
-  launchBrowser,
-  registerCleanupHandlers,
-  statsHasErrors,
-  setBrowserLaunched,
-  getBrowserLaunched,
-  type ChromiumRunnerOverride,
-} from "../browser/launcher";
 import type { HmrPluginOptions, HmrPluginTestDeps } from "../types";
 
 // ==================== Type Definitions ====================
@@ -75,41 +67,18 @@ export function getModifiedFilesFromCompiler(compiler: Compiler | null): Set<str
 const LAUNCH_PLUGIN_NAME = "rsbuild-plugin-extension-hmr:launch";
 
 /**
- * Creates the HMR Rspack plugin that handles browser launch on first successful compilation.
+ * Creates the HMR Rspack plugin that tracks the compiler for change detection.
+ * Browser launch has moved to the Rsbuild plugin's onAfterDevCompile hook so it
+ * runs after all build artifacts (including copied files) are fully written.
  */
 export function createHmrRspackPlugin(
-  options: HmrPluginOptions,
-  testDeps?: HmrPluginTestDeps
+  _options: HmrPluginOptions,
+  _testDeps?: HmrPluginTestDeps
 ): { name: string; apply(compiler: Compiler): void } {
-  const { autoOpen = true } = options;
-
   return {
     name: "rsbuild-plugin-extension-hmr:rspack",
     apply(compiler: Compiler) {
       lastCompiler = compiler;
-      const { done } = compiler.hooks;
-      if (!done) return;
-
-      registerCleanupHandlers();
-
-      done.tap(LAUNCH_PLUGIN_NAME, async (stats) => {
-        if (!autoOpen || getBrowserLaunched()) return;
-        if (statsHasErrors(stats)) return;
-        setBrowserLaunched(true);
-        // Launch browser immediately - WebSocket server is already started in parallel
-        // Reload manager extension will auto-connect via its reconnection mechanism
-        try {
-          await launchBrowser(
-            options,
-            testDeps?.runChromiumRunner as ChromiumRunnerOverride | undefined,
-            testDeps?.ensureDistReady,
-            testDeps?.getBrowserPath
-          );
-        } catch (e) {
-          const { error } = await import("@addfox/common");
-          error("Failed to launch browser:", e);
-        }
-      });
     },
   };
 }

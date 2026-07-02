@@ -39,6 +39,8 @@ export interface PipelineOptions {
   debug?: boolean;
   /** When false, do not auto-open browser. */
   open?: boolean;
+  /** Rsbuild dev server port from CLI --port. */
+  devServerPort?: number;
   /** Pre-loaded config to avoid double loading */
   config?: AddfoxResolvedConfig;
   baseEntries?: EntryInfo[];
@@ -98,6 +100,7 @@ export class Pipeline {
       ctx.browser = this.options.browser;
       ctx.cache = this.options.cache;
       ctx.report = this.options.report;
+      ctx.devServerPort = this.options.devServerPort;
       ctx.isDev = this.options.command === 'dev';
       // Use browser-specific output subdirectory: .addfox/extension/extension-chromium or extension-firefox
       const browserSubDir = getBrowserOutputDir(ctx.browser);
@@ -233,7 +236,7 @@ export class Pipeline {
       firefoxPath: browserPathConfig.firefox,
       zenPath: browserPathConfig.zen,
       cache: ctx.cache,
-      wsPort: hotReloadOpts?.port ?? HMR_WS_PORT,
+      wsPort: hotReloadOpts?.wsPort ?? HMR_WS_PORT,
       enableReload: hotReloadEnabled,
       autoRefreshContentPage: hotReloadEnabled ? (hotReloadOpts?.autoRefreshContentPage ?? true) : false,
       reloadManagerEntries,
@@ -255,7 +258,7 @@ export class Pipeline {
 
     return {
       dev: devConfig,
-      server: { printUrls: false, cors: { origin: '*' } },
+      server: { port: ctx.devServerPort, printUrls: false, cors: { origin: '*' } },
       plugins: [hmrPlugin(hmrOpts) as LoosePlugin],
     };
   }

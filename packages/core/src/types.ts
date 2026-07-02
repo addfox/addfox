@@ -106,13 +106,13 @@ export interface AddfoxUserConfig {
    */
   cache?: boolean;
   /**
-   * Hot-reload (WebSocket) options for dev. Port defaults to 23333.
-   * Set to false to disable; true or object to enable (object allows port/autoRefreshContentPage).
+   * Hot-reload (WebSocket) options for dev. WebSocket port defaults to 23333.
+   * Set to false to disable; true or object to enable (object allows wsPort/autoRefreshContentPage).
    */
   hotReload?:
     | {
         /** HMR WebSocket server port; default 23333 */
-        port?: number;
+        wsPort?: number;
         /** When true, content entry change triggers reload manager to refresh the active tab. Default is false. */
         autoRefreshContentPage?: boolean;
       }
@@ -142,8 +142,8 @@ export interface AddfoxResolvedConfig extends Omit<AddfoxUserConfig, "manifest">
   entry?: Record<string, EntryConfigValue> | false;
   /** Passed to Rsbuild loadEnv; default `['ADDFOX_PUBLIC_']` only exposes ADDFOX_PUBLIC_* */
   envPrefix?: string[];
-  /** Hot-reload options for dev; port defaults to 23333. false = disabled, true or object = enabled. */
-  hotReload?: { port?: number; autoRefreshContentPage?: boolean } | boolean;
+  /** Hot-reload options for dev; wsPort defaults to 23333. false = disabled, true or object = enabled. */
+  hotReload?: { wsPort?: number; autoRefreshContentPage?: boolean } | boolean;
 }
 
 /** Entry config value: string path or structured { src, html } */
@@ -192,6 +192,8 @@ export interface EntryInfo extends EntryRowBase {
   htmlPath?: string;
   /** Whether this entry should generate an HTML page (template optional). */
   html?: boolean;
+  /** True when the page has no user script entry and is compiled through an internal empty entry. */
+  htmlOnly?: boolean;
   /** When set, template must omit the data-addfox-entry script and rsbuild html.inject should use this. */
   scriptInject?: ScriptInjectPosition;
   /** When true, output path follows script/html path (e.g. main.ts �?main.js, scripts/main.ts �?scripts/main.js). */

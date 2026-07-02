@@ -70,3 +70,4 @@ export * from "@rspress/core/theme-original";
 export { Tab, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from "./PackageManagerTab";
 export { BlogList } from "./components/BlogList";
 export { BlogAuthors } from "./components/BlogAuthors";
+export { Gallery } from "./components/Gallery";

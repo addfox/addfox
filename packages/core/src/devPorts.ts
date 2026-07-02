@@ -4,8 +4,10 @@ import type { AddfoxUserConfig } from "./types.js";
 
 /** Resolve Rsbuild dev server port from static user rsbuild config. */
 export function resolveRsbuildDevServerPort(
-  rsbuild?: AddfoxUserConfig["rsbuild"]
+  rsbuild?: AddfoxUserConfig["rsbuild"],
+  serverPort?: number
 ): number {
+  if (typeof serverPort === "number") return serverPort;
   if (typeof rsbuild === "function") return DEFAULT_DEV_SERVER_PORT;
   const port = (rsbuild as RsbuildConfig | undefined)?.server?.port;
   return typeof port === "number" ? port : DEFAULT_DEV_SERVER_PORT;
@@ -14,10 +16,11 @@ export function resolveRsbuildDevServerPort(
 /** Dev-mode connect-src ports: Addfox HMR WS + Rsbuild dev server (for popup/options HMR client). */
 export function resolveDevConnectPorts(
   hotReload: AddfoxUserConfig["hotReload"],
-  rsbuild?: AddfoxUserConfig["rsbuild"]
+  rsbuild?: AddfoxUserConfig["rsbuild"],
+  serverPort?: number
 ): number[] {
   const hotReloadOpts = typeof hotReload === "object" ? hotReload : undefined;
-  const hmrPort = hotReloadOpts?.port ?? HMR_WS_PORT;
-  const serverPort = resolveRsbuildDevServerPort(rsbuild);
-  return [...new Set([hmrPort, serverPort])];
+  const hmrPort = hotReloadOpts?.wsPort ?? HMR_WS_PORT;
+  const rsbuildPort = resolveRsbuildDevServerPort(rsbuild, serverPort);
+  return [...new Set([hmrPort, rsbuildPort])];
 }

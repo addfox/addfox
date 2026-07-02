@@ -3,5 +3,6 @@
   { "type": "dir", "name": "guide", "label": "ガイド", "collapsible": true, "collapsed": false },
   { "type": "dir", "name": "config", "label": "設定", "collapsible": true, "collapsed": true },
   { "type": "dir", "name": "examples", "label": "サンプル", "collapsible": true, "collapsed": true },
-  { "type": "dir", "name": "blog", "label": "ブログ", "collapsible": true, "collapsed": true }
+  { "type": "dir", "name": "blog", "label": "ブログ", "collapsible": true, "collapsed": true },
+  { "type": "dir", "name": "gallery", "label": "ギャラリー", "collapsible": true, "collapsed": true }
 ]

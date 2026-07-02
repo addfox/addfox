@@ -39,7 +39,7 @@ import {
   resolveAddfoxConfig,
 } from "@addfox/core";
 import type { PipelineContext, AddfoxResolvedConfig, BrowserTarget, LaunchTarget } from "@addfox/core";
-import { launchBrowserOnly, startWebSocketServer, setFirefoxReloadHandler, getFirefoxRdpPort, reloadFirefoxAddonViaRdp, type DebugServerOpts, type WsServerMode } from "@addfox/rsbuild-plugin-extension-hmr";
+import { launchBrowserOnly, startWebSocketServer, setFirefoxReloadHandler, getFirefoxRdpPort, reloadFirefoxAddonViaRdp, registerCleanupHandlers, cleanup as cleanupBrowserResources, type DebugServerOpts, type WsServerMode } from "@addfox/rsbuild-plugin-extension-hmr";
 import { HMR_WS_PORT } from "@addfox/core";
 
 const root = process.cwd();
@@ -73,6 +73,7 @@ function printHelp(): void {
     -c, --cache                Cache browser profile between launches
     --no-cache                 Disable browser profile cache for current run
     -r, --report               Enable Rsdoctor build report (opens analysis after build)
+    --port <port>              Rsbuild dev server port (default 3000)
     --no-open                  Do not auto-open browser (dev/build)
     --debug                    Enable debug mode
     --help                     Show this help message
@@ -87,11 +88,15 @@ interface ResolvedCliOptions {
   browser: BrowserTarget;
   /** Which executable to launch in dev (chrome/edge/brave/firefox/...); distinct from browser. */
   launch: LaunchTarget;
+  /** True when -b/--browser was explicitly provided. */
+  browserSpecified: boolean;
   cache: boolean;
   report: boolean | Record<string, unknown>;
   debug: boolean;
   /** When false, do not auto-open browser. */
   open: boolean;
+  /** Rsbuild dev server port from --port. */
+  devServerPort?: number;
 }
 
 function resolveOptions(argv: string[], config: AddfoxResolvedConfig): ResolvedCliOptions {
@@ -108,10 +113,12 @@ function resolveOptions(argv: string[], config: AddfoxResolvedConfig): ResolvedC
   return {
     browser,
     launch,
+    browserSpecified: parsed.browserSpecified ?? false,
     cache: parsed.cache ?? config.cache ?? true,
     report: parsed.report ?? false,
     debug,
     open: parsed.open ?? true,
+    devServerPort: parsed.port,
   };
 }
 
@@ -128,6 +135,24 @@ async function createRsbuildInstance(ctx: PipelineContext) {
       prefixes: getLoadEnvPrefixes(ctx.config),
     },
   });
+
+  if (ctx.isDev) {
+    let sizeLogged = false;
+    rsbuild.addPlugins([
+      {
+        name: "addfox-log-size",
+        setup(api) {
+          api.onAfterDevCompile(async () => {
+            if (sizeLogged) return;
+            sizeLogged = true;
+            const devDistDir = (rsbuild.context as { distPath?: string } | undefined)?.distPath ?? ctx.distPath;
+            logExtensionSize(devDistDir, ctx.rsbuild);
+          });
+        },
+      },
+    ]);
+  }
+
   return rsbuild;
 }
 
@@ -173,10 +198,56 @@ function watchAddfoxConfig(
   }
 }
 
+// ─── Dev shutdown (Ctrl+C / SIGTERM) ───
+
+type DevServerHandle = { server?: { close?: () => Promise<unknown> | void } } | null;
+
+/** Current dev server, updated on each (re)start so the signal handler always targets the live one. */
+let activeDevServer: DevServerHandle = null;
+let devSignalsRegistered = false;
+let devShutdownStarted = false;
+
+/** Force the terminal to release immediately if a graceful close stalls (e.g. browser-held HMR sockets on Windows). */
+const DEV_SHUTDOWN_TIMEOUT_MS = 2000;
+
+async function closeDevServerWithTimeout(server: DevServerHandle): Promise<void> {
+  if (!server?.server?.close) return;
+  await Promise.race([
+    Promise.resolve(server.server.close()).catch(() => {}),
+    new Promise<void>((resolve) => setTimeout(resolve, DEV_SHUTDOWN_TIMEOUT_MS)),
+  ]);
+}
+
+async function shutdownDev(code: number): Promise<void> {
+  if (devShutdownStarted) return;
+  devShutdownStarted = true;
+  const forceTimer = setTimeout(() => process.exit(code), DEV_SHUTDOWN_TIMEOUT_MS);
+  if (typeof forceTimer.unref === "function") forceTimer.unref();
+  try {
+    // Kill browser + close WS/HTTP (port 23333) + restore stdin before waiting
+    // on Rsbuild, otherwise browser-held HMR sockets can stall server.close().
+    await cleanupBrowserResources().catch(() => {});
+    await closeDevServerWithTimeout(activeDevServer);
+  } finally {
+    process.exit(code);
+  }
+}
+
+/** Register SIGINT/SIGTERM once; recursive runDev (config restart) must not stack handlers. */
+function registerDevSignalHandlers(): void {
+  if (devSignalsRegistered) return;
+  devSignalsRegistered = true;
+  process.on("SIGINT", () => { void shutdownDev(0); });
+  process.on("SIGTERM", () => { void shutdownDev(0); });
+}
+
 // ─── Dev / Build commands ───
 
 /** Dev mode: auto-restart dev server on addfox.config change. */
 async function runDev(root: string, argv: string[]): Promise<void> {
+  registerDevSignalHandlers();
+  registerCleanupHandlers();
+
   // Load config first to get defaults
   const { config, baseEntries, entries } = resolveAddfoxConfig(root);
   
@@ -200,7 +271,7 @@ async function runDev(root: string, argv: string[]): Promise<void> {
   const hotReload = ctx.config.hotReload;
   const hotReloadEnabled = hotReload !== false;
   const hotReloadOpts = typeof hotReload === "object" && hotReload !== null ? hotReload : undefined;
-  const wsPort = hotReloadOpts?.port ?? HMR_WS_PORT;
+  const wsPort = hotReloadOpts?.wsPort ?? HMR_WS_PORT;
   const wsMode: WsServerMode = hotReloadEnabled ? "full" : "httpOnly";
   const wsDebugOpts: DebugServerOpts | undefined = ctx.config.debug ? {
     debug: true,
@@ -249,15 +320,19 @@ async function runDev(root: string, argv: string[]): Promise<void> {
   if (configPath) watcherRef = watchAddfoxConfig(configPath, onAddfoxConfigChange);
   const devServerStart = performance.now();
   devServerRef = await rsbuild.startDevServer({ getPortSilently: true });
+  activeDevServer = devServerRef as DevServerHandle;
   const urls = devServerRef?.urls ?? [];
   const mainUrl = urls[0] ?? `http://localhost:${devServerRef?.port ?? "?"}`;
   logDoneTimed("Dev server " + mainUrl, Math.round(performance.now() - devServerStart));
 
-  const devDistDir = (rsbuild.context as { distPath?: string } | undefined)?.distPath ?? ctx.distPath;
-  setTimeout(() => logExtensionSize(devDistDir, ctx.rsbuild), 1000);
+  registerDevSignalHandlers();
 }
 
-/** Build mode: compile + optional zip + auto browser launch. */
+function shouldLaunchBrowserForBuild(options: ResolvedCliOptions): boolean {
+  return options.open && options.browserSpecified;
+}
+
+/** Build mode: compile + optional zip + optional browser launch. */
 async function runBuild(root: string, argv: string[]): Promise<void> {
   // Load config first to get defaults
   const { config, baseEntries, entries } = resolveAddfoxConfig(root);
@@ -290,8 +365,10 @@ async function runBuild(root: string, argv: string[]): Promise<void> {
   const distSize = getBuildOutputSize(buildResult) ?? getDistSizeSync(distDir);
   if (distSize >= 0) logDoneWithValue("Extension size:", formatBytes(distSize));
 
-  // Auto launch browser with loaded extension (unless --no-open)
-  if (resolved.open) {
+  // Build is non-interactive by default. Passing -b/--browser opts into
+  // launching that browser with the freshly built extension loaded.
+  if (shouldLaunchBrowserForBuild(resolved)) {
+    registerDevSignalHandlers();
     const browserPathConfig = ctx.config.browserPath ?? {};
     await launchBrowserOnly({
       distPath: distDir,

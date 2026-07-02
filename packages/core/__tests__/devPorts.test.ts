@@ -21,14 +21,21 @@ describe("resolveDevConnectPorts", () => {
     expect(resolveDevConnectPorts(undefined)).toEqual([HMR_WS_PORT, DEFAULT_DEV_SERVER_PORT]);
   });
 
-  it("uses custom hotReload port", () => {
-    expect(resolveDevConnectPorts({ port: 24000 })).toEqual([24000, DEFAULT_DEV_SERVER_PORT]);
+  it("uses custom hotReload wsPort", () => {
+    expect(resolveDevConnectPorts({ wsPort: 24000 })).toEqual([24000, DEFAULT_DEV_SERVER_PORT]);
   });
 
   it("uses custom rsbuild server port", () => {
     expect(resolveDevConnectPorts(undefined, { server: { port: 5173 } })).toEqual([
       HMR_WS_PORT,
       5173,
+    ]);
+  });
+
+  it("uses CLI dev server port before rsbuild config port", () => {
+    expect(resolveDevConnectPorts(undefined, { server: { port: 5173 } }, 3001)).toEqual([
+      HMR_WS_PORT,
+      3001,
     ]);
   });
 });

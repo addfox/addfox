@@ -14,7 +14,7 @@
     "webextension-polyfill": "^0.10.0"
   },
   "devDependencies": {
-    "@rsbuild/plugin-react": "2.0.0",
+    "@rsbuild/plugin-react": "2.1.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/chrome": "^0.0.326",
     "@types/react": "^18.2.0",

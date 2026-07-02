@@ -1,0 +1,15 @@
+{
+  "name": "addfox-with-html",
+  "version": "0.0.1",
+  "private": true,
+  "description": "HTML-first browser extension example using manifest HTML entries",
+  "type": "module",
+  "scripts": {
+    "dev": "addfox dev",
+    "build": "addfox build"
+  },
+  "devDependencies": {
+    "addfox": "workspace:*",
+    "typescript": "^5.0.0"
+  }
+}
