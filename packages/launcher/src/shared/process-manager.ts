@@ -59,7 +59,11 @@ export async function spawnBrowserProcess(options: SpawnOptions): Promise<Browse
     cwd,
     env: { ...process.env, ...env },
     stdio: stdio ?? ["inherit", "inherit", "inherit"],
-    detached: process.platform !== "win32",
+    // On Windows, keep the browser out of the Node.js console process group
+    // and don't let it inherit the console. This prevents Ctrl+C from being
+    // delayed by the browser process tree.
+    detached: true,
+    windowsHide: true,
   });
 
   const cleanup = () => {

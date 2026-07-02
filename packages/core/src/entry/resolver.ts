@@ -156,7 +156,15 @@ function resolveEntryFromHtml(
     scriptPath = findScriptForHtmlDir(dir, basename(htmlPath));
   }
   
-  if (!scriptPath) return null;
+  if (!scriptPath) {
+    return {
+      name,
+      scriptPath: htmlPath,
+      htmlPath,
+      html: true,
+      htmlOnly: true,
+    };
+  }
   
   return enrichEntryWithScriptInject({
     name,

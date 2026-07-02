@@ -19,5 +19,5 @@ export default defineConfig({
   
   // You can still customize other options:
   // outDir: "extension",
-  // hotReload: { port: 23333 },
+  // hotReload: { wsPort: 23333 },
 });

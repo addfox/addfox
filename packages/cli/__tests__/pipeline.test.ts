@@ -115,6 +115,25 @@ describe("Pipeline", () => {
       expect(e).toBeDefined();
     }
   });
+
+  it("applies devServerPort to Rsbuild server config in dev", async () => {
+    const config = createMockConfig(testRoot, { outputRoot: ".addfox" });
+    const entries = createMockEntries(testRoot);
+    const ctx = await runPipeline({
+      root: testRoot,
+      command: "dev",
+      browser: "chromium",
+      launch: "chromium",
+      cache: false,
+      report: false,
+      open: false,
+      devServerPort: 3001,
+      config,
+      baseEntries: entries,
+      entries,
+    });
+    expect(ctx.rsbuild.server?.port).toBe(3001);
+  });
 });
 
 describe("Pipeline Lifecycle Hooks", () => {

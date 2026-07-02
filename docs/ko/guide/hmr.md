@@ -113,7 +113,7 @@ addfox dev -b firefox
 // addfox.config.ts
 export default defineConfig({
   hotReload: {
-    port: 23333,              // WebSocket 포트, 기본값 23333
+    wsPort: 23333,            // WebSocket 포트, 기본값 23333
     autoRefreshContentPage: true,  // content 변경 시 페이지 자동 새로고침, 기본값 true
   },
 });

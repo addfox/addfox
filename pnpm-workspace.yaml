@@ -7,6 +7,8 @@ packages:
   - "packages/utils"
   - "packages/pkg-manager"
   - "packages/launcher"
+  - "packages/browser"
+  - "packages/message"
   - "packages/plugins/rsbuild-plugin-extension-entry"
   - "packages/plugins/rsbuild-plugin-extension-manifest"
   - "packages/plugins/rsbuild-plugin-extension-hmr"
@@ -17,14 +19,14 @@ packages:
 
 catalog:
   # Rsbuild 生态 - 使用正式版
-  "@rsbuild/core": "2.0.7"
-  "@rspack/core": "2.0.4"
-  "@rsbuild/plugin-babel": "^1.2.0"
-  "@rsbuild/plugin-vue": "^1.2.8"
-  "@rsbuild/plugin-vue-jsx": "^2.0.0"
+  "@rsbuild/core": "2.1.1"
+  "@rspack/core": "2.1.1"
+  "@rsbuild/plugin-babel": "^2.0.0"
+  "@rsbuild/plugin-vue": "^2.0.0"
+  "@rsbuild/plugin-vue-jsx": "^2.0.1"
 
   # Rslib 构建工具
-  "@rslib/core": "^0.21.5"
+  "@rslib/core": "^0.23.0"
   
   # 测试工具
   "@rstest/core": "^0.9.9"

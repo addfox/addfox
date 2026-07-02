@@ -13,6 +13,6 @@
   },
   "devDependencies": {
     "addfox": "^0.2.0",
-    "@rsbuild/plugin-preact": "1.7.2"
+    "@rsbuild/plugin-preact": "2.0.0"
   }
 }

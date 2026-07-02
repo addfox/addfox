@@ -19,15 +19,18 @@ describe("CliParser", () => {
     it("parses build command", () => {
       const r = parseCliArgs(["build"]);
       expect(r.command).toBe("build");
+      expect(r.browserSpecified).toBe(false);
     });
 
     it("parses -b chromium / -b firefox", () => {
       const r1 = parseCliArgs(["build", "-b", "chromium"]);
       expect(r1.browser).toBe("chromium");
       expect(r1.launch).toBe("chromium");
+      expect(r1.browserSpecified).toBe(true);
       const r2 = parseCliArgs(["build", "--browser=firefox"]);
       expect(r2.browser).toBe("firefox");
       expect(r2.launch).toBe("firefox");
+      expect(r2.browserSpecified).toBe(true);
     });
 
     it("maps zen to firefox manifest target but preserves zen launch target", () => {
@@ -97,10 +100,23 @@ describe("CliParser", () => {
       expect(r3.open).toBe(false);
     });
 
+    it("parses --port", () => {
+      const r = parseCliArgs(["dev", "--port", "3001"]);
+      expect(r.port).toBe(3001);
+      const r2 = parseCliArgs(["dev", "--port=5173"]);
+      expect(r2.port).toBe(5173);
+    });
+
+    it("throws on invalid --port", () => {
+      expect(() => parseCliArgs(["dev", "--port", "0"])).toThrow(AddfoxError);
+      expect(() => parseCliArgs(["dev", "--port=abc"])).toThrow(AddfoxError);
+    });
+
     it("returns unknownBrowser when -b value is invalid", () => {
       const r = parseCliArgs(["build", "-b", "safari"]);
       expect(r.browser).toBeUndefined();
       expect(r.unknownBrowser).toBe("safari");
+      expect(r.browserSpecified).toBe(true);
     });
 
     it("returns unknownBrowser for -b=invalid form", () => {

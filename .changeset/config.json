@@ -7,5 +7,11 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["addfox-with-*", "addfox-content-*"]
+  "ignore": [
+    "addfox-with-*",
+    "addfox-content-*",
+    "@addfox/browser",
+    "@addfox/message",
+    "video-roll"
+  ]
 }

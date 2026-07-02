@@ -18,5 +18,10 @@
     "text": "블로그",
     "link": "/blog",
     "activeMatch": "^/ko/blog/"
+  },
+  {
+    "text": "갤러리",
+    "link": "/gallery",
+    "activeMatch": "^/ko/gallery/"
   }
 ]

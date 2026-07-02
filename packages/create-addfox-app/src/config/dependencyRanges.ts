@@ -12,7 +12,7 @@
 export const ADDFOX_CLI_PACKAGE_VERSION = "^0.2.0" as const;
 export const ADDFOX_UTILS_PACKAGE_VERSION = "^0.2.0" as const;
 /** `@rsbuild/plugin-vue` range in `template-vue-ts` / `template-vue-js` (aligned across JS/TS). */
-export const RSBUILD_PLUGIN_VUE_PACKAGE_VERSION = "^1.2.8" as const;
+export const RSBUILD_PLUGIN_VUE_PACKAGE_VERSION = "^2.0.0" as const;
 
 /**
  * `^0.2.0` matches stable releases in the 0.2.x line.

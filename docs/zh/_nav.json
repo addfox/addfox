@@ -18,5 +18,10 @@
     "text": "博客",
     "link": "/blog",
     "activeMatch": "^/zh/blog/"
+  },
+  {
+    "text": "作品展览",
+    "link": "/gallery",
+    "activeMatch": "^/zh/gallery/"
   }
 ]

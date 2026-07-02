@@ -154,7 +154,15 @@ function buildHtmlEntryInfo(
     };
   }
   
-  if (!conventionalScriptPath) return null;
+  if (!conventionalScriptPath) {
+    return {
+      name,
+      scriptPath: htmlPath,
+      htmlPath,
+      html: true,
+      htmlOnly: true,
+    };
+  }
   
   return {
     name,

@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "addfox": "^0.2.0",
-    "@rsbuild/plugin-vue": "^1.2.8",
+    "@rsbuild/plugin-vue": "^2.0.0",
     "typescript": "^5.9.3",
     "@types/chrome": "^0.1.38"
   }

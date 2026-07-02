@@ -15,8 +15,8 @@
     "@addfox/utils": "workspace:*"
   },
   "devDependencies": {
-    "@rsbuild/plugin-react": "2.0.0",
-    "@rsdoctor/rspack-plugin": "1.5.11",
+    "@rsbuild/plugin-react": "2.1.0",
+    "@rsdoctor/rspack-plugin": "1.5.16",
     "@types/chrome": "^0.0.326",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",

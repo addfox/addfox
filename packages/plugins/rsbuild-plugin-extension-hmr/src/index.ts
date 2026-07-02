@@ -17,7 +17,14 @@ import {
   getEntriesForFile,
 } from "./hmr/scope";
 import { notifyReload } from "./server/ws-server";
-import { statsHasErrors } from "./browser/launcher";
+import {
+  launchBrowser,
+  registerCleanupHandlers,
+  statsHasErrors,
+  getBrowserLaunched,
+  setBrowserLaunched,
+  type ChromiumRunnerOverride,
+} from "./browser/launcher";
 import type { HmrPluginOptions, HmrPluginTestDeps } from "./types";
 
 export type { HmrPluginOptions, HmrPluginTestDeps } from "./types";
@@ -75,15 +82,43 @@ export function hmrPlugin(
   testDeps?: HmrPluginTestDeps
 ): RsbuildPlugin {
   const entriesOrPaths = options.reloadManagerEntries ?? [];
+  const { autoOpen = true } = options;
 
   return {
     name: "rsbuild-plugin-extension-hmr",
     setup(api: RsbuildPluginAPI) {
+      registerCleanupHandlers();
+
       api.onAfterDevCompile(async ({ stats }) => {
         await clearOutdatedHotUpdateFiles(options.distPath, stats);
 
-        if (options.enableReload === false || !stats) return;
-        if (statsHasErrors(stats)) return;
+        // Launch browser once after the first successful dev compile. Using
+        // onAfterDevCompile ensures all build artifacts (including copied
+        // files such as _locales) are fully written before loading the
+        // extension via CDP.
+        if (autoOpen && !getBrowserLaunched() && stats && !statsHasErrors(stats)) {
+          setBrowserLaunched(true);
+          try {
+            await launchBrowser(
+              options,
+              testDeps?.runChromiumRunner as ChromiumRunnerOverride | undefined,
+              testDeps?.ensureDistReady,
+              testDeps?.getBrowserPath
+            );
+          } catch (e) {
+            const { error } = await import("@addfox/common");
+            error("Failed to launch browser:", e);
+          }
+        } else if (!autoOpen && !getBrowserLaunched()) {
+          setBrowserLaunched(true);
+        }
+
+        if (options.enableReload === false || !stats) {
+          return;
+        }
+        if (statsHasErrors(stats)) {
+          return;
+        }
 
         const compiler = getLastCompiler();
         const modifiedFiles = getModifiedFilesFromCompiler(compiler);

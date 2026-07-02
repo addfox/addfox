@@ -163,7 +163,7 @@ describe("plugin-extension-hmr", () => {
     await expect(ensureDistReady(emptyDir, 400)).rejects.toThrow("dist not ready");
   });
 
-  it("hmrPlugin apply launch tap catch when ensureDistReady throws", async () => {
+  it("hmrPlugin onAfterDevCompile catches when launchBrowser throws", async () => {
     const distPath = resolve(tmpdir(), `hmr-catch-${Date.now()}`);
     mkdirSync(distPath, { recursive: true });
     const errLogs: string[] = [];
@@ -176,7 +176,7 @@ describe("plugin-extension-hmr", () => {
       },
     });
     try {
-      const plugin = createHmrRspackPlugin(
+      const plugin = hmrPlugin(
         {
           distPath,
           autoOpen: true,
@@ -186,24 +186,26 @@ describe("plugin-extension-hmr", () => {
           enableReload: false,
         },
         {
-          runChromiumRunner: async () => ({ exit: async () => {} }),
-          ensureDistReady: () => {
+          runChromiumRunner: async () => {
             throw new Error("injected fail");
           },
+          ensureDistReady: () => Promise.resolve(),
         }
       );
-      const cbs: Array<(stats: unknown) => void> = [];
-      plugin.apply({
-        hooks: { done: { tap: (_: string, fn: (s: unknown) => void) => cbs.push(fn) } },
+      const cbs: Array<({ stats }: { stats: unknown }) => void> = [];
+      plugin.setup({
+        onAfterDevCompile: (fn: ({ stats }: { stats: unknown }) => void) => cbs.push(fn),
+        onBeforeStartDevServer: () => {},
+        onBeforeCreateCompiler: () => {},
       } as never);
-      await cbs[0]!({ hasErrors: () => false });
+      await cbs[0]!({ stats: { hasErrors: () => false } });
       expect(errLogs.some((m) => m.includes("Failed to launch browser"))).toBe(true);
     } finally {
       setAddfoxLoggerRawWrites(null);
     }
   });
 
-  it("hmrPlugin apply registers done hook and launch tap", async () => {
+  it("createHmrRspackPlugin tracks the compiler without registering done hook", () => {
     const plugin = createHmrRspackPlugin({
       distPath: resolve(tmpdir(), "hmr-apply-test"),
       wsPort: 23999,
@@ -213,44 +215,38 @@ describe("plugin-extension-hmr", () => {
     const compiler = {
       hooks: {
         done: {
-          tap: (name: string, fn: (stats: unknown) => void) => {
-            if (name === "rsbuild-plugin-extension-hmr:launch") launchCbs.push(fn);
+          tap: (_name: string, fn: (stats: unknown) => void) => {
+            launchCbs.push(fn);
           },
         },
       },
     };
     plugin.apply(compiler as never);
-    expect(launchCbs.length).toBe(1);
-    await launchCbs[0]!({ hasErrors: () => false });
+    expect(launchCbs.length).toBe(0);
   });
 
-  it("hmrPlugin apply with autoOpen false does not launch", async () => {
-    const plugin = createHmrRspackPlugin({
+  it("hmrPlugin onAfterDevCompile with autoOpen false does not launch", async () => {
+    const plugin = hmrPlugin({
       distPath: resolve(tmpdir(), "hmr-no-open"),
       wsPort: 23998,
       autoOpen: false,
     });
-    const cbs: Array<(stats: unknown) => void> = [];
-    const compiler = {
-      hooks: {
-        done: {
-          tap: (_name: string, fn: (stats: unknown) => void) => {
-            cbs.push(fn);
-          },
-        },
-      },
-    };
-    plugin.apply(compiler as never);
-    await cbs[0]!({ hasErrors: () => false });
+    const cbs: Array<({ stats }: { stats: unknown }) => void> = [];
+    plugin.setup({
+      onAfterDevCompile: (fn: ({ stats }: { stats: unknown }) => void) => cbs.push(fn),
+      onBeforeStartDevServer: () => {},
+      onBeforeCreateCompiler: () => {},
+    } as never);
+    await cbs[0]!({ stats: { hasErrors: () => false } });
   });
 
-  it("hmrPlugin apply returns early when hooks.done missing", () => {
+  it("createHmrRspackPlugin apply does not require hooks.done", () => {
     const plugin = createHmrRspackPlugin({ distPath: "/tmp", wsPort: 23333 });
     const compiler = { hooks: {} };
     expect(() => plugin.apply(compiler as never)).not.toThrow();
   });
 
-  it("hmrPlugin apply launch tap runs launchBrowser with mock runner", async () => {
+  it("hmrPlugin onAfterDevCompile runs launchBrowser with CDP mode", async () => {
     const distPath = resolve(tmpdir(), `hmr-launch-${Date.now()}`);
     mkdirSync(distPath, { recursive: true });
     writeFileSync(
@@ -258,8 +254,11 @@ describe("plugin-extension-hmr", () => {
       JSON.stringify({ manifest_version: 3, name: "Test", version: "1.0" }),
       "utf-8"
     );
-    const mockRunner = async () => ({ exit: async () => {} });
-    const plugin = createHmrRspackPlugin(
+    const mockRunner = async (opts: { extensionLoadMode?: string }) => {
+      expect(opts.extensionLoadMode).toBeUndefined();
+      return { exit: async () => {} };
+    };
+    const plugin = hmrPlugin(
       {
         distPath,
         autoOpen: true,
@@ -268,20 +267,15 @@ describe("plugin-extension-hmr", () => {
         wsPort: 23400,
         enableReload: true,
       },
-      { runChromiumRunner: mockRunner }
+      { runChromiumRunner: mockRunner, ensureDistReady: () => Promise.resolve() }
     );
-    const cbs: Array<(stats: unknown) => void> = [];
-    const compiler = {
-      hooks: {
-        done: {
-          tap: (_name: string, fn: (stats: unknown) => void) => {
-            cbs.push(fn);
-          },
-        },
-      },
-    };
-    plugin.apply(compiler as never);
-    await cbs[0]!({ hasErrors: () => false });
+    const cbs: Array<({ stats }: { stats: unknown }) => void> = [];
+    plugin.setup({
+      onAfterDevCompile: (fn: ({ stats }: { stats: unknown }) => void) => cbs.push(fn),
+      onBeforeStartDevServer: () => {},
+      onBeforeCreateCompiler: () => {},
+    } as never);
+    await cbs[0]!({ stats: { hasErrors: () => false } });
     const cacheDir = resolve(distPath, "..", "cache");
     if (existsSync(cacheDir)) rmSync(cacheDir, { recursive: true, force: true });
   });
@@ -394,6 +388,67 @@ describe("plugin-extension-hmr", () => {
     expect(d4.shouldNotify).toBe(true);
     expect(d4.contentChanged).toBe(false);
     expect(d4.backgroundChanged).toBe(true);
+  });
+
+  it("getReloadManagerDecision ignores project metadata-only modified files", () => {
+    const stats = {
+      compilation: {
+        entrypoints: new Map([
+          ["content", { chunks: [{ id: "1", hash: "metadata-c1" }] }],
+          ["background", { chunks: [{ id: "2", hash: "metadata-b1" }] }],
+        ]),
+      },
+      toJson: () => ({
+        chunks: [{ id: "1", names: ["content"] }],
+        modules: [{ nameForCondition: "src/inject/index.ts", chunks: ["1"] }],
+      }),
+    };
+    const decision = getReloadManagerDecision(stats, {
+      compiler: { modifiedFiles: new Set(["C:package.json", "pnpm-lock.yaml"]) },
+    });
+    expect(decision.shouldNotify).toBe(false);
+    expect(decision.contentChanged).toBe(false);
+    expect(decision.backgroundChanged).toBe(false);
+  });
+
+  it("getReloadManagerDecision still reloads when metadata changes with source files", () => {
+    const stats = {
+      compilation: {
+        entrypoints: new Map([
+          ["content", { chunks: [{ id: "1", hash: "metadata-c2" }] }],
+        ]),
+      },
+      toJson: () => ({
+        chunks: [{ id: "1", names: ["content"] }],
+        modules: [{ nameForCondition: "src/inject/index.ts", chunks: ["1"] }],
+      }),
+    };
+    const decision = getReloadManagerDecision(stats, {
+      compiler: { modifiedFiles: new Set(["package.json", "src/inject/index.ts"]) },
+    });
+    expect(decision.shouldNotify).toBe(true);
+    expect(decision.contentChanged).toBe(true);
+    expect(decision.backgroundChanged).toBe(false);
+  });
+
+  it("getReloadManagerDecision leaves HTML template changes to Rsbuild client reload", () => {
+    const stats = {
+      compilation: {
+        entrypoints: new Map([
+          ["popup", { chunks: [{ id: "1", hash: "popup-html" }] }],
+        ]),
+      },
+      toJson: () => ({
+        chunks: [{ id: "1", names: ["popup"] }],
+        modules: [{ nameForCondition: "src/popup/internal-stub.js", chunks: ["1"] }],
+      }),
+    };
+    const decision = getReloadManagerDecision(stats, {
+      compiler: { modifiedFiles: new Set(["src/popup/index.html"]) },
+    });
+    expect(decision.shouldNotify).toBe(false);
+    expect(decision.contentChanged).toBe(false);
+    expect(decision.backgroundChanged).toBe(false);
   });
 
   it("createTestWsServer starts and notifyReload does not throw", async () => {

@@ -4,8 +4,8 @@
 
 ## Resumen
 
-- **Tipo**: `{ port?: number; autoRefreshContentPage?: boolean }`
-- **Valor por defecto**: `{ port: 23333, autoRefreshContentPage: true }`
+- **Tipo**: `{ wsPort?: number; autoRefreshContentPage?: boolean }`
+- **Valor por defecto**: `{ wsPort: 23333, autoRefreshContentPage: true }`
 - **Requerido**: No
 
 ## Uso
@@ -16,7 +16,7 @@ import { defineConfig } from "addfox";
 
 export default defineConfig({
   hotReload: {
-    port: 23333,                    // Puerto WebSocket
+    wsPort: 23333,                  // Puerto WebSocket
     autoRefreshContentPage: false,   // Recargar página automáticamente cuando cambia content
   },
 });

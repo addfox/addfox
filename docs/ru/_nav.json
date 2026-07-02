@@ -18,5 +18,10 @@
     "text": "Блог",
     "link": "/blog",
     "activeMatch": "^/ru/blog/"
+  },
+  {
+    "text": "Галерея",
+    "link": "/gallery",
+    "activeMatch": "^/ru/gallery/"
   }
 ]

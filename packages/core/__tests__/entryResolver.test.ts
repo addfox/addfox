@@ -31,6 +31,56 @@ describe("EntryResolver", () => {
       expect(result.manifestReplacementMap).toBeDefined();
       expect(result.manifestReplacementMap?.get("background.service_worker")).toBe("background");
     });
+
+    it("resolves manifest HTML entry through data-addfox-entry script", async () => {
+      const { mkdirSync, writeFileSync, rmSync } = await import("fs");
+      const { join } = await import("path");
+      const { tmpdir } = await import("os");
+      const baseDir = join(tmpdir(), `addfox-manifest-html-script-${Date.now()}`);
+      mkdirSync(join(baseDir, "popup"), { recursive: true });
+      writeFileSync(join(baseDir, "popup", "main.ts"), "export {};\n", "utf-8");
+      writeFileSync(
+        join(baseDir, "popup", "index.html"),
+        '<html><body><script data-addfox-entry src="./main.ts"></script></body></html>',
+        "utf-8"
+      );
+      const manifest: ManifestRecord = {
+        name: "Test",
+        version: "1.0",
+        manifest_version: 3,
+        action: { default_popup: "./popup/index.html" },
+      };
+
+      const result = resolveEntries({}, "/root", baseDir, manifest);
+      const popup = result.entries.find((e) => e.name === "popup");
+      expect(popup?.scriptPath).toMatch(/popup[\\/]main\.ts$/);
+      expect(popup?.htmlPath).toMatch(/popup[\\/]index\.html$/);
+      expect(popup?.scriptInject).toBe("body");
+      rmSync(baseDir, { recursive: true, force: true });
+    });
+
+    it("resolves manifest HTML entry as html-only when no script exists", async () => {
+      const { mkdirSync, writeFileSync, rmSync } = await import("fs");
+      const { join } = await import("path");
+      const { tmpdir } = await import("os");
+      const baseDir = join(tmpdir(), `addfox-manifest-html-only-${Date.now()}`);
+      mkdirSync(join(baseDir, "options"), { recursive: true });
+      writeFileSync(join(baseDir, "options", "index.html"), "<html><body>Options</body></html>", "utf-8");
+      const manifest: ManifestRecord = {
+        name: "Test",
+        version: "1.0",
+        manifest_version: 3,
+        options_ui: { page: "./options/index.html" },
+      };
+
+      const result = resolveEntries({}, "/root", baseDir, manifest);
+      const options = result.entries.find((e) => e.name === "options");
+      expect(options?.htmlOnly).toBe(true);
+      expect(options?.scriptPath).toMatch(/options[\\/]index\.html$/);
+      expect(options?.htmlPath).toMatch(/options[\\/]index\.html$/);
+      rmSync(baseDir, { recursive: true, force: true });
+    });
+
   });
 
   describe("resolve with empty entry config", () => {
@@ -109,6 +159,22 @@ describe("EntryResolver", () => {
       expect(popupEntry).toBeDefined();
       expect(popupEntry?.htmlPath).toMatch(/popup[\\/]index\.html$/);
       expect(popupEntry?.scriptPath).toMatch(/popup[\\/]index\.ts$/);
+    });
+
+    it("resolves html-only config entry when no script exists", async () => {
+      const { mkdirSync, writeFileSync, rmSync } = await import("fs");
+      const { join } = await import("path");
+      const { tmpdir } = await import("os");
+      const baseDir = join(tmpdir(), `addfox-entry-html-only-${Date.now()}`);
+      mkdirSync(baseDir, { recursive: true });
+      writeFileSync(join(baseDir, "popup.html"), "<html><body>Popup</body></html>", "utf-8");
+
+      const result = resolveEntries({ entry: { popup: "popup.html" } }, "/root", baseDir);
+      const popupEntry = result.entries.find((e) => e.name === "popup");
+      expect(popupEntry?.htmlOnly).toBe(true);
+      expect(popupEntry?.scriptPath).toMatch(/popup\.html$/);
+      expect(popupEntry?.htmlPath).toMatch(/popup\.html$/);
+      rmSync(baseDir, { recursive: true, force: true });
     });
 
     it("resolves script path and infers htmlPath for popup when index.html exists", () => {
@@ -270,7 +336,7 @@ describe("EntryResolver", () => {
       expect(sidepanel?.scriptInject).toBe("body");
     });
 
-    it("skips html entry when no script exists in dir", () => {
+    it("resolves html-only entry when no script exists in dir", () => {
       const baseDir = path.join(__dirname, "fixtures", "entry-discovery");
       const result = resolveEntries(
         { entry: { popup: "only-html/index.html" } },
@@ -278,7 +344,8 @@ describe("EntryResolver", () => {
         baseDir
       );
       const popup = result.entries.find((e) => e.name === "popup");
-      expect(popup).toBeUndefined();
+      expect(popup?.htmlOnly).toBe(true);
+      expect(popup?.htmlPath).toMatch(/only-html[\\/]index\.html$/);
     });
 
     it("supports object entry config with html flag", () => {
@@ -305,7 +372,7 @@ describe("EntryResolver", () => {
       expect(popup?.html).toBe(true);
     });
 
-    it("skips html entry when data-addfox-entry has non-relative src and no body/same-dir script", async () => {
+    it("treats HTML with non-relative data-addfox-entry as html-only", async () => {
       const { mkdirSync, writeFileSync, rmSync } = await import("fs");
       const { join } = await import("path");
       const { tmpdir } = await import("os");
@@ -317,7 +384,9 @@ describe("EntryResolver", () => {
         "utf-8"
       );
       const result = resolveEntries({ entry: { popup: "popup.html" } }, "/root", baseDir);
-      expect(result.entries.some((e) => e.name === "popup")).toBe(false);
+      const popup = result.entries.find((e) => e.name === "popup");
+      expect(popup?.htmlOnly).toBe(true);
+      expect(popup?.scriptPath).toMatch(/popup\.html$/);
       rmSync(baseDir, { recursive: true, force: true });
     });
 

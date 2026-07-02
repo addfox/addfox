@@ -3,5 +3,6 @@
   { "type": "dir", "name": "guide", "label": "Руководство", "collapsible": true, "collapsed": false },
   { "type": "dir", "name": "config", "label": "Конфигурация", "collapsible": true, "collapsed": true },
   { "type": "dir", "name": "examples", "label": "Примеры", "collapsible": true, "collapsed": true },
-  { "type": "dir", "name": "blog", "label": "Блог", "collapsible": true, "collapsed": true }
+  { "type": "dir", "name": "blog", "label": "Блог", "collapsible": true, "collapsed": true },
+  { "type": "dir", "name": "gallery", "label": "Галерея", "collapsible": true, "collapsed": true }
 ]

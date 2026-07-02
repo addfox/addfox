@@ -2,6 +2,7 @@ import { mkdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { rm } from "node:fs/promises";
 import { resolve } from "node:path";
+import readline from "node:readline";
 
 import type { LaunchTarget, ChromiumLaunchTarget } from "@addfox/core";
 import { log, logDoneTimed, warn, error, ANSI_COLORS } from "@addfox/common";
@@ -25,6 +26,22 @@ import {
 import { launchGecko, reinstallTemporaryAddonViaRDP } from "@addfox/launcher";
 
 type ReloadServerPlan = { mode: WsServerMode | "none"; debugOpts?: DebugServerOpts };
+
+export interface LaunchContext {
+  distPath: string;
+  browser: LaunchTarget;
+  pathOpts: LaunchPathOptions;
+  cache: boolean;
+  enableReload: boolean;
+  wsPort: number;
+  chromiumRunnerOverride?: ChromiumRunnerOverride;
+  ensureDistReadyOverride?: (distPath: string) => Promise<boolean>;
+  getBrowserPathOverride?: (b: LaunchTarget, o: LaunchPathOptions) => string | null;
+  onBrowserExit: () => void;
+  debug?: boolean;
+  root?: string;
+  outputRoot?: string;
+}
 
 function buildDebugServerOpts(ctx: LaunchContext): DebugServerOpts | undefined {
   if (!ctx.debug || !ctx.root || !ctx.outputRoot) return undefined;
@@ -58,13 +75,43 @@ let lastOutputRoot: string | undefined;
 let chromiumUserDataDirPath: string | null = null;
 let lastChromiumBrowser: ChromiumLaunchTarget = "chrome";
 let cacheEnabled = false;
+let activeLaunchContext: LaunchContext | null = null;
+let browserClosed = false;
+
+/**
+ * Remove Chrome caches that grow unboundedly while keeping extension state,
+ * Local Storage, IndexedDB, and other user data intact when cache is enabled.
+ */
+async function cleanupCacheDirs(userDataDir: string): Promise<void> {
+  if (!userDataDir || !existsSync(userDataDir)) return;
+  const dirsToClean = [
+    "Default/Cache",
+    "Default/Code Cache",
+    "Default/GPUCache",
+    "Default/DawnGraphiteCache",
+    "Default/DawnWebGPUCache",
+    "Default/Service Worker/ScriptCache",
+    "Default/Service Worker/CacheStorage",
+    "GPUCache",
+    "GrShaderCache",
+    "GraphiteDawnCache",
+    "GPUPersistentCache",
+    "ShaderCache",
+  ];
+  for (const rel of dirsToClean) {
+    const full = resolve(userDataDir, rel);
+    if (existsSync(full)) {
+      await rm(full, { recursive: true, force: true }).catch(() => {});
+    }
+  }
+}
 let keyboardReloadCleanup: (() => void) | null = null;
 /** Firefox RDP port for reloading temporary addons. */
 let firefoxRdpPort: number | null = null;
 /** Idempotent tail of cleanup (WS, keyboard, profile dirs) without touching extensionRunner. */
 let addfoxDevResourcesTornDown = false;
 
-const EXIT_TIMEOUT_MS = 2000;
+const EXIT_TIMEOUT_MS = 500;
 async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | undefined> {
   let timer: ReturnType<typeof setTimeout> | null = null;
   try {
@@ -82,22 +129,6 @@ async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | unde
 export type ChromiumRunnerOverride = (
   opts: ChromiumRunnerOptions
 ) => Promise<{ exit: () => Promise<void> }>;
-
-export interface LaunchContext {
-  distPath: string;
-  browser: LaunchTarget;
-  pathOpts: LaunchPathOptions;
-  cache: boolean;
-  enableReload: boolean;
-  wsPort: number;
-  chromiumRunnerOverride?: ChromiumRunnerOverride;
-  ensureDistReadyOverride?: (distPath: string) => Promise<boolean>;
-  getBrowserPathOverride?: (b: LaunchTarget, o: LaunchPathOptions) => string | null;
-  onBrowserExit: () => void;
-  debug?: boolean;
-  root?: string;
-  outputRoot?: string;
-}
 
 async function teardownAddfoxDevResources(): Promise<void> {
   if (addfoxDevResourcesTornDown) return;
@@ -139,78 +170,81 @@ export async function cleanup(): Promise<void> {
   }
 }
 
-/** Same as SIGINT handler. */
+/** Handles SIGINT/SIGTERM. SIGINT is cooperative with the CLI. */
 function handleTerminalExitRequest(signal: NodeJS.Signals): void {
   if (isCleaningUp) {
-    process.exit(0);
+    if (signal === "SIGTERM") process.exit(0);
     return;
   }
   isCleaningUp = true;
 
-  // Kill browser synchronously (non-blocking taskkill/spawn) so the
-  // process tree is torn down before we exit.  On Windows this avoids
-  // the "Terminate batch job (Y/N)?" prompt from CMD.
-  if (extensionRunner) {
-    void extensionRunner.exit();
-    extensionRunner = null;
-  }
-
-  // Synchronous teardown (profile deletion is fire-and-forget)
-  addfoxDevResourcesTornDown = true;
-  if (keyboardReloadCleanup) {
-    keyboardReloadCleanup();
-    keyboardReloadCleanup = null;
-  }
-  closeWebSocketServer();
-
-  process.exit(0);
-}
-
-function stdinChunkHasCtrlC(chunk: Buffer | string): boolean {
-  if (typeof chunk === "string") {
-    for (let i = 0; i < chunk.length; i++) {
-      if (chunk.charCodeAt(i) === 3) return true;
+  try {
+    // Kill browser synchronously (non-blocking taskkill/spawn) so the
+    // process tree is torn down before we exit.  On Windows this avoids
+    // the "Terminate batch job (Y/N)?" prompt from CMD.
+    if (extensionRunner) {
+      void extensionRunner.exit();
+      extensionRunner = null;
     }
-    return false;
+
+    // Synchronous teardown: restore stdin, close websocket, and start
+    // profile deletion. Do not wait for async cleanup.
+    void teardownAddfoxDevResources().catch(() => {});
+  } finally {
+    // SIGINT is handled cooperatively with the CLI so it can close the
+    // dev server before exiting. SIGTERM should exit immediately.
+    if (signal === "SIGTERM") process.exit(0);
   }
-  return chunk.includes(3);
 }
 
-function registerStdinRShortcut(onPressR: (() => void) | null, showHint = true): void {
+function registerStdinRShortcut(
+  onPressR: (() => void) | null,
+  onPressO: (() => void) | null,
+  showHint = true
+): void {
   const stdin = process.stdin;
-  const onData = (chunk: Buffer | string): void => {
-    if (stdinChunkHasCtrlC(chunk)) {
-      handleTerminalExitRequest("SIGINT");
-      return;
+
+  // Non-terminal readline keeps Ctrl+C on the default SIGINT path instead of
+  // capturing it as stdin input.
+  const rl = readline.createInterface({
+    input: stdin,
+    terminal: false,
+  });
+
+  // stdin may not be a TTY (e.g. launched via pnpm/turbo/bun); resume so line
+  // events flow on a piped stdin as well.
+  try { stdin.resume(); } catch { /* ignore */ }
+
+  const onLine = (line: string): void => {
+    const input = line.trim().toLowerCase();
+    if (input === "r" && onPressR) {
+      onPressR();
+    } else if (input === "o" && onPressO) {
+      onPressO();
     }
-    if (!onPressR) return;
-    const s = typeof chunk === "string" ? chunk : chunk.toString("utf8");
-    if (!s) return;
-    const c = s.trim().toLowerCase();
-    if (c === "r") onPressR();
   };
-  stdin.setEncoding("utf8");
-  if (typeof stdin.setRawMode === "function") {
-    stdin.setRawMode(true);
-  }
-  stdin.resume();
-  stdin.on("data", onData);
+
+  rl.on("line", onLine);
   if (showHint) {
-    log("Press R to reload extension (and Ctrl-C to quit)");
+    log("Press r + enter to reload, o + enter to reopen browser (Ctrl-C to quit)");
   }
   keyboardReloadCleanup = () => {
-    stdin.off("data", onData);
-    if (typeof stdin.setRawMode === "function") {
-      stdin.setRawMode(false);
-    }
-    stdin.pause();
+    rl.off("line", onLine);
+    rl.close();
+    // Release stdin so the process can exit cleanly after teardown.
+    try { stdin.pause(); } catch { /* ignore */ }
   };
 }
 
 function registerTerminalShortcuts(enableReload: boolean, _browser: LaunchTarget): void {
-  if (!process.stdin.isTTY || keyboardReloadCleanup) return;
+  if (keyboardReloadCleanup) return;
+  // Do not require a TTY: when addfox dev runs through pnpm/turbo/bun the
+  // stdin is often a non-TTY pipe, yet r/o + enter still work via readline.
+  const stdin = process.stdin;
+  if (!stdin || stdin.destroyed) return;
   registerStdinRShortcut(
     enableReload ? () => notifyReload("reload-extension") : null,
+    () => reopenBrowser(),
     enableReload
   );
 }
@@ -253,6 +287,8 @@ export async function launchBrowserCore(ctx: LaunchContext): Promise<void> {
   cacheEnabled = ctx.cache;
   lastDistPath = ctx.distPath;
   lastOutputRoot = ctx.outputRoot;
+  activeLaunchContext = ctx;
+  browserClosed = false;
   const browserBinary = (ctx.getBrowserPathOverride ?? getBrowserPath)(ctx.browser, ctx.pathOpts);
   
   // Quick check: dist should be ready since first compile is done (done hook triggered)
@@ -275,6 +311,33 @@ export async function launchBrowserCore(ctx: LaunchContext): Promise<void> {
   await launchFirefoxBrowser(ctx, browserBinary, launchStart);
 }
 
+function handleBrowserExit(): void {
+  if (isCleaningUp) return;
+  log(`${ANSI_COLORS.RED}Browser was closed. Press o + enter to reopen.${ANSI_COLORS.RESET}`);
+  browserClosed = true;
+  extensionRunner = null;
+  isCleaningUp = false;
+}
+
+async function reopenBrowser(): Promise<void> {
+  if (!activeLaunchContext || !browserClosed) return;
+  browserClosed = false;
+  isCleaningUp = false;
+  const ctx = activeLaunchContext;
+  const browserBinary = (ctx.getBrowserPathOverride ?? getBrowserPath)(ctx.browser, ctx.pathOpts);
+  const launchStart = performance.now();
+  if (keyboardReloadCleanup) {
+    keyboardReloadCleanup();
+    keyboardReloadCleanup = null;
+  }
+  registerTerminalShortcuts(ctx.enableReload, ctx.browser);
+  if (isChromiumBrowser(ctx.browser)) {
+    await launchChromiumBrowser(ctx, browserBinary, launchStart);
+    return;
+  }
+  await launchFirefoxBrowser(ctx, browserBinary, launchStart);
+}
+
 async function launchChromiumBrowser(
   ctx: LaunchContext,
   browserBinary: string | null,
@@ -287,6 +350,9 @@ async function launchChromiumBrowser(
     ctx.outputRoot
   );
   await mkdir(chromiumUserDataDirPath, { recursive: true });
+  // Keep the profile from ballooning due to transient Chrome caches while
+  // preserving extension state and user data when cache is enabled.
+  await cleanupCacheDirs(chromiumUserDataDirPath);
   const extensions = [ctx.distPath, reloadManagerPath].filter(Boolean) as string[];
   const runnerFn = ctx.chromiumRunnerOverride ?? runChromiumRunner;
   extensionRunner = await runnerFn({
@@ -354,10 +420,7 @@ export async function launchBrowser(
     root,
     outputRoot,
   } = options;
-  const onBrowserExit = () => {
-    log(`${ANSI_COLORS.RED}Exiting because the browser was closed.${ANSI_COLORS.RESET}`);
-    cleanup().then(() => process.exit(0)).catch(() => process.exit(1));
-  };
+  const onBrowserExit = () => handleBrowserExit();
   await launchBrowserCore({
     distPath,
     browser,
@@ -441,7 +504,11 @@ export async function launchBrowserOnly(
   const closedPromise = new Promise<void>((r) => { resolveClosed = r; });
   const onBrowserExit = () => {
     log(`${ANSI_COLORS.RED}Exiting because the browser was closed.${ANSI_COLORS.RESET}`);
-    cleanup().then(() => { resolveClosed(); process.exit(0); }).catch(() => process.exit(1));
+    // Start cleanup but exit immediately so the terminal is not blocked
+    // waiting for the browser process tree or file removal.
+    void cleanup().catch(() => {});
+    resolveClosed();
+    process.exit(0);
   };
 
   const doLaunch = async (): Promise<void> => {

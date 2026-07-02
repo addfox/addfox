@@ -110,6 +110,23 @@ describe("EntryDiscoverer", () => {
       rmSync(dir, { recursive: true, force: true });
     });
 
+    it("finds html-only entry as single HTML file at base", async () => {
+      const { mkdirSync, writeFileSync, rmSync } = await import("fs");
+      const { join } = await import("path");
+      const { tmpdir } = await import("os");
+      const dir = join(tmpdir(), `addfox-discover-html-only-single-${Date.now()}`);
+      mkdirSync(dir, { recursive: true });
+      writeFileSync(join(dir, "popup.html"), "<html><body>Popup</body></html>", "utf-8");
+
+      const entries = discoverEntries(dir);
+      const popup = entries.find((e) => e.name === "popup");
+      expect(popup).toBeDefined();
+      expect(popup?.htmlOnly).toBe(true);
+      expect(popup?.scriptPath).toMatch(/popup\.html$/);
+      expect(popup?.htmlPath).toMatch(/popup\.html$/);
+      rmSync(dir, { recursive: true, force: true });
+    });
+
     it("finds chrome override html entries at base (newtab/bookmarks/history)", async () => {
       const { mkdirSync, writeFileSync, rmSync } = await import("fs");
       const { join } = await import("path");
@@ -219,7 +236,7 @@ describe("EntryDiscoverer", () => {
       rmSync(dir, { recursive: true, force: true });
     });
 
-    it("falls through to buildHtmlEntryInfo when subdir has only index.html (no script)", async () => {
+    it("finds html-only entry when subdir has only index.html (no script)", async () => {
       const { mkdirSync, writeFileSync, rmSync } = await import("fs");
       const { join } = await import("path");
       const { tmpdir } = await import("os");
@@ -229,7 +246,9 @@ describe("EntryDiscoverer", () => {
       
       const entries = discoverEntries(dir);
       const popup = entries.find((e) => e.name === "popup");
-      expect(popup).toBeUndefined();
+      expect(popup?.htmlOnly).toBe(true);
+      expect(popup?.scriptPath).toMatch(/popup[\\/]index\.html$/);
+      expect(popup?.htmlPath).toMatch(/popup[\\/]index\.html$/);
       rmSync(dir, { recursive: true, force: true });
     });
 

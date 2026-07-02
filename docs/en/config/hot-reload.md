@@ -7,18 +7,18 @@
 - **Type**:
   ```ts
   hotReload?: {
-    port?: number;
+    wsPort?: number;
     autoRefreshContentPage?: boolean;
   };
   ```
 - **Defaults**:
-  - `port`: `23333` (matches core `HMR_WS_PORT`)
+  - `wsPort`: `23333` (matches core `HMR_WS_PORT`)
   - `autoRefreshContentPage`: `true`
 
 ## Role
 
 - Only used in **dev** (`addfox dev`):
-  - `port` becomes the WebSocket server port used by the HMR plugin
+  - `wsPort` becomes the WebSocket server port used by the HMR plugin
   - `autoRefreshContentPage` controls whether the reload manager automatically refreshes the active tab when a **content entry** changes
 - Has no effect on `addfox build`.
 
@@ -29,7 +29,7 @@
 ```ts
 export default defineConfig({
   hotReload: {
-    port: 30001,
+    wsPort: 30001,
   },
 });
 ```
@@ -49,7 +49,7 @@ export default defineConfig({
 ```ts
 export default defineConfig({
   hotReload: {
-    port: 31000,
+    wsPort: 31000,
     autoRefreshContentPage: false,
   },
 });

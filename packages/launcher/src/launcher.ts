@@ -20,6 +20,8 @@ export interface UnifiedLaunchOptions extends CommonLaunchOptions {
   pathOptions?: import("./types").PathOptions;
   /** Watch source directories for changes and restart */
   watchPaths?: string[];
+  /** Chromium extension loading strategy. */
+  extensionLoadMode?: ChromiumLaunchOptions["extensionLoadMode"];
 }
 
 /**
@@ -27,7 +29,7 @@ export interface UnifiedLaunchOptions extends CommonLaunchOptions {
  * Automatically dispatches to Chromium or Gecko runner based on target.
  */
 export async function launchBrowser(options: UnifiedLaunchOptions): Promise<BrowserProcess> {
-  const { target, userDataDir, devtools, remoteDebuggingPort, pathOptions, watchPaths, ...common } = options;
+  const { target, userDataDir, devtools, remoteDebuggingPort, pathOptions, watchPaths, extensionLoadMode, ...common } = options;
 
   if (!ALL_TARGETS.includes(target)) {
     throw new Error(`Unsupported browser target: ${target}`);
@@ -41,6 +43,7 @@ export async function launchBrowser(options: UnifiedLaunchOptions): Promise<Brow
       devtools,
       remoteDebuggingPort,
       pathOptions,
+      extensionLoadMode,
     };
     return launchChromium(chromiumOpts);
   }

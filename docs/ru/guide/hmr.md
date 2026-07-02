@@ -113,7 +113,7 @@ addfox dev -b firefox
 // addfox.config.ts
 export default defineConfig({
   hotReload: {
-    port: 23333,              // Порт WebSocket, по умолчанию 23333
+    wsPort: 23333,            // Порт WebSocket, по умолчанию 23333
     autoRefreshContentPage: true,  // Автоматически обновлять страницу при изменении content, по умолчанию true
   },
 });
