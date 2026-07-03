@@ -1,4 +1,5 @@
 ---
+title: meta
 name: addfox-meta
 description: meta.md provides structured metadata for the project, including permissions, entry mappings, and build artifacts, serving as a key reference for AI refactoring and design.
 ---

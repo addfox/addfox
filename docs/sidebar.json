@@ -1,0 +1,1646 @@
+{
+  "/guide/": [
+    {
+      "sectionHeaderText": "Quick Start"
+    },
+    {
+      "text": "Introduction",
+      "link": "/guide/introduction"
+    },
+    {
+      "text": "Installation",
+      "link": "/guide/install"
+    },
+    {
+      "text": "CLI",
+      "link": "/guide/cli"
+    },
+    {
+      "sectionHeaderText": "Basics"
+    },
+    {
+      "text": "App Directory",
+      "link": "/guide/app-dir"
+    },
+    {
+      "text": "Entry",
+      "items": [
+        {
+          "text": "Entry Concepts",
+          "link": "/guide/entry/concept"
+        },
+        {
+          "text": "File-based Entry",
+          "link": "/guide/entry/file-based"
+        },
+        {
+          "text": "Config-based Entry",
+          "link": "/guide/entry/config-based"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Manifest",
+      "link": "/guide/manifest"
+    },
+    {
+      "text": "Browser Launch",
+      "link": "/guide/launch"
+    },
+    {
+      "text": "AI",
+      "items": [
+        {
+          "text": "llms.txt",
+          "link": "/guide/ai/llms"
+        },
+        {
+          "text": "error.md",
+          "link": "/guide/ai/error"
+        },
+        {
+          "text": "meta.md",
+          "link": "/guide/ai/meta"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Skills",
+      "link": "/guide/skills"
+    },
+    {
+      "text": "Internationalization (i18n)",
+      "link": "/guide/i18n"
+    },
+    {
+      "text": "Extension icons",
+      "link": "/guide/icons"
+    },
+    {
+      "text": "Content-UI",
+      "link": "/guide/content-ui"
+    },
+    {
+      "text": "TypeScript",
+      "link": "/guide/typescript"
+    },
+    {
+      "text": "Framework support",
+      "items": [
+        {
+          "text": "Vue",
+          "link": "/guide/framework/vue"
+        },
+        {
+          "text": "React",
+          "link": "/guide/framework/react"
+        },
+        {
+          "text": "Preact",
+          "link": "/guide/framework/preact"
+        },
+        {
+          "text": "Svelte",
+          "link": "/guide/framework/svelte"
+        },
+        {
+          "text": "Solid",
+          "link": "/guide/framework/solid"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Style Integration",
+      "items": [
+        {
+          "text": "Tailwind CSS",
+          "link": "/guide/style-integration/tailwindcss"
+        },
+        {
+          "text": "UnoCSS",
+          "link": "/guide/style-integration/unocss"
+        },
+        {
+          "text": "Less",
+          "link": "/guide/style-integration/less"
+        },
+        {
+          "text": "Sass",
+          "link": "/guide/style-integration/sass"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Error Monitor",
+      "link": "/guide/monitor"
+    },
+    {
+      "text": "Environment Variables",
+      "link": "/guide/env-prefix"
+    },
+    {
+      "text": "Rsbuild config (rsbuild)",
+      "link": "/guide/rsbuild"
+    },
+    {
+      "text": "Cache",
+      "link": "/guide/cache"
+    },
+    {
+      "text": "Unit & E2E Testing",
+      "link": "/guide/testing"
+    },
+    {
+      "text": "Analysis Report",
+      "link": "/guide/report"
+    },
+    {
+      "sectionHeaderText": "Development"
+    },
+    {
+      "text": "Hot Reload (HMR)",
+      "link": "/guide/hmr"
+    },
+    {
+      "text": "Reload Manager",
+      "link": "/guide/reload-manager"
+    },
+    {
+      "sectionHeaderText": "Production"
+    },
+    {
+      "text": "Build Output",
+      "link": "/guide/output"
+    },
+    {
+      "text": "Zip Packaging",
+      "link": "/guide/zip"
+    }
+  ],
+  "/config/": [
+    {
+      "text": "manifest",
+      "link": "/config/manifest"
+    },
+    {
+      "text": "entry",
+      "link": "/config/entry"
+    },
+    {
+      "text": "appDir",
+      "link": "/config/app-dir"
+    },
+    {
+      "text": "outDir",
+      "link": "/config/out-dir"
+    },
+    {
+      "text": "zip",
+      "link": "/config/zip"
+    },
+    {
+      "text": "envPrefix",
+      "link": "/config/env-prefix"
+    },
+    {
+      "text": "browserPath",
+      "link": "/config/launch"
+    },
+    {
+      "text": "hotReload",
+      "link": "/config/hot-reload"
+    },
+    {
+      "text": "cache",
+      "link": "/config/cache"
+    },
+    {
+      "text": "debug",
+      "link": "/config/debug"
+    },
+    {
+      "text": "report",
+      "link": "/config/report"
+    },
+    {
+      "text": "plugins",
+      "link": "/config/plugins"
+    },
+    {
+      "text": "rsbuild",
+      "link": "/config/rsbuild"
+    }
+  ],
+  "/examples/": [
+    {
+      "text": "Examples",
+      "link": "/examples/index"
+    }
+  ],
+  "/blog/": [
+    {
+      "text": "Addfox Blog",
+      "link": "/blog/index"
+    },
+    {
+      "text": "Addfox 0.2.0: Architecture Refactoring & Dependency Slimming",
+      "link": "/blog/v0-2-0"
+    }
+  ],
+  "/resources/": [
+    {
+      "text": "Resources",
+      "link": "/resources/index"
+    },
+    {
+      "text": "@addfox/launcher",
+      "link": "/resources/launcher"
+    },
+    {
+      "text": "@addfox/cli",
+      "link": "/resources/cli"
+    },
+    {
+      "text": "create-addfox-app",
+      "link": "/resources/create-addfox-app"
+    }
+  ],
+  "/zh/guide/": [
+    {
+      "sectionHeaderText": "快速开始"
+    },
+    {
+      "text": "介绍",
+      "link": "/zh/guide/introduction"
+    },
+    {
+      "text": "安装",
+      "link": "/zh/guide/install"
+    },
+    {
+      "text": "CLI",
+      "link": "/zh/guide/cli"
+    },
+    {
+      "sectionHeaderText": "基础"
+    },
+    {
+      "text": "目录结构",
+      "link": "/zh/guide/app-dir"
+    },
+    {
+      "text": "入口",
+      "items": [
+        {
+          "text": "入口概念",
+          "link": "/zh/guide/entry/concept"
+        },
+        {
+          "text": "基于文件的入口",
+          "link": "/zh/guide/entry/file-based"
+        },
+        {
+          "text": "基于配置的入口",
+          "link": "/zh/guide/entry/config-based"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Manifest 配置",
+      "link": "/zh/guide/manifest"
+    },
+    {
+      "text": "浏览器启动",
+      "link": "/zh/guide/launch"
+    },
+    {
+      "text": "AI",
+      "items": [
+        {
+          "text": "llms.txt",
+          "link": "/zh/guide/ai/llms"
+        },
+        {
+          "text": "error.md",
+          "link": "/zh/guide/ai/error"
+        },
+        {
+          "text": "meta.md",
+          "link": "/zh/guide/ai/meta"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Skills",
+      "link": "/zh/guide/skills"
+    },
+    {
+      "text": "国际化",
+      "link": "/zh/guide/i18n"
+    },
+    {
+      "text": "Icons",
+      "link": "/zh/guide/icons"
+    },
+    {
+      "text": "Content-UI",
+      "link": "/zh/guide/content-ui"
+    },
+    {
+      "text": "TypeScript",
+      "link": "/zh/guide/typescript"
+    },
+    {
+      "text": "框架支持",
+      "items": [
+        {
+          "text": "Vue",
+          "link": "/zh/guide/framework/vue"
+        },
+        {
+          "text": "React",
+          "link": "/zh/guide/framework/react"
+        },
+        {
+          "text": "Preact",
+          "link": "/zh/guide/framework/preact"
+        },
+        {
+          "text": "Svelte",
+          "link": "/zh/guide/framework/svelte"
+        },
+        {
+          "text": "Solid",
+          "link": "/zh/guide/framework/solid"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "样式集成",
+      "items": [
+        {
+          "text": "Tailwind CSS",
+          "link": "/zh/guide/style-integration/tailwindcss"
+        },
+        {
+          "text": "UnoCSS",
+          "link": "/zh/guide/style-integration/unocss"
+        },
+        {
+          "text": "Less",
+          "link": "/zh/guide/style-integration/less"
+        },
+        {
+          "text": "Sass",
+          "link": "/zh/guide/style-integration/sass"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "错误监控",
+      "link": "/zh/guide/monitor"
+    },
+    {
+      "text": "环境变量",
+      "link": "/zh/guide/env-prefix"
+    },
+    {
+      "text": "Rsbuild 配置",
+      "link": "/zh/guide/rsbuild"
+    },
+    {
+      "text": "缓存",
+      "link": "/zh/guide/cache"
+    },
+    {
+      "text": "单元测试与 E2E 测试",
+      "link": "/zh/guide/testing"
+    },
+    {
+      "text": "分析报告",
+      "link": "/zh/guide/report"
+    },
+    {
+      "sectionHeaderText": "开发环境"
+    },
+    {
+      "text": "热更新（HMR）",
+      "link": "/zh/guide/hmr"
+    },
+    {
+      "text": "重载管理器",
+      "link": "/zh/guide/reload-manager"
+    },
+    {
+      "sectionHeaderText": "生产环境"
+    },
+    {
+      "text": "Output",
+      "link": "/zh/guide/output"
+    },
+    {
+      "text": "打包",
+      "link": "/zh/guide/zip"
+    }
+  ],
+  "/zh/config/": [
+    {
+      "text": "manifest",
+      "link": "/zh/config/manifest"
+    },
+    {
+      "text": "entry",
+      "link": "/zh/config/entry"
+    },
+    {
+      "text": "appDir",
+      "link": "/zh/config/app-dir"
+    },
+    {
+      "text": "outDir",
+      "link": "/zh/config/out-dir"
+    },
+    {
+      "text": "zip",
+      "link": "/zh/config/zip"
+    },
+    {
+      "text": "envPrefix",
+      "link": "/zh/config/env-prefix"
+    },
+    {
+      "text": "browserPath",
+      "link": "/zh/config/launch"
+    },
+    {
+      "text": "hotReload",
+      "link": "/zh/config/hot-reload"
+    },
+    {
+      "text": "cache",
+      "link": "/zh/config/cache"
+    },
+    {
+      "text": "debug",
+      "link": "/zh/config/debug"
+    },
+    {
+      "text": "report",
+      "link": "/zh/config/report"
+    },
+    {
+      "text": "plugins",
+      "link": "/zh/config/plugins"
+    },
+    {
+      "text": "rsbuild",
+      "link": "/zh/config/rsbuild"
+    }
+  ],
+  "/zh/examples/": [
+    {
+      "text": "示例",
+      "link": "/zh/examples/index"
+    }
+  ],
+  "/zh/blog/": [
+    {
+      "text": "Addfox 博客",
+      "link": "/zh/blog/index"
+    },
+    {
+      "text": "Addfox 0.2.0：架构重构与依赖精简",
+      "link": "/zh/blog/v0-2-0"
+    }
+  ],
+  "/zh/resources/": [
+    {
+      "text": "资源",
+      "link": "/zh/resources/index"
+    },
+    {
+      "text": "@addfox/launcher",
+      "link": "/zh/resources/launcher"
+    },
+    {
+      "text": "@addfox/cli",
+      "link": "/zh/resources/cli"
+    },
+    {
+      "text": "create-addfox-app",
+      "link": "/zh/resources/create-addfox-app"
+    }
+  ],
+  "/ja/guide/": [
+    {
+      "sectionHeaderText": "クイックスタート"
+    },
+    {
+      "text": "はじめに",
+      "link": "/ja/guide/introduction"
+    },
+    {
+      "text": "インストール",
+      "link": "/ja/guide/install"
+    },
+    {
+      "text": "CLI",
+      "link": "/ja/guide/cli"
+    },
+    {
+      "sectionHeaderText": "基本"
+    },
+    {
+      "text": "ディレクトリ構造",
+      "link": "/ja/guide/app-dir"
+    },
+    {
+      "text": "エントリ",
+      "items": [
+        {
+          "text": "エントリーコンセプト",
+          "link": "/ja/guide/entry/concept"
+        },
+        {
+          "text": "ファイルベースのエントリー",
+          "link": "/ja/guide/entry/file-based"
+        },
+        {
+          "text": "設定ベースのエントリー",
+          "link": "/ja/guide/entry/config-based"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Manifest 設定",
+      "link": "/ja/guide/manifest"
+    },
+    {
+      "text": "ブラウザ起動",
+      "link": "/ja/guide/launch"
+    },
+    {
+      "text": "AI",
+      "items": [
+        {
+          "text": "llms.txt",
+          "link": "/ja/guide/ai/llms"
+        },
+        {
+          "text": "error.md",
+          "link": "/ja/guide/ai/error"
+        },
+        {
+          "text": "meta.md",
+          "link": "/ja/guide/ai/meta"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Skills",
+      "link": "/ja/guide/skills"
+    },
+    {
+      "text": "国際化",
+      "link": "/ja/guide/i18n"
+    },
+    {
+      "text": "アイコン",
+      "link": "/ja/guide/icons"
+    },
+    {
+      "text": "Content-UI",
+      "link": "/ja/guide/content-ui"
+    },
+    {
+      "text": "TypeScript",
+      "link": "/ja/guide/typescript"
+    },
+    {
+      "text": "フレームワークサポート",
+      "items": [
+        {
+          "text": "Vue",
+          "link": "/ja/guide/framework/vue"
+        },
+        {
+          "text": "React",
+          "link": "/ja/guide/framework/react"
+        },
+        {
+          "text": "Preact",
+          "link": "/ja/guide/framework/preact"
+        },
+        {
+          "text": "Svelte",
+          "link": "/ja/guide/framework/svelte"
+        },
+        {
+          "text": "Solid",
+          "link": "/ja/guide/framework/solid"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "スタイル統合",
+      "items": [
+        {
+          "text": "Tailwind CSS",
+          "link": "/ja/guide/style-integration/tailwindcss"
+        },
+        {
+          "text": "UnoCSS",
+          "link": "/ja/guide/style-integration/unocss"
+        },
+        {
+          "text": "Less",
+          "link": "/ja/guide/style-integration/less"
+        },
+        {
+          "text": "Sass",
+          "link": "/ja/guide/style-integration/sass"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "エラーモニタリング",
+      "link": "/ja/guide/monitor"
+    },
+    {
+      "text": "環境変数",
+      "link": "/ja/guide/env-prefix"
+    },
+    {
+      "text": "Rsbuild 設定",
+      "link": "/ja/guide/rsbuild"
+    },
+    {
+      "text": "キャッシュ",
+      "link": "/ja/guide/cache"
+    },
+    {
+      "text": "ユニットテストとE2Eテスト",
+      "link": "/ja/guide/testing"
+    },
+    {
+      "text": "分析レポート",
+      "link": "/ja/guide/report"
+    },
+    {
+      "sectionHeaderText": "開発環境"
+    },
+    {
+      "text": "ホットアップデート（HMR）",
+      "link": "/ja/guide/hmr"
+    },
+    {
+      "text": "リロードマネージャー",
+      "link": "/ja/guide/reload-manager"
+    },
+    {
+      "sectionHeaderText": "本番環境"
+    },
+    {
+      "text": "Output",
+      "link": "/ja/guide/output"
+    },
+    {
+      "text": "パッケージング",
+      "link": "/ja/guide/zip"
+    }
+  ],
+  "/ja/config/": [
+    {
+      "text": "manifest",
+      "link": "/ja/config/manifest"
+    },
+    {
+      "text": "entry",
+      "link": "/ja/config/entry"
+    },
+    {
+      "text": "appDir",
+      "link": "/ja/config/app-dir"
+    },
+    {
+      "text": "outDir",
+      "link": "/ja/config/out-dir"
+    },
+    {
+      "text": "zip",
+      "link": "/ja/config/zip"
+    },
+    {
+      "text": "envPrefix",
+      "link": "/ja/config/env-prefix"
+    },
+    {
+      "text": "browserPath",
+      "link": "/ja/config/launch"
+    },
+    {
+      "text": "hotReload",
+      "link": "/ja/config/hot-reload"
+    },
+    {
+      "text": "cache",
+      "link": "/ja/config/cache"
+    },
+    {
+      "text": "debug",
+      "link": "/ja/config/debug"
+    },
+    {
+      "text": "report",
+      "link": "/ja/config/report"
+    },
+    {
+      "text": "plugins",
+      "link": "/ja/config/plugins"
+    },
+    {
+      "text": "rsbuild",
+      "link": "/ja/config/rsbuild"
+    }
+  ],
+  "/ja/examples/": [
+    {
+      "text": "サンプル",
+      "link": "/ja/examples/index"
+    }
+  ],
+  "/ja/blog/": [
+    {
+      "text": "Addfox ブログ",
+      "link": "/ja/blog/index"
+    },
+    {
+      "text": "Addfox 0.2.0：アーキテクチャの再構築と依存関係の削減",
+      "link": "/ja/blog/v0-2-0"
+    }
+  ],
+  "/ja/resources/": [
+    {
+      "text": "Resources",
+      "link": "/ja/resources/index"
+    },
+    {
+      "text": "@addfox/launcher",
+      "link": "/ja/resources/launcher"
+    },
+    {
+      "text": "@addfox/cli",
+      "link": "/ja/resources/cli"
+    },
+    {
+      "text": "create-addfox-app",
+      "link": "/ja/resources/create-addfox-app"
+    }
+  ],
+  "/ko/guide/": [
+    {
+      "sectionHeaderText": "빠른 시작"
+    },
+    {
+      "text": "소개",
+      "link": "/ko/guide/introduction"
+    },
+    {
+      "text": "설치",
+      "link": "/ko/guide/install"
+    },
+    {
+      "text": "CLI",
+      "link": "/ko/guide/cli"
+    },
+    {
+      "sectionHeaderText": "기본"
+    },
+    {
+      "text": "디렉토리 구조",
+      "link": "/ko/guide/app-dir"
+    },
+    {
+      "text": "Entry",
+      "items": [
+        {
+          "text": "Entry 개념",
+          "link": "/ko/guide/entry/concept"
+        },
+        {
+          "text": "파일 기반 Entry",
+          "link": "/ko/guide/entry/file-based"
+        },
+        {
+          "text": "구성 기반 Entry",
+          "link": "/ko/guide/entry/config-based"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Manifest 구성",
+      "link": "/ko/guide/manifest"
+    },
+    {
+      "text": "브라우저 시작",
+      "link": "/ko/guide/launch"
+    },
+    {
+      "text": "AI",
+      "items": [
+        {
+          "text": "llms.txt",
+          "link": "/ko/guide/ai/llms"
+        },
+        {
+          "text": "error.md",
+          "link": "/ko/guide/ai/error"
+        },
+        {
+          "text": "meta.md",
+          "link": "/ko/guide/ai/meta"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Skills",
+      "link": "/ko/guide/skills"
+    },
+    {
+      "text": "국제화",
+      "link": "/ko/guide/i18n"
+    },
+    {
+      "text": "아이콘",
+      "link": "/ko/guide/icons"
+    },
+    {
+      "text": "Content-UI",
+      "link": "/ko/guide/content-ui"
+    },
+    {
+      "text": "TypeScript",
+      "link": "/ko/guide/typescript"
+    },
+    {
+      "text": "프레임워크 지원",
+      "items": [
+        {
+          "text": "Vue",
+          "link": "/ko/guide/framework/vue"
+        },
+        {
+          "text": "React",
+          "link": "/ko/guide/framework/react"
+        },
+        {
+          "text": "Preact",
+          "link": "/ko/guide/framework/preact"
+        },
+        {
+          "text": "Svelte",
+          "link": "/ko/guide/framework/svelte"
+        },
+        {
+          "text": "Solid",
+          "link": "/ko/guide/framework/solid"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "스타일 통합",
+      "items": [
+        {
+          "text": "Tailwind CSS",
+          "link": "/ko/guide/style-integration/tailwindcss"
+        },
+        {
+          "text": "UnoCSS",
+          "link": "/ko/guide/style-integration/unocss"
+        },
+        {
+          "text": "Less",
+          "link": "/ko/guide/style-integration/less"
+        },
+        {
+          "text": "Sass",
+          "link": "/ko/guide/style-integration/sass"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "오류 모니터링",
+      "link": "/ko/guide/monitor"
+    },
+    {
+      "text": "환경 변수",
+      "link": "/ko/guide/env-prefix"
+    },
+    {
+      "text": "Rsbuild 구성",
+      "link": "/ko/guide/rsbuild"
+    },
+    {
+      "text": "캐시",
+      "link": "/ko/guide/cache"
+    },
+    {
+      "text": "단위 테스트 및 E2E 테스트",
+      "link": "/ko/guide/testing"
+    },
+    {
+      "text": "분석 보고서",
+      "link": "/ko/guide/report"
+    },
+    {
+      "sectionHeaderText": "개발 환경"
+    },
+    {
+      "text": "핫 업데이트 (HMR)",
+      "link": "/ko/guide/hmr"
+    },
+    {
+      "text": "리로드 관리자",
+      "link": "/ko/guide/reload-manager"
+    },
+    {
+      "sectionHeaderText": "프로덕션 환경"
+    },
+    {
+      "text": "Output",
+      "link": "/ko/guide/output"
+    },
+    {
+      "text": "패키징",
+      "link": "/ko/guide/zip"
+    }
+  ],
+  "/ko/config/": [
+    {
+      "text": "manifest",
+      "link": "/ko/config/manifest"
+    },
+    {
+      "text": "entry",
+      "link": "/ko/config/entry"
+    },
+    {
+      "text": "appDir",
+      "link": "/ko/config/app-dir"
+    },
+    {
+      "text": "outDir",
+      "link": "/ko/config/out-dir"
+    },
+    {
+      "text": "zip",
+      "link": "/ko/config/zip"
+    },
+    {
+      "text": "envPrefix",
+      "link": "/ko/config/env-prefix"
+    },
+    {
+      "text": "browserPath",
+      "link": "/ko/config/launch"
+    },
+    {
+      "text": "hotReload",
+      "link": "/ko/config/hot-reload"
+    },
+    {
+      "text": "cache",
+      "link": "/ko/config/cache"
+    },
+    {
+      "text": "debug",
+      "link": "/ko/config/debug"
+    },
+    {
+      "text": "report",
+      "link": "/ko/config/report"
+    },
+    {
+      "text": "plugins",
+      "link": "/ko/config/plugins"
+    },
+    {
+      "text": "rsbuild",
+      "link": "/ko/config/rsbuild"
+    }
+  ],
+  "/ko/examples/": [
+    {
+      "text": "예시",
+      "link": "/ko/examples/index"
+    }
+  ],
+  "/ko/blog/": [
+    {
+      "text": "Addfox 블로그",
+      "link": "/ko/blog/index"
+    },
+    {
+      "text": "Addfox 0.2.0: 아키텍처 리팩토링 및 의존성 경량화",
+      "link": "/ko/blog/v0-2-0"
+    }
+  ],
+  "/ko/resources/": [
+    {
+      "text": "Resources",
+      "link": "/ko/resources/index"
+    },
+    {
+      "text": "@addfox/launcher",
+      "link": "/ko/resources/launcher"
+    },
+    {
+      "text": "@addfox/cli",
+      "link": "/ko/resources/cli"
+    },
+    {
+      "text": "create-addfox-app",
+      "link": "/ko/resources/create-addfox-app"
+    }
+  ],
+  "/ru/guide/": [
+    {
+      "sectionHeaderText": "Быстрый старт"
+    },
+    {
+      "text": "Введение",
+      "link": "/ru/guide/introduction"
+    },
+    {
+      "text": "Установка",
+      "link": "/ru/guide/install"
+    },
+    {
+      "text": "CLI",
+      "link": "/ru/guide/cli"
+    },
+    {
+      "sectionHeaderText": "Основы"
+    },
+    {
+      "text": "Структура директорий",
+      "link": "/ru/guide/app-dir"
+    },
+    {
+      "text": "Точки входа",
+      "items": [
+        {
+          "text": "Концепция Entry",
+          "link": "/ru/guide/entry/concept"
+        },
+        {
+          "text": "Entry на основе файлов",
+          "link": "/ru/guide/entry/file-based"
+        },
+        {
+          "text": "Entry на основе конфигурации",
+          "link": "/ru/guide/entry/config-based"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Конфигурация Manifest",
+      "link": "/ru/guide/manifest"
+    },
+    {
+      "text": "Запуск браузера",
+      "link": "/ru/guide/launch"
+    },
+    {
+      "text": "AI",
+      "items": [
+        {
+          "text": "llms.txt",
+          "link": "/ru/guide/ai/llms"
+        },
+        {
+          "text": "error.md",
+          "link": "/ru/guide/ai/error"
+        },
+        {
+          "text": "meta.md",
+          "link": "/ru/guide/ai/meta"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Skills",
+      "link": "/ru/guide/skills"
+    },
+    {
+      "text": "Интернационализация",
+      "link": "/ru/guide/i18n"
+    },
+    {
+      "text": "Иконки",
+      "link": "/ru/guide/icons"
+    },
+    {
+      "text": "Content-UI",
+      "link": "/ru/guide/content-ui"
+    },
+    {
+      "text": "TypeScript",
+      "link": "/ru/guide/typescript"
+    },
+    {
+      "text": "Поддержка фреймворков",
+      "items": [
+        {
+          "text": "Vue",
+          "link": "/ru/guide/framework/vue"
+        },
+        {
+          "text": "React",
+          "link": "/ru/guide/framework/react"
+        },
+        {
+          "text": "Preact",
+          "link": "/ru/guide/framework/preact"
+        },
+        {
+          "text": "Svelte",
+          "link": "/ru/guide/framework/svelte"
+        },
+        {
+          "text": "Solid",
+          "link": "/ru/guide/framework/solid"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Интеграция стилей",
+      "items": [
+        {
+          "text": "Tailwind CSS",
+          "link": "/ru/guide/style-integration/tailwindcss"
+        },
+        {
+          "text": "UnoCSS",
+          "link": "/ru/guide/style-integration/unocss"
+        },
+        {
+          "text": "Less",
+          "link": "/ru/guide/style-integration/less"
+        },
+        {
+          "text": "Sass",
+          "link": "/ru/guide/style-integration/sass"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Мониторинг ошибок",
+      "link": "/ru/guide/monitor"
+    },
+    {
+      "text": "Переменные окружения",
+      "link": "/ru/guide/env-prefix"
+    },
+    {
+      "text": "Конфигурация Rsbuild",
+      "link": "/ru/guide/rsbuild"
+    },
+    {
+      "text": "Кэш",
+      "link": "/ru/guide/cache"
+    },
+    {
+      "text": "Модульное и E2E тестирование",
+      "link": "/ru/guide/testing"
+    },
+    {
+      "text": "Отчет об анализе",
+      "link": "/ru/guide/report"
+    },
+    {
+      "sectionHeaderText": "Среда разработки"
+    },
+    {
+      "text": "Горячее обновление (HMR)",
+      "link": "/ru/guide/hmr"
+    },
+    {
+      "text": "Менеджер перезагрузки",
+      "link": "/ru/guide/reload-manager"
+    },
+    {
+      "sectionHeaderText": "Продакшн среда"
+    },
+    {
+      "text": "Output",
+      "link": "/ru/guide/output"
+    },
+    {
+      "text": "Упаковка",
+      "link": "/ru/guide/zip"
+    }
+  ],
+  "/ru/config/": [
+    {
+      "text": "manifest",
+      "link": "/ru/config/manifest"
+    },
+    {
+      "text": "entry",
+      "link": "/ru/config/entry"
+    },
+    {
+      "text": "appDir",
+      "link": "/ru/config/app-dir"
+    },
+    {
+      "text": "outDir",
+      "link": "/ru/config/out-dir"
+    },
+    {
+      "text": "zip",
+      "link": "/ru/config/zip"
+    },
+    {
+      "text": "envPrefix",
+      "link": "/ru/config/env-prefix"
+    },
+    {
+      "text": "browserPath",
+      "link": "/ru/config/launch"
+    },
+    {
+      "text": "hotReload",
+      "link": "/ru/config/hot-reload"
+    },
+    {
+      "text": "cache",
+      "link": "/ru/config/cache"
+    },
+    {
+      "text": "debug",
+      "link": "/ru/config/debug"
+    },
+    {
+      "text": "report",
+      "link": "/ru/config/report"
+    },
+    {
+      "text": "plugins",
+      "link": "/ru/config/plugins"
+    },
+    {
+      "text": "rsbuild",
+      "link": "/ru/config/rsbuild"
+    }
+  ],
+  "/ru/examples/": [
+    {
+      "text": "Примеры",
+      "link": "/ru/examples/index"
+    }
+  ],
+  "/ru/blog/": [
+    {
+      "text": "Блог Addfox",
+      "link": "/ru/blog/index"
+    },
+    {
+      "text": "Addfox 0.2.0: Рефакторинг архитектуры и сокращение зависимостей",
+      "link": "/ru/blog/v0-2-0"
+    }
+  ],
+  "/ru/resources/": [
+    {
+      "text": "Resources",
+      "link": "/ru/resources/index"
+    },
+    {
+      "text": "@addfox/launcher",
+      "link": "/ru/resources/launcher"
+    },
+    {
+      "text": "@addfox/cli",
+      "link": "/ru/resources/cli"
+    },
+    {
+      "text": "create-addfox-app",
+      "link": "/ru/resources/create-addfox-app"
+    }
+  ],
+  "/es/guide/": [
+    {
+      "sectionHeaderText": "Inicio Rápido"
+    },
+    {
+      "text": "Introducción",
+      "link": "/es/guide/introduction"
+    },
+    {
+      "text": "Instalación",
+      "link": "/es/guide/install"
+    },
+    {
+      "text": "CLI",
+      "link": "/es/guide/cli"
+    },
+    {
+      "sectionHeaderText": "Fundamentos"
+    },
+    {
+      "text": "Estructura de Directorios",
+      "link": "/es/guide/app-dir"
+    },
+    {
+      "text": "Puntos de Entrada",
+      "items": [
+        {
+          "text": "Concepto de entrada",
+          "link": "/es/guide/entry/concept"
+        },
+        {
+          "text": "Entradas basadas en archivos",
+          "link": "/es/guide/entry/file-based"
+        },
+        {
+          "text": "Entradas basadas en configuración",
+          "link": "/es/guide/entry/config-based"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Configuración de Manifest",
+      "link": "/es/guide/manifest"
+    },
+    {
+      "text": "Inicio de navegador",
+      "link": "/es/guide/launch"
+    },
+    {
+      "text": "AI",
+      "items": [
+        {
+          "text": "llms.txt",
+          "link": "/es/guide/ai/llms"
+        },
+        {
+          "text": "error.md",
+          "link": "/es/guide/ai/error"
+        },
+        {
+          "text": "meta.md",
+          "link": "/es/guide/ai/meta"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Skills",
+      "link": "/es/guide/skills"
+    },
+    {
+      "text": "Internacionalización",
+      "link": "/es/guide/i18n"
+    },
+    {
+      "text": "Iconos",
+      "link": "/es/guide/icons"
+    },
+    {
+      "text": "Content-UI",
+      "link": "/es/guide/content-ui"
+    },
+    {
+      "text": "TypeScript",
+      "link": "/es/guide/typescript"
+    },
+    {
+      "text": "Soporte de Frameworks",
+      "items": [
+        {
+          "text": "Vue",
+          "link": "/es/guide/framework/vue"
+        },
+        {
+          "text": "React",
+          "link": "/es/guide/framework/react"
+        },
+        {
+          "text": "Preact",
+          "link": "/es/guide/framework/preact"
+        },
+        {
+          "text": "Svelte",
+          "link": "/es/guide/framework/svelte"
+        },
+        {
+          "text": "Solid",
+          "link": "/es/guide/framework/solid"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Integración de Estilos",
+      "items": [
+        {
+          "text": "Tailwind CSS",
+          "link": "/es/guide/style-integration/tailwindcss"
+        },
+        {
+          "text": "UnoCSS",
+          "link": "/es/guide/style-integration/unocss"
+        },
+        {
+          "text": "Less",
+          "link": "/es/guide/style-integration/less"
+        },
+        {
+          "text": "Sass",
+          "link": "/es/guide/style-integration/sass"
+        }
+      ],
+      "collapsible": true,
+      "collapsed": true
+    },
+    {
+      "text": "Monitoreo de errores",
+      "link": "/es/guide/monitor"
+    },
+    {
+      "text": "Variables de entorno",
+      "link": "/es/guide/env-prefix"
+    },
+    {
+      "text": "Configuración de Rsbuild",
+      "link": "/es/guide/rsbuild"
+    },
+    {
+      "text": "Caché",
+      "link": "/es/guide/cache"
+    },
+    {
+      "text": "Pruebas Unitarias y E2E",
+      "link": "/es/guide/testing"
+    },
+    {
+      "text": "Informe de análisis",
+      "link": "/es/guide/report"
+    },
+    {
+      "sectionHeaderText": "Entorno de Desarrollo"
+    },
+    {
+      "text": "Recarga en caliente (HMR)",
+      "link": "/es/guide/hmr"
+    },
+    {
+      "text": "Administrador de recarga",
+      "link": "/es/guide/reload-manager"
+    },
+    {
+      "sectionHeaderText": "Entorno de Producción"
+    },
+    {
+      "text": "Output",
+      "link": "/es/guide/output"
+    },
+    {
+      "text": "Empaquetado",
+      "link": "/es/guide/zip"
+    }
+  ],
+  "/es/config/": [
+    {
+      "text": "manifest",
+      "link": "/es/config/manifest"
+    },
+    {
+      "text": "entry",
+      "link": "/es/config/entry"
+    },
+    {
+      "text": "appDir",
+      "link": "/es/config/app-dir"
+    },
+    {
+      "text": "outDir",
+      "link": "/es/config/out-dir"
+    },
+    {
+      "text": "zip",
+      "link": "/es/config/zip"
+    },
+    {
+      "text": "envPrefix",
+      "link": "/es/config/env-prefix"
+    },
+    {
+      "text": "browserPath",
+      "link": "/es/config/launch"
+    },
+    {
+      "text": "hotReload",
+      "link": "/es/config/hot-reload"
+    },
+    {
+      "text": "cache",
+      "link": "/es/config/cache"
+    },
+    {
+      "text": "debug",
+      "link": "/es/config/debug"
+    },
+    {
+      "text": "report",
+      "link": "/es/config/report"
+    },
+    {
+      "text": "plugins",
+      "link": "/es/config/plugins"
+    },
+    {
+      "text": "rsbuild",
+      "link": "/es/config/rsbuild"
+    }
+  ],
+  "/es/examples/": [
+    {
+      "text": "Ejemplos",
+      "link": "/es/examples/index"
+    }
+  ],
+  "/es/blog/": [
+    {
+      "text": "Blog de Addfox",
+      "link": "/es/blog/index"
+    },
+    {
+      "text": "Addfox 0.2.0: Refactorización de Arquitectura y Reducción de Dependencias",
+      "link": "/es/blog/v0-2-0"
+    }
+  ],
+  "/es/resources/": [
+    {
+      "text": "Resources",
+      "link": "/es/resources/index"
+    },
+    {
+      "text": "@addfox/launcher",
+      "link": "/es/resources/launcher"
+    },
+    {
+      "text": "@addfox/cli",
+      "link": "/es/resources/cli"
+    },
+    {
+      "text": "create-addfox-app",
+      "link": "/es/resources/create-addfox-app"
+    }
+  ]
+}

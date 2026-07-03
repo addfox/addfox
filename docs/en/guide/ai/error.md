@@ -1,4 +1,5 @@
 ---
+title: error
 name: addfox-error
 description: error.md records the original error stacks and context information during extension runtime, serving as the single source of truth for AI to handle runtime issues.
 ---

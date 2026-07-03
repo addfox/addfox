@@ -4,13 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "rspress dev --port 3100",
-    "build": "rspress build",
+    "gen:sidebar": "node scripts/generate-sidebar.mjs",
+    "dev": "node scripts/generate-sidebar.mjs && rspress dev --port 3100",
+    "build": "node scripts/generate-sidebar.mjs && rspress build",
     "preview": "wrangler dev",
     "deploy": "wrangler deploy"
   },
   "dependencies": {
-    "@rspress/core": "^2.0.6",
+    "@rspress/core": "^2.0.15",
     "@shikijs/transformers": "^3.22.0",
     "rspress-plugin-file-tree": "^1.0.4"
   },

@@ -1,4 +1,5 @@
 ---
+title: llms
 name: addfox-llms
 description: llms.txt 是为大型语言模型提供的高层项目指南。它定义了项目的核心架构、入口点以及 AI 在开发过程中应遵循的约定。
 ---

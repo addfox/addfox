@@ -1,0 +1,6 @@
+[
+  "index",
+  { "type": "file", "name": "launcher", "label": "@addfox/launcher" },
+  { "type": "file", "name": "cli", "label": "@addfox/cli" },
+  { "type": "file", "name": "create-addfox-app", "label": "create-addfox-app" }
+]
