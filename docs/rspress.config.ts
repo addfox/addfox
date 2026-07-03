@@ -1,6 +1,7 @@
 import { transformerNotationHighlight } from "@shikijs/transformers";
 import fileTree from "rspress-plugin-file-tree";
 import { pluginNodePolyfill } from "@rsbuild/plugin-node-polyfill";
+import sidebar from "./sidebar.json" with { type: "json" };
 
 /** Custom theme files, build outputs, and tooling config should not be included in doc routes or SSG. */
 const docRouteExclude = [
@@ -18,11 +19,12 @@ const SITE_DESCRIPTION =
 const OG_IMAGE_PATH = "/og-image.png";
 const OG_IMAGE_URL = `${SITE_URL}${OG_IMAGE_PATH}`;
 const HOME_URL = `${SITE_URL}/`;
-const GUIDE_URL = `${SITE_URL}/guide/`;
+const GUIDE_URL = `${SITE_URL}/guide/introduction/`;
 const CONFIG_URL = `${SITE_URL}/config/`;
 const EXAMPLES_URL = `${SITE_URL}/examples/`;
-const CLI_URL = `${SITE_URL}/guide/cli`;
 const BLOG_URL = `${SITE_URL}/blog/`;
+const RESOURCES_URL = `${SITE_URL}/resources/`;
+const CLI_URL = `${SITE_URL}/guide/cli`;
 
 const jsonLdWebSite = JSON.stringify({
   "@context": "https://schema.org",
@@ -40,8 +42,8 @@ const jsonLdWebSite = JSON.stringify({
 const jsonLdSiteNavigation = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "SiteNavigationElement",
-  name: ["Guide", "Config", "Examples", "Blog", "CLI"],
-  url: [GUIDE_URL, CONFIG_URL, EXAMPLES_URL, BLOG_URL, CLI_URL],
+  name: ["Guide", "Config", "Examples", "Blog", "Resources", "CLI"],
+  url: [GUIDE_URL, CONFIG_URL, EXAMPLES_URL, BLOG_URL, RESOURCES_URL, CLI_URL],
 });
 
 const jsonLdBreadcrumb = JSON.stringify({
@@ -116,6 +118,66 @@ export default {
   icon: "/addfox-z.png",
   logo: { light: "/addfox-z.png", dark: "/addfox-light-z.png" },
   themeConfig: {
+    locales: [
+      {
+        lang: "zh",
+        nav: [
+          { text: "指南", link: "/zh/guide/introduction" },
+          { text: "配置", link: "/zh/config/" },
+          { text: "示例", link: "/zh/examples/" },
+          { text: "博客", link: "/zh/blog/" },
+          { text: "资源", link: "/zh/resources/" },
+        ],
+      },
+      {
+        lang: "ja",
+        nav: [
+          { text: "ガイド", link: "/ja/guide/introduction" },
+          { text: "設定", link: "/ja/config/" },
+          { text: "例", link: "/ja/examples/" },
+          { text: "ブログ", link: "/ja/blog/" },
+          { text: "リソース", link: "/ja/resources/" },
+        ],
+      },
+      {
+        lang: "ko",
+        nav: [
+          { text: "가이드", link: "/ko/guide/introduction" },
+          { text: "설정", link: "/ko/config/" },
+          { text: "예제", link: "/ko/examples/" },
+          { text: "블로그", link: "/ko/blog/" },
+          { text: "리소스", link: "/ko/resources/" },
+        ],
+      },
+      {
+        lang: "ru",
+        nav: [
+          { text: "Руководство", link: "/ru/guide/introduction" },
+          { text: "Конфиг", link: "/ru/config/" },
+          { text: "Примеры", link: "/ru/examples/" },
+          { text: "Блог", link: "/ru/blog/" },
+          { text: "Ресурсы", link: "/ru/resources/" },
+        ],
+      },
+      {
+        lang: "es",
+        nav: [
+          { text: "Guía", link: "/es/guide/introduction" },
+          { text: "Config", link: "/es/config/" },
+          { text: "Ejemplos", link: "/es/examples/" },
+          { text: "Blog", link: "/es/blog/" },
+          { text: "Recursos", link: "/es/resources/" },
+        ],
+      },
+    ],
+    nav: [
+      { text: "Guide", link: "/guide/introduction" },
+      { text: "Config", link: "/config/" },
+      { text: "Examples", link: "/examples/" },
+      { text: "Blog", link: "/blog/" },
+      { text: "Resources", link: "/resources/" },
+    ],
+    sidebar,
     socialLinks: [
       {
         icon: "github",

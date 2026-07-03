@@ -1,4 +1,5 @@
 ---
+title: error
 name: addfox-error
 description: error.md 记录了浏览器扩展运行时的原始错误堆栈和上下文信息，是 AI 处理运行时问题的唯一事实来源。
 ---

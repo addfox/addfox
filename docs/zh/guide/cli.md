@@ -1,3 +1,7 @@
+---
+title: CLI
+---
+
 # CLI
 
 本页汇总 `addfox` CLI 支持的命令与参数。
@@ -35,6 +39,7 @@ addfox <command> [options]
 | 参数 | 内置默认值 | 对应 `addfox.config` 字段 | 说明 |
 |------|------------|---------------------------|------|
 | `-b, --browser <browser>` | `chromium` | 无直接字段（影响目标与启动） | 指定目标/启动浏览器，详见下方[支持的浏览器列表](#支持的浏览器列表)。 |
+| `--port <port>` | `3000` | 无直接字段 | Rsbuild dev server 端口，仅对 `dev` 生效。 |
 | `-c, --cache` | `true` | `cache` | 启用浏览器 profile 缓存。 |
 | `--no-cache` | `false`（仅当前命令） | `cache` | 禁用本次运行的浏览器 profile 缓存。 |
 | `-r, --report` | `false` | `report` | 启用 Rsdoctor 构建分析报告。 |
@@ -68,6 +73,9 @@ addfox <command> [options]
 # Chromium 开发模式
 addfox dev -b chromium
 
+# 指定 dev server 端口
+addfox dev --port 3100 -b edge
+
 # Firefox 开发 + 调试
 addfox dev -b firefox --debug
 
@@ -80,6 +88,17 @@ addfox build -b chrome --no-open
 # 生成构建分析报告
 addfox build -r
 ```
+
+## 入口路径与 HTML 模板
+
+传给 `entry` 的入口路径可以是**脚本**（`.ts/.tsx/.js/.jsx`）或 **HTML 模板**（`.html`）。
+
+- **脚本路径**：框架以该脚本作为构建入口，并为需要 HTML 的入口自动生成页面。
+- **HTML 路径**：入口路径可以写成 `popup/index.html`，但你必须告诉框架真正的入口脚本。方法有两种：
+  - 在 HTML 中给 `<script type="module">` 标签加上 `data-addfox-entry`；
+  - 在 HTML 旁边放置同名脚本文件（`index.ts` / `index.tsx`），让框架自动解析。
+
+详情与示例见 [Config-based Entry](/guide/entry/config-based)。
 
 ## 说明
 

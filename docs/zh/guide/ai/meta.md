@@ -1,4 +1,5 @@
 ---
+title: meta
 name: addfox-meta
 description: meta.md 提供了项目的结构化元数据，包括权限配置、入口映射、构建产物等，是 AI 进行代码重构和功能设计的关键依据。
 ---

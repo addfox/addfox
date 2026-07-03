@@ -1,3 +1,7 @@
+---
+title: CLI
+---
+
 # CLI
 
 This page lists the supported `addfox` CLI commands and options.
@@ -35,6 +39,7 @@ addfox <command> [options]
 | Option | Built-in Default | `addfox.config` Field | Description |
 |--------|------------------|------------------------|-------------|
 | `-b, --browser <browser>` | `chromium` | No direct field (command-level target/launch selection) | Target/launch browser. See [Supported Browsers List](#supported-browsers-list) below. |
+| `--port <port>` | `3000` | No direct field | Rsbuild dev server port. Only applies to `dev`. |
 | `-c, --cache` | `true` | `cache` | Enable browser profile cache for current run. |
 | `--no-cache` | `false` (for this run) | `cache` | Disable browser profile cache for current run. |
 | `-r, --report` | `false` | `report` | Enable Rsdoctor build report. |
@@ -68,6 +73,9 @@ The `-b, --browser` option supports the following browsers:
 # Development (Chromium)
 addfox dev -b chromium
 
+# Development on a custom port
+addfox dev --port 3100 -b edge
+
 # Development (Firefox) with debug monitor
 addfox dev -b firefox --debug
 
@@ -81,8 +89,11 @@ addfox build -b chrome --no-open
 addfox build -r
 ```
 
-## Notes
+## Entry Paths and HTML Templates
 
-- `--debug` mainly affects `dev` mode.
-- `--no-cache` is useful for clean-state debugging; `cache` can still be set as project default in config.
-- `-b/--browser` does not have a dedicated config field and is intended as a command-level choice.
+Entry paths passed to `entry` or discovered by the framework can point to either a **script** (`.ts/.tsx/.js/.jsx`) or an **HTML template** (`.html`).
+
+- **Script path**: the framework uses the script as the build entry and auto-generates HTML for entries that need it.
+- **HTML path**: you can write the entry path as `popup/index.html`, but you must still tell the framework which script is the entry. Do this by adding `data-addfox-entry` to a `<script type="module">` tag in the HTML, or by placing a sibling script file (`index.ts` / `index.tsx`) next to the HTML so the framework can resolve it automatically.
+
+See [Config-based Entry](/guide/entry/config-based) for details and examples.
