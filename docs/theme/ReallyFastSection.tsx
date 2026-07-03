@@ -11,10 +11,10 @@ interface BenchmarkData {
 }
 
 const BENCHMARK_DATA: BenchmarkData[] = [
-  { name: "addfox", version: "0.2.0", devTime: 2.39, buildTime: 1.47, size: 836.8, buildTool: "Rsbuild 2.0.7" },
-  { name: "extensionjs", version: "3.17.0", devTime: 2.13, buildTime: 1.53, size: 1450.8, buildTool: "Rspack 2.0.x" },
-  { name: "wxt", version: "0.20.26", devTime: 2.13, buildTime: 1.83, size: 811.8, buildTool: "Vite 8.0.14" },
-  { name: "plasmo", version: "0.90.5", devTime: 3.04, buildTime: 2.63, size: 1364.8, buildTool: "Parcel 2.9.3" },
+  { name: "addfox", version: "0.2.5", devTime: 1.92, buildTime: 1.48, size: 837, buildTool: "Rsbuild 2.1.1" },
+  { name: "extensionjs", version: "4.0.1", devTime: 2.25, buildTime: 1.75, size: 1445, buildTool: "Rspack 2.1.2" },
+  { name: "WXT", version: "0.20.27", devTime: 2.09, buildTime: 1.91, size: 810, buildTool: "Vite 8.1.2" },
+  { name: "plasmo", version: "0.90.5", devTime: 3.12, buildTime: 2.69, size: 1365, buildTool: "Parcel 2.9.3" },
 ];
 
 // Compute max values for percentage bars
