@@ -663,6 +663,46 @@ describe("plugin-extension-entry", () => {
     expect((bundlerConfig.output as Record<string, unknown>).filename).toBeDefined();
   });
 
+  it("setup onBeforeCreateCompiler excludes custom html:false entries from splitChunks", async () => {
+    const config = createMockConfig(testRoot);
+    const entries: EntryInfo[] = [
+      ...createMockEntries(testRoot),
+      {
+        name: "sniffer",
+        scriptPath: resolve(testRoot, "src/inject/sniffer/index.ts"),
+        html: false,
+      },
+    ];
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot));
+
+    let onBeforeCb: ((arg: { bundlerConfigs: unknown[] }) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: () => {},
+      onBeforeCreateCompiler: (cb: (arg: { bundlerConfigs: unknown[] }) => void) => {
+        onBeforeCb = cb;
+      },
+    };
+
+    plugin.setup(api as never);
+    const bundlerConfig = {
+      plugins: [],
+      watchOptions: {},
+      output: {},
+      optimization: { splitChunks: {} },
+    };
+    await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
+
+    // A no-HTML entry chunk (content script / worker) must not be split: nothing
+    // loads the shared chunk there, so a deferred entry would never execute.
+    const chunksFn = (bundlerConfig.optimization.splitChunks as Record<string, unknown>)
+      .chunks as (chunk: { name?: string }) => boolean;
+    expect(typeof chunksFn).toBe("function");
+    expect(chunksFn({ name: "sniffer" })).toBe(false);
+    expect(chunksFn({ name: "background" })).toBe(false);
+    expect(chunksFn({ name: "popup" })).toBe(true);
+    expect(chunksFn({ name: undefined })).toBe(true);
+  });
+
   it("setup adds public copy when public dir exists", () => {
     const publicDir = resolve(testRoot, "public");
     mkdirSync(publicDir, { recursive: true });
