@@ -1,5 +1,13 @@
 # @addfox/cli
 
+## 0.2.6
+
+### Patch Changes
+
+- Updated dependencies [475ef2f]
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-entry@0.2.6
+
 ## 0.2.5
 
 ### Patch Changes
