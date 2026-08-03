@@ -1,5 +1,12 @@
 # @addfox/rsbuild-plugin-extension-entry
 
+## 0.2.6
+
+### Patch Changes
+
+- 475ef2f: fix: keep user-defined `html: false` entries (e.g. extra content scripts) unsplit in dev. The splitChunks exemption was hardcoded to `background`/`content`, so custom no-HTML entries were split on `shared-vendor` — a chunk no manifest ever loads — and their emitted entry silently never executed in dev. The no-HTML entry set is now derived from the resolved `EntryInfo[]` and also used for the HMR WebSocket-noop injection.
+- fix: keep user-defined `html: false` entries (e.g. extra content scripts) unsplit in dev. The splitChunks exemption was hardcoded to `background`/`content`, so custom no-HTML entries were split on `shared-vendor` — a chunk no manifest ever loads — and their emitted entry silently never executed in dev. The no-HTML entry set is now derived from the resolved `EntryInfo[]` and also used for the HMR WebSocket-noop injection.
+
 ## 0.2.5
 
 ### Patch Changes

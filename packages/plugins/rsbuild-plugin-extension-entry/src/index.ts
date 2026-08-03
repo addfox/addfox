@@ -751,11 +751,15 @@ function setupRspackConfig(
     htmlPaths: string[];
     outputMap: EntryOutputMap;
     entryNames: Set<string>;
+    /** Entries that emit no HTML page (background/content and any user-defined
+     * `html: false` entry such as extra content scripts). Their chunks must stay
+     * self-contained: nothing loads a shared chunk in a content script / worker. */
+    noHtmlEntryNames: ReadonlySet<string>;
     /** When true, Rspack HMR is disabled (only when addfox hotReload config is off). */
     hotReloadDisabled: boolean;
   }
 ): void {
-  const { root, outputRoot, outDir, htmlPaths, outputMap, entryNames, hotReloadDisabled } = context;
+  const { root, outputRoot, outDir, htmlPaths, outputMap, entryNames, noHtmlEntryNames, hotReloadDisabled } = context;
   const distPath = resolve(root, outputRoot, outDir);
 
   if (hotReloadDisabled) {
@@ -780,7 +784,7 @@ function setupRspackConfig(
               },
               (assets: Record<string, any>) => {
                 const noopEntryNames = Array.from(entryNames).filter((n) =>
-                  NO_HTML_ENTRIES.has(n)
+                  noHtmlEntryNames.has(n)
                 );
                 for (const [entryName, entrypoint] of compilation.entrypoints) {
                   if (!noopEntryNames.includes(entryName)) continue;
@@ -856,10 +860,13 @@ function setupRspackConfig(
     optimization.splitChunks = optimization.splitChunks ?? {};
 
     const split = optimization.splitChunks as Record<string, unknown>;
-    // Only HTML entries participate in splitting so background/content vendor stays in their chunks
+    // Only HTML entries participate in splitting; no-HTML entries (background/content
+    // and user-defined `html: false` entries) keep vendor code in their own chunk —
+    // otherwise the emitted entry defers startup on a shared chunk that no manifest
+    // ever loads, and the content script / worker silently never executes.
     split.chunks = typeof split.chunks === "function"
       ? split.chunks
-      : (chunk: { name?: string }) => (chunk.name ? !NO_HTML_ENTRIES.has(chunk.name) : true);
+      : (chunk: { name?: string }) => (chunk.name ? !noHtmlEntryNames.has(chunk.name) : true);
   }
 }
 
@@ -989,6 +996,11 @@ export function entryPlugin(
   // Build all lookup maps and configurations
   const entry = buildSourceEntry(entries, resolve(root, outputRoot, "html-entry-stubs"));
   const entryNames = new Set(Object.keys(entry));
+  // No-HTML entries (background/content and any `html: false` entry like extra
+  // content scripts) must stay self-contained single chunks — see setupRspackConfig.
+  const noHtmlEntryNames = new Set(
+    entries.filter((e) => !needsHtmlGeneration(e)).map((e) => e.name)
+  );
   const templateMap = createTemplateMap(entries);
   const enableHtmlOnlyClient = devOptions?.isDev === true && resolvedConfig.hotReload !== false;
   const scriptInjectMap = createScriptInjectMap(entries, enableHtmlOnlyClient);
@@ -1055,6 +1067,7 @@ export function entryPlugin(
           htmlPaths,
           outputMap,
           entryNames,
+          noHtmlEntryNames,
           hotReloadDisabled:
             isHotReloadDisabled(resolvedConfig.hotReload) ||
             shouldDisableRspackHmrForFirefox(devOptions?.browser, resolvedConfig.hotReload),

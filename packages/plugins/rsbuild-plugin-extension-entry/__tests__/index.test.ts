@@ -663,6 +663,220 @@ describe("plugin-extension-entry", () => {
     expect((bundlerConfig.output as Record<string, unknown>).filename).toBeDefined();
   });
 
+  it("setup onBeforeCreateCompiler excludes custom html:false entries from splitChunks", async () => {
+    const config = createMockConfig(testRoot);
+    const entries: EntryInfo[] = [
+      ...createMockEntries(testRoot),
+      {
+        name: "sniffer",
+        scriptPath: resolve(testRoot, "src/inject/sniffer/index.ts"),
+        html: false,
+      },
+    ];
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot));
+
+    let onBeforeCb: ((arg: { bundlerConfigs: unknown[] }) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: () => {},
+      onBeforeCreateCompiler: (cb: (arg: { bundlerConfigs: unknown[] }) => void) => {
+        onBeforeCb = cb;
+      },
+    };
+
+    plugin.setup(api as never);
+    const bundlerConfig = {
+      plugins: [],
+      watchOptions: {},
+      output: {},
+      optimization: { splitChunks: {} },
+    };
+    await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
+
+    // A no-HTML entry chunk (content script / worker) must not be split: nothing
+    // loads the shared chunk there, so a deferred entry would never execute.
+    const chunksFn = (bundlerConfig.optimization.splitChunks as Record<string, unknown>)
+      .chunks as (chunk: { name?: string }) => boolean;
+    expect(typeof chunksFn).toBe("function");
+    expect(chunksFn({ name: "sniffer" })).toBe(false);
+    expect(chunksFn({ name: "background" })).toBe(false);
+    expect(chunksFn({ name: "popup" })).toBe(true);
+    expect(chunksFn({ name: undefined })).toBe(true);
+  });
+
+  it("setup onBeforeCreateCompiler excludes shorthand-style entries without explicit html flag from splitChunks", async () => {
+    const config = createMockConfig(testRoot);
+    // String-shorthand entries (html never set, no htmlPath) are resolved as
+    // no-HTML entries and must stay self-contained too.
+    const entries: EntryInfo[] = [
+      ...createMockEntries(testRoot),
+      { name: "web-component", scriptPath: resolve(testRoot, "src/inject/web-component.js") },
+    ];
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot));
+
+    let onBeforeCb: ((arg: { bundlerConfigs: unknown[] }) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: () => {},
+      onBeforeCreateCompiler: (cb: (arg: { bundlerConfigs: unknown[] }) => void) => {
+        onBeforeCb = cb;
+      },
+    };
+
+    plugin.setup(api as never);
+    const bundlerConfig = {
+      plugins: [],
+      watchOptions: {},
+      output: {},
+      optimization: { splitChunks: {} },
+    };
+    await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
+
+    const chunksFn = (bundlerConfig.optimization.splitChunks as Record<string, unknown>)
+      .chunks as (chunk: { name?: string }) => boolean;
+    expect(chunksFn({ name: "web-component" })).toBe(false);
+  });
+
+  it("setup onBeforeCreateCompiler lets custom entries with html:true participate in splitChunks", async () => {
+    const config = createMockConfig(testRoot);
+    const entries: EntryInfo[] = [
+      ...createMockEntries(testRoot),
+      {
+        name: "dashboard",
+        scriptPath: resolve(testRoot, "src/dashboard/index.ts"),
+        html: true,
+      },
+    ];
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot));
+
+    let onBeforeCb: ((arg: { bundlerConfigs: unknown[] }) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: () => {},
+      onBeforeCreateCompiler: (cb: (arg: { bundlerConfigs: unknown[] }) => void) => {
+        onBeforeCb = cb;
+      },
+    };
+
+    plugin.setup(api as never);
+    const bundlerConfig = {
+      plugins: [],
+      watchOptions: {},
+      output: {},
+      optimization: { splitChunks: {} },
+    };
+    await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
+
+    const chunksFn = (bundlerConfig.optimization.splitChunks as Record<string, unknown>)
+      .chunks as (chunk: { name?: string }) => boolean;
+    expect(chunksFn({ name: "dashboard" })).toBe(true);
+  });
+
+  it("setup onBeforeCreateCompiler preserves a user-provided split.chunks function with custom no-html entries", async () => {
+    const config = createMockConfig(testRoot);
+    const entries: EntryInfo[] = [
+      ...createMockEntries(testRoot),
+      {
+        name: "sniffer",
+        scriptPath: resolve(testRoot, "src/inject/sniffer/index.ts"),
+        html: false,
+      },
+    ];
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot));
+
+    let onBeforeCb: ((arg: { bundlerConfigs: unknown[] }) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: () => {},
+      onBeforeCreateCompiler: (cb: (arg: { bundlerConfigs: unknown[] }) => void) => {
+        onBeforeCb = cb;
+      },
+    };
+
+    plugin.setup(api as never);
+    // A user-defined chunks function is the documented escape hatch (projects can
+    // exclude their own no-html entries on older versions); it must be kept as-is.
+    const userChunksFn = () => true;
+    const bundlerConfig = {
+      plugins: [],
+      watchOptions: {},
+      output: {},
+      optimization: { splitChunks: { chunks: userChunksFn } },
+    };
+    await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
+
+    expect(
+      (bundlerConfig.optimization.splitChunks as Record<string, unknown>).chunks
+    ).toBe(userChunksFn);
+  });
+
+  it("setup onBeforeCreateCompiler hmr-noop plugin injects WebSocket noop into custom html:false entry chunks", async () => {
+    const config = createMockConfig(testRoot, { hotReload: true });
+    const entries: EntryInfo[] = [
+      ...createMockEntries(testRoot),
+      {
+        name: "sniffer",
+        scriptPath: resolve(testRoot, "src/inject/sniffer/index.ts"),
+        html: false,
+      },
+    ];
+    const plugin = entryPlugin(config, entries, mockChromiumDist(testRoot));
+    let onBeforeCb: ((arg: { bundlerConfigs: unknown[] }) => void) | null = null;
+    const api = {
+      modifyRsbuildConfig: () => {},
+      onBeforeCreateCompiler: (cb: (arg: { bundlerConfigs: unknown[] }) => void) => {
+        onBeforeCb = cb;
+      },
+    };
+    plugin.setup(api as never);
+    const bundlerConfig = {
+      plugins: [] as unknown[],
+      devServer: { hot: true },
+      watchOptions: {},
+      output: {},
+      optimization: { splitChunks: {} },
+    };
+    await onBeforeCb!({ bundlerConfigs: [bundlerConfig] });
+
+    const noopPlugin = (bundlerConfig.plugins as { name?: string; apply?: Function }[])
+      .find(p => p.name === "rsbuild-plugin-extension-entry:hmr-noop");
+    expect(noopPlugin).toBeDefined();
+
+    const { ConcatSource, RawSource } = require("@rspack/core").sources;
+    const snifferCode = 'console.log("sniffer");';
+    const popupCode = 'console.log("popup");';
+    const assets: Record<string, any> = {
+      "sniffer/index.js": new RawSource(snifferCode),
+      "popup/index.js": new RawSource(popupCode),
+    };
+
+    const mockCompiler = {
+      webpack: { sources: { ConcatSource, RawSource } },
+      hooks: {
+        compilation: {
+          tap: (_name: string, fn: (compilation: any) => void) => {
+            fn({
+              PROCESS_ASSETS_STAGE_ADDITIONS: -100,
+              outputOptions: { uniqueName: "test-ext", hotUpdateGlobal: "rspackHotUpdatetest-ext" },
+              hooks: {
+                processAssets: {
+                  tap: (_opts: any, handler: (a: Record<string, any>) => void) => {
+                    handler(assets);
+                  },
+                },
+              },
+              entrypoints: new Map([
+                ["sniffer", { chunks: [{ files: ["sniffer/index.js"] }] }],
+                ["popup", { chunks: [{ files: ["popup/index.js"] }] }],
+              ]),
+            });
+          },
+        },
+      },
+    };
+
+    noopPlugin!.apply(mockCompiler);
+    expect(assets["sniffer/index.js"].source()).toContain("addfox-hmr-noop");
+    expect(assets["sniffer/index.js"].source()).toContain(snifferCode);
+    expect(assets["popup/index.js"].source()).toBe(popupCode);
+  });
+
   it("setup adds public copy when public dir exists", () => {
     const publicDir = resolve(testRoot, "public");
     mkdirSync(publicDir, { recursive: true });
