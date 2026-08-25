@@ -14,7 +14,7 @@ const RSTEST_CORE = "^0.9.4";
 const RSTEST_COVERAGE = "^0.3.0";
 const RSTEST_BROWSER = "^0.9.4";
 const PLAYWRIGHT = "^1.58.2";
-const RSDOCTOR_RSPACK = "^1.5.5";
+const RSDOCTOR_RSPACK = "^1.6.3";
 
 export interface TestSetupSelection {
   testKinds: TestKind[];

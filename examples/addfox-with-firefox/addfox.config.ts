@@ -54,8 +54,8 @@ export default defineConfig({
   manifest: { chromium: chromiumManifest, firefox: firefoxManifest },
   /** Dev: enable error monitor → terminal + `.addfox/error.md` (or use CLI `addfox dev --debug`). */
   debug: true,
-  // browserPath: {
-  //   firefox: "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
+  // browser: {
+  //   firefox: { path: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" },
   // },
-  cache: true,
+  keepBrowserProfile: true,
 });

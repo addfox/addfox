@@ -121,6 +121,6 @@ export default defineConfig({
 
 ## 次のステップ
 
-- [browserPath 設定](/ja/guide/launch) — 開発時に自動的にブラウザを開く設定
+- [browser 設定](/ja/guide/launch) — 開発時に自動的にブラウザを開く設定
 - [monitor デバッグ](/ja/guide/monitor) — エラーモニタリングパネルを使用したデバッグ
 - [config/hot-reload](/ja/config/hot-reload) — ホットリロードの完全な設定オプション

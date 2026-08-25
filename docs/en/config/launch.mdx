@@ -1,14 +1,20 @@
 import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
 
-# browserPath
+# browser
 
-`browserPath` specifies the executable paths for browsers used during `addfox dev` to open and load the extension.
+`browser` configures the browsers used during `addfox dev` to open and load the extension: executable path, user-data (profile) directory, and whether to keep the profile between launches.
 
 ## Overview
 
-- **Type**: `BrowserPathConfig`
+- **Type**: `Record<BrowserName, { path?: string; profile?: string; keepBrowserProfile?: boolean }>`
 - **Default**: `undefined` (uses system default paths)
 - **Required**: No
+
+Each browser entry supports:
+
+- `path` — browser executable path
+- `profile` — custom user-data (profile) directory; relative paths resolve from the project root (default: `<outputRoot>/cache/browser-profile/<name>-user-data`)
+- `keepBrowserProfile` — keep this browser's profile between launches, overriding the top-level [`keepBrowserProfile`](/config/cache)
 
 ## Chromium-based Browsers
 
@@ -29,9 +35,9 @@ The following Chromium-based browsers are supported:
 ```ts
 // addfox.config.ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  browser: {
+    chrome: { path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+    edge: { path: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" },
   },
 });
 ```
@@ -83,8 +89,8 @@ Firefox uses the `web-ext` tool to manage extensions. The path configuration is 
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  browser: {
+    firefox: { path: "/Applications/Firefox.app/Contents/MacOS/firefox" },
   },
 });
 ```
@@ -132,10 +138,10 @@ Firefox development mode uses the `web-ext` tool. Extension reload is handled by
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
-    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  browser: {
+    chrome: { path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+    edge: { path: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" },
+    firefox: { path: "/Applications/Firefox.app/Contents/MacOS/firefox" },
   },
 });
 ```
@@ -144,9 +150,9 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  browser: {
+    chrome: { path: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" },
+    edge: { path: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe" },
   },
 });
 ```
@@ -155,14 +161,33 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/usr/bin/google-chrome",
-    chromium: "/usr/bin/chromium-browser",
-    firefox: "/usr/bin/firefox",
+  browser: {
+    chrome: { path: "/usr/bin/google-chrome" },
+    chromium: { path: "/usr/bin/chromium-browser" },
+    firefox: { path: "/usr/bin/firefox" },
   },
 });
 ```
 
+## Deprecated: `browserPath`
+
+`browserPath` still works but prints a deprecation warning in the terminal. Migrate to `browser`:
+
+```ts
+// Before (deprecated)
+export default defineConfig({
+  browserPath: { chrome: "/path/to/chrome" },
+});
+
+// After
+export default defineConfig({
+  browser: { chrome: { path: "/path/to/chrome" } },
+});
+```
+
+If both `browserPath` and `browser` set a path for the same browser, `browser` takes precedence.
+
 ## Related Configuration
 
 - [guide/launch](/guide/launch) - Browser launch guide
+- [`keepBrowserProfile` / `buildCache`](/config/cache) - Cache configuration

@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.1.6
+
+### Patch Changes
+
+- chore: update cache and config
+
 ## 0.1.5
 
 ### Patch Changes

@@ -121,6 +121,6 @@ export default defineConfig({
 
 ## Siguientes pasos
 
-- [Configuración de browserPath](/guide/launch) — Configurar navegador para abrir automáticamente durante desarrollo
+- [Configuración de browser](/guide/launch) — Configurar navegador para abrir automáticamente durante desarrollo
 - [Depuración de monitor](/guide/monitor) — Usar panel de monitoreo de errores para depurar
 - [Configuración de hot-reload](/config/hot-reload) — Opciones completas de configuración de recarga en caliente

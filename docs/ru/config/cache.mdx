@@ -1,13 +1,13 @@
 import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
 
-# cache
+# keepBrowserProfile
 
-`cache` используется для управления сохранением пользовательских данных браузера при разработке.
+`keepBrowserProfile` используется для управления сохранением пользовательских данных браузера (профиля) при разработке.
 
 ## Обзор
 
 - **Тип**: `boolean`
-- **Значение по умолчанию**: `true`
+- **Значение по умолчанию**: `false`
 - **Обязательный**: Нет
 
 ## Использование
@@ -17,16 +17,36 @@ import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from 
 import { defineConfig } from "addfox";
 
 export default defineConfig({
-  cache: true,  // Включить кэширование
+  keepBrowserProfile: true,  // Сохранять профиль браузера между запусками
 });
 ```
 
 ## Влияние
 
-При включении кэширования:
-- Пользовательские данные браузера сохраняются в директории `.addfox/cache/`
+При включении:
+- Пользовательские данные браузера сохраняются в директории `.addfox/cache/browser-profile/<name>-user-data`
 - При следующем запуске `addfox dev` эти данные переиспользуются
 - Состояние входа, настройки расширения и т.д. сохраняются
+
+Можно также переопределить для отдельного браузера:
+
+```ts
+export default defineConfig({
+  browser: {
+    chrome: { keepBrowserProfile: true },
+  },
+});
+```
+
+## Приоритет
+
+Разрешается в следующем порядке (от высшего к низшему):
+
+1. CLI `--keep-browser-profile` / `--no-keep-browser-profile`
+2. `browser.<name>.keepBrowserProfile` (переопределение для отдельного браузера)
+3. Верхнеуровневый `keepBrowserProfile`
+4. Устаревший `cache` (CLI `-c/--cache`, `--no-cache` или конфигурация `cache`)
+5. Значение по умолчанию `false`
 
 ## CLI параметры
 
@@ -36,60 +56,88 @@ export default defineConfig({
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-# Принудительно включить кэш (даже если в конфигурации false)
-pnpm dev -- -c
-pnpm dev -- --cache
+# Принудительно сохранить профиль (даже если в конфигурации false)
+pnpm dev -- --keep-browser-profile
 
-# Принудительно отключить кэш (даже если в конфигурации true)
-pnpm dev -- --no-cache
+# Принудительно использовать новый профиль (даже если в конфигурации true)
+pnpm dev -- --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-# Принудительно включить кэш (даже если в конфигурации false)
-npm run dev -- -c
-npm run dev -- --cache
+# Принудительно сохранить профиль (даже если в конфигурации false)
+npm run dev -- --keep-browser-profile
 
-# Принудительно отключить кэш (даже если в конфигурации true)
-npm run dev -- --no-cache
+# Принудительно использовать новый профиль (даже если в конфигурации true)
+npm run dev -- --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-# Принудительно включить кэш (даже если в конфигурации false)
-yarn dev -c
-yarn dev --cache
+# Принудительно сохранить профиль (даже если в конфигурации false)
+yarn dev --keep-browser-profile
 
-# Принудительно отключить кэш (даже если в конфигурации true)
-yarn dev -- --no-cache
+# Принудительно использовать новый профиль (даже если в конфигурации true)
+yarn dev --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-# Принудительно включить кэш (даже если в конфигурации false)
-bun run dev -- -c
-bun run dev -- --cache
+# Принудительно сохранить профиль (даже если в конфигурации false)
+bun run dev -- --keep-browser-profile
 
-# Принудительно отключить кэш (даже если в конфигурации true)
-bun run dev -- --no-cache
+# Принудительно использовать новый профиль (даже если в конфигурации true)
+bun run dev -- --no-keep-browser-profile
 ```
 
   </Tab>
 </Tabs>
 
-Когда одновременно присутствуют `--cache` и `--no-cache`, приоритет имеет последний параметр.
+Когда одновременно присутствуют `--keep-browser-profile` и `--no-keep-browser-profile`, приоритет имеет последний параметр.
+
+:::warning
+Поле конфигурации `cache` и CLI-параметры `-c/--cache`, `--no-cache` — устаревшие (deprecated) псевдонимы; они по-прежнему работают, но выводят предупреждение об устаревании в терминале. Мигрируйте на `keepBrowserProfile` и `--keep-browser-profile` / `--no-keep-browser-profile`.
+:::
 
 ## Примечания
 
 - Влияет только на режим разработки (`addfox dev`)
-- Продакшн сборка (`addfox build`) не зависит от этой конфигурации
+- Не влияет на Firefox; профиль Firefox управляется `web-ext`
 - При возникновении странных проблем попробуйте очистить директорию `.addfox/cache/`
+
+# buildCache
+
+`buildCache` управляет **постоянным кэшем сборки Rspack**, ускоряя повторные сборки.
+
+## Обзор
+
+- **Тип**: `boolean | { cacheDirectory?: string }`
+- **Значение по умолчанию**: `true`
+- Файлы кэша сохраняются в `<outputRoot>/cache/build/`
+
+## Использование
+
+```ts
+export default defineConfig({
+  // Отключить кэш сборки
+  buildCache: false,
+});
+```
+
+```ts
+export default defineConfig({
+  // Пользовательская директория кэша
+  buildCache: { cacheDirectory: "./node_modules/.cache/addfox-build" },
+});
+```
+
+Для более глубокой настройки rsbuild/rspack используйте существующее поле конфигурации [`rsbuild`](/config/rsbuild) (объект с глубоким слиянием или функция).
 
 ## Связанная конфигурация
 

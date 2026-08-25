@@ -14,7 +14,7 @@
 !**/.env.example
 **/node_modules
 
-# 根目录合并后的覆盖率报告（CI 生成，用于 Codecov）
+# 根目录合并后的覆盖率报告（pnpm run test:coverage:report 生成）
 /coverage
 # coverage
 **/coverage
@@ -30,3 +30,11 @@
 /e2e/playwright/.cache/.rspress
 /examples/videoroll-pro
 .cursor
+
+# Playwright 默认输出(仓库根目录运行 playwright 时生成)
+/test-results
+
+# 本地 AI 工具配置(不进仓库)
+.roomodes
+.agents
+/skills-lock.json

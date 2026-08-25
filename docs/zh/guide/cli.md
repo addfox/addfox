@@ -40,13 +40,15 @@ addfox <command> [options]
 |------|------------|---------------------------|------|
 | `-b, --browser <browser>` | `chromium` | 无直接字段（影响目标与启动） | 指定目标/启动浏览器，详见下方[支持的浏览器列表](#支持的浏览器列表)。 |
 | `--port <port>` | `3000` | 无直接字段 | Rsbuild dev server 端口，仅对 `dev` 生效。 |
-| `-c, --cache` | `true` | `cache` | 启用浏览器 profile 缓存。 |
-| `--no-cache` | `false`（仅当前命令） | `cache` | 禁用本次运行的浏览器 profile 缓存。 |
+| `--keep-browser-profile` | `false` | `keepBrowserProfile` | 跨启动保留浏览器 profile(默认每次启动使用全新 profile)。 |
+| `--no-keep-browser-profile` | `false`（仅当前命令） | `keepBrowserProfile` | 本次运行使用全新浏览器 profile。 |
 | `-r, --report` | `false` | `report` | 启用 Rsdoctor 构建分析报告。 |
 | `--no-open` | `false`（即默认自动打开） | 无直接字段 | 构建或开发时不自动打开浏览器。 |
 | `--debug` | `false` | `debug` | 启用调试模式（开发时错误监控等能力）。 |
 | `--help` | - | - | 显示帮助。 |
 | `--version` | - | - | 显示版本号。 |
+
+> `-c, --cache` 与 `--no-cache` 是 `--keep-browser-profile` / `--no-keep-browser-profile` 的废弃别名，仍可使用，但终端会打印 deprecated 警告。
 
 ## 支持的浏览器列表
 
@@ -103,5 +105,5 @@ addfox build -r
 ## 说明
 
 - `--debug` 主要作用于 `dev` 模式。
-- `--no-cache` 适合做“干净环境”排查；`cache` 仍可在配置文件中作为项目默认值。
+- 默认每次启动使用全新 profile；需要保留登录态等状态时，用 `--keep-browser-profile`，或在配置文件中设 `keepBrowserProfile: true`（也可用 `browser.<name>.keepBrowserProfile` 按浏览器覆盖）。
 - `-b/--browser` 没有单独的 config 字段，属于命令级选择。

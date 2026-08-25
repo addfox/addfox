@@ -1,5 +1,18 @@
 # @addfox/cli
 
+## 0.2.7
+
+### Patch Changes
+
+- chore: update cache and config
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-hmr@0.2.6
+  - create-addfox-app@0.2.6
+  - @addfox/core@0.2.6
+  - @addfox/rsbuild-plugin-extension-entry@0.2.7
+  - @addfox/rsbuild-plugin-extension-manifest@0.2.6
+  - @addfox/rsbuild-plugin-extension-monitor@0.2.6
+
 ## 0.2.6
 
 ### Patch Changes

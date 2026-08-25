@@ -328,7 +328,7 @@ export function resolveLatestVersion(pkgName: string): string | null {
     const output = execSync(`npm view ${pkgName} version --registry https://registry.npmjs.org/`, {
       encoding: "utf-8",
       stdio: ["pipe", "pipe", "ignore"],
-      timeout: 3000,
+      timeout: 15000,
     });
     const version = output.trim();
     return version || null;

@@ -3,6 +3,7 @@ import {
   CliParser,
   parseCliArgs,
   assertSupportedBrowser,
+  resolveKeepBrowserProfile,
 } from "../src/cli/args.ts";
 import { AddfoxError, ADDFOX_ERROR_CODES } from "@addfox/common";
 
@@ -73,6 +74,17 @@ describe("CliParser", () => {
     it("does not force cache=false when --cache is omitted", () => {
       const r = parseCliArgs(["build"]);
       expect(r.cache).toBeUndefined();
+    });
+
+    it("parses --keep-browser-profile / --no-keep-browser-profile", () => {
+      expect(parseCliArgs(["dev", "--keep-browser-profile"]).keepBrowserProfile).toBe(true);
+      expect(parseCliArgs(["dev", "--no-keep-browser-profile"]).keepBrowserProfile).toBe(false);
+      expect(parseCliArgs(["dev"]).keepBrowserProfile).toBeUndefined();
+    });
+
+    it("uses last keep-profile flag when both are present", () => {
+      expect(parseCliArgs(["dev", "--keep-browser-profile", "--no-keep-browser-profile"]).keepBrowserProfile).toBe(false);
+      expect(parseCliArgs(["dev", "--no-keep-browser-profile", "--keep-browser-profile"]).keepBrowserProfile).toBe(true);
     });
 
     it("parses --debug", () => {
@@ -171,5 +183,44 @@ describe("CliParser", () => {
       expect(() => assertSupportedBrowser("firefox")).not.toThrow();
       expect(() => assertSupportedBrowser("zen")).not.toThrow();
     });
+  });
+});
+
+describe("resolveKeepBrowserProfile", () => {
+  it("defaults to false (fresh profile each run)", () => {
+    expect(resolveKeepBrowserProfile({})).toBe(false);
+  });
+
+  it("CLI --keep-browser-profile wins over everything", () => {
+    expect(
+      resolveKeepBrowserProfile({
+        cli: true,
+        perBrowser: false,
+        config: false,
+        cliCache: false,
+        configCache: false,
+      })
+    ).toBe(true);
+    expect(resolveKeepBrowserProfile({ cli: false, perBrowser: true, config: true })).toBe(false);
+  });
+
+  it("browser.<name>.keepBrowserProfile overrides top-level config", () => {
+    expect(resolveKeepBrowserProfile({ perBrowser: true, config: false })).toBe(true);
+    expect(resolveKeepBrowserProfile({ perBrowser: false, config: true })).toBe(false);
+  });
+
+  it("top-level keepBrowserProfile beats deprecated cache", () => {
+    expect(resolveKeepBrowserProfile({ config: false, cliCache: true, configCache: true })).toBe(false);
+    expect(resolveKeepBrowserProfile({ config: true, configCache: false })).toBe(true);
+  });
+
+  it("deprecated CLI cache beats deprecated config cache", () => {
+    expect(resolveKeepBrowserProfile({ cliCache: true, configCache: false })).toBe(true);
+    expect(resolveKeepBrowserProfile({ cliCache: false, configCache: true })).toBe(false);
+  });
+
+  it("deprecated cache still honored when nothing else is set", () => {
+    expect(resolveKeepBrowserProfile({ configCache: true })).toBe(true);
+    expect(resolveKeepBrowserProfile({ cliCache: true })).toBe(true);
   });
 });

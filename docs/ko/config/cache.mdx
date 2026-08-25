@@ -1,13 +1,13 @@
 import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
 
-# cache
+# keepBrowserProfile
 
-`cache`는 개발 시 브라우저 사용자 데이터를 유지할지 여부를 제어합니다.
+`keepBrowserProfile`은 개발 시 브라우저 사용자 데이터(profile)를 유지할지 여부를 제어합니다.
 
 ## 개요
 
 - **타입**: `boolean`
-- **기본값**: `true`
+- **기본값**: `false`
 - **필수 여부**: 아니오
 
 ## 사용법
@@ -17,16 +17,36 @@ import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from 
 import { defineConfig } from "addfox";
 
 export default defineConfig({
-  cache: true,  // 캐시 활성화
+  keepBrowserProfile: true,  // 실행 사이에 브라우저 profile 유지
 });
 ```
 
 ## 역할
 
-캐시를 활성화하면:
-- 개발 시 브라우저 사용자 데이터가 `.addfox/cache/` 디렉토리에 저장됩니다
+활성화하면:
+- 개발 시 브라우저 사용자 데이터가 `.addfox/cache/browser-profile/<name>-user-data` 디렉토리에 저장됩니다
 - 다음에 `addfox dev`를 시작할 때 이 데이터를 재사용합니다
 - 로그인 상태, 확장 설정 등이 유지됩니다
+
+브라우저별로 최상위 구성을 재정의할 수도 있습니다:
+
+```ts
+export default defineConfig({
+  browser: {
+    chrome: { keepBrowserProfile: true },
+  },
+});
+```
+
+## 우선순위
+
+다음 순서로 해석됩니다(높은 순):
+
+1. CLI `--keep-browser-profile` / `--no-keep-browser-profile`
+2. `browser.<name>.keepBrowserProfile` (브라우저별 재정의)
+3. 최상위 `keepBrowserProfile`
+4. Deprecated `cache` (CLI `-c/--cache`, `--no-cache` 또는 구성 `cache`)
+5. 기본값 `false`
 
 ## CLI 파라미터
 
@@ -36,60 +56,88 @@ CLI 파라미터는 설정보다 우선순위가 높습니다:
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-# 캐시 강제 활성화 (설정이 false여도)
-pnpm dev -- -c
-pnpm dev -- --cache
+# profile 유지 강제 활성화 (설정이 false여도)
+pnpm dev -- --keep-browser-profile
 
-# 캐시 강제 비활성화 (설정이 true여도)
-pnpm dev -- --no-cache
+# 새 profile 강제 사용 (설정이 true여도)
+pnpm dev -- --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-# 캐시 강제 활성화 (설정이 false여도)
-npm run dev -- -c
-npm run dev -- --cache
+# profile 유지 강제 활성화 (설정이 false여도)
+npm run dev -- --keep-browser-profile
 
-# 캐시 강제 비활성화 (설정이 true여도)
-npm run dev -- --no-cache
+# 새 profile 강제 사용 (설정이 true여도)
+npm run dev -- --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-# 캐시 강제 활성화 (설정이 false여도)
-yarn dev -c
-yarn dev --cache
+# profile 유지 강제 활성화 (설정이 false여도)
+yarn dev --keep-browser-profile
 
-# 캐시 강제 비활성화 (설정이 true여도)
-yarn dev -- --no-cache
+# 새 profile 강제 사용 (설정이 true여도)
+yarn dev --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-# 캐시 강제 활성화 (설정이 false여도)
-bun run dev -- -c
-bun run dev -- --cache
+# profile 유지 강제 활성화 (설정이 false여도)
+bun run dev -- --keep-browser-profile
 
-# 캐시 강제 비활성화 (설정이 true여도)
-bun run dev -- --no-cache
+# 새 profile 강제 사용 (설정이 true여도)
+bun run dev -- --no-keep-browser-profile
 ```
 
   </Tab>
 </Tabs>
 
-`--cache`와 `--no-cache`가 동시에 있으면 마지막 파라미터가 우선합니다.
+`--keep-browser-profile`과 `--no-keep-browser-profile`이 동시에 있으면 마지막 파라미터가 우선합니다.
+
+:::warning
+구성 필드 `cache`와 CLI 파라미터 `-c/--cache`, `--no-cache`는 deprecated 별칭이며, 여전히 동작하지만 터미널에 deprecated 경고를 출력합니다. `keepBrowserProfile`과 `--keep-browser-profile` / `--no-keep-browser-profile`로 마이그레이션하세요.
+:::
 
 ## 주의사항
 
 - 개발 모드(`addfox dev`)에만 영향을 줍니다
-- 프로덕션 빌드(`addfox build`)는 이 설정의 영향을 받지 않습니다
+- Firefox에는 영향을 주지 않습니다. Firefox profile은 `web-ext`가 관리합니다
 - 이상한 문제가 발생하면 `.addfox/cache/` 디렉토리를 삭제해 보세요
+
+# buildCache
+
+`buildCache`는 **Rspack 영구 빌드 캐시**를 제어하여 반복 빌드를 가속합니다.
+
+## 개요
+
+- **타입**: `boolean | { cacheDirectory?: string }`
+- **기본값**: `true`
+- 캐시 파일은 `<outputRoot>/cache/build/`에 저장됩니다
+
+## 사용법
+
+```ts
+export default defineConfig({
+  // 빌드 캐시 비활성화
+  buildCache: false,
+});
+```
+
+```ts
+export default defineConfig({
+  // 사용자 정의 캐시 디렉토리
+  buildCache: { cacheDirectory: "./node_modules/.cache/addfox-build" },
+});
+```
+
+더 깊은 rsbuild/rspack 사용자 정의가 필요하면 기존 [`rsbuild`](/config/rsbuild) 구성 필드(객체 깊은 병합 또는 함수 형태)를 사용하세요.
 
 ## 관련 설정
 

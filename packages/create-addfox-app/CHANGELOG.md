@@ -1,5 +1,11 @@
 # create-addfox-app
 
+## 0.2.6
+
+### Patch Changes
+
+- chore: update cache and config
+
 ## 0.2.5
 
 ### Patch Changes

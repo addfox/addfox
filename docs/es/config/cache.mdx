@@ -1,13 +1,13 @@
 import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
 
-# cache
+# keepBrowserProfile
 
-`cache` se utiliza para controlar si se conservan los datos de usuario del navegador durante el desarrollo.
+`keepBrowserProfile` se utiliza para controlar si se conservan los datos de usuario del navegador (perfil) durante el desarrollo.
 
 ## Resumen
 
 - **Tipo**: `boolean`
-- **Valor por defecto**: `true`
+- **Valor por defecto**: `false`
 - **Requerido**: No
 
 ## Uso
@@ -17,16 +17,36 @@ import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from 
 import { defineConfig } from "addfox";
 
 export default defineConfig({
-  cache: true,  // Habilitar caché
+  keepBrowserProfile: true,  // Conservar el perfil del navegador entre ejecuciones
 });
 ```
 
 ## Función
 
-Después de habilitar la caché:
-- Los datos de usuario del navegador durante el desarrollo se guardan en el directorio `.addfox/cache/`
+Después de habilitarlo:
+- Los datos de usuario del navegador durante el desarrollo se guardan en el directorio `.addfox/cache/browser-profile/<name>-user-data`
 - Se reutilizan estos datos la próxima vez que se inicie `addfox dev`
 - Estado de inicio de sesión, configuraciones de extensión, etc. se conservan
+
+También puedes sobrescribir la configuración de nivel superior por navegador:
+
+```ts
+export default defineConfig({
+  browser: {
+    chrome: { keepBrowserProfile: true },
+  },
+});
+```
+
+## Prioridad
+
+Se resuelve en el siguiente orden (de mayor a menor):
+
+1. CLI `--keep-browser-profile` / `--no-keep-browser-profile`
+2. `browser.<name>.keepBrowserProfile` (sobrescritura por navegador)
+3. `keepBrowserProfile` de nivel superior
+4. `cache` obsoleto (CLI `-c/--cache`, `--no-cache` o configuración `cache`)
+5. Valor por defecto `false`
 
 ## Parámetros de CLI
 
@@ -36,60 +56,88 @@ Los parámetros de CLI tienen mayor prioridad que la configuración:
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-# Forzar habilitar caché (incluso si está configurado como false)
-pnpm dev -- -c
-pnpm dev -- --cache
+# Forzar conservar perfil (incluso si está configurado como false)
+pnpm dev -- --keep-browser-profile
 
-# Forzar deshabilitar caché (incluso si está configurado como true)
-pnpm dev -- --no-cache
+# Forzar usar un perfil nuevo (incluso si está configurado como true)
+pnpm dev -- --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-# Forzar habilitar caché (incluso si está configurado como false)
-npm run dev -- -c
-npm run dev -- --cache
+# Forzar conservar perfil (incluso si está configurado como false)
+npm run dev -- --keep-browser-profile
 
-# Forzar deshabilitar caché (incluso si está configurado como true)
-npm run dev -- --no-cache
+# Forzar usar un perfil nuevo (incluso si está configurado como true)
+npm run dev -- --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-# Forzar habilitar caché (incluso si está configurado como false)
-yarn dev -c
-yarn dev --cache
+# Forzar conservar perfil (incluso si está configurado como false)
+yarn dev --keep-browser-profile
 
-# Forzar deshabilitar caché (incluso si está configurado como true)
-yarn dev -- --no-cache
+# Forzar usar un perfil nuevo (incluso si está configurado como true)
+yarn dev --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-# Forzar habilitar caché (incluso si está configurado como false)
-bun run dev -- -c
-bun run dev -- --cache
+# Forzar conservar perfil (incluso si está configurado como false)
+bun run dev -- --keep-browser-profile
 
-# Forzar deshabilitar caché (incluso si está configurado como true)
-bun run dev -- --no-cache
+# Forzar usar un perfil nuevo (incluso si está configurado como true)
+bun run dev -- --no-keep-browser-profile
 ```
 
   </Tab>
 </Tabs>
 
-Cuando `--cache` y `--no-cache` aparecen simultáneamente, prevalece el último parámetro.
+Cuando `--keep-browser-profile` y `--no-keep-browser-profile` aparecen simultáneamente, prevalece el último parámetro.
+
+:::warning
+El campo de configuración `cache` y los parámetros de CLI `-c/--cache`, `--no-cache` son alias obsoletos (deprecated); siguen funcionando pero muestran una advertencia de deprecación en la terminal. Migra a `keepBrowserProfile` y `--keep-browser-profile` / `--no-keep-browser-profile`.
+:::
 
 ## Notas
 
 - Solo afecta modo de desarrollo (`addfox dev`)
-- La construcción de producción (`addfox build`) no se ve afectada por esta configuración
+- No afecta a Firefox; el perfil de Firefox es gestionado por `web-ext`
 - Cuando encuentres problemas extraños, intenta limpiar el directorio `.addfox/cache/`
+
+# buildCache
+
+`buildCache` controla la **caché de construcción persistente de Rspack**, que acelera las construcciones repetidas.
+
+## Resumen
+
+- **Tipo**: `boolean | { cacheDirectory?: string }`
+- **Valor por defecto**: `true`
+- Los archivos de caché se guardan en `<outputRoot>/cache/build/`
+
+## Uso
+
+```ts
+export default defineConfig({
+  // Deshabilitar la caché de construcción
+  buildCache: false,
+});
+```
+
+```ts
+export default defineConfig({
+  // Directorio de caché personalizado
+  buildCache: { cacheDirectory: "./node_modules/.cache/addfox-build" },
+});
+```
+
+Para una personalización más profunda de rsbuild/rspack, usa el campo de configuración [`rsbuild`](/config/rsbuild) existente (fusión profunda de objetos o forma de función).
 
 ## Configuraciones relacionadas
 

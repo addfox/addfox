@@ -190,20 +190,44 @@ bunx addfox dev -b vivaldi
   </Tab>
 </Tabs>
 
-### Chromium Browser Path Configuration
+### Chromium Browser Configuration
 
-If the browser is not in the default location, specify `browserPath` in config:
+If the browser is not in the default location, specify the `browser` object in config:
 
 ```ts
 // addfox.config.ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/path/to/chrome",
-    edge: "/path/to/edge",
-    brave: "/path/to/brave",
+  browser: {
+    chrome: { path: "/path/to/chrome" },
+    edge: { path: "/path/to/edge" },
+    brave: { path: "/path/to/brave" },
   },
 });
 ```
+
+Each browser entry supports:
+
+- `path` — browser executable path
+- `profile` — custom user-data (profile) directory; relative paths resolve from the project root (default: `<outputRoot>/cache/browser-profile/<name>-user-data`)
+- `keepBrowserProfile` — keep this browser's profile between launches, overriding the top-level `keepBrowserProfile`
+
+:::warning
+`browserPath` is deprecated. Migrate to `browser`:
+
+```ts
+// Before (deprecated)
+export default defineConfig({
+  browserPath: { chrome: "/path/to/chrome" },
+});
+
+// After
+export default defineConfig({
+  browser: { chrome: { path: "/path/to/chrome" } },
+});
+```
+
+If both are set for the same browser, `browser` takes precedence.
+:::
 
 #### Platform Examples
 
@@ -211,9 +235,9 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  browser: {
+    chrome: { path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+    edge: { path: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" },
   },
 });
 ```
@@ -222,9 +246,9 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  browser: {
+    chrome: { path: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" },
+    edge: { path: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe" },
   },
 });
 ```
@@ -233,9 +257,9 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/usr/bin/google-chrome",
-    chromium: "/usr/bin/chromium-browser",
+  browser: {
+    chrome: { path: "/usr/bin/google-chrome" },
+    chromium: { path: "/usr/bin/chromium-browser" },
   },
 });
 ```
@@ -247,8 +271,8 @@ By default, a new user data directory is used on each start. To preserve data (e
 ```json
 {
   "scripts": {
-    "dev:cache": "addfox dev -b chrome --cache",
-    "dev:edge:cache": "addfox dev -b edge --cache"
+    "dev:keep-profile": "addfox dev -b chrome --keep-browser-profile",
+    "dev:edge:keep-profile": "addfox dev -b edge --keep-browser-profile"
   }
 }
 ```
@@ -259,36 +283,28 @@ Or run directly via CLI:
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-pnpm addfox dev --cache
-# or
-pnpm addfox dev -c
+pnpm addfox dev --keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-npx addfox dev --cache
-# or
-npx addfox dev -c
+npx addfox dev --keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-yarn addfox dev --cache
-# or
-yarn addfox dev -c
+yarn addfox dev --keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-bunx addfox dev --cache
-# or
-bunx addfox dev -c
+bunx addfox dev --keep-browser-profile
 ```
 
   </Tab>
@@ -298,11 +314,21 @@ Or enable in config:
 
 ```ts
 export default defineConfig({
-  cache: true,
+  keepBrowserProfile: true,
 });
 ```
 
-User data is saved in `.addfox/cache/` directory.
+Or per browser (overrides the top-level `keepBrowserProfile`):
+
+```ts
+export default defineConfig({
+  browser: {
+    chrome: { keepBrowserProfile: true },
+  },
+});
+```
+
+User data is saved in `.addfox/cache/browser-profile/<name>-user-data`.
 
 ## Firefox
 
@@ -359,8 +385,8 @@ bunx addfox dev -b firefox
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  browser: {
+    firefox: { path: "/Applications/Firefox.app/Contents/MacOS/firefox" },
   },
 });
 ```
@@ -437,7 +463,7 @@ bunx addfox dev --debug
 
 ## Related Configuration
 
-- [`browserPath`](/config/launch) - Browser executable path configuration
-- [`cache`](/config/cache) - Cache configuration
+- [`browser`](/config/launch) - Browser configuration (path, profile, keepBrowserProfile)
+- [`keepBrowserProfile` / `buildCache`](/config/cache) - Cache configuration
 - [`hotReload`](/config/hot-reload) - Hot reload configuration
 - [`debug`](/config/debug) - Error monitoring configuration

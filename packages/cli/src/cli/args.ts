@@ -42,7 +42,13 @@ export interface CliParseResult {
   /** True when -b/--browser was explicitly provided. */
   browserSpecified?: boolean;
   unknownBrowser?: string;
+  /**
+   * @deprecated Use keepBrowserProfile instead. From -c/--cache or --no-cache.
+   * Still honored during the deprecation window.
+   */
   cache?: boolean;
+  /** Keep browser profile between runs. From --keep-browser-profile / --no-keep-browser-profile. */
+  keepBrowserProfile?: boolean;
   /** When true, same as debug: true in addfox.config (e.g. enable monitor in dev). From --debug. */
   debug?: boolean;
   /** When true, enable Rsdoctor build report (RSDOCTOR=true). From -r/--report. */
@@ -68,11 +74,12 @@ export class CliParser {
     }
     const { browser, launch, unknown: unknownBrowser, specified: browserSpecified } = this.getBrowserFromArgv(argv);
     const cache = this.getCacheFromArgv(argv);
+    const keepBrowserProfile = this.getKeepBrowserProfileFromArgv(argv);
     const debug = this.getDebugFromArgv(argv);
     const report = this.getReportFromArgv(argv);
     const open = this.getOpenFromArgv(argv);
     const port = this.getPortFromArgv(argv);
-    return { command, browser, launch, browserSpecified, unknownBrowser, cache, debug, report, open, port };
+    return { command, browser, launch, browserSpecified, unknownBrowser, cache, keepBrowserProfile, debug, report, open, port };
   }
 
   private getBrowserFromArgv(argv: string[]): { browser?: BrowserTarget; launch?: LaunchTarget; unknown?: string; specified: boolean } {
@@ -111,6 +118,15 @@ export class CliParser {
       if (arg === "--no-cache") cache = false;
     }
     return cache;
+  }
+
+  private getKeepBrowserProfileFromArgv(argv: string[]): boolean | undefined {
+    let keepBrowserProfile: boolean | undefined;
+    for (const arg of argv) {
+      if (arg === "--keep-browser-profile") keepBrowserProfile = true;
+      if (arg === "--no-keep-browser-profile") keepBrowserProfile = false;
+    }
+    return keepBrowserProfile;
   }
 
   private getDebugFromArgv(argv: string[]): true | undefined {
@@ -167,6 +183,29 @@ export class CliParser {
 }
 
 const defaultParser: CliParser = new CliParser();
+
+/** Sources for keepBrowserProfile resolution, in priority order. */
+export interface KeepBrowserProfileSources {
+  /** CLI --keep-browser-profile / --no-keep-browser-profile (highest priority). */
+  cli?: boolean;
+  /** browser.<name>.keepBrowserProfile for the launched browser. */
+  perBrowser?: boolean;
+  /** Top-level keepBrowserProfile in addfox.config. */
+  config?: boolean;
+  /** @deprecated CLI -c/--cache or --no-cache. */
+  cliCache?: boolean;
+  /** @deprecated `cache` in addfox.config. */
+  configCache?: boolean;
+}
+
+/**
+ * Resolve browser profile retention.
+ * Precedence: CLI --keep-browser-profile > browser.<name>.keepBrowserProfile
+ *   > top-level keepBrowserProfile > deprecated cache (CLI, then config) > false.
+ */
+export function resolveKeepBrowserProfile(s: KeepBrowserProfileSources): boolean {
+  return s.cli ?? s.perBrowser ?? s.config ?? s.cliCache ?? s.configCache ?? false;
+}
 
 export function parseCliArgs(argv: string[]): CliParseResult {
   return defaultParser.parse(argv);

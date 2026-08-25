@@ -73,5 +73,20 @@ describe("chromium runner", () => {
       const flags = buildChromeFlags(baseOpts, "/tmp", [], false);
       expect(flags).not.toContain("--auto-open-devtools-for-tabs");
     });
+
+    it("bounds cache growth with default cache flags", () => {
+      const flags = buildChromeFlags(baseOpts, "/tmp", [], false);
+      expect(flags).toContain(`--disk-cache-size=${64 * 1024 * 1024}`);
+      expect(flags).toContain(`--media-cache-size=${32 * 1024 * 1024}`);
+      expect(flags).toContain("--aggressive-cache-discard");
+      expect(flags).toContain("--disable-gpu-shader-disk-cache");
+      expect(flags).toContain("--disable-breakpad");
+    });
+
+    it("honours a custom diskCacheSize", () => {
+      const flags = buildChromeFlags({ ...baseOpts, diskCacheSize: 1024 }, "/tmp", [], false);
+      expect(flags).toContain("--disk-cache-size=1024");
+      expect(flags.some((f) => f.startsWith("--disk-cache-size=") && f !== "--disk-cache-size=1024")).toBe(false);
+    });
   });
 });

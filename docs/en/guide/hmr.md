@@ -121,6 +121,6 @@ export default defineConfig({
 
 ## Next Steps
 
-- [browserPath config](/guide/launch) — Configure auto browser launch during dev
+- [browser config](/guide/launch) — Configure auto browser launch during dev
 - [monitor debugging](/guide/monitor) — Use error monitoring panel
 - [config/hot-reload](/config/hot-reload) — Complete hot reload configuration

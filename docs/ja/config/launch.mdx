@@ -1,14 +1,20 @@
 import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
 
-# browserPath
+# browser
 
-`browserPath` は開発時に自動的にブラウザを開いて拡張機能を読み込むための実行ファイルパスを設定するために使用されます。
+`browser` は開発時に自動的に開いて拡張機能を読み込むブラウザを設定するために使用されます：実行ファイルパス、user-data(profile)ディレクトリ、起動間での profile 保持。
 
 ## 概要
 
-- **型**: `BrowserPathConfig`
+- **型**: `Record<BrowserName, { path?: string; profile?: string; keepBrowserProfile?: boolean }>`
 - **デフォルト値**: `undefined`（システムのデフォルトパスを使用）
 - **必須**: いいえ
+
+各ブラウザエントリは以下のフィールドをサポートします：
+
+- `path` — ブラウザ実行ファイルパス
+- `profile` — カスタム user-data(profile)ディレクトリ。相対パスはプロジェクトルートを基準に解決されます（デフォルト: `<outputRoot>/cache/browser-profile/<name>-user-data`)
+- `keepBrowserProfile` — 起動間でこのブラウザの profile を保持し、トップレベルの [`keepBrowserProfile`](/ja/config/cache) を上書きします
 
 ## Chromium 系ブラウザ
 
@@ -29,9 +35,9 @@ import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from 
 ```ts
 // addfox.config.ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  browser: {
+    chrome: { path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+    edge: { path: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" },
   },
 });
 ```
@@ -83,8 +89,8 @@ Firefox は `web-ext` ツールを使用して拡張機能を管理し、パス�
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  browser: {
+    firefox: { path: "/Applications/Firefox.app/Contents/MacOS/firefox" },
   },
 });
 ```
@@ -132,10 +138,10 @@ Firefox 開発モードでは `web-ext` ツールを使用し、拡張機能の�
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
-    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  browser: {
+    chrome: { path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+    edge: { path: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" },
+    firefox: { path: "/Applications/Firefox.app/Contents/MacOS/firefox" },
   },
 });
 ```
@@ -144,9 +150,9 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  browser: {
+    chrome: { path: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" },
+    edge: { path: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe" },
   },
 });
 ```
@@ -155,14 +161,33 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/usr/bin/google-chrome",
-    chromium: "/usr/bin/chromium-browser",
-    firefox: "/usr/bin/firefox",
+  browser: {
+    chrome: { path: "/usr/bin/google-chrome" },
+    chromium: { path: "/usr/bin/chromium-browser" },
+    firefox: { path: "/usr/bin/firefox" },
   },
 });
 ```
 
+## 非推奨: `browserPath`
+
+`browserPath` は引き続き使用できますが、ターミナルに非推奨の警告が表示されます。`browser` に移行してください：
+
+```ts
+// 移行前（非推奨）
+export default defineConfig({
+  browserPath: { chrome: "/path/to/chrome" },
+});
+
+// 移行後
+export default defineConfig({
+  browser: { chrome: { path: "/path/to/chrome" } },
+});
+```
+
+同じブラウザに `browserPath` と `browser` の両方が設定されている場合、`browser` が優先されます。
+
 ## 関連設定
 
 - [guide/launch](/ja/guide/launch) - ブラウザ起動ガイド
+- [`keepBrowserProfile` / `buildCache`](/ja/config/cache) - キャッシュ設定

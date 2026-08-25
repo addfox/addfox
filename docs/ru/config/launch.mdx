@@ -1,14 +1,20 @@
 import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
 
-# browserPath
+# browser
 
-`browserPath` используется для настройки пути к исполняемому файлу браузера, который автоматически открывается при разработке и загружает расширение.
+`browser` используется для настройки браузеров, которые автоматически открываются при разработке и загружают расширение: путь к исполняемому файлу, директория user-data (профиля) и сохранение профиля между запусками.
 
 ## Обзор
 
-- **Тип**: `BrowserPathConfig`
+- **Тип**: `Record<BrowserName, { path?: string; profile?: string; keepBrowserProfile?: boolean }>`
 - **Значение по умолчанию**: `undefined` (используется системный путь по умолчанию)
 - **Обязательный**: Нет
+
+Каждая запись браузера поддерживает поля:
+
+- `path` — путь к исполняемому файлу браузера
+- `profile` — пользовательская директория user-data (профиля); относительные пути разрешаются относительно корня проекта (по умолчанию `<outputRoot>/cache/browser-profile/<name>-user-data`)
+- `keepBrowserProfile` — сохранять профиль этого браузера между запусками, переопределяя верхнеуровневый [`keepBrowserProfile`](/config/cache)
 
 ## Браузеры на базе Chromium
 
@@ -29,9 +35,9 @@ import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from 
 ```ts
 // addfox.config.ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  browser: {
+    chrome: { path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+    edge: { path: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" },
   },
 });
 ```
@@ -83,8 +89,8 @@ Firefox использует инструмент `web-ext` для управл�
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  browser: {
+    firefox: { path: "/Applications/Firefox.app/Contents/MacOS/firefox" },
   },
 });
 ```
@@ -132,10 +138,10 @@ bun run dev -- -b firefox
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
-    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  browser: {
+    chrome: { path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+    edge: { path: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" },
+    firefox: { path: "/Applications/Firefox.app/Contents/MacOS/firefox" },
   },
 });
 ```
@@ -144,9 +150,9 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  browser: {
+    chrome: { path: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" },
+    edge: { path: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe" },
   },
 });
 ```
@@ -155,14 +161,33 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/usr/bin/google-chrome",
-    chromium: "/usr/bin/chromium-browser",
-    firefox: "/usr/bin/firefox",
+  browser: {
+    chrome: { path: "/usr/bin/google-chrome" },
+    chromium: { path: "/usr/bin/chromium-browser" },
+    firefox: { path: "/usr/bin/firefox" },
   },
 });
 ```
 
+## Устарело: `browserPath`
+
+`browserPath` по-прежнему работает, но выводит предупреждение об устаревании в терминале. Мигрируйте на `browser`:
+
+```ts
+// До (устарело)
+export default defineConfig({
+  browserPath: { chrome: "/path/to/chrome" },
+});
+
+// После
+export default defineConfig({
+  browser: { chrome: { path: "/path/to/chrome" } },
+});
+```
+
+Если для одного браузера заданы и `browserPath`, и `browser`, приоритет имеет `browser`.
+
 ## Связанная конфигурация
 
 - [guide/launch](/guide/launch) — руководство по запуску браузера
+- [`keepBrowserProfile` / `buildCache`](/config/cache) — конфигурация кэширования

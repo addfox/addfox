@@ -65,5 +65,5 @@ export default defineConfig({
       copy: [{ from: "./public/icons", to: "./icons" }],
     },
   },
-  cache: true
+  keepBrowserProfile: true
 });

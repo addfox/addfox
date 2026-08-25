@@ -190,20 +190,44 @@ bunx addfox dev -b vivaldi
   </Tab>
 </Tabs>
 
-### Chromium ブラウザパス設定
+### Chromium ブラウザ設定
 
-ブラウザがデフォルトの位置にない場合は、設定で `browserPath` を指定できます：
+ブラウザがデフォルトの位置にない場合は、設定で `browser` オブジェクトを指定できます：
 
 ```ts
 // addfox.config.ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/path/to/chrome",
-    edge: "/path/to/edge",
-    brave: "/path/to/brave",
+  browser: {
+    chrome: { path: "/path/to/chrome" },
+    edge: { path: "/path/to/edge" },
+    brave: { path: "/path/to/brave" },
   },
 });
 ```
+
+各ブラウザエントリは以下のフィールドをサポートします：
+
+- `path` — ブラウザ実行ファイルパス
+- `profile` — カスタム user-data(profile)ディレクトリ。相対パスはプロジェクトルートを基準に解決されます（デフォルト: `<outputRoot>/cache/browser-profile/<name>-user-data`)
+- `keepBrowserProfile` — 起動間でこのブラウザの profile を保持し、トップレベルの `keepBrowserProfile` を上書きします
+
+:::warning
+`browserPath` は非推奨（deprecated）です。`browser` に移行してください：
+
+```ts
+// 移行前（非推奨）
+export default defineConfig({
+  browserPath: { chrome: "/path/to/chrome" },
+});
+
+// 移行後
+export default defineConfig({
+  browser: { chrome: { path: "/path/to/chrome" } },
+});
+```
+
+同じブラウザに両方が設定されている場合、`browser` が優先されます。
+:::
 
 #### 各プラットフォームの例
 
@@ -211,9 +235,9 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  browser: {
+    chrome: { path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+    edge: { path: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" },
   },
 });
 ```
@@ -222,9 +246,9 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  browser: {
+    chrome: { path: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" },
+    edge: { path: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe" },
   },
 });
 ```
@@ -233,9 +257,9 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/usr/bin/google-chrome",
-    chromium: "/usr/bin/chromium-browser",
+  browser: {
+    chrome: { path: "/usr/bin/google-chrome" },
+    chromium: { path: "/usr/bin/chromium-browser" },
   },
 });
 ```
@@ -247,8 +271,8 @@ export default defineConfig({
 ```json
 {
   "scripts": {
-    "dev:cache": "addfox dev -b chrome --cache",
-    "dev:edge:cache": "addfox dev -b edge --cache"
+    "dev:keep-profile": "addfox dev -b chrome --keep-browser-profile",
+    "dev:edge:keep-profile": "addfox dev -b edge --keep-browser-profile"
   }
 }
 ```
@@ -259,36 +283,28 @@ export default defineConfig({
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-pnpm addfox dev --cache
-# または
-pnpm addfox dev -c
+pnpm addfox dev --keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-npx addfox dev --cache
-# または
-npx addfox dev -c
+npx addfox dev --keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-yarn addfox dev --cache
-# または
-yarn addfox dev -c
+yarn addfox dev --keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-bunx addfox dev --cache
-# または
-bunx addfox dev -c
+bunx addfox dev --keep-browser-profile
 ```
 
   </Tab>
@@ -298,11 +314,21 @@ bunx addfox dev -c
 
 ```ts
 export default defineConfig({
-  cache: true,
+  keepBrowserProfile: true,
 });
 ```
 
-ユーザーデータは `.addfox/cache/` ディレクトリに保存されます。
+またはブラウザごとに上書きします（トップレベルの `keepBrowserProfile` より優先）：
+
+```ts
+export default defineConfig({
+  browser: {
+    chrome: { keepBrowserProfile: true },
+  },
+});
+```
+
+ユーザーデータは `.addfox/cache/browser-profile/<name>-user-data` ディレクトリに保存されます。
 
 ## Firefox
 
@@ -359,8 +385,8 @@ bunx addfox dev -b firefox
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  browser: {
+    firefox: { path: "/Applications/Firefox.app/Contents/MacOS/firefox" },
   },
 });
 ```
@@ -437,7 +463,7 @@ bunx addfox dev --debug
 
 ## 関連設定
 
-- [`browserPath`](/ja/config/launch) - ブラウザ実行ファイルパス設定
-- [`cache`](/ja/config/cache) - キャッシュ設定
+- [`browser`](/ja/config/launch) - ブラウザ設定（パス、profile、keepBrowserProfile)
+- [`keepBrowserProfile` / `buildCache`](/ja/config/cache) - キャッシュ設定
 - [`hotReload`](/ja/config/hot-reload) - ホットリロード設定
 - [`debug`](/ja/config/debug) - エラーモニタリング設定

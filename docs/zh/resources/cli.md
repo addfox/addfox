@@ -38,10 +38,12 @@ npm install @addfox/cli
 | `-b, --browser <browser>` | 指定目标/启动浏览器 |
 | `--port <port>` | Rsbuild dev server 端口（仅 dev，默认 `3000`） |
 | `--no-open` | 不自动打开浏览器 |
-| `-c, --cache` | 缓存浏览器 profile |
-| `--no-cache` | 本次运行不缓存 profile |
+| `--keep-browser-profile` | 跨启动保留浏览器 profile |
+| `--no-keep-browser-profile` | 本次运行使用全新 profile |
 | `-r, --report` | 启用 Rsdoctor 构建分析报告 |
 | `--debug` | 启用调试模式 |
+
+> `-c, --cache` 与 `--no-cache` 是 `--keep-browser-profile` / `--no-keep-browser-profile` 的废弃别名，仍可使用，但会打印 deprecated 警告。
 
 ## Dev server 与 HMR
 

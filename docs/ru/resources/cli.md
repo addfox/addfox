@@ -38,10 +38,12 @@ npm install @addfox/cli
 | `-b, --browser <browser>` | Target/launch browser |
 | `--port <port>` | Rsbuild dev server port (dev only, default `3000`) |
 | `--no-open` | Do not auto-open browser |
-| `-c, --cache` | Cache browser profile between launches |
-| `--no-cache` | Disable profile cache for this run |
+| `--keep-browser-profile` | Keep browser profile between launches |
+| `--no-keep-browser-profile` | Use a fresh browser profile for this run |
 | `-r, --report` | Enable Rsdoctor build report |
 | `--debug` | Enable debug mode |
+
+> `-c, --cache` and `--no-cache` are deprecated aliases of `--keep-browser-profile` / `--no-keep-browser-profile`; they still work but print a deprecation warning.
 
 ## Dev server and HMR
 

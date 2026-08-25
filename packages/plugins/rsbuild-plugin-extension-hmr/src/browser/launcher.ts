@@ -4,7 +4,7 @@ import { rm } from "node:fs/promises";
 import { resolve } from "node:path";
 import readline from "node:readline";
 
-import type { LaunchTarget, ChromiumLaunchTarget } from "@addfox/core";
+import type { LaunchTarget, ChromiumLaunchTarget, BrowserConfig } from "@addfox/core";
 import { log, logDoneTimed, warn, error, ANSI_COLORS } from "@addfox/common";
 import { runChromiumRunner } from "./runner";
 import type { ChromiumRunnerOptions } from "./runner";
@@ -31,7 +31,10 @@ export interface LaunchContext {
   distPath: string;
   browser: LaunchTarget;
   pathOpts: LaunchPathOptions;
-  cache: boolean;
+  /** Resolved profile retention for this run (CLI/config precedence applied upstream). */
+  keepBrowserProfile: boolean;
+  /** Per-browser launch config from addfox.config `browser` option. */
+  browserConfig?: BrowserConfig;
   enableReload: boolean;
   wsPort: number;
   chromiumRunnerOverride?: ChromiumRunnerOverride;
@@ -78,33 +81,6 @@ let cacheEnabled = false;
 let activeLaunchContext: LaunchContext | null = null;
 let browserClosed = false;
 
-/**
- * Remove Chrome caches that grow unboundedly while keeping extension state,
- * Local Storage, IndexedDB, and other user data intact when cache is enabled.
- */
-async function cleanupCacheDirs(userDataDir: string): Promise<void> {
-  if (!userDataDir || !existsSync(userDataDir)) return;
-  const dirsToClean = [
-    "Default/Cache",
-    "Default/Code Cache",
-    "Default/GPUCache",
-    "Default/DawnGraphiteCache",
-    "Default/DawnWebGPUCache",
-    "Default/Service Worker/ScriptCache",
-    "Default/Service Worker/CacheStorage",
-    "GPUCache",
-    "GrShaderCache",
-    "GraphiteDawnCache",
-    "GPUPersistentCache",
-    "ShaderCache",
-  ];
-  for (const rel of dirsToClean) {
-    const full = resolve(userDataDir, rel);
-    if (existsSync(full)) {
-      await rm(full, { recursive: true, force: true }).catch(() => {});
-    }
-  }
-}
 let keyboardReloadCleanup: (() => void) | null = null;
 /** Firefox RDP port for reloading temporary addons. */
 let firefoxRdpPort: number | null = null;
@@ -284,12 +260,12 @@ async function runGecko(
 export async function launchBrowserCore(ctx: LaunchContext): Promise<void> {
   const launchStart = performance.now();
   addfoxDevResourcesTornDown = false;
-  cacheEnabled = ctx.cache;
+  cacheEnabled = ctx.keepBrowserProfile;
   lastDistPath = ctx.distPath;
   lastOutputRoot = ctx.outputRoot;
   activeLaunchContext = ctx;
   browserClosed = false;
-  const browserBinary = (ctx.getBrowserPathOverride ?? getBrowserPath)(ctx.browser, ctx.pathOpts);
+  const browserBinary = resolveBrowserBinary(ctx);
   
   // Quick check: dist should be ready since first compile is done (done hook triggered)
   // No need for long polling - reload manager extension will auto-connect when ready
@@ -305,10 +281,55 @@ export async function launchBrowserCore(ctx: LaunchContext): Promise<void> {
   registerTerminalShortcuts(ctx.enableReload, ctx.browser);
 
   if (isChromiumBrowser(ctx.browser)) {
+    await resetChromiumProfileIfCacheDisabled(ctx);
     await launchChromiumBrowser(ctx, browserBinary, launchStart);
     return;
   }
   await launchFirefoxBrowser(ctx, browserBinary, launchStart);
+}
+
+/** Browser binary resolution: addfox.config browser.<name>.path > deprecated browserPath > OS defaults. */
+function resolveBrowserBinary(ctx: LaunchContext): string | null {
+  if (ctx.getBrowserPathOverride) return ctx.getBrowserPathOverride(ctx.browser, ctx.pathOpts);
+  return getBrowserPath(ctx.browser, ctx.pathOpts, ctx.browserConfig);
+}
+
+/**
+ * Resolve the chromium user-data dir: addfox.config `browser.<name>.profile`
+ * (relative to project root) wins; otherwise the default under the cache root.
+ */
+function resolveChromiumUserDataDir(
+  distPath: string,
+  browser: ChromiumLaunchTarget,
+  outputRoot: string | undefined,
+  root: string | undefined,
+  browserConfig: BrowserConfig | undefined
+): string {
+  const custom = browserConfig?.[browser]?.profile;
+  if (custom && custom.trim() !== "") return resolve(root ?? process.cwd(), custom.trim());
+  return getChromiumUserDataDir(distPath, browser, outputRoot);
+}
+
+/**
+ * When profile retention is disabled (the default), wipe the previous run's
+ * user-data dir before launch so every run starts from a fresh profile.
+ * Done at process start (browser not running yet, no file locks) rather than
+ * only at exit, so crashed/killed runs cannot leave a stale profile behind.
+ * The "o" reopen shortcut does NOT go through here — it keeps the profile
+ * for the duration of the dev session.
+ */
+async function resetChromiumProfileIfCacheDisabled(ctx: LaunchContext): Promise<void> {
+  if (ctx.keepBrowserProfile) return;
+  const dir = resolveChromiumUserDataDir(
+    ctx.distPath,
+    ctx.browser as ChromiumLaunchTarget,
+    ctx.outputRoot,
+    ctx.root,
+    ctx.browserConfig
+  );
+  if (existsSync(dir)) {
+    await rm(dir, { recursive: true, force: true }).catch(() => {});
+  }
 }
 
 function handleBrowserExit(): void {
@@ -324,7 +345,7 @@ async function reopenBrowser(): Promise<void> {
   browserClosed = false;
   isCleaningUp = false;
   const ctx = activeLaunchContext;
-  const browserBinary = (ctx.getBrowserPathOverride ?? getBrowserPath)(ctx.browser, ctx.pathOpts);
+  const browserBinary = resolveBrowserBinary(ctx);
   const launchStart = performance.now();
   if (keyboardReloadCleanup) {
     keyboardReloadCleanup();
@@ -344,15 +365,17 @@ async function launchChromiumBrowser(
   launchStart: number
 ): Promise<void> {
   lastChromiumBrowser = ctx.browser as ChromiumLaunchTarget;
-  chromiumUserDataDirPath = getChromiumUserDataDir(
+  chromiumUserDataDirPath = resolveChromiumUserDataDir(
     ctx.distPath,
     ctx.browser as ChromiumLaunchTarget,
-    ctx.outputRoot
+    ctx.outputRoot,
+    ctx.root,
+    ctx.browserConfig
   );
   await mkdir(chromiumUserDataDirPath, { recursive: true });
-  // Keep the profile from ballooning due to transient Chrome caches while
-  // preserving extension state and user data when cache is enabled.
-  await cleanupCacheDirs(chromiumUserDataDirPath);
+  // Cache growth is bounded by launcher flags (--disk-cache-size etc.) and the
+  // HTTP cache is cleared via CDP after launch; no profile dirs are deleted,
+  // which keeps Service Worker / login state consistent.
   const extensions = [ctx.distPath, reloadManagerPath].filter(Boolean) as string[];
   const runnerFn = ctx.chromiumRunnerOverride ?? runChromiumRunner;
   extensionRunner = await runnerFn({
@@ -383,7 +406,15 @@ async function launchFirefoxBrowser(
 export interface HmrPluginOptionsForLaunch {
   distPath: string;
   browser?: LaunchTarget;
+  /**
+   * @deprecated Use `keepBrowserProfile` instead. Still honored during the
+   * deprecation window.
+   */
   cache?: boolean;
+  /** Keep the browser profile (user data dir) between runs. Default false. */
+  keepBrowserProfile?: boolean;
+  /** Per-browser launch config (path / profile / keepBrowserProfile overrides). */
+  browserConfig?: BrowserConfig;
   wsPort?: number;
   enableReload?: boolean;
   debug?: boolean;
@@ -413,13 +444,14 @@ export async function launchBrowser(
   const {
     distPath,
     browser = "chrome",
-    cache = false,
     wsPort = 23333,
     enableReload = true,
     debug,
     root,
     outputRoot,
   } = options;
+  // keepBrowserProfile wins; deprecated `cache` is the fallback during the deprecation window
+  const keepBrowserProfile = options.keepBrowserProfile ?? options.cache ?? false;
   const onBrowserExit = () => handleBrowserExit();
   await launchBrowserCore({
     distPath,
@@ -427,6 +459,7 @@ export async function launchBrowser(
     debug,
     root,
     outputRoot,
+    browserConfig: options.browserConfig,
     pathOpts: {
       chromePath: options.chromePath,
       chromiumPath: options.chromiumPath,
@@ -442,7 +475,7 @@ export async function launchBrowser(
       firefoxPath: options.firefoxPath,
       zenPath: options.zenPath,
     },
-    cache,
+    keepBrowserProfile,
     enableReload,
     wsPort,
     chromiumRunnerOverride,
@@ -493,9 +526,11 @@ export async function launchBrowserOnly(
   options: LaunchOnlyOptions,
   chromiumRunnerOverride?: ChromiumRunnerOverride
 ): Promise<void> {
-  const { distPath, browser = "chrome", cache = false } = options;
+  const { distPath, browser = "chrome" } = options;
+  // keepBrowserProfile wins; deprecated `cache` is the fallback during the deprecation window
+  const keepBrowserProfile = options.keepBrowserProfile ?? options.cache ?? false;
   addfoxDevResourcesTornDown = false;
-  cacheEnabled = cache;
+  cacheEnabled = keepBrowserProfile;
   lastDistPath = distPath;
   lastOutputRoot = options.outputRoot;
   registerCleanupHandlers();
@@ -526,14 +561,18 @@ export async function launchBrowserOnly(
       customPath: options.customPath,
       firefoxPath: options.firefoxPath,
       zenPath: options.zenPath,
-    });
+    }, options.browserConfig);
     await ensureDistReady(distPath);
     if (isChromiumBrowser(browser)) {
       if (!browserBinary) {
-        throw new Error(`${browser} path not found; set browserPath.${browser} in addfox.config, or install the browser at a default location`);
+        throw new Error(`${browser} path not found; set browser.${browser}.path in addfox.config, or install the browser at a default location`);
       }
       lastChromiumBrowser = browser;
-      chromiumUserDataDirPath = getChromiumUserDataDir(distPath, browser, options.outputRoot);
+      chromiumUserDataDirPath = resolveChromiumUserDataDir(distPath, browser, options.outputRoot, options.root, options.browserConfig);
+      // Fresh profile per launch unless keepBrowserProfile is explicitly enabled
+      if (!keepBrowserProfile && existsSync(chromiumUserDataDirPath)) {
+        await rm(chromiumUserDataDirPath, { recursive: true, force: true }).catch(() => {});
+      }
       await mkdir(chromiumUserDataDirPath, { recursive: true });
       const runnerFn = chromiumRunnerOverride ?? runChromiumRunner;
       extensionRunner = await runnerFn({
@@ -561,6 +600,10 @@ export type LaunchOnlyOptions = Pick<
   HmrPluginOptionsForLaunch,
   | "distPath"
   | "browser"
+  | "keepBrowserProfile"
+  | "cache"
+  | "browserConfig"
+  | "root"
   | "chromePath"
   | "chromiumPath"
   | "edgePath"

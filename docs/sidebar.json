@@ -211,7 +211,7 @@
       "link": "/config/env-prefix"
     },
     {
-      "text": "browserPath",
+      "text": "browser",
       "link": "/config/launch"
     },
     {
@@ -485,7 +485,7 @@
       "link": "/zh/config/env-prefix"
     },
     {
-      "text": "browserPath",
+      "text": "browser",
       "link": "/zh/config/launch"
     },
     {
@@ -759,7 +759,7 @@
       "link": "/ja/config/env-prefix"
     },
     {
-      "text": "browserPath",
+      "text": "browser",
       "link": "/ja/config/launch"
     },
     {
@@ -1033,7 +1033,7 @@
       "link": "/ko/config/env-prefix"
     },
     {
-      "text": "browserPath",
+      "text": "browser",
       "link": "/ko/config/launch"
     },
     {
@@ -1307,7 +1307,7 @@
       "link": "/ru/config/env-prefix"
     },
     {
-      "text": "browserPath",
+      "text": "browser",
       "link": "/ru/config/launch"
     },
     {
@@ -1581,7 +1581,7 @@
       "link": "/es/config/env-prefix"
     },
     {
-      "text": "browserPath",
+      "text": "browser",
       "link": "/es/config/launch"
     },
     {

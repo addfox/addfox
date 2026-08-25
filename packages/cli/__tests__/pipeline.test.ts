@@ -71,7 +71,7 @@ describe("Pipeline", () => {
       command: 'build',
       browser: 'chromium',
       launch: 'chromium',
-      cache: false,
+      keepBrowserProfile: false,
       report: false,
     });
     
@@ -104,7 +104,7 @@ describe("Pipeline", () => {
         command: 'build',
         browser: 'chromium',
         launch: 'chromium',
-        cache: false,
+        keepBrowserProfile: false,
         report: false,
       });
       expect(ctx).toBeDefined();
@@ -124,7 +124,7 @@ describe("Pipeline", () => {
       command: "dev",
       browser: "chromium",
       launch: "chromium",
-      cache: false,
+      keepBrowserProfile: false,
       report: false,
       open: false,
       devServerPort: 3001,
@@ -133,6 +133,74 @@ describe("Pipeline", () => {
       entries,
     });
     expect(ctx.rsbuild.server?.port).toBe(3001);
+  });
+});
+
+describe("Pipeline buildCache", () => {
+  let testRoot: string;
+
+  beforeEach(() => {
+    testRoot = resolve(tmpdir(), `addfox-buildcache-${Date.now()}`);
+    mkdirSync(testRoot, { recursive: true });
+    writeFileSync(
+      resolve(testRoot, "package.json"),
+      JSON.stringify({ name: "test", devDependencies: { "@types/chrome": "^0.0.0" } }),
+      "utf-8"
+    );
+  });
+
+  afterEach(() => {
+    if (existsSync(testRoot)) rmSync(testRoot, { recursive: true, force: true });
+  });
+
+  async function runWithConfig(config: AddfoxResolvedConfig): Promise<PipelineContext> {
+    const entries = createMockEntries(testRoot);
+    return runPipeline({
+      root: testRoot,
+      command: "build",
+      browser: "chromium",
+      launch: "chromium",
+      keepBrowserProfile: false,
+      report: false,
+      config,
+      baseEntries: entries,
+      entries,
+    });
+  }
+
+  it("enables persistent build cache by default under <outputRoot>/cache/build", async () => {
+    const ctx = await runWithConfig(createMockConfig(testRoot, { outputRoot: ".addfox" }));
+    const bc = ctx.rsbuild.performance?.buildCache;
+    expect(bc).toBeDefined();
+    expect(typeof bc).toBe("object");
+    const dir = (bc as { cacheDirectory?: string }).cacheDirectory;
+    expect(dir).toBe(resolve(testRoot, ".addfox", "cache", "build"));
+    expect(Array.isArray((bc as { cacheDigest?: unknown[] }).cacheDigest)).toBe(true);
+  });
+
+  it("buildCache: false disables the persistent cache", async () => {
+    const ctx = await runWithConfig(createMockConfig(testRoot, { buildCache: false }));
+    expect(ctx.rsbuild.performance?.buildCache).toBe(false);
+  });
+
+  it("custom cacheDirectory is resolved against project root", async () => {
+    const ctx = await runWithConfig(
+      createMockConfig(testRoot, { buildCache: { cacheDirectory: "tmp/my-cache" } })
+    );
+    const bc = ctx.rsbuild.performance?.buildCache as { cacheDirectory?: string };
+    expect(bc.cacheDirectory).toBe(resolve(testRoot, "tmp/my-cache"));
+  });
+
+  it("cacheDigest changes when the manifest changes", async () => {
+    const ctx1 = await runWithConfig(
+      createMockConfig(testRoot, { manifest: { name: "a", manifest_version: 3 } })
+    );
+    const ctx2 = await runWithConfig(
+      createMockConfig(testRoot, { manifest: { name: "b", manifest_version: 3 } })
+    );
+    const d1 = (ctx1.rsbuild.performance?.buildCache as { cacheDigest?: string[] }).cacheDigest;
+    const d2 = (ctx2.rsbuild.performance?.buildCache as { cacheDigest?: string[] }).cacheDigest;
+    expect(d1?.[0]).not.toBe(d2?.[0]);
   });
 });
 
@@ -172,7 +240,7 @@ describe("Pipeline Lifecycle Hooks", () => {
       command: 'build',
       browser: 'chromium',
       launch: 'chromium',
-      cache: false,
+      keepBrowserProfile: false,
       report: false,
     });
 
@@ -205,7 +273,7 @@ describe("Pipeline Lifecycle Hooks", () => {
       command: 'build',
       browser: 'chromium',
       launch: 'chromium',
-      cache: false,
+      keepBrowserProfile: false,
       report: false,
     });
 

@@ -4,6 +4,7 @@ export interface CDPCommand {
   id: number;
   method: string;
   params?: Record<string, unknown>;
+  sessionId?: string;
 }
 
 export interface CDPResponse {
@@ -64,10 +65,16 @@ export class CDPClient {
     }
   }
 
-  sendCommand(method: string, params?: Record<string, unknown>, timeoutMs = 5000): Promise<unknown> {
+  sendCommand(
+    method: string,
+    params?: Record<string, unknown>,
+    timeoutMs = 5000,
+    sessionId?: string,
+  ): Promise<unknown> {
     if (this.closed) return Promise.reject(new Error("CDP client closed"));
     const id = ++this.id;
     const cmd: CDPCommand = { id, method, params };
+    if (sessionId) cmd.sessionId = sessionId;
     const promise = new Promise<CDPResponse>((resolve, reject) => {
       this.pending.set(id, resolve);
       if (timeoutMs > 0) {

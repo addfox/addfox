@@ -40,13 +40,15 @@ addfox <command> [options]
 |--------|------------------|------------------------|-------------|
 | `-b, --browser <browser>` | `chromium` | No direct field (command-level target/launch selection) | Target/launch browser. See [Supported Browsers List](#supported-browsers-list) below. |
 | `--port <port>` | `3000` | No direct field | Rsbuild dev server port. Only applies to `dev`. |
-| `-c, --cache` | `true` | `cache` | Enable browser profile cache for current run. |
-| `--no-cache` | `false` (for this run) | `cache` | Disable browser profile cache for current run. |
+| `--keep-browser-profile` | `false` | `keepBrowserProfile` | Keep browser profile between launches (default: fresh profile each run). |
+| `--no-keep-browser-profile` | `false` (for this run) | `keepBrowserProfile` | Use a fresh browser profile for current run. |
 | `-r, --report` | `false` | `report` | Enable Rsdoctor build report. |
 | `--no-open` | `false` (default is auto-open) | No direct field | Do not auto-open browser. |
 | `--debug` | `false` | `debug` | Enable debug mode (error monitor in dev). |
 | `--help` | - | - | Print help. |
 | `--version` | - | - | Print version. |
+
+> `-c, --cache` and `--no-cache` are deprecated aliases of `--keep-browser-profile` / `--no-keep-browser-profile`; they still work but print a deprecation warning in the terminal.
 
 ## Supported Browsers List
 

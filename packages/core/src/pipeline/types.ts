@@ -9,7 +9,8 @@ export interface PipelineContext {
   root: string;
   command: CliCommand;
   browser: BrowserTarget;
-  cache?: boolean;
+  /** Resolved keepBrowserProfile (browser profile retention) for this run. */
+  keepBrowserProfile?: boolean;
   report?: boolean | Record<string, unknown>;
   devServerPort?: number;
   config: AddfoxResolvedConfig;
