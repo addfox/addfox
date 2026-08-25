@@ -1,13 +1,13 @@
 import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
 
-# cache
+# keepBrowserProfile
 
-`cache` は開発時にブラウザのユーザーデータを保持するかどうかを制御するために使用されます。
+`keepBrowserProfile` は開発時にブラウザのユーザーデータ(profile)を保持するかどうかを制御するために使用されます。
 
 ## 概要
 
 - **型**: `boolean`
-- **デフォルト値**: `true`
+- **デフォルト値**: `false`
 - **必須**: いいえ
 
 ## 使い方
@@ -17,16 +17,36 @@ import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from 
 import { defineConfig } from "addfox";
 
 export default defineConfig({
-  cache: true,  // キャッシュを有効にする
+  keepBrowserProfile: true,  // 起動間でブラウザ profile を保持する
 });
 ```
 
 ## 機能
 
-キャッシュを有効にすると：
-- 開発時のブラウザユーザーデータが `.addfox/cache/` ディレクトリに保存されます
+有効にすると：
+- 開発時のブラウザユーザーデータが `.addfox/cache/browser-profile/<name>-user-data` ディレクトリに保存されます
 - 次回 `addfox dev` 起動時にこれらのデータが再利用されます
 - ログイン状態、拡張機能の設定などが保持されます
+
+ブラウザごとにトップレベルの設定を上書きすることもできます：
+
+```ts
+export default defineConfig({
+  browser: {
+    chrome: { keepBrowserProfile: true },
+  },
+});
+```
+
+## 優先順位
+
+以下の順序で解決されます（優先度の高い順）:
+
+1. CLI `--keep-browser-profile` / `--no-keep-browser-profile`
+2. `browser.<name>.keepBrowserProfile`（ブラウザごとの上書き）
+3. トップレベルの `keepBrowserProfile`
+4. 非推奨の `cache`(CLI `-c/--cache`、`--no-cache` または設定の `cache`)
+5. デフォルト値 `false`
 
 ## CLI パラメータ
 
@@ -36,60 +56,88 @@ CLI パラメータは設定より優先されます：
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-# キャッシュを強制的に有効にする（設定が false でも）
-pnpm dev -- -c
-pnpm dev -- --cache
+# profile 保持を強制的に有効にする（設定が false でも）
+pnpm dev -- --keep-browser-profile
 
-# キャッシュを強制的に無効にする（設定が true でも）
-pnpm dev -- --no-cache
+# 新規 profile を強制的に使用する（設定が true でも）
+pnpm dev -- --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-# キャッシュを強制的に有効にする（設定が false でも）
-npm run dev -- -c
-npm run dev -- --cache
+# profile 保持を強制的に有効にする（設定が false でも）
+npm run dev -- --keep-browser-profile
 
-# キャッシュを強制的に無効にする（設定が true でも）
-npm run dev -- --no-cache
+# 新規 profile を強制的に使用する（設定が true でも）
+npm run dev -- --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-# キャッシュを強制的に有効にする（設定が false でも）
-yarn dev -c
-yarn dev --cache
+# profile 保持を強制的に有効にする（設定が false でも）
+yarn dev --keep-browser-profile
 
-# キャッシュを強制的に無効にする（設定が true でも）
-yarn dev -- --no-cache
+# 新規 profile を強制的に使用する（設定が true でも）
+yarn dev --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-# キャッシュを強制的に有効にする（設定が false でも）
-bun run dev -- -c
-bun run dev -- --cache
+# profile 保持を強制的に有効にする（設定が false でも）
+bun run dev -- --keep-browser-profile
 
-# キャッシュを強制的に無効にする（設定が true でも）
-bun run dev -- --no-cache
+# 新規 profile を強制的に使用する（設定が true でも）
+bun run dev -- --no-keep-browser-profile
 ```
 
   </Tab>
 </Tabs>
 
-`--cache` と `--no-cache` が同時に指定された場合、最後のパラメータが優先されます。
+`--keep-browser-profile` と `--no-keep-browser-profile` が同時に指定された場合、最後のパラメータが優先されます。
+
+:::warning
+設定フィールド `cache` と CLI パラメータ `-c/--cache`、`--no-cache` は非推奨（deprecated）のエイリアスです。引き続き使用できますが、ターミナルに非推奨の警告が表示されます。`keepBrowserProfile` と `--keep-browser-profile` / `--no-keep-browser-profile` に移行してください。
+:::
 
 ## 注意事項
 
 - 開発モード（`addfox dev`）にのみ影響します
-- 本番ビルド（`addfox build`）には影響しません
+- Firefox には影響しません。Firefox の profile は `web-ext` が管理します
 - 奇妙な問題が発生した場合は、`.addfox/cache/` ディレクトリを削除してみてください
+
+# buildCache
+
+`buildCache` は **Rspack の永続ビルドキャッシュ**を制御し、繰り返しのビルドを高速化します。
+
+## 概要
+
+- **型**: `boolean | { cacheDirectory?: string }`
+- **デフォルト値**: `true`
+- キャッシュファイルは `<outputRoot>/cache/build/` に保存されます
+
+## 使い方
+
+```ts
+export default defineConfig({
+  // ビルドキャッシュを無効にする
+  buildCache: false,
+});
+```
+
+```ts
+export default defineConfig({
+  // カスタムキャッシュディレクトリ
+  buildCache: { cacheDirectory: "./node_modules/.cache/addfox-build" },
+});
+```
+
+さらに深い rsbuild/rspack のカスタマイズが必要な場合は、既存の [`rsbuild`](/ja/config/rsbuild) 設定フィールド（オブジェクトのディープマージまたは関数形式）を使用してください。
 
 ## 関連設定
 

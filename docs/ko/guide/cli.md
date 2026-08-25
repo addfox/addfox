@@ -35,13 +35,15 @@ addfox <command> [options]
 | 파라미터 | 내장 기본값 | 대응 `addfox.config` 필드 | 설명 |
 |------|------------|---------------------------|------|
 | `-b, --browser <browser>` | `chromium` | 직접 필드 없음 (대상 및 시작에 영향) | 대상/시작 브라우저 지정, 아래 [지원 브라우저 목록](#지원-브라우저-목록) 참조. |
-| `-c, --cache` | `true` | `cache` | 브라우저 profile 캐시 활성화. |
-| `--no-cache` | `false` (현재 명령 전용) | `cache` | 이번 실행의 브라우저 profile 캐시 비활성화. |
+| `--keep-browser-profile` | `false` | `keepBrowserProfile` | 실행 사이에 브라우저 profile 유지 (기본값: 매 실행마다 새 profile 사용). |
+| `--no-keep-browser-profile` | `false` (현재 명령 전용) | `keepBrowserProfile` | 이번 실행에는 새 브라우저 profile 사용. |
 | `-r, --report` | `false` | `report` | Rsdoctor 빌드 분석 보고서 활성화. |
 | `--no-open` | `false` (즉 기본 자동 열기) | 직접 필드 없음 | 빌드 또는 개발 시 브라우저를 자동으로 열지 않음. |
 | `--debug` | `false` | `debug` | 디버그 모드 활성화 (개발 시 오류 모니터링 등 기능). |
 | `--help` | - | - | 도움말 표시. |
 | `--version` | - | - | 버전 번호 표시. |
+
+> `-c, --cache`와 `--no-cache`는 `--keep-browser-profile` / `--no-keep-browser-profile`의 deprecated 별칭이며, 여전히 동작하지만 터미널에 deprecated 경고를 출력합니다.
 
 ## 지원 브라우저 목록
 
@@ -84,5 +86,5 @@ addfox build -r
 ## 설명
 
 - `--debug`는 주로 `dev` 모드에 작용합니다.
-- `--no-cache`는 "깨끗한 환경" 조사에 적합합니다. `cache`는 여전히 구성 파일에서 프로젝트 기본값으로 사용할 수 있습니다.
+- 기본적으로 매 실행마다 새 profile을 사용합니다. 로그인 상태 등을 유지하려면 `--keep-browser-profile`을 사용하거나 구성 파일에 `keepBrowserProfile: true`를 설정하세요(브라우저별로 `browser.<name>.keepBrowserProfile`로 재정의할 수도 있습니다).
 - `-b/--browser`에는 별도의 config 필드가 없으며, 명령 수준 선택에 속합니다.

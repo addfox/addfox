@@ -53,8 +53,8 @@ const firefoxManifest = {
 
 export default defineConfig({
   manifest: { chromium: manifest, firefox: firefoxManifest},
-  browserPath: {
-    vivaldi: "C:\\apps\\browser\\Application\\vivaldi.exe",
+  browser: {
+    vivaldi: { path: "C:\\apps\\browser\\Application\\vivaldi.exe" },
   },
-  // cache: true,
+  // keepBrowserProfile: true,
 });

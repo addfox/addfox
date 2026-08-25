@@ -58,5 +58,5 @@ export default defineConfig({
   plugins: [pluginReact()],
   /** Dev: enable error monitor → terminal + `.addfox/error.md` (or use CLI `addfox dev --debug`). */
   debug: true,
-  cache: true,
+  keepBrowserProfile: true,
 });

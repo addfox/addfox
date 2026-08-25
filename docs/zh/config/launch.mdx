@@ -1,14 +1,20 @@
 import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
 
-# browserPath
+# browser
 
-`browserPath` 用于配置开发时自动打开浏览器并加载扩展的可执行文件路径。
+`browser` 用于配置开发时自动打开并加载扩展的浏览器：可执行文件路径、user-data(profile)目录，以及是否跨启动保留 profile。
 
 ## 概述
 
-- **类型**：`BrowserPathConfig`
-- **默认值**：`undefined`（使用系统默认路径）
+- **类型**:`Record<BrowserName, { path?: string; profile?: string; keepBrowserProfile?: boolean }>`
+- **默认值**:`undefined`（使用系统默认路径）
 - **是否必需**：否
+
+每个浏览器条目支持以下字段：
+
+- `path` — 浏览器可执行文件路径
+- `profile` — 自定义 user-data(profile)目录，相对路径相对项目根解析（默认 `<outputRoot>/cache/browser-profile/<name>-user-data`)
+- `keepBrowserProfile` — 跨启动保留该浏览器的 profile，覆盖顶层 [`keepBrowserProfile`](/config/cache)
 
 ## Chromium 系浏览器
 
@@ -29,9 +35,9 @@ import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from 
 ```ts
 // addfox.config.ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  browser: {
+    chrome: { path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+    edge: { path: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" },
   },
 });
 ```
@@ -83,8 +89,8 @@ Firefox 使用 `web-ext` 工具管理扩展，路径配置方式相同：
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  browser: {
+    firefox: { path: "/Applications/Firefox.app/Contents/MacOS/firefox" },
   },
 });
 ```
@@ -132,10 +138,10 @@ Firefox 开发模式使用 `web-ext` 工具，扩展重载由 `web-ext` 处理�
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
-    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  browser: {
+    chrome: { path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+    edge: { path: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" },
+    firefox: { path: "/Applications/Firefox.app/Contents/MacOS/firefox" },
   },
 });
 ```
@@ -144,9 +150,9 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  browser: {
+    chrome: { path: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" },
+    edge: { path: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe" },
   },
 });
 ```
@@ -155,14 +161,33 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/usr/bin/google-chrome",
-    chromium: "/usr/bin/chromium-browser",
-    firefox: "/usr/bin/firefox",
+  browser: {
+    chrome: { path: "/usr/bin/google-chrome" },
+    chromium: { path: "/usr/bin/chromium-browser" },
+    firefox: { path: "/usr/bin/firefox" },
   },
 });
 ```
 
+## 已废弃：`browserPath`
+
+`browserPath` 仍可使用，但终端会打印 deprecated 警告。请迁移到 `browser`：
+
+```ts
+// 迁移前（已废弃）
+export default defineConfig({
+  browserPath: { chrome: "/path/to/chrome" },
+});
+
+// 迁移后
+export default defineConfig({
+  browser: { chrome: { path: "/path/to/chrome" } },
+});
+```
+
+同一浏览器同时配置 `browserPath` 和 `browser` 时，`browser` 优先。
+
 ## 相关配置
 
 - [guide/launch](/guide/launch) - 浏览器启动指南
+- [`keepBrowserProfile` / `buildCache`](/config/cache) - 缓存配置

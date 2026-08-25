@@ -5,7 +5,7 @@
   { "type": "file", "name": "out-dir", "label": "outDir" },
   { "type": "file", "name": "zip", "label": "zip" },
   { "type": "file", "name": "env-prefix", "label": "envPrefix" },
-  { "type": "file", "name": "launch", "label": "browserPath" },
+  { "type": "file", "name": "launch", "label": "browser" },
   { "type": "file", "name": "hot-reload", "label": "hotReload" },
   { "type": "file", "name": "cache", "label": "cache" },
   { "type": "file", "name": "debug", "label": "debug" },

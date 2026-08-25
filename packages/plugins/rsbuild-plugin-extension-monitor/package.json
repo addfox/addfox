@@ -1,6 +1,6 @@
 {
   "name": "@addfox/rsbuild-plugin-extension-monitor",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Rsbuild plugin: dev monitor injection and monitor assets (internal)",
   "license": "MIT",
   "type": "module",

@@ -14,5 +14,5 @@ const manifest = {
 
 export default defineConfig({
   manifest: { chromium: manifest, firefox: { ...manifest } },
-  browserPath: { chrome: "C:\\Users\\GomiGXY\\Downloads\\chrome-win64\\chrome.exe" },
+  browser: { chrome: { path: "C:\\Users\\GomiGXY\\Downloads\\chrome-win64\\chrome.exe" } },
 });

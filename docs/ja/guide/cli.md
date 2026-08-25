@@ -35,13 +35,15 @@ addfox <command> [options]
 | パラメータ | 組み込みデフォルト | 対応 `addfox.config` フィールド | 説明 |
 |------|------------|---------------------------|------|
 | `-b, --browser <browser>` | `chromium` | 直接対応するフィールドなし（ターゲットと起動に影響） | ターゲット/起動ブラウザを指定。詳細は以下の[サポートされているブラウザリスト](#サポートされているブラウザリスト)を参照。 |
-| `-c, --cache` | `true` | `cache` | ブラウザ profile キャッシュを有効にする。 |
-| `--no-cache` | `false`（現在のコマンドのみ） | `cache` | 今回の実行のブラウザ profile キャッシュを無効にする。 |
+| `--keep-browser-profile` | `false` | `keepBrowserProfile` | 起動間でブラウザ profile を保持する(デフォルト: 毎回新規 profile を使用)。 |
+| `--no-keep-browser-profile` | `false`（現在のコマンドのみ） | `keepBrowserProfile` | 今回の実行では新規ブラウザ profile を使用する。 |
 | `-r, --report` | `false` | `report` | Rsdoctor ビルド分析レポートを有効にする。 |
 | `--no-open` | `false`（つまりデフォルトで自動で開く） | 直接対応するフィールドなし | ビルドまたは開発時にブラウザを自動で開かない。 |
 | `--debug` | `false` | `debug` | デバッグモードを有効にする（開発時のエラー監視などの機能）。 |
 | `--help` | - | - | ヘルプを表示。 |
 | `--version` | - | - | バージョン番号を表示。 |
+
+> `-c, --cache` と `--no-cache` は `--keep-browser-profile` / `--no-keep-browser-profile` の非推奨（deprecated）エイリアスです。引き続き使用できますが、ターミナルに非推奨の警告が表示されます。
 
 ## サポートされているブラウザリスト
 
@@ -84,5 +86,5 @@ addfox build -r
 ## 説明
 
 - `--debug` は主に `dev` モードで作用します。
-- `--no-cache` は「クリーンな環境」での問題調査に適しています。`cache` は設定ファイルでプロジェクトのデフォルト値として引き続き使用できます。
+- デフォルトでは毎回新規 profile で起動します。ログイン状態などを保持したい場合は `--keep-browser-profile` を使うか、設定ファイルで `keepBrowserProfile: true` を指定してください（`browser.<name>.keepBrowserProfile` でブラウザごとに上書きも可能です）。
 - `-b/--browser` は個別の config フィールドがなく、コマンドレベルの選択です。

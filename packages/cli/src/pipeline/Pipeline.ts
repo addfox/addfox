@@ -33,7 +33,8 @@ export interface PipelineOptions {
   command: 'dev' | 'build';
   browser: 'chromium' | 'firefox';
   launch: LaunchTarget;
-  cache: boolean;
+  /** Resolved browser profile retention for this run. */
+  keepBrowserProfile: boolean;
   report: boolean | Record<string, unknown>;
   /** When true, enable error monitor in dev; CLI --debug overrides config.debug */
   debug?: boolean;
@@ -98,7 +99,7 @@ export class Pipeline {
     this.hookManager.register('resolve', 'after', async (ctx) => {
       ctx.command = this.options.command;
       ctx.browser = this.options.browser;
-      ctx.cache = this.options.cache;
+      ctx.keepBrowserProfile = this.options.keepBrowserProfile;
       ctx.report = this.options.report;
       ctx.devServerPort = this.options.devServerPort;
       ctx.isDev = this.options.command === 'dev';
@@ -154,6 +155,24 @@ export class Pipeline {
     );
     if (scopedProcessEnvPlugin) plugins.push(scopedProcessEnvPlugin as LoosePlugin);
 
+    // Persistent build cache (Rspack filesystem cache) for faster dev restarts.
+    // Default on; cacheDirectory under <outputRoot>/cache/build so all addfox
+    // caches live together. cacheDigest covers addfox-injected variability
+    // (resolved manifest + env defines) so config changes invalidate the cache.
+    const buildCacheOption = ctx.config.buildCache ?? true;
+    const buildCache = buildCacheOption === false
+      ? false
+      : {
+          cacheDirectory:
+            typeof buildCacheOption === 'object' && buildCacheOption.cacheDirectory
+              ? resolve(ctx.root, buildCacheOption.cacheDirectory)
+              : resolve(ctx.root, ctx.config.outputRoot, 'cache', 'build'),
+          cacheDigest: [
+            JSON.stringify(getManifestRecordForTarget(ctx.config.manifest, ctx.browser) ?? {}),
+            JSON.stringify(runtimeEnvConfig.define),
+          ],
+        };
+
     // In dev mode, use SourceMapDevToolPlugin to exclude third-party source maps.
     // The strategy is to generate source maps only for project entry files and exclude vendor chunks.
     const rspackPlugins = ctx.isDev
@@ -173,6 +192,9 @@ export class Pipeline {
     return {
       root: ctx.root,
       plugins,
+      performance: {
+        buildCache,
+      },
       source: {
         define: runtimeEnvConfig.define,
       },
@@ -235,7 +257,8 @@ export class Pipeline {
       customPath: browserPathConfig.custom,
       firefoxPath: browserPathConfig.firefox,
       zenPath: browserPathConfig.zen,
-      cache: ctx.cache,
+      browserConfig: ctx.config.browser,
+      keepBrowserProfile: ctx.keepBrowserProfile ?? false,
       wsPort: hotReloadOpts?.wsPort ?? HMR_WS_PORT,
       enableReload: hotReloadEnabled,
       autoRefreshContentPage: hotReloadEnabled ? (hotReloadOpts?.autoRefreshContentPage ?? true) : false,

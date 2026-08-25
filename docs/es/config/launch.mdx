@@ -1,14 +1,20 @@
 import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
 
-# browserPath
+# browser
 
-`browserPath` se utiliza para configurar la ruta del archivo ejecutable del navegador para abrir automáticamente y cargar la extensión durante el desarrollo.
+`browser` se utiliza para configurar los navegadores que se abren automáticamente y cargan la extensión durante el desarrollo: ruta del archivo ejecutable, directorio user-data (perfil) y conservación del perfil entre ejecuciones.
 
 ## Resumen
 
-- **Tipo**: `BrowserPathConfig`
+- **Tipo**: `Record<BrowserName, { path?: string; profile?: string; keepBrowserProfile?: boolean }>`
 - **Valor por defecto**: `undefined` (usar ruta predeterminada del sistema)
 - **Requerido**: No
+
+Cada entrada de navegador soporta los campos:
+
+- `path` — ruta del archivo ejecutable del navegador
+- `profile` — directorio user-data (perfil) personalizado; las rutas relativas se resuelven desde la raíz del proyecto (por defecto: `<outputRoot>/cache/browser-profile/<name>-user-data`)
+- `keepBrowserProfile` — conservar el perfil de este navegador entre ejecuciones, sobrescribiendo el [`keepBrowserProfile`](/config/cache) de nivel superior
 
 ## Navegadores basados en Chromium
 
@@ -29,9 +35,9 @@ Soporta los siguientes navegadores basados en Chromium:
 ```ts
 // addfox.config.ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  browser: {
+    chrome: { path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+    edge: { path: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" },
   },
 });
 ```
@@ -83,8 +89,8 @@ Firefox usa la herramienta `web-ext` para gestionar extensiones, la forma de con
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  browser: {
+    firefox: { path: "/Applications/Firefox.app/Contents/MacOS/firefox" },
   },
 });
 ```
@@ -132,10 +138,10 @@ El modo de desarrollo de Firefox usa la herramienta `web-ext`, la recarga de ext
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
-    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  browser: {
+    chrome: { path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+    edge: { path: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" },
+    firefox: { path: "/Applications/Firefox.app/Contents/MacOS/firefox" },
   },
 });
 ```
@@ -144,9 +150,9 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  browser: {
+    chrome: { path: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" },
+    edge: { path: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe" },
   },
 });
 ```
@@ -155,14 +161,33 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/usr/bin/google-chrome",
-    chromium: "/usr/bin/chromium-browser",
-    firefox: "/usr/bin/firefox",
+  browser: {
+    chrome: { path: "/usr/bin/google-chrome" },
+    chromium: { path: "/usr/bin/chromium-browser" },
+    firefox: { path: "/usr/bin/firefox" },
   },
 });
 ```
 
+## Obsoleto: `browserPath`
+
+`browserPath` sigue funcionando pero muestra una advertencia de deprecación en la terminal. Migra a `browser`:
+
+```ts
+// Antes (obsoleto)
+export default defineConfig({
+  browserPath: { chrome: "/path/to/chrome" },
+});
+
+// Después
+export default defineConfig({
+  browser: { chrome: { path: "/path/to/chrome" } },
+});
+```
+
+Si tanto `browserPath` como `browser` configuran una ruta para el mismo navegador, `browser` tiene prioridad.
+
 ## Configuraciones relacionadas
 
 - [guide/launch](/guide/launch) - Guía de inicio de navegador
+- [`keepBrowserProfile` / `buildCache`](/config/cache) - Configuración de caché

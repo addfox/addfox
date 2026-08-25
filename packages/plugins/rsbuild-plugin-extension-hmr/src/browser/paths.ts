@@ -1,6 +1,6 @@
 import { resolve } from "path";
 import { existsSync } from "node:fs";
-import type { LaunchTarget, ChromiumLaunchTarget } from "@addfox/core";
+import type { LaunchTarget, ChromiumLaunchTarget, BrowserConfig } from "@addfox/core";
 
 type PlatformPaths = Record<string, string[]>;
 
@@ -157,18 +157,25 @@ export function buildDefaultPaths(browser: LaunchTarget, platform: string): stri
   return basePaths;
 }
 
-export function getBrowserPath(browser: LaunchTarget, options: LaunchPathOptions): string | null {
+export function getBrowserPath(
+  browser: LaunchTarget,
+  options: LaunchPathOptions,
+  browserConfig?: BrowserConfig
+): string | null {
+  // addfox.config `browser.<name>.path` takes precedence over deprecated browserPath
+  const configPath = browserConfig?.[browser]?.path;
+  if (configPath != null && configPath.trim() !== "") return configPath.trim();
   const userPath = getLaunchPathFromOptions(browser, options);
   if (userPath != null && userPath.trim() !== "") return userPath.trim();
   const paths = buildDefaultPaths(browser, process.platform);
   if (!paths || paths.length === 0) {
-    if (browser === "chromium") return getBrowserPath("chrome", options);
+    if (browser === "chromium") return getBrowserPath("chrome", options, browserConfig);
     return null;
   }
   for (const p of paths) {
     if (existsSync(p)) return p;
   }
-  if (browser === "chromium") return getBrowserPath("chrome", options);
+  if (browser === "chromium") return getBrowserPath("chrome", options, browserConfig);
   return null;
 }
 

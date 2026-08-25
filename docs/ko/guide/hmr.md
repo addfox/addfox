@@ -121,6 +121,6 @@ export default defineConfig({
 
 ## 다음 단계
 
-- [browserPath 구성](/guide/launch) — 개발 시 브라우저 자동 열기 구성
+- [browser 구성](/guide/launch) — 개발 시 브라우저 자동 열기 구성
 - [monitor 디버깅](/guide/monitor) — 오류 모니터링 패널을 사용하여 디버그
 - [config/hot-reload](/config/hot-reload) — 핫 리로드의 전체 구성 옵션

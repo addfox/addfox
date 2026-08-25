@@ -5,6 +5,7 @@ import type { RsbuildConfig } from "@rsbuild/core";
 import { runPipeline, type PipelineOptions } from "./pipeline/index.ts";
 import { getLoadEnvPrefixes } from "./pipeline/Pipeline.ts";
 import { parseCliArgs } from "./cli/index.ts";
+import { resolveKeepBrowserProfile } from "./cli/args.ts";
 import {
   wrapAddfoxOutput,
   getRawWrites,
@@ -26,6 +27,7 @@ import {
   logDoneTimed,
   logDoneWithValue,
   setAddfoxLoggerRawWrites,
+  warn,
   error,
   formatError,
   exitWithError,
@@ -70,8 +72,9 @@ function printHelp(): void {
 
   Options:
     -b, --browser <browser>    Target/launch browser (chromium | firefox | zen | chrome | edge | brave | ...)
-    -c, --cache                Cache browser profile between launches
-    --no-cache                 Disable browser profile cache for current run
+    --keep-browser-profile             Keep browser profile between launches (default: fresh profile each run)
+    --no-keep-browser-profile          Use a fresh browser profile for current run (default behavior)
+    -c, --cache, --no-cache    Deprecated aliases for --keep-browser-profile / --no-keep-browser-profile
     -r, --report               Enable Rsdoctor build report (opens analysis after build)
     --port <port>              Rsbuild dev server port (default 3000)
     --no-open                  Do not auto-open browser (dev/build)
@@ -90,7 +93,8 @@ interface ResolvedCliOptions {
   launch: LaunchTarget;
   /** True when -b/--browser was explicitly provided. */
   browserSpecified: boolean;
-  cache: boolean;
+  /** Resolved browser profile retention for this run. */
+  keepBrowserProfile: boolean;
   report: boolean | Record<string, unknown>;
   debug: boolean;
   /** When false, do not auto-open browser. */
@@ -107,6 +111,29 @@ function resolveOptions(argv: string[], config: AddfoxResolvedConfig): ResolvedC
   const browser = parsed.browser ?? "chromium";
   const launch = parsed.launch ?? (browser === "firefox" ? "firefox" : "chrome");
 
+  // Deprecation warnings (still honored during the deprecation window)
+  if (parsed.cache !== undefined) {
+    warn("`-c/--cache` and `--no-cache` are deprecated; use `--keep-browser-profile` / `--no-keep-browser-profile` instead.");
+  }
+  if (config.cache !== undefined) {
+    warn("Config `cache` is deprecated; use `keepBrowserProfile` (or `browser.<name>.keepBrowserProfile`) instead.");
+  }
+  if (config.browserPath && Object.keys(config.browserPath).length > 0) {
+    warn(
+      'Config `browserPath` is deprecated; migrate to `browser.<name>.path`, e.g. `browser: { chrome: { path: "..." } }`.'
+    );
+  }
+
+  // keepBrowserProfile precedence: CLI --keep-browser-profile > browser.<name>.keepBrowserProfile
+  //   > top-level keepBrowserProfile > deprecated cache (CLI, then config) > false
+  const keepBrowserProfile = resolveKeepBrowserProfile({
+    cli: parsed.keepBrowserProfile,
+    perBrowser: config.browser?.[launch]?.keepBrowserProfile,
+    config: config.keepBrowserProfile,
+    cliCache: parsed.cache,
+    configCache: config.cache,
+  });
+
   // CLI overrides config: --debug takes precedence over config.debug
   const debug = parsed.debug ?? config.debug ?? false;
 
@@ -114,7 +141,7 @@ function resolveOptions(argv: string[], config: AddfoxResolvedConfig): ResolvedC
     browser,
     launch,
     browserSpecified: parsed.browserSpecified ?? false,
-    cache: parsed.cache ?? config.cache ?? true,
+    keepBrowserProfile,
     report: parsed.report ?? false,
     debug,
     open: parsed.open ?? true,
@@ -373,7 +400,10 @@ async function runBuild(root: string, argv: string[]): Promise<void> {
     await launchBrowserOnly({
       distPath: distDir,
       browser: resolved.launch,
-      cache: resolved.cache,
+      keepBrowserProfile: resolved.keepBrowserProfile,
+      root: ctx.root,
+      outputRoot: ctx.config.outputRoot,
+      browserConfig: ctx.config.browser,
       chromePath: browserPathConfig.chrome,
       chromiumPath: browserPathConfig.chromium,
       edgePath: browserPathConfig.edge,

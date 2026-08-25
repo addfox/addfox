@@ -190,20 +190,44 @@ bunx addfox dev -b vivaldi
   </Tab>
 </Tabs>
 
-### Chromium 브라우저 경로 구성
+### Chromium 브라우저 구성
 
-브라우저가 기본 위치에 없는 경우 `browserPath`에서 구성할 수 있습니다:
+브라우저가 기본 위치에 없는 경우 구성에서 `browser` 객체를 지정할 수 있습니다:
 
 ```ts
 // addfox.config.ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/path/to/chrome",
-    edge: "/path/to/edge",
-    brave: "/path/to/brave",
+  browser: {
+    chrome: { path: "/path/to/chrome" },
+    edge: { path: "/path/to/edge" },
+    brave: { path: "/path/to/brave" },
   },
 });
 ```
+
+각 브라우저 항목은 다음 필드를 지원합니다:
+
+- `path` — 브라우저 실행 파일 경로
+- `profile` — 사용자 정의 user-data(profile) 디렉토리. 상대 경로는 프로젝트 루트 기준으로 해석됩니다 (기본값: `<outputRoot>/cache/browser-profile/<name>-user-data`)
+- `keepBrowserProfile` — 실행 사이에 이 브라우저의 profile을 유지하며, 최상위 `keepBrowserProfile`을 재정의합니다
+
+:::warning
+`browserPath`는 deprecated입니다. `browser`로 마이그레이션하세요:
+
+```ts
+// 이전 (deprecated)
+export default defineConfig({
+  browserPath: { chrome: "/path/to/chrome" },
+});
+
+// 이후
+export default defineConfig({
+  browser: { chrome: { path: "/path/to/chrome" } },
+});
+```
+
+같은 브라우저에 둘 다 설정된 경우 `browser`가 우선합니다.
+:::
 
 #### 각 플랫폼 예시
 
@@ -211,9 +235,9 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  browser: {
+    chrome: { path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+    edge: { path: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" },
   },
 });
 ```
@@ -222,9 +246,9 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  browser: {
+    chrome: { path: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" },
+    edge: { path: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe" },
   },
 });
 ```
@@ -233,9 +257,9 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/usr/bin/google-chrome",
-    chromium: "/usr/bin/chromium-browser",
+  browser: {
+    chrome: { path: "/usr/bin/google-chrome" },
+    chromium: { path: "/usr/bin/chromium-browser" },
   },
 });
 ```
@@ -247,8 +271,8 @@ export default defineConfig({
 ```json
 {
   "scripts": {
-    "dev:cache": "addfox dev -b chrome --cache",
-    "dev:edge:cache": "addfox dev -b edge --cache"
+    "dev:keep-profile": "addfox dev -b chrome --keep-browser-profile",
+    "dev:edge:keep-profile": "addfox dev -b edge --keep-browser-profile"
   }
 }
 ```
@@ -259,36 +283,28 @@ export default defineConfig({
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-pnpm addfox dev --cache
-# 또는
-pnpm addfox dev -c
+pnpm addfox dev --keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-npx addfox dev --cache
-# 또는
-npx addfox dev -c
+npx addfox dev --keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-yarn addfox dev --cache
-# 또는
-yarn addfox dev -c
+yarn addfox dev --keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-bunx addfox dev --cache
-# 또는
-bunx addfox dev -c
+bunx addfox dev --keep-browser-profile
 ```
 
   </Tab>
@@ -298,11 +314,21 @@ bunx addfox dev -c
 
 ```ts
 export default defineConfig({
-  cache: true,
+  keepBrowserProfile: true,
 });
 ```
 
-사용자 데이터는 `.addfox/cache/` 디렉토리에 저장됩니다.
+또는 브라우저별로 재정의(최상위 `keepBrowserProfile`보다 우선):
+
+```ts
+export default defineConfig({
+  browser: {
+    chrome: { keepBrowserProfile: true },
+  },
+});
+```
+
+사용자 데이터는 `.addfox/cache/browser-profile/<name>-user-data` 디렉토리에 저장됩니다.
 
 ## Firefox
 
@@ -359,8 +385,8 @@ bunx addfox dev -b firefox
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  browser: {
+    firefox: { path: "/Applications/Firefox.app/Contents/MacOS/firefox" },
   },
 });
 ```
@@ -437,7 +463,7 @@ bunx addfox dev --debug
 
 ## 관련 설정
 
-- [`browserPath`](/config/launch) - 브라우저 실행 파일 경로 구성
-- [`cache`](/config/cache) - 캐시 구성
+- [`browser`](/config/launch) - 브라우저 구성 (경로, profile, keepBrowserProfile)
+- [`keepBrowserProfile` / `buildCache`](/config/cache) - 캐시 구성
 - [`hotReload`](/config/hot-reload) - 핫 리로드 구성
 - [`debug`](/config/debug) - 오류 모니터링 구성

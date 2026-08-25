@@ -1,13 +1,13 @@
 import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
 
-# cache
+# keepBrowserProfile
 
-`cache` 用于控制是否在开发时保留浏览器用户数据。
+`keepBrowserProfile` 用于控制是否在开发时保留浏览器用户数据（profile)。
 
 ## 概述
 
-- **类型**：`boolean`
-- **默认值**：`true`
+- **类型**:`boolean`
+- **默认值**:`false`
 - **是否必需**：否
 
 ## 用法
@@ -17,16 +17,36 @@ import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from 
 import { defineConfig } from "addfox";
 
 export default defineConfig({
-  cache: true,  // 启用缓存
+  keepBrowserProfile: true,  // 跨启动保留浏览器 profile
 });
 ```
 
 ## 作用
 
-启用缓存后：
-- 开发时浏览器用户数据会保存在 `.addfox/cache/` 目录
+启用后：
+- 开发时浏览器用户数据保存在 `.addfox/cache/browser-profile/<name>-user-data` 目录
 - 下次启动 `addfox dev` 时会复用这些数据
 - 登录状态、扩展设置等会保留
+
+也可以按浏览器覆盖顶层配置：
+
+```ts
+export default defineConfig({
+  browser: {
+    chrome: { keepBrowserProfile: true },
+  },
+});
+```
+
+## 优先级
+
+按以下顺序解析（优先级从高到低）:
+
+1. CLI `--keep-browser-profile` / `--no-keep-browser-profile`
+2. `browser.<name>.keepBrowserProfile`（按浏览器覆盖）
+3. 顶层 `keepBrowserProfile`
+4. 废弃的 `cache`(CLI `-c/--cache`、`--no-cache` 或配置 `cache`)
+5. 默认值 `false`
 
 ## CLI 参数
 
@@ -36,60 +56,88 @@ CLI 参数优先级高于配置：
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-# 强制启用缓存（即使配置为 false）
-pnpm dev -- -c
-pnpm dev -- --cache
+# 强制保留 profile（即使配置为 false）
+pnpm dev -- --keep-browser-profile
 
-# 强制禁用缓存（即使配置为 true）
-pnpm dev -- --no-cache
+# 强制使用全新 profile（即使配置为 true）
+pnpm dev -- --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-# 强制启用缓存（即使配置为 false）
-npm run dev -- -c
-npm run dev -- --cache
+# 强制保留 profile（即使配置为 false）
+npm run dev -- --keep-browser-profile
 
-# 强制禁用缓存（即使配置为 true）
-npm run dev -- --no-cache
+# 强制使用全新 profile（即使配置为 true）
+npm run dev -- --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-# 强制启用缓存（即使配置为 false）
-yarn dev -c
-yarn dev --cache
+# 强制保留 profile（即使配置为 false）
+yarn dev --keep-browser-profile
 
-# 强制禁用缓存（即使配置为 true）
-yarn dev --no-cache
+# 强制使用全新 profile（即使配置为 true）
+yarn dev --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-# 强制启用缓存（即使配置为 false）
-bun run dev -- -c
-bun run dev -- --cache
+# 强制保留 profile（即使配置为 false）
+bun run dev -- --keep-browser-profile
 
-# 强制禁用缓存（即使配置为 true）
-bun run dev -- --no-cache
+# 强制使用全新 profile（即使配置为 true）
+bun run dev -- --no-keep-browser-profile
 ```
 
   </Tab>
 </Tabs>
 
-当 `--cache` 与 `--no-cache` 同时出现时，以最后一个参数为准。
+当 `--keep-browser-profile` 与 `--no-keep-browser-profile` 同时出现时，以最后一个参数为准。
+
+:::warning
+配置字段 `cache` 与 CLI 参数 `-c/--cache`、`--no-cache` 是废弃别名，仍可使用，但终端会打印 deprecated 警告。请迁移到 `keepBrowserProfile` 和 `--keep-browser-profile` / `--no-keep-browser-profile`。
+:::
 
 ## 注意事项
 
-- 仅影响开发模式（`addfox dev`）
-- 生产构建（`addfox build`）不受此配置影响
+- 仅影响开发模式（`addfox dev`)
+- 不影响 Firefox;Firefox 的 profile 由 `web-ext` 管理
 - 遇到奇怪问题时，可尝试清除 `.addfox/cache/` 目录
+
+# buildCache
+
+`buildCache` 用于控制 **Rspack 持久化构建缓存**，加快重复构建。
+
+## 概述
+
+- **类型**:`boolean | { cacheDirectory?: string }`
+- **默认值**:`true`
+- 缓存文件保存在 `<outputRoot>/cache/build/`
+
+## 用法
+
+```ts
+export default defineConfig({
+  // 关闭构建缓存
+  buildCache: false,
+});
+```
+
+```ts
+export default defineConfig({
+  // 自定义缓存目录
+  buildCache: { cacheDirectory: "./node_modules/.cache/addfox-build" },
+});
+```
+
+如需更深层的 rsbuild/rspack 定制，可使用已有的 [`rsbuild`](/config/rsbuild) 配置字段（对象深合并或函数形式）。
 
 ## 相关配置
 

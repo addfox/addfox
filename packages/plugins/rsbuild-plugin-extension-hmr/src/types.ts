@@ -1,4 +1,4 @@
-import type { LaunchTarget, ReloadManagerEntry } from "@addfox/core";
+import type { LaunchTarget, ReloadManagerEntry, BrowserConfig } from "@addfox/core";
 import type { LaunchPathOptions } from "./browser/paths";
 import type { ChromiumRunnerOverride } from "./browser/launcher";
 
@@ -19,7 +19,15 @@ export interface HmrPluginOptions {
   customPath?: string;
   firefoxPath?: string;
   zenPath?: string;
+  /**
+   * @deprecated Use `keepBrowserProfile` instead. Still honored during the
+   * deprecation window.
+   */
   cache?: boolean;
+  /** Keep the browser profile (user data dir) between runs. Default false. */
+  keepBrowserProfile?: boolean;
+  /** Per-browser launch config (path / profile / keepBrowserProfile overrides). */
+  browserConfig?: BrowserConfig;
   wsPort?: number;
   enableReload?: boolean;
   autoRefreshContentPage?: boolean;

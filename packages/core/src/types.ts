@@ -3,7 +3,10 @@ import type { EntryRowBase } from "@addfox/common";
 import type { BrowserTarget, CliCommand } from "./constants.ts";
 import type { PipelineContext } from "./pipeline/types.js";
 
-/** Browser executable paths for dev mode (addfox.config browserPath option) */
+/**
+ * Browser executable paths for dev mode (addfox.config browserPath option)
+ * @deprecated Use `browser.<name>.path` instead. Will be removed in a future release.
+ */
 export interface BrowserPathConfig {
   chrome?: string;
   chromium?: string;
@@ -19,6 +22,49 @@ export interface BrowserPathConfig {
   custom?: string;
   firefox?: string;
   zen?: string;
+}
+
+/** Per-browser launch options (addfox.config `browser` option). */
+export interface BrowserLaunchOptions {
+  /** Browser executable path. Overrides OS default path detection. */
+  path?: string;
+  /**
+   * Custom user-data (profile) directory for this browser.
+   * Relative paths resolve against the project root.
+   * Defaults to `<outputRoot>/cache/browser-profile/<name>-user-data`.
+   */
+  profile?: string;
+  /**
+   * Keep this browser's profile between runs. Overrides the top-level
+   * `keepBrowserProfile` option for this browser. Default false (fresh profile).
+   */
+  keepBrowserProfile?: boolean;
+}
+
+/** Per-browser launch configuration, keyed by browser name. */
+export interface BrowserConfig {
+  chrome?: BrowserLaunchOptions;
+  chromium?: BrowserLaunchOptions;
+  edge?: BrowserLaunchOptions;
+  brave?: BrowserLaunchOptions;
+  vivaldi?: BrowserLaunchOptions;
+  opera?: BrowserLaunchOptions;
+  santa?: BrowserLaunchOptions;
+  arc?: BrowserLaunchOptions;
+  yandex?: BrowserLaunchOptions;
+  browseros?: BrowserLaunchOptions;
+  custom?: BrowserLaunchOptions;
+  firefox?: BrowserLaunchOptions;
+  zen?: BrowserLaunchOptions;
+}
+
+/** Persistent build cache options (mapped to Rsbuild performance.buildCache). */
+export interface BuildCacheConfig {
+  /**
+   * Output directory of the cache files.
+   * Defaults to `<outputRoot>/cache/build`.
+   */
+  cacheDirectory?: string;
 }
 
 /** Single manifest as JSON object (nested unknown allowed) */
@@ -96,15 +142,35 @@ export interface AddfoxUserConfig {
    */
   envPrefix?: string[];
   /**
-   * Browser executable paths for dev mode. Framework uses these to start Chrome/Firefox when running `addfox dev`.
-   * If unset, dev mode uses default OS paths (see plugin-extension-hmr). Chrome is launched via chrome-launcher.
+   * Browser executable paths for dev mode.
+   * @deprecated Use `browser.<name>.path` instead. Will be removed in a future release.
    */
   browserPath?: BrowserPathConfig;
   /**
+   * Per-browser launch configuration: executable path, profile directory,
+   * per-browser keepBrowserProfile override. Example:
+   * `browser: { chrome: { path: "...", profile: ".addfox/profiles/chrome", keepBrowserProfile: true } }`
+   */
+  browser?: BrowserConfig;
+  /**
    * Cache chromium-based user data dir between dev runs.
-   * Default true; CLI -c/--cache has higher priority.
+   * @deprecated Use `keepBrowserProfile` (or `browser.<name>.keepBrowserProfile`, CLI `--keep-browser-profile`) instead.
+   * Still honored during the deprecation window.
    */
   cache?: boolean;
+  /**
+   * Keep the browser profile (user data dir) between runs.
+   * Default false: every launch starts from a fresh profile.
+   * Precedence: CLI --keep-browser-profile > browser.<name>.keepBrowserProfile > this option.
+   */
+  keepBrowserProfile?: boolean;
+  /**
+   * Persistent build cache (Rspack filesystem cache) for faster dev restarts.
+   * Default true; cache files live in `<outputRoot>/cache/build`.
+   * Pass an object to customize the cache directory.
+   * Arbitrary Rsbuild/Rspack overrides remain available via the `rsbuild` option.
+   */
+  buildCache?: boolean | BuildCacheConfig;
   /**
    * Hot-reload (WebSocket) options for dev. WebSocket port defaults to 23333.
    * Set to false to disable; true or object to enable (object allows wsPort/autoRefreshContentPage).

@@ -1,5 +1,14 @@
 # addfox
 
+## 0.2.7
+
+### Patch Changes
+
+- Updated dependencies
+  - @addfox/core@0.2.6
+  - @addfox/cli@0.2.7
+  - @addfox/rsbuild-plugin-extension-monitor@0.2.6
+
 ## 0.2.6
 
 ### Patch Changes

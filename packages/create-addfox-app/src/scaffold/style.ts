@@ -24,11 +24,11 @@ const DEPS: Record<StyleEngineWithDeps, Record<string, string>> = {
     postcss: "^8.4.32",
   },
   less: {
-    "@rsbuild/plugin-less": "^1.6.2",
+    "@rsbuild/plugin-less": "^2.0.1",
     less: "^4.2.0",
   },
   sass: {
-    "@rsbuild/plugin-sass": "^1.5.1",
+    "@rsbuild/plugin-sass": "^2.0.1",
     sass: "^1.77.0",
   },
 };

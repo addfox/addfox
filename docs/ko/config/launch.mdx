@@ -1,14 +1,20 @@
 import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
 
-# browserPath
+# browser
 
-`browserPath`는 개발 시 자동으로 브라우저를 열고 확장을 로드할 브라우저 실행 파일 경로를 구성하는 데 사용됩니다.
+`browser`는 개발 시 자동으로 열고 확장을 로드할 브라우저를 구성하는 데 사용됩니다: 실행 파일 경로, user-data(profile) 디렉토리, 실행 간 profile 유지 여부.
 
 ## 개요
 
-- **타입**: `BrowserPathConfig`
+- **타입**: `Record<BrowserName, { path?: string; profile?: string; keepBrowserProfile?: boolean }>`
 - **기본값**: `undefined` (시스템 기본 경로 사용)
 - **필수 여부**: 아니오
+
+각 브라우저 항목은 다음 필드를 지원합니다:
+
+- `path` — 브라우저 실행 파일 경로
+- `profile` — 사용자 정의 user-data(profile) 디렉토리. 상대 경로는 프로젝트 루트 기준으로 해석됩니다 (기본값: `<outputRoot>/cache/browser-profile/<name>-user-data`)
+- `keepBrowserProfile` — 실행 사이에 이 브라우저의 profile을 유지하며, 최상위 [`keepBrowserProfile`](/config/cache)을 재정의합니다
 
 ## Chromium 기반 브라우저
 
@@ -29,9 +35,9 @@ import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from 
 ```ts
 // addfox.config.ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+  browser: {
+    chrome: { path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+    edge: { path: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" },
   },
 });
 ```
@@ -83,8 +89,8 @@ Firefox는 `web-ext` 도구를 사용하여 확장을 관리하며, 경로 구�
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  browser: {
+    firefox: { path: "/Applications/Firefox.app/Contents/MacOS/firefox" },
   },
 });
 ```
@@ -132,10 +138,10 @@ Firefox 개발 모드는 `web-ext` 도구를 사용하며, 확장 리로드는 A
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    edge: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
-    firefox: "/Applications/Firefox.app/Contents/MacOS/firefox",
+  browser: {
+    chrome: { path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" },
+    edge: { path: "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" },
+    firefox: { path: "/Applications/Firefox.app/Contents/MacOS/firefox" },
   },
 });
 ```
@@ -144,9 +150,9 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-    edge: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  browser: {
+    chrome: { path: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" },
+    edge: { path: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe" },
   },
 });
 ```
@@ -155,14 +161,33 @@ export default defineConfig({
 
 ```ts
 export default defineConfig({
-  browserPath: {
-    chrome: "/usr/bin/google-chrome",
-    chromium: "/usr/bin/chromium-browser",
-    firefox: "/usr/bin/firefox",
+  browser: {
+    chrome: { path: "/usr/bin/google-chrome" },
+    chromium: { path: "/usr/bin/chromium-browser" },
+    firefox: { path: "/usr/bin/firefox" },
   },
 });
 ```
 
+## Deprecated: `browserPath`
+
+`browserPath`는 여전히 동작하지만 터미널에 deprecated 경고를 출력합니다. `browser`로 마이그레이션하세요:
+
+```ts
+// 이전 (deprecated)
+export default defineConfig({
+  browserPath: { chrome: "/path/to/chrome" },
+});
+
+// 이후
+export default defineConfig({
+  browser: { chrome: { path: "/path/to/chrome" } },
+});
+```
+
+같은 브라우저에 `browserPath`와 `browser`가 모두 설정된 경우 `browser`가 우선합니다.
+
 ## 관련 설정
 
 - [guide/launch](/guide/launch) - 브라우저 시작 가이드
+- [`keepBrowserProfile` / `buildCache`](/config/cache) - 캐시 구성

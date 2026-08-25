@@ -121,6 +121,6 @@ export default defineConfig({
 
 ## 下一步
 
-- [browserPath 配置](/guide/launch) — 配置开发时自动打开浏览器
+- [browser 配置](/guide/launch) — 配置开发时自动打开浏览器
 - [monitor 调试](/guide/monitor) — 使用错误监控面板调试
 - [config/hot-reload](/config/hot-reload) — 热重载的完整配置选项

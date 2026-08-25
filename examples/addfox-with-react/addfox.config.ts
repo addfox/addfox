@@ -26,8 +26,8 @@ const manifest = {
 export default defineConfig({
   manifest: { chromium: manifest, firefox: { ...manifest } },
   plugins: [pluginReact()],
-  browserPath: {
-    arc: 'C:\\Users\\GomiGXY\\AppData\\Local\\Microsoft\\WindowsApps\\Arc.exe',
-    browseros: 'C:\\Users\\GomiGXY\\AppData\\Local\\BrowserOS\\BrowserOS\\Application\\chrome.exe',
+  browser: {
+    arc: { path: 'C:\\Users\\GomiGXY\\AppData\\Local\\Microsoft\\WindowsApps\\Arc.exe' },
+    browseros: { path: 'C:\\Users\\GomiGXY\\AppData\\Local\\BrowserOS\\BrowserOS\\Application\\chrome.exe' },
   }
 });

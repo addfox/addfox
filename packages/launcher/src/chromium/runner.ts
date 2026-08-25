@@ -25,13 +25,47 @@ export interface ChromiumLaunchOptions extends CommonLaunchOptions {
    * - "load-extension": pass --load-extension at startup and return once the browser process starts.
    */
   extensionLoadMode?: "cdp" | "load-extension";
+  /**
+   * Max size of the HTTP disk cache in bytes (--disk-cache-size).
+   * Bounds cache growth for long-lived dev profiles. Default: 64 MiB.
+   */
+  diskCacheSize?: number;
 }
+
+/** Default cap for the HTTP disk cache (64 MiB). */
+export const DEFAULT_DISK_CACHE_SIZE = 64 * 1024 * 1024;
+/** Default cap for the media disk cache (32 MiB). */
+export const DEFAULT_MEDIA_CACHE_SIZE = 32 * 1024 * 1024;
 
 function log(message: string, verbose?: boolean): void {
   if (verbose) console.log(message);
 }
 
 const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
+/**
+ * Clear the browser HTTP cache via CDP. The Network domain is not exposed on
+ * the browser-level pipe session, so we attach to a temporary page target and
+ * issue Network.clearBrowserCache on its session. This clears the disk cache
+ * only — cookies, storage and service workers are untouched (same as Chrome
+ * settings → "Cached images and files").
+ */
+async function clearHttpCacheViaCDP(cdp: CDPClient): Promise<void> {
+  const created = (await cdp.sendCommand("Target.createTarget", { url: "about:blank" }, 5000)) as {
+    targetId?: string;
+  };
+  const targetId = created?.targetId;
+  if (!targetId) throw new Error("Target.createTarget returned no targetId");
+  try {
+    const attach = (await cdp.sendCommand("Target.attachToTarget", { targetId, flatten: true }, 5000)) as {
+      sessionId?: string;
+    };
+    if (!attach?.sessionId) throw new Error("Target.attachToTarget returned no sessionId");
+    await cdp.sendCommand("Network.clearBrowserCache", {}, 5000, attach.sessionId);
+  } finally {
+    await cdp.sendCommand("Target.closeTarget", { targetId }, 3000).catch(() => {});
+  }
+}
 
 async function waitForCDPReady(cdp: CDPClient, verbose: boolean, timeoutMs = 5000): Promise<void> {
   const start = performance.now();
@@ -72,6 +106,21 @@ export function buildChromeFlags(
     "--disable-background-networking",
     "--disable-client-side-phishing-detection",
     "--no-default-browser-check",
+  );
+
+  // Cache control: bound cache growth on long-lived dev profiles via flags
+  // instead of deleting profile directories (which corrupts Service Worker
+  // registrations and breaks Cloudflare/Google flows).
+  // - disk/media cache size caps keep Default/Network/Cache bounded
+  // - aggressive-cache-discard makes Chrome evict cold entries eagerly
+  // - disable-gpu-shader-disk-cache stops ShaderCache/GrShaderCache writes
+  // - disable-breakpad stops Crashpad/reports accumulation
+  flags.push(
+    `--disk-cache-size=${opts.diskCacheSize ?? DEFAULT_DISK_CACHE_SIZE}`,
+    `--media-cache-size=${DEFAULT_MEDIA_CACHE_SIZE}`,
+    "--aggressive-cache-discard",
+    "--disable-gpu-shader-disk-cache",
+    "--disable-breakpad",
   );
 
   // DevTools
@@ -296,6 +345,16 @@ export async function launchChromium(options: ChromiumLaunchOptions): Promise<Br
 
   // Wait for browser to initialize
   await waitForCDPReady(cdp, verbose, 5000);
+
+  // Equivalent of Chrome settings → "Clear cached images and files": clears
+  // the HTTP disk cache only, leaving cookies, storage and service workers
+  // intact. Best-effort: failures must not block extension loading.
+  try {
+    await clearHttpCacheViaCDP(cdp);
+    log("Cleared browser HTTP cache via CDP", verbose);
+  } catch (e) {
+    log(`clearHttpCacheViaCDP failed (ignored): ${e}`, verbose);
+  }
 
   let needFallback = false;
 

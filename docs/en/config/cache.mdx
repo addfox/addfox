@@ -1,76 +1,88 @@
 import { Tab, Tabs, TabLabelPnpm, TabLabelNpm, TabLabelYarn, TabLabelBun } from '@rspress/core/theme';
 
-# cache
+# keepBrowserProfile
 
-`cache` controls whether **Chromium-based browsers reuse a dev user data directory** between `addfox dev` runs. It affects only dev mode and only Chromium-family browsers.
+`keepBrowserProfile` controls whether **Chromium-based browsers reuse a dev user data directory** between `addfox dev` runs. It affects only dev mode and only Chromium-family browsers.
 
 ## Type and default
 
 - **Type**: `boolean | undefined`
-- **Default**: `true`
+- **Default**: `false`
 - **CLI precedence**:
-  - `-c/--cache` forces cache on for current run
-  - `--no-cache` forces cache off for current run
+  - `--keep-browser-profile` forces profile keeping on for current run
+  - `--no-keep-browser-profile` forces profile keeping off for current run
   - If both are provided, the **last flag wins**
 
 ## Role
 
-- When `true` (or CLI `--cache` is used):
-  - Dev mode **caches** a Chromium user data dir under the internal cache path, so:
+- When `true` (or CLI `--keep-browser-profile` is used):
+  - Dev mode **keeps** a Chromium user data dir under `.addfox/cache/browser-profile/<name>-user-data`, so:
     - extension install state
     - extension settings
     - login sessions and cookies
     are kept between `addfox dev` runs.
 - When `false`:
-  - Each `addfox dev` run uses a fresh temporary profile for Chromium-based browsers.
+  - Each `addfox dev` run uses a fresh profile for Chromium-based browsers.
 - Does not affect Firefox; Firefox profile handling is delegated to `web-ext`.
+
+## Priority
+
+`keepBrowserProfile` is resolved in this order (highest first):
+
+1. CLI `--keep-browser-profile` / `--no-keep-browser-profile`
+2. `browser.<name>.keepBrowserProfile` (per-browser override)
+3. Top-level `keepBrowserProfile`
+4. Deprecated `cache` (CLI `-c/--cache`, `--no-cache` or config `cache`)
+5. Default `false`
 
 ## Examples
 
-### Enable caching via config
+### Enable via config
 
 ```ts
 export default defineConfig({
-  cache: true,
+  keepBrowserProfile: true,
 });
 ```
 
-### One-off caching via CLI
+### Per-browser override
+
+```ts
+export default defineConfig({
+  browser: {
+    chrome: { keepBrowserProfile: true },
+  },
+});
+```
+
+### One-off via CLI
 
 <Tabs>
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-pnpm dev -- --cache
-# or
-pnpm dev -- -c
+pnpm dev -- --keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-npm run dev -- --cache
-# or
-npm run dev -- -c
+npm run dev -- --keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-yarn dev --cache
-# or
-yarn dev -c
+yarn dev --keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-bun run dev -- --cache
-# or
-bun run dev -- -c
+bun run dev -- --keep-browser-profile
 ```
 
   </Tab>
@@ -82,34 +94,66 @@ bun run dev -- -c
   <Tab label={<TabLabelPnpm />}>
 
 ```bash
-pnpm dev -- --no-cache
+pnpm dev -- --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelNpm />}>
 
 ```bash
-npm run dev -- --no-cache
+npm run dev -- --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelYarn />}>
 
 ```bash
-yarn dev --no-cache
+yarn dev --no-keep-browser-profile
 ```
 
   </Tab>
   <Tab label={<TabLabelBun />}>
 
 ```bash
-bun run dev -- --no-cache
+bun run dev -- --no-keep-browser-profile
 ```
 
   </Tab>
 </Tabs>
 
-CLI flags override `cache` in config for that run.
+CLI flags override `keepBrowserProfile` in config for that run.
+
+:::warning
+The `cache` config field and the `-c/--cache`, `--no-cache` CLI flags are deprecated aliases; they still work but print a deprecation warning in the terminal. Migrate to `keepBrowserProfile` and `--keep-browser-profile` / `--no-keep-browser-profile`.
+:::
+
+# buildCache
+
+`buildCache` controls the **Rspack persistent build cache**, which speeds up repeated builds.
+
+## Type and default
+
+- **Type**: `boolean | { cacheDirectory?: string }`
+- **Default**: `true`
+- Cache files are stored in `<outputRoot>/cache/build/`
+
+## Examples
+
+```ts
+export default defineConfig({
+  // Disable the build cache
+  buildCache: false,
+});
+```
+
+```ts
+export default defineConfig({
+  // Custom cache directory
+  buildCache: { cacheDirectory: "./node_modules/.cache/addfox-build" },
+});
+```
+
+For deeper rsbuild/rspack customization, use the existing [`rsbuild`](/config/rsbuild) config field (object deep-merge or function form).
 
 ## Related
 
