@@ -68,8 +68,8 @@ export const ANSI_COLORS = {
   TIME: "\x1b[38;5;245m",
   /** Cyan for size/value highlight */
   VALUE: "\x1b[38;5;75m",
-  /** Purple for table headers */
-  PURPLE: "\x1b[38;5;141m",
+  /** White for tree blocks (Entry / URLs) */
+  TREE: "\x1b[37m",
   /** Red background + yellow text for error badge */
   ERROR_BADGE: "\x1b[41m\x1b[93m",
   /** Red foreground for error content */
@@ -273,6 +273,15 @@ export class Logger {
   }
 
   /**
+   * Write raw text to stdout without the [Addfox] prefix (for tree blocks,
+   * matching the prefix-free style of logEntriesTable).
+   */
+  writeRaw(text: string): void {
+    const w = this.getWrites().stdout;
+    w(text.endsWith("\n") ? text : text + "\n", "utf8");
+  }
+
+  /**
    * Format duration: >= 1000ms as "X.XXs", else "Xms"
    */
   formatDuration(ms: number): string {
@@ -290,8 +299,8 @@ export class Logger {
     if (entries.length === 0) return;
     
     const root = options?.root;
-    const titleColor = this.useColors ? ANSI_COLORS.PURPLE : "";
-    const entryColor = this.useColors ? ANSI_COLORS.PURPLE : "";
+    const titleColor = this.useColors ? ANSI_COLORS.TREE : "";
+    const entryColor = this.useColors ? ANSI_COLORS.TREE : "";
     const fileColor = this.useColors ? ANSI_COLORS.TIME : "";
     const resetColor = this.useColors ? ANSI_COLORS.RESET : "";
 
@@ -361,6 +370,19 @@ export function logDone(...args: unknown[]): void {
 /** Log a completion step with duration */
 export function logDoneTimed(message: string, ms: number): void {
   logger.successWithDuration(message, ms);
+}
+
+/** Write raw text to stdout without prefix (for tree blocks) */
+export function logRaw(text: string): void {
+  logger.writeRaw(text);
+}
+
+/**
+ * Whether verbose step-timing logs (e.g. "Parse config", "Rsbuild ready") are enabled.
+ * Off by default to keep dev output clean; set ADDFOX_VERBOSE=1 to re-enable for troubleshooting.
+ */
+export function isVerboseLogEnabled(): boolean {
+  return process.env.ADDFOX_VERBOSE === "1";
 }
 
 /** Log a completion step with a highlighted value */

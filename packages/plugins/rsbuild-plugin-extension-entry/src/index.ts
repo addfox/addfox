@@ -795,7 +795,6 @@ function setupRspackConfig(
                       const asset = assets[file];
                       if (!asset) continue;
                       try {
-                        const original = asset.source();
                         const uniqueName = compilation.outputOptions?.uniqueName || "";
                         const hotUpdateGlobal = compilation.outputOptions?.hotUpdateGlobal || `rspackHotUpdate${uniqueName}`;
                         const safeHotUpdateGlobal = hotUpdateGlobal.replace(/["\\]/g, "\\$&");

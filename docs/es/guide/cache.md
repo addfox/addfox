@@ -1,31 +1,29 @@
 # Caché
 
-Addfox genera el directorio `.addfox/cache` en el proyecto para mejorar la experiencia del modo de desarrollo.
+Addfox crea el directorio `.addfox/cache` en tu proyecto para acelerar el desarrollo.
 
-## Qué hay en `.addfox/cache`
+## Qué se almacena en `.addfox/cache`
 
-El contenido común incluye:
+- **`cache/build/`** — Caché persistente de build de Rspack. Habilitada por defecto, acelera las recompilaciones y los reinicios de dev. Configúrala con [`buildCache`](/config/cache).
+- **`cache/browser-profile/`** — Directorios de datos de usuario (profile) de Chromium. Por defecto, cada ejecución de `addfox dev` inicia con un **profile completamente nuevo**; el profile solo se conserva entre ejecuciones cuando habilitas [`keepBrowserProfile`](/config/cache) (configuración de nivel superior, override por navegador, o el flag CLI `--keep-browser-profile`).
 
-- Caché de datos de usuario del navegador (para reutilizar el estado de carga de la extensión)
-- Caché intermedio durante el proceso de construcción (reducir el overhead de recompilación)
+Los archivos exactos pueden variar según la plataforma y el modo, pero el objetivo es el mismo: **evitar la inicialización en frío repetida**.
 
-En diferentes plataformas y modos de ejecución, la estructura de archivos de caché puede variar ligeramente, pero la función es la misma: **reducir el costo de inicialización repetida**.
+## Por qué importa
 
-## Función
-
-El beneficio más intuitivo es la experiencia de inicio del navegador en modo de desarrollo:
-
-- Primera vez `addfox dev`: Se necesita inicializar completamente el entorno del navegador, cargar la extensión;
-- Ejecuciones posteriores de `addfox dev`: Después de reutilizar la caché, el navegador puede entrar más rápidamente en estado depurable, reduciendo operaciones manuales.
-
-Por ejemplo, en el escenario que mencionas: después de la primera ejecución ya hay caché, la segunda ejecución generalmente no necesita repetir manualmente el mismo flujo.
+- **Recompilaciones más rápidas**: la caché persistente de build omite la recompilación de módulos sin cambios.
+- **Persistencia opcional del profile**: con `keepBrowserProfile` habilitado, el estado de instalación de la extensión, la configuración y las sesiones de inicio de sesión se conservan entre ejecuciones de `addfox dev`.
 
 ## Cuándo limpiar la caché
 
-Puedes limpiar `.addfox/cache` y reintentar en las siguientes situaciones:
+Limpia `.addfox/cache` si observas:
 
-- Estado de configuración del navegador anormal
-- Comportamiento de carga de la extensión inconsistente con lo esperado
-- Quieres volver al estado de "inicio limpio" para investigar problemas
+- Comportamiento inesperado del profile del navegador
+- Inconsistencias en el estado de carga de la extensión
+- Necesidad de un entorno de depuración desde cero
 
-Puedes eliminar directamente este directorio, Addfox lo reconstruirá automáticamente en la próxima ejecución.
+Puedes eliminar el directorio de forma segura; Addfox lo recreará en la próxima ejecución.
+
+## Configuración relacionada
+
+- [`keepBrowserProfile` / `buildCache`](/config/cache) - Configuración de caché

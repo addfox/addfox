@@ -1,4 +1,7 @@
 import { describe, it, expect } from "@rstest/core";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { buildChromeFlags } from "../../src/chromium/runner";
 import type { ChromiumLaunchOptions } from "../../src/chromium/runner";
 
@@ -87,6 +90,59 @@ describe("chromium runner", () => {
       const flags = buildChromeFlags({ ...baseOpts, diskCacheSize: 1024 }, "/tmp", [], false);
       expect(flags).toContain("--disk-cache-size=1024");
       expect(flags.some((f) => f.startsWith("--disk-cache-size=") && f !== "--disk-cache-size=1024")).toBe(false);
+    });
+
+    describe("MV2 re-enable flags (Chrome 139+)", () => {
+      const withManifest = (mv: number): string => {
+        const dir = mkdtempSync(join(tmpdir(), "addfox-mv-"));
+        writeFileSync(
+          join(dir, "manifest.json"),
+          JSON.stringify({ manifest_version: mv, name: "x", version: "1.0.0" }),
+        );
+        return dir;
+      };
+
+      it("adds MV2 re-enable flags when an extension uses manifest_version 2", () => {
+        const dir = withManifest(2);
+        try {
+          const flags = buildChromeFlags(baseOpts, "/tmp", [dir], false);
+          const disable = flags.find((f) => f.startsWith("--disable-features=")) ?? "";
+          expect(disable).toContain("ExtensionManifestV2Unsupported");
+          expect(disable).toContain("ExtensionManifestV2Disabled");
+          expect(flags).toContain("--enable-features=AllowLegacyMV2Extensions");
+        } finally {
+          rmSync(dir, { recursive: true, force: true });
+        }
+      });
+
+      it("adds MV2 flags when a later extension (not the first) is MV2", () => {
+        const mv3 = withManifest(3);
+        const mv2 = withManifest(2);
+        try {
+          const flags = buildChromeFlags(baseOpts, "/tmp", [mv3, mv2], false);
+          expect(flags).toContain("--enable-features=AllowLegacyMV2Extensions");
+        } finally {
+          rmSync(mv3, { recursive: true, force: true });
+          rmSync(mv2, { recursive: true, force: true });
+        }
+      });
+
+      it("does not add MV2 flags for MV3-only extensions", () => {
+        const dir = withManifest(3);
+        try {
+          const flags = buildChromeFlags(baseOpts, "/tmp", [dir], false);
+          expect(flags.some((f) => f.includes("AllowLegacyMV2Extensions"))).toBe(false);
+          const disable = flags.find((f) => f.startsWith("--disable-features=")) ?? "";
+          expect(disable).not.toContain("ExtensionManifestV2");
+        } finally {
+          rmSync(dir, { recursive: true, force: true });
+        }
+      });
+
+      it("does not add MV2 flags when there are no extension paths", () => {
+        const flags = buildChromeFlags(baseOpts, "/tmp", [], false);
+        expect(flags.some((f) => f.includes("AllowLegacyMV2Extensions"))).toBe(false);
+      });
     });
   });
 });

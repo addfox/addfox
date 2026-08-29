@@ -22,10 +22,10 @@ my-extension/
 `.addfox`는 프레임워크에서 **자동 생성**되며 다음을 포함합니다:
 
 - **`extension/`** — 기본 빌드 출력 디렉토리 (`outDir`로 수정 가능)
-- **`cache/`** — 빌드 캐시, 후속 빌드 가속에 사용
+- **`cache/`** — 영구 빌드 캐시(`cache/build/`) 및 `keepBrowserProfile`이 활성화된 경우 개발 브라우저 profile(`cache/browser-profile/`)
 
 :::tip
-`cache` 디렉토리는 불필요한 경우 삭제하지 마세요. 그렇지 않으면 빌드 속도와 browser 사용자 데이터 재사용에 영향을 미칩니다.
+`cache` 디렉토리는 불필요한 경우 삭제하지 마세요. 후속 빌드 속도가 빨라집니다. `keepBrowserProfile`을 활성화한 경우 개발 브라우저 profile(로그인 세션, 확장 상태)도 여기에 저장됩니다.
 :::
 
 ## app 디렉토리

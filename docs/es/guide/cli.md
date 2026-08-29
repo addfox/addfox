@@ -30,6 +30,8 @@ addfox <command> [options]
 | `build` | Ejecutar construcción de producción. |
 | `test` | Ejecutar pruebas (los parámetros se pasan a rstest). |
 
+> `addfox test` lee la configuración de `rstest.config.*` o del campo [`test`](/config/test) en `addfox.config`; cuando ambos existen, `rstest.config.*` tiene prioridad.
+
 ## Parámetros comunes (valores predeterminados + mapeo de configuración)
 
 | Parámetro | Valor predeterminado interno | Campo `addfox.config` correspondiente | Descripción |

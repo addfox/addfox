@@ -237,6 +237,10 @@
     {
       "text": "rsbuild",
       "link": "/config/rsbuild"
+    },
+    {
+      "text": "test",
+      "link": "/config/test"
     }
   ],
   "/examples/": [
@@ -511,6 +515,10 @@
     {
       "text": "rsbuild",
       "link": "/zh/config/rsbuild"
+    },
+    {
+      "text": "test",
+      "link": "/zh/config/test"
     }
   ],
   "/zh/examples/": [
@@ -785,6 +793,10 @@
     {
       "text": "rsbuild",
       "link": "/ja/config/rsbuild"
+    },
+    {
+      "text": "test",
+      "link": "/ja/config/test"
     }
   ],
   "/ja/examples/": [
@@ -1059,6 +1071,10 @@
     {
       "text": "rsbuild",
       "link": "/ko/config/rsbuild"
+    },
+    {
+      "text": "test",
+      "link": "/ko/config/test"
     }
   ],
   "/ko/examples/": [
@@ -1333,6 +1349,10 @@
     {
       "text": "rsbuild",
       "link": "/ru/config/rsbuild"
+    },
+    {
+      "text": "test",
+      "link": "/ru/config/test"
     }
   ],
   "/ru/examples/": [
@@ -1607,6 +1627,10 @@
     {
       "text": "rsbuild",
       "link": "/es/config/rsbuild"
+    },
+    {
+      "text": "test",
+      "link": "/es/config/test"
     }
   ],
   "/es/examples/": [

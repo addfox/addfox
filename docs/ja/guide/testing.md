@@ -49,7 +49,22 @@ addfox test
 
 CI またはリリース前に完全な E2E を1回実行することをお勧めします。
 
-## 最小設定例
+## テスト設定
+
+`addfox.config` の [`test`](/config/test) フィールドでテストを設定できます — 別途設定ファイルは不要です:
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  test: {
+    include: ["**/*.test.ts", "**/*.spec.ts"],
+  },
+});
+```
+
+独立した `rstest.config.ts` もサポートされています:
 
 ```ts
 // rstest.config.ts
@@ -61,6 +76,8 @@ export default defineConfig({
   },
 });
 ```
+
+両方が存在する場合、`rstest.config.*` が優先され、`test` フィールドは無視されます（警告が表示されます）。詳細は [test](/config/test) を参照してください。
 
 ## 推奨スクリプト
 

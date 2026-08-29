@@ -20,3 +20,4 @@ Provides addfox types, config loading, entry discovery/resolution, manifest buil
 ## When changing this package
 
 - When adding or changing reserved entry names or manifest output paths, update `constants.ts` and `ManifestBuilder`, then run `pnpm test` (core has unit tests).
+- `AddfoxUserConfig.test` (`src/types.ts`, type `AddfoxTestConfig`) is Rstest config passed through by `addfox test`; `framework` is a reserved discriminator (only `"rstest"`). The type-only `RstestConfig` import comes from devDependency `@rstest/core`.

@@ -22,10 +22,10 @@ my-extension/
 `.addfox` es **generado automáticamente** por el framework y contiene:
 
 - **`extension/`** — Directorio de salida de build por defecto (puede modificarse mediante `outDir`)
-- **`cache/`** — Caché de build para acelerar compilaciones posteriores
+- **`cache/`** — Caché persistente de build (`cache/build/`), además de los profiles del navegador de dev (`cache/browser-profile/`) cuando `keepBrowserProfile` está habilitado
 
 :::tip
-No elimines el directorio `cache` a menos que sea necesario, ya que afectará la velocidad de build y la reutilización de datos de usuario del navegador.
+Evita eliminar el directorio `cache` a menos que sea necesario, ya que acelera las compilaciones posteriores. Si habilitaste `keepBrowserProfile`, también contiene el profile del navegador de dev (sesiones de inicio de sesión, estado de la extensión).
 :::
 
 ## Directorio app

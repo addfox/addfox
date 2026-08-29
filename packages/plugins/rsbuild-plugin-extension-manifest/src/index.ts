@@ -893,6 +893,14 @@ function injectDevCsp(manifest: ManifestRecord, ports: number[]): void {
   const devHosts = buildDevConnectHosts(ports);
   const csp = manifest.content_security_policy;
 
+  // MV2 requires content_security_policy as a single string; Chrome rejects
+  // the MV3 object form outright.
+  if (manifest.manifest_version === 2) {
+    manifest.content_security_policy =
+      typeof csp === "string" ? mergeCspString(csp, devHosts) : buildDefaultCsp(devHosts);
+    return;
+  }
+
   if (typeof csp === "string") {
     manifest.content_security_policy = mergeCspString(csp, devHosts);
     return;

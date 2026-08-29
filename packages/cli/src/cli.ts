@@ -26,6 +26,7 @@ import {
   logDone,
   logDoneTimed,
   logDoneWithValue,
+  isVerboseLogEnabled,
   setAddfoxLoggerRawWrites,
   warn,
   error,
@@ -279,6 +280,9 @@ async function runDev(root: string, argv: string[]): Promise<void> {
   const { config, baseEntries, entries } = resolveAddfoxConfig(root);
   
   const resolved = resolveOptions(argv, config);
+  // Mutable bag passed to the HMR plugin; filled with the dev server URL once
+  // startDevServer resolves so the plugin can print it in the shortcuts block.
+  const devServerInfo: { url?: string } = {};
   const options: PipelineOptions = {
     root,
     command: 'dev',
@@ -286,12 +290,16 @@ async function runDev(root: string, argv: string[]): Promise<void> {
     config,
     baseEntries,
     entries,
+    devServerInfo,
   };
   const rsbuildReadyStart = performance.now();
   const ctx = await runPipeline(options);
   process.env.NODE_ENV = ctx.isDev ? "development" : "production";
   const rsbuild = await createRsbuildInstance(ctx);
-  logDoneTimed("Rsbuild ready", Math.round(performance.now() - rsbuildReadyStart));
+  // Step timing hidden by default; ADDFOX_VERBOSE=1 re-enables for troubleshooting
+  if (isVerboseLogEnabled()) {
+    logDoneTimed("Rsbuild ready", Math.round(performance.now() - rsbuildReadyStart));
+  }
 
   // Start WebSocket server immediately (parallel with dev server), don't wait for first compile
   const wsStartTime = performance.now();
@@ -350,7 +358,11 @@ async function runDev(root: string, argv: string[]): Promise<void> {
   activeDevServer = devServerRef as DevServerHandle;
   const urls = devServerRef?.urls ?? [];
   const mainUrl = urls[0] ?? `http://localhost:${devServerRef?.port ?? "?"}`;
-  logDoneTimed("Dev server " + mainUrl, Math.round(performance.now() - devServerStart));
+  devServerInfo.url = mainUrl;
+  // Step timing hidden by default; ADDFOX_VERBOSE=1 re-enables for troubleshooting
+  if (isVerboseLogEnabled()) {
+    logDoneTimed("Dev server " + mainUrl, Math.round(performance.now() - devServerStart));
+  }
 
   registerDevSignalHandlers();
 }
@@ -376,7 +388,10 @@ async function runBuild(root: string, argv: string[]): Promise<void> {
   const rsbuildReadyStart = performance.now();
   const ctx = await runPipeline(options);
   const rsbuild = await createRsbuildInstance(ctx);
-  logDoneTimed("Rsbuild ready", Math.round(performance.now() - rsbuildReadyStart));
+  // Step timing hidden by default; ADDFOX_VERBOSE=1 re-enables for troubleshooting
+  if (isVerboseLogEnabled()) {
+    logDoneTimed("Rsbuild ready", Math.round(performance.now() - rsbuildReadyStart));
+  }
 
   const buildStart = performance.now();
   const buildResult = await rsbuild.build();

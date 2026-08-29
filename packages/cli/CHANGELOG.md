@@ -1,5 +1,20 @@
 # @addfox/cli
 
+## 0.2.8
+
+### Patch Changes
+
+- feat: MV2 support, config-level test field, and leaner dev output
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-manifest@0.2.7
+  - @addfox/rsbuild-plugin-extension-monitor@0.2.7
+  - @addfox/rsbuild-plugin-extension-entry@0.2.8
+  - @addfox/rsbuild-plugin-extension-hmr@0.2.7
+  - @addfox/rsbuild-plugin-vue@0.2.6
+  - create-addfox-app@0.2.7
+  - @addfox/common@0.2.6
+  - @addfox/core@0.2.7
+
 ## 0.2.7
 
 ### Patch Changes

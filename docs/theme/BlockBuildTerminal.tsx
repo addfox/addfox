@@ -1,6 +1,6 @@
 import React from "react";
 import { TerminalChrome } from "./TerminalChrome";
-import { termBox, termBody, termLine, termTable } from "./terminalStyles";
+import { termBox, termBody, termLine } from "./terminalStyles";
 
 export function BlockBuildTerminal() {
   return (
@@ -12,30 +12,13 @@ export function BlockBuildTerminal() {
         </div>
         <div className="block">
           <span className={termLine.addfox}>[Addfox] </span>
-          <span className={termLine.done}>● </span>
-          <span className={termLine.value}>Parse config </span>
-          <span className={termLine.time}>20ms</span>
+          <span className={termLine.value}>Addfox 0.2.7 with </span>
+          <span className={termLine.purple}>Rsbuild 2.1.13</span>
         </div>
         <div className="block">
-          <table className={termTable}>
-            <thead>
-              <tr>
-                <th>Entry</th>
-                <th>File</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>background</td><td>app/background.ts</td></tr>
-              <tr><td>content</td><td>app/content/index.ts</td></tr>
-              <tr><td>popup</td><td>app/popup/index.tsx</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div className="block">
-          <span className={termLine.addfox}>[Addfox] </span>
-          <span className={termLine.done}>● </span>
-          <span className={termLine.value}>Rsbuild ready </span>
-          <span className={termLine.time}>130ms</span>
+          <span className={termLine.rsbuild}>[Rsbuild] </span>
+          <span className={termLine.value}>ready   built in </span>
+          <span className={termLine.time}>2.1 s</span>
         </div>
         <div className="block">
           <span className={termLine.addfox}>[Addfox] </span>

@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { WebSocketServer, WebSocket } from "ws";
-import { logDone, logDoneTimed, writeExtensionErrorBlock } from "@addfox/common";
+import { logDone, logDoneTimed, writeExtensionErrorBlock, isVerboseLogEnabled } from "@addfox/common";
 import { detectFrontendFramework } from "@addfox/core";
 import type { ReloadKind } from "../hmr/scope";
 
@@ -306,8 +306,11 @@ export async function startWebSocketServer(
       }
     });
   });
-  const ms = Math.round(performance.now() - t0);
-  logDoneTimed("Hot reload WebSocket: ws://127.0.0.1:" + port, ms);
+  // Step timing hidden by default; ADDFOX_VERBOSE=1 re-enables for troubleshooting
+  if (isVerboseLogEnabled()) {
+    const ms = Math.round(performance.now() - t0);
+    logDoneTimed("Hot reload WebSocket: ws://127.0.0.1:" + port, ms);
+  }
   return wsServer;
 }
 

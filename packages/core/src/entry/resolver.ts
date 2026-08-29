@@ -25,6 +25,8 @@ export interface EntryResolverOptions {
   entryDiscovererOptions?: EntryDiscovererOptions;
   /** Target browser for manifest entry extraction */
   browser?: BrowserTarget;
+  /** Pre-discovered entries to reuse instead of re-scanning baseDir. */
+  discoveredEntries?: EntryInfo[];
 }
 
 export interface EntryResolutionResult {
@@ -231,8 +233,9 @@ export function resolveEntries(
 ): EntryResolutionResult {
   const browser = options?.browser ?? "chromium";
   
-  // Step 1: Start with auto-discovered entries (lowest priority)
-  const defaultEntries = discoverEntries(baseDir, options?.entryDiscovererOptions);
+  // Step 1: Start with auto-discovered entries (lowest priority); reuse a
+  // pre-discovered set when the caller already scanned baseDir.
+  const defaultEntries = options?.discoveredEntries ?? discoverEntries(baseDir, options?.entryDiscovererOptions);
   const entryMap = new Map<string, EntryInfo>(defaultEntries.map(e => [e.name, e]));
   
   // Track manifest replacement map for output path replacement

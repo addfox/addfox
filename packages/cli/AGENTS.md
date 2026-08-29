@@ -22,3 +22,4 @@ Provides the `addfox` executable: when running `addfox dev` or `addfox build` fr
 
 - New commands or flags require updates in `cli.ts` and `@addfox/core`’s CliParser/constants
 - Pipeline order or plugin injection lives in `pipeline.ts`; keep rsbuild-plugin-extension-entry, rsbuild-plugin-extension-manifest, rsbuild-plugin-extension-hmr contracts in mind
+- `addfox test` (`src/commands/test.ts`): rstest config resolution order is rstest.config.* file first, then the addfox.config `test` field (generates `.addfox/rstest.config.ts` wrapper re-importing the user config, run via `--config`). The reserved `test.framework` discriminator only accepts `"rstest"`.

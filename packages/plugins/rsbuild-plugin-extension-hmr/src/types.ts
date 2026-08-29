@@ -42,6 +42,8 @@ export interface HmrPluginOptions {
   root?: string;
   /** Output root under project (e.g. ".addfox") for error.md path. */
   outputRoot?: string;
+  /** Mutable bag filled by the CLI with the dev server URL; printed in the shortcuts block. */
+  devServerInfo?: { url?: string };
 }
 
 export interface HmrPluginTestDeps {

@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import type { ChildProcess } from "node:child_process";
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import type { CommonLaunchOptions, BrowserProcess } from "../types";
 import { findBrowserPath } from "../paths";
@@ -83,6 +83,24 @@ async function waitForCDPReady(cdp: CDPClient, verbose: boolean, timeoutMs = 500
 }
 
 /**
+ * Detect whether any extension being loaded uses Manifest V2, by reading each
+ * extension's manifest.json. The reload manager companion is always MV3, so
+ * any MV2 hit wins.
+ */
+function isMv2Extension(extensionPaths: string[]): boolean {
+  for (const dir of extensionPaths) {
+    try {
+      const raw = readFileSync(join(dir, "manifest.json"), "utf-8");
+      const mv = (JSON.parse(raw) as { manifest_version?: unknown }).manifest_version;
+      if (mv === 2) return true;
+    } catch {
+      // unreadable/missing manifest — ignore
+    }
+  }
+  return false;
+}
+
+/**
  * Build the chrome-launcher style flags for Chromium.
  * This is a lightweight replacement that does not require the chrome-launcher npm package.
  */
@@ -95,8 +113,29 @@ export function buildChromeFlags(
   const flags: string[] = [];
 
   // Stability flags (similar to ChromeLauncher.defaultFlags minus exclusions)
+  const disabledFeatures = [
+    "Translate",
+    "OptimizationHints",
+    "MediaRouter",
+    "DialMediaRouteProvider",
+    "InterestFeedContentSuggestions",
+    "CertificateTransparencyComponentUpdater",
+    "AutofillServerCommunication",
+    "PrivacySandboxAdsApiOverride",
+    "SafeBrowsingEnhancedProtection",
+    "SafeBrowsingPhishingProtection",
+  ];
+  const enabledFeatures: string[] = [];
+
+  // Chrome 139+ blocks MV2 extensions by default. Re-enable them for dev.
+  // Best-effort: unknown feature names are ignored by older/newer versions.
+  if (isMv2Extension(extensionPaths)) {
+    disabledFeatures.push("ExtensionManifestV2Unsupported", "ExtensionManifestV2Disabled");
+    enabledFeatures.push("AllowLegacyMV2Extensions");
+  }
+
   flags.push(
-    "--disable-features=Translate,OptimizationHints,MediaRouter,DialMediaRouteProvider,InterestFeedContentSuggestions,CertificateTransparencyComponentUpdater,AutofillServerCommunication,PrivacySandboxAdsApiOverride,SafeBrowsingEnhancedProtection,SafeBrowsingPhishingProtection",
+    `--disable-features=${disabledFeatures.join(",")}`,
     "--disable-background-timer-throttling",
     "--disable-backgrounding-occluded-windows",
     "--disable-renderer-backgrounding",
@@ -107,6 +146,9 @@ export function buildChromeFlags(
     "--disable-client-side-phishing-detection",
     "--no-default-browser-check",
   );
+  if (enabledFeatures.length > 0) {
+    flags.push(`--enable-features=${enabledFeatures.join(",")}`);
+  }
 
   // Cache control: bound cache growth on long-lived dev profiles via flags
   // instead of deleting profile directories (which corrupts Service Worker

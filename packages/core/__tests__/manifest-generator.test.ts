@@ -27,6 +27,36 @@ describe('manifest generator', () => {
       expect(manifest.version).toBe('1.0.0');
     });
 
+    it('should use flat output paths for flat-file entries', () => {
+      const entries: EntryInfo[] = [
+        { name: 'background', scriptPath: '/app/background.ts', html: false },
+        { name: 'content', scriptPath: '/app/content.ts', html: false },
+        { name: 'popup', scriptPath: '/app/popup.ts', html: true, htmlPath: '/app/popup.html' },
+        { name: 'options', scriptPath: '/app/options.ts', html: true, htmlPath: '/app/options.html' },
+      ];
+      const manifest = generateManifestFromEntries(entries, 'chromium', 3);
+
+      expect(manifest.background).toEqual({ service_worker: 'background.js' });
+      expect(manifest.content_scripts).toEqual([
+        { matches: ['<all_urls>'], js: ['content.js'], run_at: 'document_idle' },
+      ]);
+      expect(manifest.action).toEqual({ default_popup: 'popup.html' });
+      expect(manifest.options_ui).toEqual({ page: 'options.html', open_in_tab: true });
+    });
+
+    it('should use flat output paths for flat-file entries (MV2)', () => {
+      const entries: EntryInfo[] = [
+        { name: 'background', scriptPath: '/app/background.ts', html: false },
+        { name: 'popup', scriptPath: '/app/popup.ts', html: true, htmlPath: '/app/popup.html' },
+        { name: 'options', scriptPath: '/app/options.ts', html: true, htmlPath: '/app/options.html' },
+      ];
+      const manifest = generateManifestFromEntries(entries, 'chromium', 2);
+
+      expect(manifest.background).toEqual({ scripts: ['background.js'] });
+      expect(manifest.browser_action).toEqual({ default_popup: 'popup.html' });
+      expect(manifest.options_page).toBe('options.html');
+    });
+
     it('should generate background field for background entry', () => {
       const entries: EntryInfo[] = [
         { name: 'background', scriptPath: '/app/background/index.ts', html: false },

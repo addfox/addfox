@@ -30,6 +30,8 @@ addfox <command> [options]
 | `build` | 本番ビルドを実行。 |
 | `test` | テストを実行（パラメータは rstest に透過されます）。 |
 
+> `addfox test` は `rstest.config.*` または `addfox.config` の [`test`](/config/test) フィールドから設定を読み込みます。両方が存在する場合は `rstest.config.*` が優先されます。
+
 ## よく使うパラメータ（デフォルト値 + 設定マッピング）
 
 | パラメータ | 組み込みデフォルト | 対応 `addfox.config` フィールド | 説明 |

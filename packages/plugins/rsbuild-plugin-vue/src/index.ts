@@ -10,25 +10,37 @@ function createAppRequire(appRoot: string) {
   return createRequire(resolve(appRoot, "package.json"));
 }
 
+/**
+ * Fallback require resolving from this package itself. Covers pnpm layouts
+ * where the peer plugins sit next to @addfox/rsbuild-plugin-vue (auto-installed
+ * peers) instead of the app root.
+ */
+const selfRequire = createRequire(import.meta.url);
+
 /** Return Rsbuild plugins to prepend before addfox-vue (Vue + Vue JSX via @rsbuild/plugin-vue-jsx; Babel required by vue-jsx). */
 export function getVueRsbuildPlugins(
   appRoot: string,
   /** Optional require (e.g. for tests to simulate missing deps). */
   appRequireOverride?: NodeRequire
 ): unknown[] {
-  const appRequire = appRequireOverride ?? createAppRequire(appRoot);
-  try {
-    const { pluginBabel } = appRequire("@rsbuild/plugin-babel");
-    const { pluginVue } = appRequire("@rsbuild/plugin-vue");
-    const { pluginVueJsx } = appRequire("@rsbuild/plugin-vue-jsx");
-    return [
-      pluginBabel({ include: /\.(?:jsx|tsx)$/ }),
-      pluginVue(),
-      pluginVueJsx(),
-    ];
-  } catch {
-    return [];
+  const candidates = appRequireOverride
+    ? [appRequireOverride]
+    : [createAppRequire(appRoot), selfRequire];
+  for (const req of candidates) {
+    try {
+      const { pluginBabel } = req("@rsbuild/plugin-babel");
+      const { pluginVue } = req("@rsbuild/plugin-vue");
+      const { pluginVueJsx } = req("@rsbuild/plugin-vue-jsx");
+      return [
+        pluginBabel({ include: /\.(?:jsx|tsx)$/ }),
+        pluginVue(),
+        pluginVueJsx(),
+      ];
+    } catch {
+      // try the next resolution root
+    }
   }
+  return [];
 }
 
 /**

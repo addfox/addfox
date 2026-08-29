@@ -21,7 +21,7 @@ Addfox のビルド成果物はデフォルトで `.addfox/extension/` のブラ
 │   │   └── icons/
 │   │       └── icon*.png
 │   └── extension-firefox/   # Firefox 成果物
-└── cache/                   # 開発キャッシュ
+└── cache/                   # ビルドキャッシュと開発用ブラウザ profile
 ```
 
 ## カスタム出力ディレクトリ

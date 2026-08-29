@@ -21,7 +21,7 @@ Addfox 的构建产物默认输出到 `.addfox/extension/` 下的浏览器特定
 │   │   └── icons/
 │   │       └── icon*.png
 │   └── extension-firefox/   # Firefox 产物
-└── cache/                   # 开发缓存
+└── cache/                   # 构建缓存和 dev 浏览器 profile
 ```
 
 ## 自定义输出目录

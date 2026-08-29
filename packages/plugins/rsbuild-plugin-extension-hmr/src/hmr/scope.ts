@@ -28,6 +28,8 @@ type CompilationLike = {
   getAsset?: (name: string) => AssetLike | void;
   getAssets?: () => ReadonlyArray<AssetLike>;
   getStats?: () => { toJson: (opts?: unknown) => unknown };
+  /** Compilation hash; identical when a recompile changed nothing. */
+  hash?: string;
 };
 
 type StatsChunk = {
@@ -253,6 +255,13 @@ export function getEntriesSignature(
 type ChunkIdToEntryNames = Map<string, Set<string>>;
 type EntryToPaths = Map<string, Set<string>>;
 
+/**
+ * Cache for getEntryToModulePaths keyed by compilation.hash. Skips the full
+ * modules toJson + map rebuild when a recompile changed nothing, and dedupes
+ * repeat calls within the same compile (e.g. the Gecko htmlChanged check).
+ */
+let entryToPathsCache: { hash: string; map: EntryToPaths } | null = null;
+
 function buildChunkIdToEntryNames(compilation: CompilationLike): ChunkIdToEntryNames {
   const map = new Map<string, Set<string>>();
   if (!compilation.entrypoints || typeof compilation.entrypoints.forEach !== "function") return map;
@@ -362,22 +371,32 @@ function processNestedModules(
 }
 
 export function getEntryToModulePaths(stats: unknown): EntryToPaths {
-  const entryToPaths = new Map<string, Set<string>>();
   const compilation = getCompilationFromStats(stats);
+  const hash =
+    compilation && typeof compilation.hash === "string" && compilation.hash !== ""
+      ? compilation.hash
+      : null;
+  if (hash && entryToPathsCache?.hash === hash) return entryToPathsCache.map;
+
+  const entryToPaths = new Map<string, Set<string>>();
   const statsJson = getStatsFromCompilation(compilation) ?? getStatsJson(stats);
-  
-  if (!statsJson?.chunks?.length) return entryToPaths;
-  
-  const chunkIdToEntryNames = compilation 
+
+  if (!statsJson?.chunks?.length) {
+    if (hash) entryToPathsCache = { hash, map: entryToPaths };
+    return entryToPaths;
+  }
+
+  const chunkIdToEntryNames = compilation
     ? buildChunkIdToEntryNames(compilation)
     : buildChunkIdToEntryNamesFromStats(statsJson);
-  
+
   if (Array.isArray(statsJson.modules) && statsJson.modules.length > 0) {
     processFlatModules(entryToPaths, statsJson.modules, chunkIdToEntryNames);
   } else {
     processNestedModules(entryToPaths, statsJson.chunks, chunkIdToEntryNames);
   }
-  
+
+  if (hash) entryToPathsCache = { hash, map: entryToPaths };
   return entryToPaths;
 }
 

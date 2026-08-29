@@ -23,7 +23,7 @@ Build artifacts are output to browser-specific subdirectories under `.addfox/ext
 │   │   └── icons/
 │   │       └── icon*.png
 │   └── extension-firefox/   # Firefox output
-└── cache/                   # Dev cache
+└── cache/                   # Build cache and dev browser profiles
 ```
 
 ## Custom Output Directory

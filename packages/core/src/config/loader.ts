@@ -24,7 +24,7 @@ import {
   mergeWithGeneratedManifest,
   hasRequiredFields,
 } from "../manifest/generator.ts";
-import { logDoneTimed, logEntriesTable, warn } from "@addfox/common";
+import { logDoneTimed, warn, isVerboseLogEnabled } from "@addfox/common";
 
 export interface ConfigResolutionResult {
   config: AddfoxResolvedConfig;
@@ -164,11 +164,14 @@ function discoverAndResolveEntries(
   root: string,
   appDir: string,
   manifest: ManifestRecord | null,
-  entryDiscovererOptions?: EntryDiscovererOptions,
+  baseEntries: EntryInfo[],
   entryResolverOptions?: EntryResolverOptions
 ): { baseEntries: EntryInfo[]; entries: EntryInfo[] } {
-  const baseEntries = discoverEntries(appDir, entryDiscovererOptions);
-  const result = resolveEntries(userConfig, root, appDir, manifest ?? undefined, entryResolverOptions);
+  // Reuse the already-discovered baseEntries instead of re-scanning appDir.
+  const result = resolveEntries(userConfig, root, appDir, manifest ?? undefined, {
+    ...entryResolverOptions,
+    discoveredEntries: baseEntries,
+  });
   return { baseEntries, entries: result.entries };
 }
 
@@ -364,7 +367,7 @@ export function resolveAddfoxConfig(
         root,
         appDir,
         manifestForEntry,
-        options.entryDiscovererOptions,
+        baseEntries,
         options.entryResolverOptions
       );
   
@@ -377,10 +380,11 @@ export function resolveAddfoxConfig(
     });
   }
   
-  // Log results
-  logDoneTimed("Parse config", Math.round(performance.now() - t0));
-  logEntriesTable(entries, { root });
-  
+  // Log results (step timing hidden by default; ADDFOX_VERBOSE=1 re-enables for troubleshooting)
+  if (isVerboseLogEnabled()) {
+    logDoneTimed("Parse config", Math.round(performance.now() - t0));
+  }
+
   return { config, baseEntries, entries };
 }
 
