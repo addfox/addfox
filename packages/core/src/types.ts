@@ -1,4 +1,5 @@
 import type { RsbuildConfig } from "@rsbuild/core";
+import type { RstestConfig } from "@rstest/core";
 import type { EntryRowBase } from "@addfox/common";
 import type { BrowserTarget, CliCommand } from "./constants.ts";
 import type { PipelineContext } from "./pipeline/types.js";
@@ -66,6 +67,16 @@ export interface BuildCacheConfig {
    */
   cacheDirectory?: string;
 }
+
+/**
+ * addfox.config `test` field: passed through to Rstest as-is (minus `framework`),
+ * so users do not need a separate rstest.config file.
+ * `framework` is a reserved discriminator for future test framework support.
+ */
+export type AddfoxTestConfig = RstestConfig & {
+  /** Test framework. Defaults to "rstest"; only "rstest" is currently supported. */
+  framework?: "rstest";
+};
 
 /** Single manifest as JSON object (nested unknown allowed) */
 export type ManifestRecord = Record<string, unknown>;
@@ -194,6 +205,14 @@ export interface AddfoxUserConfig {
    * Default false. CLI -r/--report overrides to true when enabled.
    */
   report?: boolean | RsdoctorReportOptions;
+  /**
+   * Rstest configuration for `addfox test`, passed through as-is (like Vitest's `test` field
+   * in vite.config). When set, no rstest.config file is required.
+   * If both this field and a rstest.config.* file exist, the file takes precedence
+   * (industry convention, same as vitest.config over vite.config) and this field is ignored
+   * with a warning.
+   */
+  test?: AddfoxTestConfig;
 }
 
 /** Resolved config with root, appDir, outDir; manifest is resolved to object form */

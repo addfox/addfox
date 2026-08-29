@@ -3,6 +3,7 @@
  * Follows minimum generation principle: only output necessary fields
  */
 
+import { basename, extname } from "path";
 import type { EntryInfo, ManifestConfig, ManifestRecord } from "../types.ts";
 import type { BrowserTarget } from "../constants.ts";
 import { SCRIPT_ONLY_ENTRY_NAMES } from "../constants.ts";
@@ -56,9 +57,15 @@ function isScriptOnlyEntry(entry: EntryInfo): boolean {
 
 /** Get output path for an entry */
 function getEntryOutputPath(entry: EntryInfo): string {
+  // Flat entries (app/background.ts, app/popup.html) emit flat outputs
+  // (background.js, popup.html); directory entries emit <name>/index.*.
+  // Mirrors buildScriptOutputPath/buildHtmlOutputPath in the ManifestBuilder.
   if (isScriptOnlyEntry(entry)) {
-    return `${entry.name}/index.js`;
+    const stem = basename(entry.scriptPath, extname(entry.scriptPath));
+    return stem === entry.name ? `${entry.name}.js` : `${entry.name}/index.js`;
   }
+  const htmlFile = entry.htmlPath ? basename(entry.htmlPath).toLowerCase() : "";
+  if (htmlFile === `${entry.name}.html`) return `${entry.name}.html`;
   return `${entry.name}/index.html`;
 }
 

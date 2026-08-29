@@ -125,6 +125,7 @@ export type {
   BrowserConfig,
   BrowserLaunchOptions,
   BuildCacheConfig,
+  AddfoxTestConfig,
   RsbuildConfigHelpers,
   EntryInfo,
   ReloadManagerEntry,

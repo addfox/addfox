@@ -22,10 +22,10 @@ my-extension/
 `.addfox` 由框架**自动生成**，包含：
 
 - **`extension/`** — 默认构建输出目录（可通过 `outDir` 修改）
-- **`cache/`** — 构建缓存，用于加速后续构建
+- **`cache/`** — 持久化构建缓存（`cache/build/`），以及启用 `keepBrowserProfile` 时的 dev 浏览器 profile（`cache/browser-profile/`）
 
 :::tip
-非必要情况下请勿删除 `cache` 目录，否则会影响构建速度和浏览器用户数据的复用。
+非必要情况下请勿删除 `cache` 目录，它可以加速后续构建。如果启用了 `keepBrowserProfile`，其中还保存着 dev 浏览器 profile（登录会话、扩展状态）。
 :::
 
 ## app 目录

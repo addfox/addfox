@@ -49,7 +49,22 @@ Best for:
 
 Run E2E as part of CI or release validation.
 
-## Minimal config example
+## Test configuration
+
+You can configure tests with the [`test`](/config/test) field in `addfox.config` — no separate config file needed:
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  test: {
+    include: ["**/*.test.ts", "**/*.spec.ts"],
+  },
+});
+```
+
+A standalone `rstest.config.ts` is also supported:
 
 ```ts
 // rstest.config.ts
@@ -61,6 +76,8 @@ export default defineConfig({
   },
 });
 ```
+
+When both exist, `rstest.config.*` takes precedence and the `test` field is ignored (a warning is printed). See [test](/config/test) for details.
 
 ## Suggested script
 

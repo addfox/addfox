@@ -49,7 +49,22 @@ Adecuado para:
 
 Se recomienda ejecutar E2E completo en CI o antes del lanzamiento.
 
-## Ejemplo de configuración mínima
+## Configuración de pruebas
+
+Puedes configurar las pruebas con el campo [`test`](/config/test) en `addfox.config` — no necesitas un archivo de configuración aparte:
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  test: {
+    include: ["**/*.test.ts", "**/*.spec.ts"],
+  },
+});
+```
+
+También se admite un `rstest.config.ts` independiente:
 
 ```ts
 // rstest.config.ts
@@ -61,6 +76,8 @@ export default defineConfig({
   },
 });
 ```
+
+Cuando ambos existen, `rstest.config.*` tiene prioridad y el campo `test` se ignora (se muestra una advertencia). Consulta [test](/config/test) para más detalles.
 
 ## Scripts recomendados
 

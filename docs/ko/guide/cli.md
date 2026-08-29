@@ -30,6 +30,8 @@ addfox <command> [options]
 | `build` | 프로덕션 빌드 실행. |
 | `test` | 테스트 실행 (파라미터는 rstest에 전달됨). |
 
+> `addfox test`는 `rstest.config.*` 또는 `addfox.config`의 [`test`](/config/test) 필드에서 설정을 읽습니다. 둘 다 존재하면 `rstest.config.*`가 우선합니다.
+
 ## 일반 파라미터 (기본값 + 구성 매핑)
 
 | 파라미터 | 내장 기본값 | 대응 `addfox.config` 필드 | 설명 |

@@ -49,7 +49,22 @@ addfox test
 
 Рекомендуется выполнять полный E2E перед CI или публикацией.
 
-## Минимальный пример конфигурации
+## Конфигурация тестов
+
+Вы можете настроить тесты через поле [`test`](/config/test) в `addfox.config` — отдельный конфигурационный файл не нужен:
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  test: {
+    include: ["**/*.test.ts", "**/*.spec.ts"],
+  },
+});
+```
+
+Также поддерживается отдельный `rstest.config.ts`:
 
 ```ts
 // rstest.config.ts
@@ -61,6 +76,8 @@ export default defineConfig({
   },
 });
 ```
+
+Когда присутствуют оба, `rstest.config.*` имеет приоритет, а поле `test` игнорируется (выводится предупреждение). Подробнее см. [test](/config/test).
 
 ## Рекомендуемые scripts
 

@@ -21,7 +21,7 @@ Addfox의 빌드 결과물은 기본적으로 `.addfox/extension/` 아래의 브
 │   │   └── icons/
 │   │       └── icon*.png
 │   └── extension-firefox/   # Firefox 결과물
-└── cache/                   # 개발 캐시
+└── cache/                   # 빌드 캐시 및 개발 브라우저 profile
 ```
 
 ## 사용자 지정 출력 디렉토리

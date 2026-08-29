@@ -34,6 +34,8 @@ addfox <command> [options]
 | `build` | 执行生产构建。 |
 | `test` | 运行测试（参数会透传给 rstest）。 |
 
+> `addfox test` 从 `rstest.config.*` 或 `addfox.config` 的 [`test`](/config/test) 字段读取测试配置；两者同时存在时 `rstest.config.*` 优先。
+
 ## 常用参数（默认值 + 配置映射）
 
 | 参数 | 内置默认值 | 对应 `addfox.config` 字段 | 说明 |

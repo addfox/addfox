@@ -2,7 +2,7 @@ import React from "react";
 import { TerminalChrome } from "./TerminalChrome";
 import { termLine } from "./terminalStyles";
 
-export const HERO_TERMINAL_LINE_COUNT = 8;
+export const HERO_TERMINAL_LINE_COUNT = 6;
 const LINE_INTERVAL_MS = 120;
 const BROWSER_VISIBLE_MS = 2600;
 const PAUSE_AFTER_BROWSER_MS = 1000;
@@ -33,73 +33,39 @@ function HeroTerminalBody({
       {row(1, (
         <>
           <span className={termLine.addfox}>[Addfox] </span>
-          <span className={termLine.value}>Addfox 0.2.0 with </span>
-          <span className={termLine.purple}>Rsbuild 2.0.7</span>
+          <span className={termLine.value}>Addfox 0.2.7 with </span>
+          <span className={termLine.purple}>Rsbuild 2.1.13</span>
         </>
       ))}
+      {/* Rsbuild build lines appear as one group */}
       {row(2, (
-        <>
-          <span className={termLine.addfox}>[Addfox] </span>
-          <span className={termLine.done}>● </span>
-          <span className={termLine.value}>Parse config </span>
-          <span className={termLine.time}>84ms</span>
-        </>
-      ))}
-      {/* Entry tree appears as one group */}
-      {row(3, (
-        <div className="flex flex-col leading-[1.4]">
-          <span className={termLine.purple}>Entry</span>
-          <span className={termLine.value}>{`├── `}<span className={termLine.purple}>background</span>{` -> app/background/index.ts`}</span>
-          <span className={termLine.value}>{`├── `}<span className={termLine.purple}>content</span>{` -> app/content/index.ts`}</span>
-          <span className={termLine.value}>{`├── `}<span className={termLine.purple}>popup</span>{` -> app/popup/index.tsx`}</span>
-          <span className={termLine.value}>{`└── `}<span className={termLine.purple}>options</span>{` -> app/options/index.tsx`}</span>
-        </div>
-      ), true)}
-      {/* Each pair of lines appears as one group */}
-      {row(4, (
-        <div className="flex flex-col leading-[1.4]">
-          <span>
-            <span className={termLine.addfox}>[Addfox] </span>
-            <span className={termLine.done}>● </span>
-            <span className={termLine.value}>Rsbuild ready </span>
-            <span className={termLine.time}>6ms</span>
-          </span>
-          <span>
-            <span className={termLine.addfox}>[Addfox] </span>
-            <span className={termLine.done}>● </span>
-            <span className={termLine.value}>Hot reload WebSocket: ws://127.0.0.1:23333 </span>
-            <span className={termLine.time}>31ms</span>
-          </span>
-        </div>
-      ), true)}
-      {row(5, (
         <div className="flex flex-col leading-[1.4]">
           <span>
             <span className={termLine.rsbuild}>[Rsbuild] </span>
             <span className={termLine.value}>start   build started...</span>
           </span>
           <span>
-            <span className={termLine.addfox}>[Addfox] </span>
-            <span className={termLine.done}>● </span>
-            <span className={termLine.value}>Dev server http://198.18.0.1:3000 </span>
-            <span className={termLine.time}>297ms</span>
-          </span>
-        </div>
-      ), true)}
-      {row(6, (
-        <div className="flex flex-col leading-[1.4]">
-          <span>
             <span className={termLine.rsbuild}>[Rsbuild] </span>
             <span className={termLine.value}>ready   built in </span>
             <span className={termLine.time}>0.62 s</span>
           </span>
-          <span>
-            <span className={termLine.addfox}>[Addfox] </span>
-            <span className={termLine.value}>Press R to reload extension (and Ctrl-C to quit)</span>
-          </span>
         </div>
       ), true)}
-      {row(7, (
+      {row(3, (
+        <>
+          <span className={termLine.addfox}>[Addfox] </span>
+          <span className={termLine.value}>Press r + enter to reload, o + enter to reopen browser (Ctrl-C to quit)</span>
+        </>
+      ))}
+      {/* URLs tree appears as one group */}
+      {row(4, (
+        <div className="flex flex-col leading-[1.4]">
+          <span className={termLine.value}>URLs</span>
+          <span className={termLine.value}>{`├── Dev server -> `}<span className={termLine.time}>http://localhost:3000</span></span>
+          <span className={termLine.value}>{`└── WebSocket -> `}<span className={termLine.time}>ws://127.0.0.1:23333</span></span>
+        </div>
+      ), true)}
+      {row(5, (
         <div className="flex flex-col leading-[1.4]">
           <span>
             <span className={termLine.addfox}>[Addfox] </span>

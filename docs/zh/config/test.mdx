@@ -1,0 +1,57 @@
+# test
+
+`test` 用于将测试配置直接透传给 **Rstest** —— 其内容等价于 `rstest.config` 的导出，因此无需新建单独的 rstest.config 文件。类似于 Vite 通过 `test` 字段集成 Vitest。
+
+## 概述
+
+- **类型**:`RstestConfig & { framework?: "rstest" }`
+- **默认值**:`undefined`
+
+`framework` 是预留的测试框架判别字段：
+
+- 默认值为 `"rstest"`，目前仅支持 `"rstest"`。
+- 传入其他值会报错 `ADDFOX_INVALID_ARGUMENT`。
+- addfox 在生成透传配置前会剥离 `framework` 键。
+
+## 用法
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  manifest: { /* ... */ },
+  test: {
+    include: ["__tests__/**/*.test.ts"],
+    globals: true,
+    coverage: { provider: "istanbul" },
+  },
+});
+```
+
+## 与 rstest.config 的优先级
+
+遵循业界惯例（同 `vitest.config` 优先于 `vite.config` 的 `test` 字段）,`addfox test` 按以下顺序解析测试配置（优先级从高到低）:
+
+1. `rstest.config.*`（如果存在）
+2. `addfox.config` 中的 `test` 字段
+
+两者同时存在时，`test` 字段被忽略，并打印警告：
+
+```
+The `test` field in addfox.config is ignored because rstest.config.* takes precedence.
+```
+
+两者都不存在时，`addfox test` 会报错，提示创建 `rstest.config.*` 或在 `addfox.config` 中添加 `test` 字段。
+
+## 实现机制
+
+走 `test` 字段时，addfox 会自动生成 `.addfox/rstest.config.ts` 包装文件（重新 import 用户的 `addfox.config`，函数、reporter 等活对象会被保留），再以 `--config` 传给 rstest CLI。`.addfox` 目录已被 gitignore。`root` 会被设为项目根，可通过 `test.root` 覆盖。
+
+## 浏览器测试
+
+写在 `test` 字段里的 `browser.enabled: true` 同样会被识别，从而提示安装 `@rstest/browser` 和 `playwright` 依赖。
+
+## CLI 参数
+
+`addfox test` 的其余行为不变：CLI 参数原样转发给 rstest。

@@ -1,4 +1,4 @@
-﻿import { resolve } from "path";
+import { resolve } from "path";
 import { readFileSync, existsSync } from "fs";
 import type {
   ManifestConfig,
@@ -205,6 +205,12 @@ function validateMv2(manifest: ManifestRecord): string[] {
   }
   if (manifest.host_permissions != null) {
     errors.push(`MV2 does not support "host_permissions"; use "permissions"`);
+  }
+  if (manifest.content_security_policy != null && typeof manifest.content_security_policy !== "string") {
+    errors.push(`MV2 "content_security_policy" must be a string`);
+  }
+  if (manifest.web_accessible_resources != null && !isStringArray(manifest.web_accessible_resources)) {
+    errors.push(`MV2 "web_accessible_resources" must be string[]`);
   }
   errors.push(...validateBackgroundMv2(manifest.background));
   errors.push(...validatePermissionsList(manifest.permissions, "permissions"));

@@ -49,7 +49,22 @@ addfox test
 
 建议在 CI 或发布前执行一次完整 E2E。
 
-## 最小配置示例
+## 测试配置
+
+你可以通过 `addfox.config` 的 [`test`](/config/test) 字段配置测试 —— 无需新建单独的配置文件：
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  test: {
+    include: ["**/*.test.ts", "**/*.spec.ts"],
+  },
+});
+```
+
+也支持独立的 `rstest.config.ts`:
 
 ```ts
 // rstest.config.ts
@@ -61,6 +76,8 @@ export default defineConfig({
   },
 });
 ```
+
+两者同时存在时，`rstest.config.*` 优先，`test` 字段被忽略（并打印警告）。详见 [test](/config/test)。
 
 ## 建议脚本
 

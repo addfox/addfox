@@ -991,5 +991,49 @@ describe("plugin-extension", () => {
         "script-src 'self'; connect-src 'self' http://127.0.0.1:23333 http://127.0.0.1:* ws://127.0.0.1:* http://localhost:* ws://localhost:* ws://127.0.0.1:23333 http://localhost:23333 ws://localhost:23333 http://127.0.0.1:3000 ws://127.0.0.1:3000 http://localhost:3000 ws://localhost:3000;"
       );
     });
+
+    it("MV2: injects string CSP when manifest has no CSP", async () => {
+      const config = createMockConfig(testRoot);
+      config.manifest = { name: "Mv2NoCsp", version: "1.0.0", manifest_version: 2 };
+      const afterEmitFn = await getAfterEmitFn(config, createMockEntries(), "chromium", undefined, [23333, 3000]);
+      afterEmitFn({});
+      const manifest = JSON.parse(readFileSync(resolve(testRoot, "dist", "manifest.json"), "utf-8"));
+      expect(manifest.content_security_policy).toBe(
+        `script-src 'self'; object-src 'self'; ${DEV_CONNECT_SRC_23333_3000}`
+      );
+    });
+
+    it("MV2: merges connect-src into existing string CSP", async () => {
+      const config = createMockConfig(testRoot);
+      config.manifest = {
+        name: "Mv2StringCsp",
+        version: "1.0.0",
+        manifest_version: 2,
+        content_security_policy: "script-src 'self'; object-src 'self';",
+      };
+      const afterEmitFn = await getAfterEmitFn(config, createMockEntries(), "chromium", undefined, [23333, 3000]);
+      afterEmitFn({});
+      const manifest = JSON.parse(readFileSync(resolve(testRoot, "dist", "manifest.json"), "utf-8"));
+      expect(manifest.content_security_policy).toBe(
+        `script-src 'self'; object-src 'self'; ${DEV_CONNECT_SRC_23333_3000}`
+      );
+    });
+
+    it("MV2: replaces MV3 object CSP with a valid string CSP", async () => {
+      const config = createMockConfig(testRoot);
+      config.manifest = {
+        name: "Mv2ObjCsp",
+        version: "1.0.0",
+        manifest_version: 2,
+        content_security_policy: { extension_pages: "script-src 'self';" },
+      };
+      const afterEmitFn = await getAfterEmitFn(config, createMockEntries(), "chromium", undefined, [23333, 3000]);
+      afterEmitFn({});
+      const manifest = JSON.parse(readFileSync(resolve(testRoot, "dist", "manifest.json"), "utf-8"));
+      expect(typeof manifest.content_security_policy).toBe("string");
+      expect(manifest.content_security_policy).toBe(
+        `script-src 'self'; object-src 'self'; ${DEV_CONNECT_SRC_23333_3000}`
+      );
+    });
   });
 });

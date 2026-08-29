@@ -5,7 +5,7 @@ import { resolve } from "node:path";
 import readline from "node:readline";
 
 import type { LaunchTarget, ChromiumLaunchTarget, BrowserConfig } from "@addfox/core";
-import { log, logDoneTimed, warn, error, ANSI_COLORS } from "@addfox/common";
+import { log, logRaw, logDoneTimed, warn, error, ANSI_COLORS } from "@addfox/common";
 import { runChromiumRunner } from "./runner";
 import type { ChromiumRunnerOptions } from "./runner";
 import { getBrowserPath, isChromiumBrowser, type LaunchPathOptions } from "./paths";
@@ -44,6 +44,8 @@ export interface LaunchContext {
   debug?: boolean;
   root?: string;
   outputRoot?: string;
+  /** Mutable bag filled by the CLI with the dev server URL; printed in the shortcuts block. */
+  devServerInfo?: { url?: string };
 }
 
 function buildDebugServerOpts(ctx: LaunchContext): DebugServerOpts | undefined {
@@ -176,7 +178,7 @@ function handleTerminalExitRequest(signal: NodeJS.Signals): void {
 function registerStdinRShortcut(
   onPressR: (() => void) | null,
   onPressO: (() => void) | null,
-  showHint = true
+  printHint?: () => void
 ): void {
   const stdin = process.stdin;
 
@@ -201,9 +203,7 @@ function registerStdinRShortcut(
   };
 
   rl.on("line", onLine);
-  if (showHint) {
-    log("Press r + enter to reload, o + enter to reopen browser (Ctrl-C to quit)");
-  }
+  printHint?.();
   keyboardReloadCleanup = () => {
     rl.off("line", onLine);
     rl.close();
@@ -212,16 +212,41 @@ function registerStdinRShortcut(
   };
 }
 
-function registerTerminalShortcuts(enableReload: boolean, _browser: LaunchTarget): void {
+/**
+ * Print the key hints (original one-line style) followed by the dev URLs as a
+ * tree block (same style as the Entry tree), so hints and URLs appear together.
+ */
+function printShortcutsAndUrlsBlock(ctx: LaunchContext): void {
+  if (ctx.enableReload) {
+    log("Press r + enter to reload, o + enter to reopen browser (Ctrl-C to quit)");
+  }
+
+  const urls: Array<[string, string]> = [];
+  if (ctx.devServerInfo?.url) urls.push(["Dev server", ctx.devServerInfo.url]);
+  if (ctx.enableReload) urls.push(["WebSocket", "ws://127.0.0.1:" + ctx.wsPort]);
+  if (urls.length === 0) return;
+
+  const nameColor = ANSI_COLORS.TREE;
+  const valueColor = ANSI_COLORS.TIME;
+  const reset = ANSI_COLORS.RESET;
+  const lines: string[] = [nameColor + "URLs" + reset];
+  urls.forEach(([name, value], i) => {
+    const branchPrefix = i === urls.length - 1 ? "└── " : "├── ";
+    lines.push(branchPrefix + nameColor + name + reset + " -> " + valueColor + value + reset);
+  });
+  logRaw(lines.join("\n"));
+}
+
+function registerTerminalShortcuts(ctx: LaunchContext): void {
   if (keyboardReloadCleanup) return;
   // Do not require a TTY: when addfox dev runs through pnpm/turbo/bun the
   // stdin is often a non-TTY pipe, yet r/o + enter still work via readline.
   const stdin = process.stdin;
   if (!stdin || stdin.destroyed) return;
   registerStdinRShortcut(
-    enableReload ? () => notifyReload("reload-extension") : null,
+    ctx.enableReload ? () => notifyReload("reload-extension") : null,
     () => reopenBrowser(),
-    enableReload
+    () => printShortcutsAndUrlsBlock(ctx)
   );
 }
 
@@ -278,7 +303,7 @@ export async function launchBrowserCore(ctx: LaunchContext): Promise<void> {
   if (plan.mode === "full") {
     reloadManagerPath = await createReloadManagerExtension(ctx.wsPort, ctx.distPath, ctx.browser);
   }
-  registerTerminalShortcuts(ctx.enableReload, ctx.browser);
+  registerTerminalShortcuts(ctx);
 
   if (isChromiumBrowser(ctx.browser)) {
     await resetChromiumProfileIfCacheDisabled(ctx);
@@ -351,7 +376,7 @@ async function reopenBrowser(): Promise<void> {
     keyboardReloadCleanup();
     keyboardReloadCleanup = null;
   }
-  registerTerminalShortcuts(ctx.enableReload, ctx.browser);
+  registerTerminalShortcuts(ctx);
   if (isChromiumBrowser(ctx.browser)) {
     await launchChromiumBrowser(ctx, browserBinary, launchStart);
     return;
@@ -420,6 +445,8 @@ export interface HmrPluginOptionsForLaunch {
   debug?: boolean;
   root?: string;
   outputRoot?: string;
+  /** Mutable bag filled by the CLI with the dev server URL; printed in the shortcuts block. */
+  devServerInfo?: { url?: string };
   chromePath?: string;
   chromiumPath?: string;
   edgePath?: string;
@@ -478,6 +505,7 @@ export async function launchBrowser(
     keepBrowserProfile,
     enableReload,
     wsPort,
+    devServerInfo: options.devServerInfo,
     chromiumRunnerOverride,
     ensureDistReadyOverride,
     getBrowserPathOverride,

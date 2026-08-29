@@ -31,6 +31,8 @@ npm install @addfox/cli
 | `build` | Build production output |
 | `test` | Run tests (forwards args to rstest) |
 
+> `addfox test` reads its config from `rstest.config.*` or the [`test`](/config/test) field in `addfox.config`; when both exist, `rstest.config.*` takes precedence.
+
 ## Common Options
 
 | Option | Description |

@@ -1,0 +1,57 @@
+# test
+
+`test` передаёт конфигурацию тестов напрямую в **Rstest** — её содержимое эквивалентно экспорту файла `rstest.config`, поэтому отдельный конфигурационный файл создавать не нужно. Аналогично тому, как Vite интегрирует Vitest через поле `test`.
+
+## Тип и значение по умолчанию
+
+- **Тип**: `RstestConfig & { framework?: "rstest" }`
+- **По умолчанию**: `undefined`
+
+`framework` — зарезервированное поле-дискриминатор тестового фреймворка:
+
+- По умолчанию `"rstest"`, на данный момент поддерживается только `"rstest"`.
+- Любое другое значение вызывает ошибку `ADDFOX_INVALID_ARGUMENT`.
+- Перед генерацией транзитной конфигурации addfox удаляет ключ `framework`.
+
+## Пример
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  manifest: { /* ... */ },
+  test: {
+    include: ["__tests__/**/*.test.ts"],
+    globals: true,
+    coverage: { provider: "istanbul" },
+  },
+});
+```
+
+## Приоритет относительно rstest.config
+
+Следуя общепринятой практике (как `vitest.config` имеет приоритет над полем `test` в `vite.config`), `addfox test` разрешает конфигурацию тестов в следующем порядке (от высшего приоритета):
+
+1. `rstest.config.*` (если присутствует)
+2. Поле `test` в `addfox.config`
+
+Когда присутствуют оба, поле `test` игнорируется и выводится предупреждение:
+
+```
+The `test` field in addfox.config is ignored because rstest.config.* takes precedence.
+```
+
+Если отсутствуют оба, `addfox test` завершается ошибкой с предложением создать `rstest.config.*` или добавить поле `test` в `addfox.config`.
+
+## Как это работает
+
+При использовании поля `test` addfox автоматически генерирует файл-обёртку `.addfox/rstest.config.ts` (который повторно импортирует ваш `addfox.config`; живые объекты вроде функций и репортёров сохраняются) и передаёт его в rstest CLI через `--config`. Директория `.addfox` уже добавлена в gitignore. `root` устанавливается в корень проекта; его можно переопределить через `test.root`.
+
+## Браузерные тесты
+
+`browser.enabled: true`, указанное внутри поля `test`, также распознаётся — addfox предложит установить зависимости `@rstest/browser` и `playwright`.
+
+## Аргументы CLI
+
+Остальное поведение `addfox test` не меняется: аргументы CLI передаются в rstest как есть.

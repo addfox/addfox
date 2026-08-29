@@ -1,0 +1,57 @@
+# test
+
+`test` はテスト設定を **Rstest** に直接渡します — 内容は `rstest.config` のエクスポートと同等のため、別途設定ファイルを作成する必要はありません。Vite が `test` フィールドで Vitest を統合するのと同様の仕組みです。
+
+## 型とデフォルト値
+
+- **型**: `RstestConfig & { framework?: "rstest" }`
+- **デフォルト**: `undefined`
+
+`framework` は予約されたテストフレームワーク判別フィールドです：
+
+- デフォルトは `"rstest"` で、現在サポートされているのは `"rstest"` のみです。
+- その他の値を指定すると `ADDFOX_INVALID_ARGUMENT` エラーになります。
+- addfox は透過設定を生成する前に `framework` キーを取り除きます。
+
+## 例
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  manifest: { /* ... */ },
+  test: {
+    include: ["__tests__/**/*.test.ts"],
+    globals: true,
+    coverage: { provider: "istanbul" },
+  },
+});
+```
+
+## rstest.config との優先順位
+
+業界の慣例（`vitest.config` が `vite.config` の `test` フィールドより優先されるのと同じ）に従い、`addfox test` は次の順序でテスト設定を解決します（優先度の高い順）:
+
+1. `rstest.config.*`（存在する場合）
+2. `addfox.config` の `test` フィールド
+
+両方が存在する場合、`test` フィールドは無視され、次の警告が表示されます：
+
+```
+The `test` field in addfox.config is ignored because rstest.config.* takes precedence.
+```
+
+どちらも存在しない場合、`addfox test` はエラーとなり、`rstest.config.*` の作成または `addfox.config` への `test` フィールドの追加を促します。
+
+## 仕組み
+
+`test` フィールドを使用する場合、addfox は `.addfox/rstest.config.ts` というラッパー設定ファイルを自動生成し（ユーザーの `addfox.config` を再 import するため、関数や reporter などのライブオブジェクトは保持されます）、`--config` で rstest CLI に渡します。`.addfox` ディレクトリはすでに gitignore されています。`root` はプロジェクトルートに設定され、`test.root` で上書きできます。
+
+## ブラウザテスト
+
+`test` フィールド内に記述された `browser.enabled: true` も認識され、`@rstest/browser` と `playwright` 依存関係のインストールが促されます。
+
+## CLI 引数
+
+`addfox test` のその他の動作に変更はありません：CLI 引数はそのまま rstest に転送されます。

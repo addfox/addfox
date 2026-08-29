@@ -34,6 +34,8 @@ addfox <command> [options]
 | `build` | Build production output. |
 | `test` | Run tests (forward args to rstest). |
 
+> `addfox test` reads its config from `rstest.config.*` or the [`test`](/config/test) field in `addfox.config`; when both exist, `rstest.config.*` takes precedence.
+
 ## Common Options (Defaults + Config Mapping)
 
 | Option | Built-in Default | `addfox.config` Field | Description |

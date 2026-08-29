@@ -1,0 +1,57 @@
+# test
+
+`test`는 테스트 설정을 **Rstest**에 직접 전달합니다 — 내용은 `rstest.config`의 export와 동일하므로 별도의 설정 파일을 만들 필요가 없습니다. Vite가 `test` 필드로 Vitest를 통합하는 방식과 유사합니다.
+
+## 타입과 기본값
+
+- **타입**: `RstestConfig & { framework?: "rstest" }`
+- **기본값**: `undefined`
+
+`framework`는 예약된 테스트 프레임워크 구분 필드입니다:
+
+- 기본값은 `"rstest"`이며, 현재는 `"rstest"`만 지원합니다.
+- 다른 값을 지정하면 `ADDFOX_INVALID_ARGUMENT` 오류가 발생합니다.
+- addfox는 전달용 설정을 생성하기 전에 `framework` 키를 제거합니다.
+
+## 예시
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  manifest: { /* ... */ },
+  test: {
+    include: ["__tests__/**/*.test.ts"],
+    globals: true,
+    coverage: { provider: "istanbul" },
+  },
+});
+```
+
+## rstest.config와의 우선순위
+
+업계 관례(`vitest.config`가 `vite.config`의 `test` 필드보다 우선하는 것과 동일)에 따라, `addfox test`는 다음 순서로 테스트 설정을 해석합니다(우선순위 높은 순):
+
+1. `rstest.config.*`(존재하는 경우)
+2. `addfox.config`의 `test` 필드
+
+둘 다 존재하면 `test` 필드는 무시되고 다음 경고가 출력됩니다:
+
+```
+The `test` field in addfox.config is ignored because rstest.config.* takes precedence.
+```
+
+둘 다 없으면 `addfox test`는 `rstest.config.*`를 만들거나 `addfox.config`에 `test` 필드를 추가하라는 오류를 표시합니다.
+
+## 동작 방식
+
+`test` 필드를 사용하면 addfox가 `.addfox/rstest.config.ts` 래퍼 파일을 자동 생성하고(사용자의 `addfox.config`를 다시 import하며, 함수나 reporter 같은 라이브 객체는 유지됨), `--config`로 rstest CLI에 전달합니다. `.addfox` 디렉터리는 이미 gitignore되어 있습니다. `root`는 프로젝트 루트로 설정되며, `test.root`로 재정의할 수 있습니다.
+
+## 브라우저 테스트
+
+`test` 필드 안에 작성된 `browser.enabled: true`도 인식되어, `@rstest/browser`와 `playwright` 의존성 설치를 안내합니다.
+
+## CLI 인자
+
+`addfox test`의 나머지 동작은 변경되지 않습니다: CLI 인자는 그대로 rstest에 전달됩니다.

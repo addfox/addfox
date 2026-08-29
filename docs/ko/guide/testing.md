@@ -49,7 +49,22 @@ addfox test
 
 CI 또는 릴리스 전에 완전한 E2E를 한 번 실행하는 것이 좋습니다.
 
-## 최소 구성 예시
+## 테스트 구성
+
+`addfox.config`의 [`test`](/config/test) 필드로 테스트를 구성할 수 있습니다 — 별도의 설정 파일이 필요 없습니다:
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  test: {
+    include: ["**/*.test.ts", "**/*.spec.ts"],
+  },
+});
+```
+
+독립적인 `rstest.config.ts`도 지원됩니다:
 
 ```ts
 // rstest.config.ts
@@ -61,6 +76,8 @@ export default defineConfig({
   },
 });
 ```
+
+둘 다 존재하면 `rstest.config.*`가 우선하고 `test` 필드는 무시됩니다(경고가 출력됨). 자세한 내용은 [test](/config/test)를 참조하세요.
 
 ## 권장 scripts
 

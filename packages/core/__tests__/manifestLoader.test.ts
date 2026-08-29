@@ -1,4 +1,4 @@
-﻿import path from "path";
+import path from "path";
 import { fileURLToPath } from "url";
 import { writeFileSync, mkdirSync, rmSync, existsSync } from "fs";
 import { tmpdir } from "os";
@@ -213,6 +213,46 @@ describe("ManifestLoader", () => {
           tempDir
         )
       ).toThrow("MV2 does not support \"action\"");
+    });
+
+    it("throws MV2 when content_security_policy is an object", () => {
+      expect(() =>
+        resolveManifestInput(
+          { name: "X", version: "1.0.0", manifest_version: 2, content_security_policy: { extension_pages: "script-src 'self';" } },
+          "/root",
+          tempDir
+        )
+      ).toThrow('MV2 "content_security_policy" must be a string');
+    });
+
+    it("accepts MV2 string content_security_policy", () => {
+      expect(() =>
+        resolveManifestInput(
+          { name: "X", version: "1.0.0", manifest_version: 2, content_security_policy: "script-src 'self'; object-src 'self';" },
+          "/root",
+          tempDir
+        )
+      ).not.toThrow();
+    });
+
+    it("throws MV2 when web_accessible_resources is not string[]", () => {
+      expect(() =>
+        resolveManifestInput(
+          { name: "X", version: "1.0.0", manifest_version: 2, web_accessible_resources: [{ resources: ["a.png"], matches: ["<all_urls>"] }] },
+          "/root",
+          tempDir
+        )
+      ).toThrow('MV2 "web_accessible_resources" must be string[]');
+    });
+
+    it("accepts MV2 web_accessible_resources string array", () => {
+      expect(() =>
+        resolveManifestInput(
+          { name: "X", version: "1.0.0", manifest_version: 2, web_accessible_resources: ["images/*.png"] },
+          "/root",
+          tempDir
+        )
+      ).not.toThrow();
     });
 
     it("throws MV3 when manifest_version 3 has browser_action", () => {

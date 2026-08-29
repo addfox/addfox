@@ -46,6 +46,8 @@ export interface PipelineOptions {
   config?: AddfoxResolvedConfig;
   baseEntries?: EntryInfo[];
   entries?: EntryInfo[];
+  /** Mutable bag: CLI fills `url` after startDevServer; HMR plugin prints it in the shortcuts block. */
+  devServerInfo?: { url?: string };
 }
 
 /**
@@ -263,6 +265,7 @@ export class Pipeline {
       enableReload: hotReloadEnabled,
       autoRefreshContentPage: hotReloadEnabled ? (hotReloadOpts?.autoRefreshContentPage ?? true) : false,
       reloadManagerEntries,
+      devServerInfo: this.options.devServerInfo,
     };
 
     const useRsbuildClientHmr = hotReloadEnabled;

@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.1.7
+
+### Patch Changes
+
+- feat: MV2 support, config-level test field, and leaner dev output
+
 ## 0.1.6
 
 ### Patch Changes

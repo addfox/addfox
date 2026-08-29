@@ -1,5 +1,11 @@
 # @addfox/launcher
 
+## 0.2.7
+
+### Patch Changes
+
+- feat: MV2 support, config-level test field, and leaner dev output
+
 ## 0.2.6
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @addfox/rsbuild-plugin-extension-hmr
 
+## 0.2.7
+
+### Patch Changes
+
+- feat: MV2 support, config-level test field, and leaner dev output
+- Updated dependencies
+  - @addfox/launcher@0.2.7
+  - @addfox/common@0.2.6
+  - @addfox/core@0.2.7
+
 ## 0.2.6
 
 ### Patch Changes

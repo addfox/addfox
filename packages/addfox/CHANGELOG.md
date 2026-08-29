@@ -1,5 +1,15 @@
 # addfox
 
+## 0.2.8
+
+### Patch Changes
+
+- feat: MV2 support, config-level test field, and leaner dev output
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-monitor@0.2.7
+  - @addfox/core@0.2.7
+  - @addfox/cli@0.2.8
+
 ## 0.2.7
 
 ### Patch Changes

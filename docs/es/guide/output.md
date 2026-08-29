@@ -21,7 +21,7 @@ El producto de construcción de Addfox se envía por defecto a subdirectorios es
 │   │   └── icons/
 │   │       └── icon*.png
 │   └── extension-firefox/   # Producto de Firefox
-└── cache/                   # Caché de desarrollo
+└── cache/                   # Caché de build y profiles del navegador de dev
 ```
 
 ## Personalizar directorio de salida

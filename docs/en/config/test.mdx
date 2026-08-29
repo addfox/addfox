@@ -1,0 +1,57 @@
+# test
+
+`test` passes test configuration directly to **Rstest** — it is equivalent to the export of a `rstest.config` file, so you don't need to create a separate config file. Similar to how Vite integrates Vitest via the `test` field.
+
+## Type and default
+
+- **Type**: `RstestConfig & { framework?: "rstest" }`
+- **Default**: `undefined`
+
+`framework` is a reserved test framework discriminator:
+
+- Defaults to `"rstest"`, and only `"rstest"` is currently supported.
+- Any other value throws `ADDFOX_INVALID_ARGUMENT`.
+- Addfox strips the `framework` key before generating the pass-through config.
+
+## Example
+
+```ts
+// addfox.config.ts
+import { defineConfig } from "addfox";
+
+export default defineConfig({
+  manifest: { /* ... */ },
+  test: {
+    include: ["__tests__/**/*.test.ts"],
+    globals: true,
+    coverage: { provider: "istanbul" },
+  },
+});
+```
+
+## Precedence with rstest.config
+
+Following the industry convention (same as `vitest.config` taking precedence over the `test` field in `vite.config`), `addfox test` resolves test config in this order (highest first):
+
+1. `rstest.config.*` (if present)
+2. `test` field in `addfox.config`
+
+When both exist, the `test` field is ignored and a warning is printed:
+
+```
+The `test` field in addfox.config is ignored because rstest.config.* takes precedence.
+```
+
+If neither exists, `addfox test` errors and asks you to create a `rstest.config.*` file or add a `test` field to `addfox.config`.
+
+## How it works
+
+When the `test` field is used, addfox auto-generates a wrapper config at `.addfox/rstest.config.ts` that re-imports your `addfox.config` (live objects such as functions and reporters are preserved) and passes it to the rstest CLI via `--config`. The `.addfox` directory is already gitignored. `root` is set to the project root; you can override it with `test.root`.
+
+## Browser tests
+
+`browser.enabled: true` written inside the `test` field is also recognized, so addfox will prompt you to install the `@rstest/browser` and `playwright` dependencies.
+
+## CLI args
+
+All other `addfox test` behavior is unchanged: CLI arguments are forwarded to rstest as-is.

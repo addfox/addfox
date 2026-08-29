@@ -31,6 +31,8 @@ npm install @addfox/cli
 | `build` | 执行生产构建 |
 | `test` | 运行测试（参数透传给 rstest） |
 
+> `addfox test` 从 `rstest.config.*` 或 `addfox.config` 的 [`test`](/config/test) 字段读取测试配置；两者同时存在时 `rstest.config.*` 优先。
+
 ## 常用参数
 
 | 参数 | 说明 |
