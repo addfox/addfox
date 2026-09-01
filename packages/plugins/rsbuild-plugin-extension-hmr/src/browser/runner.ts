@@ -9,6 +9,8 @@ export type ChromiumRunnerOptions = {
   args?: string[];
   verbose?: boolean;
   extensionLoadMode?: "cdp" | "load-extension";
+  /** Clear the HTTP disk cache after extensions load (reused profiles only). */
+  clearHttpCache?: boolean;
   onExit?: () => void;
 };
 
@@ -24,6 +26,7 @@ export async function runChromiumRunner(
     args: options.args,
     verbose: options.verbose,
     extensionLoadMode: options.extensionLoadMode,
+    clearHttpCache: options.clearHttpCache,
     onExit: options.onExit,
   });
   return {

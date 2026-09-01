@@ -1,5 +1,14 @@
 # @addfox/rsbuild-plugin-extension-hmr
 
+## 0.2.8
+
+### Patch Changes
+
+- fix(entry,launcher): restore page-entry chunk splitting and unblock dev launch
+- Updated dependencies
+  - @addfox/launcher@0.2.8
+  - @addfox/core@0.2.8
+
 ## 0.2.7
 
 ### Patch Changes

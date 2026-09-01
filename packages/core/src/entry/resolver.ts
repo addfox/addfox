@@ -6,7 +6,7 @@
 import { resolve, dirname, basename } from "path";
 import { existsSync } from "fs";
 import type { AddfoxUserConfig, EntryInfo, EntryConfigValue, ManifestRecord } from "../types.ts";
-import { HTML_ENTRY_NAMES, SCRIPT_EXTS } from "../constants.ts";
+import { HTML_ENTRY_NAMES, SCRIPT_EXTS, SCRIPT_ONLY_ENTRY_NAMES } from "../constants.ts";
 import type { BrowserTarget } from "../constants.ts";
 import { discoverEntries, type EntryDiscovererOptions } from "./discoverer.ts";
 import {
@@ -40,6 +40,7 @@ export interface EntryResolutionResult {
 // ============================================================================
 
 const HTML_ENTRY_SET = new Set(HTML_ENTRY_NAMES);
+const SCRIPT_ONLY_ENTRY_SET = new Set<string>(SCRIPT_ONLY_ENTRY_NAMES);
 
 function isHtmlPath(pathStr: string): boolean {
   return pathStr.trim().toLowerCase().endsWith(".html");
@@ -86,7 +87,7 @@ function resolveHtmlFlag(
   if (htmlValue === false) return false;
   if (htmlValue === true) return true;
   if (typeof htmlValue === "string") return hasTemplate;
-  return isHtmlEntryName(entryName);
+  return isHtmlEntryName(entryName) || hasTemplate;
 }
 
 function isHtmlEntryName(entryName: string): boolean {
@@ -99,8 +100,14 @@ function enrichEntryWithScriptInject(entry: EntryInfo): EntryInfo {
   return scriptInject ? { ...entry, scriptInject } : entry;
 }
 
-function inferHtmlPathForReservedName(entryName: string, scriptPath: string): string | undefined {
-  if (!HTML_ENTRY_SET.has(entryName as (typeof HTML_ENTRY_NAMES)[number])) return undefined;
+/**
+ * Infer a sibling `index.html` next to a script entry. Applies to any entry
+ * name except script-only ones (background/content) — a sibling template is a
+ * strong signal the entry is a page (matching auto-discovery semantics), so
+ * custom page entries like `space` get HTML output and shared vendor chunks.
+ */
+function inferSiblingHtmlPath(entryName: string, scriptPath: string): string | undefined {
+  if (SCRIPT_ONLY_ENTRY_SET.has(entryName)) return undefined;
   const dir = dirname(scriptPath);
   const htmlPath = resolve(dir, "index.html");
   return existsSync(htmlPath) ? htmlPath : undefined;
@@ -121,8 +128,13 @@ function resolveEntryFromObject(
   const htmlPath = resolveHtmlPath(baseDir, typeof value.html === "string" ? value.html : undefined);
   if (typeof value.html === "string" && !htmlPath) return null;
   
-  const inferredHtml = htmlPath ?? inferHtmlPathForReservedName(name, scriptPath);
-  const html = resolveHtmlFlag(name, value.html, Boolean(htmlPath));
+  // Explicit `html: false` must also suppress sibling inference: attaching an
+  // htmlPath would make downstream page processing (splitChunks exclusion,
+  // HTML emission) treat the entry as a page despite the opt-out.
+  const inferredHtml = value.html === false
+    ? undefined
+    : htmlPath ?? inferSiblingHtmlPath(name, scriptPath);
+  const html = resolveHtmlFlag(name, value.html, Boolean(inferredHtml));
   
   return enrichEntryWithScriptInject({ name, scriptPath, htmlPath: inferredHtml, html });
 }
@@ -185,8 +197,8 @@ function resolveEntryFromScript(
   const scriptPath = resolve(baseDir, pathStr);
   if (!existsSync(scriptPath)) return null;
   
-  const htmlPath = inferHtmlPathForReservedName(name, scriptPath);
-  const html = isHtmlEntryName(name);
+  const htmlPath = inferSiblingHtmlPath(name, scriptPath);
+  const html = isHtmlEntryName(name) || Boolean(htmlPath);
   
   return enrichEntryWithScriptInject({ name, scriptPath, htmlPath, html });
 }

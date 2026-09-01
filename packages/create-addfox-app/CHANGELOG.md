@@ -1,5 +1,11 @@
 # create-addfox-app
 
+## 0.2.8
+
+### Patch Changes
+
+- fix(entry,launcher): restore page-entry chunk splitting and unblock dev launch
+
 ## 0.2.7
 
 ### Patch Changes

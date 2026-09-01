@@ -13,7 +13,7 @@ export function BlockDevTerminal() {
         <div className="block">
           <span className={termLine.addfox}>[Addfox] </span>
           <span className={termLine.value}>Addfox 0.2.7 with </span>
-          <span className={termLine.purple}>Rsbuild 2.1.13</span>
+          <span className={termLine.purple}>Rsbuild 2.2.1</span>
         </div>
         <div className="block">
           <span className={termLine.rsbuild}>[Rsbuild] </span>

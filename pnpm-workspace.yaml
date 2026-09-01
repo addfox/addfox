@@ -19,8 +19,8 @@ packages:
 
 catalog:
   # Rsbuild 生态 - 使用正式版
-  "@rsbuild/core": "2.1.13"
-  "@rspack/core": "2.1.10"
+  "@rsbuild/core": "2.2.1"
+  "@rspack/core": "2.2.1"
   "@rsbuild/plugin-babel": "^2.1.0"
   "@rsbuild/plugin-vue": "^2.0.1"
   "@rsbuild/plugin-vue-jsx": "^2.0.1"
