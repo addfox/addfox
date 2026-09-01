@@ -398,9 +398,11 @@ async function launchChromiumBrowser(
     ctx.browserConfig
   );
   await mkdir(chromiumUserDataDirPath, { recursive: true });
-  // Cache growth is bounded by launcher flags (--disk-cache-size etc.) and the
-  // HTTP cache is cleared via CDP after launch; no profile dirs are deleted,
-  // which keeps Service Worker / login state consistent.
+  // Cache growth is bounded by launcher flags (--disk-cache-size etc.). The
+  // HTTP cache clear is only requested when the profile is kept between runs
+  // (a fresh profile has an empty cache); it runs after extension loading so
+  // it never delays startup. No profile subdirs are deleted, which keeps
+  // Service Worker / login state consistent.
   const extensions = [ctx.distPath, reloadManagerPath].filter(Boolean) as string[];
   const runnerFn = ctx.chromiumRunnerOverride ?? runChromiumRunner;
   extensionRunner = await runnerFn({
@@ -410,6 +412,7 @@ async function launchChromiumBrowser(
     extensions,
     startUrl: "chrome://extensions",
     verbose: false,
+    clearHttpCache: ctx.keepBrowserProfile === true,
     onExit: ctx.onBrowserExit,
   });
   logDoneTimed(ctx.browser + " started, extensions loaded.", Math.round(performance.now() - launchStart));
@@ -610,6 +613,7 @@ export async function launchBrowserOnly(
         extensions: [distPath],
         startUrl: "chrome://extensions",
         verbose: false,
+        clearHttpCache: keepBrowserProfile === true,
         onExit: onBrowserExit,
       });
       logDoneTimed(browser + " started (build launch), extension loaded.", Math.round(performance.now()));

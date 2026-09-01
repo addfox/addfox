@@ -30,6 +30,14 @@ export interface ChromiumLaunchOptions extends CommonLaunchOptions {
    * Bounds cache growth for long-lived dev profiles. Default: 64 MiB.
    */
   diskCacheSize?: number;
+  /**
+   * Clear the HTTP disk cache via CDP after extensions are loaded (like
+   * Chrome settings → "Clear cached images and files"). Only meaningful when
+   * the profile is reused between runs; fresh profiles start with an empty
+   * cache, so callers should pass `false` there — the clear costs ~2s of
+   * startup latency. Default: false.
+   */
+  clearHttpCache?: boolean;
 }
 
 /** Default cap for the HTTP disk cache (64 MiB). */
@@ -384,19 +392,8 @@ export async function launchChromium(options: ChromiumLaunchOptions): Promise<Br
       callOnExit();
     },
   );
-
   // Wait for browser to initialize
   await waitForCDPReady(cdp, verbose, 5000);
-
-  // Equivalent of Chrome settings → "Clear cached images and files": clears
-  // the HTTP disk cache only, leaving cookies, storage and service workers
-  // intact. Best-effort: failures must not block extension loading.
-  try {
-    await clearHttpCacheViaCDP(cdp);
-    log("Cleared browser HTTP cache via CDP", verbose);
-  } catch (e) {
-    log(`clearHttpCacheViaCDP failed (ignored): ${e}`, verbose);
-  }
 
   let needFallback = false;
 
@@ -438,6 +435,16 @@ export async function launchChromium(options: ChromiumLaunchOptions): Promise<Br
   if (!needFallback) {
     // CDP mode succeeded
     log(`All extensions loaded via CDP`, verbose);
+    // Equivalent of Chrome settings → "Clear cached images and files": clears
+    // the HTTP disk cache only, leaving cookies, storage and service workers
+    // intact. Runs after extension loading (not on the startup critical path —
+    // the clear costs seconds), and only when the caller opted in (reused
+    // profiles); fresh profiles start with an empty cache. Best-effort.
+    if (options.clearHttpCache === true) {
+      void clearHttpCacheViaCDP(cdp)
+        .then(() => log("Cleared browser HTTP cache via CDP", verbose))
+        .catch((e) => log(`clearHttpCacheViaCDP failed (ignored): ${e}`, verbose));
+    }
     const stopPageWatcher = startPageTargetWatcher(cdp, proc, verbose, () => {
       killBrowserProcess(proc);
       callOnExit();

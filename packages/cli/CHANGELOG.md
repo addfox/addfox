@@ -1,5 +1,17 @@
 # @addfox/cli
 
+## 0.2.9
+
+### Patch Changes
+
+- Updated dependencies
+  - @addfox/rsbuild-plugin-extension-hmr@0.2.8
+  - create-addfox-app@0.2.8
+  - @addfox/core@0.2.8
+  - @addfox/rsbuild-plugin-extension-entry@0.2.9
+  - @addfox/rsbuild-plugin-extension-manifest@0.2.8
+  - @addfox/rsbuild-plugin-extension-monitor@0.2.8
+
 ## 0.2.8
 
 ### Patch Changes

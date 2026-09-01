@@ -1,5 +1,11 @@
 ﻿# addfox-docs
 
+## 0.1.8
+
+### Patch Changes
+
+- fix(entry,launcher): restore page-entry chunk splitting and unblock dev launch
+
 ## 0.1.7
 
 ### Patch Changes

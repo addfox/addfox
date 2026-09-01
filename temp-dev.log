@@ -1,0 +1,12 @@
+$ addfox dev -b edge
+[38;5;208m[Addfox][0m Addfox 0.2.8 with [38;5;141mRsbuild 2.2.1[0m
+[38;5;208m[Addfox][0m [1m[32m●[0m Parse config [38;5;245m28ms[0m
+[38;5;208m[Addfox][0m [1m[32m●[0m Rsbuild ready [38;5;245m6ms[0m
+[38;5;208m[Addfox][0m [1m[32m●[0m Hot reload WebSocket: ws://127.0.0.1:23333 [38;5;245m28ms[0m
+[38;5;141m[Rsbuild][0m start   build started...
+[38;5;208m[Addfox][0m [1m[32m●[0m Dev server http://localhost:4299 [38;5;245m345ms[0m
+[38;5;141m[Rsbuild][0m ready   built in 0.38s
+[38;5;208m[Addfox][0m Press r + enter to reload, o + enter to reopen browser (Ctrl-C to quit)
+[37mURLs[0m
+├── [37mDev server[0m -> [38;5;245mhttp://localhost:4299[0m
+└── [37mWebSocket[0m -> [38;5;245mws://127.0.0.1:23333[0m

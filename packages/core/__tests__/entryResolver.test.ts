@@ -1,4 +1,4 @@
-﻿import path from "path";
+import path from "path";
 import { fileURLToPath } from "url";
 import { describe, expect, it } from "@rstest/core";
 import { resolveEntries } from "../src/entry/resolver.ts";
@@ -500,6 +500,95 @@ describe("EntryResolver", () => {
       const bg = result.entries.find((e) => e.name === "background");
       // should use auto-discovery
       expect(bg?.scriptPath).toMatch(/background[\\/]index\.ts$/);
+    });
+  });
+
+  describe("sibling index.html inference for custom entries", () => {
+    async function makeEntryDir(
+      name: string,
+      files: Record<string, string>
+    ): Promise<string> {
+      const { mkdtempSync, mkdirSync, writeFileSync } = await import("fs");
+      const { join } = await import("path");
+      const { tmpdir } = await import("os");
+      const baseDir = mkdtempSync(join(tmpdir(), "addfox-sibling-html-"));
+      const dir = join(baseDir, name);
+      mkdirSync(dir, { recursive: true });
+      for (const [file, content] of Object.entries(files)) {
+        writeFileSync(join(dir, file), content, "utf-8");
+      }
+      return baseDir;
+    }
+
+    it("treats a custom script entry with sibling index.html as an HTML page", async () => {
+      const baseDir = await makeEntryDir("space", {
+        "index.tsx": "// space page",
+        "index.html": "<html><body><div id=\"root\"></div></body></html>",
+      });
+      const result = resolveEntries({ entry: { space: "space/index.tsx" } }, "/root", baseDir);
+      const space = result.entries.find((e) => e.name === "space");
+      expect(space?.html).toBe(true);
+      expect(space?.htmlPath).toMatch(/space[\\/]index\.html$/);
+    });
+
+    it("keeps a custom script entry without sibling index.html script-only", async () => {
+      const baseDir = await makeEntryDir("extra-content", { "index.ts": "// script" });
+      const result = resolveEntries(
+        { entry: { "extra-content": "extra-content/index.ts" } },
+        "/root",
+        baseDir
+      );
+      const entry = result.entries.find((e) => e.name === "extra-content");
+      expect(entry?.html).toBe(false);
+      expect(entry?.htmlPath).toBeUndefined();
+    });
+
+    it("never infers HTML for script-only names (background/content)", async () => {
+      const baseDir = await makeEntryDir("background", {
+        "index.ts": "// sw",
+        "index.html": "<html></html>",
+      });
+      const result = resolveEntries(
+        { entry: { background: "background/index.ts" } },
+        "/root",
+        baseDir
+      );
+      const bg = result.entries.find((e) => e.name === "background");
+      expect(bg?.html).toBe(false);
+      expect(bg?.htmlPath).toBeUndefined();
+    });
+
+    it("infers sibling index.html for object-form custom entries", async () => {
+      const baseDir = await makeEntryDir("space", {
+        "index.tsx": "// space page",
+        "index.html": "<html><body></body></html>",
+      });
+      const result = resolveEntries(
+        { entry: { space: { src: "space/index.tsx" } } },
+        "/root",
+        baseDir
+      );
+      const space = result.entries.find((e) => e.name === "space");
+      expect(space?.html).toBe(true);
+      expect(space?.htmlPath).toMatch(/space[\\/]index\.html$/);
+    });
+
+    it("explicit html: false wins over sibling index.html", async () => {
+      const baseDir = await makeEntryDir("space", {
+        "index.tsx": "// space page",
+        "index.html": "<html><body></body></html>",
+      });
+      const result = resolveEntries(
+        { entry: { space: { src: "space/index.tsx", html: false } } },
+        "/root",
+        baseDir
+      );
+      const space = result.entries.find((e) => e.name === "space");
+      expect(space?.html).toBe(false);
+      // htmlPath must stay unset, or entryBuildsHtmlPage (htmlPath != null)
+      // would re-classify the entry as a page and re-expose it to splitChunks
+      // (the d9960a7 regression: content script never executes in dev).
+      expect(space?.htmlPath).toBeUndefined();
     });
   });
 });

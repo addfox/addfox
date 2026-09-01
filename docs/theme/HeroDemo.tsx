@@ -34,7 +34,7 @@ function HeroTerminalBody({
         <>
           <span className={termLine.addfox}>[Addfox] </span>
           <span className={termLine.value}>Addfox 0.2.7 with </span>
-          <span className={termLine.purple}>Rsbuild 2.1.13</span>
+          <span className={termLine.purple}>Rsbuild 2.2.1</span>
         </>
       ))}
       {/* Rsbuild build lines appear as one group */}
