@@ -35,10 +35,10 @@
 
 | 框架 | 构建工具 | dev 启动 | 生产构建 | 产物体积 |
 | ---- | -------- | -------- | -------- | -------- |
-| **Addfox 0.2.5** | **Rsbuild 2.1.1** | **1.92s** | **1.48s** | **837KB** |
-| WXT 0.20.27 | Vite 8.1.2 | 2.09s | 1.91s | 810KB |
-| Extension.js 4.0.1 | Rspack 2.1.2 | 2.25s | 1.75s | 1.45MB |
-| Plasmo 0.90.5 | Parcel 2.9.3 | 3.12s | 2.69s | 1.37MB |
+| **Addfox 0.2.9** | **Rsbuild 2.2.1** | **1.81s** | **1.58s** | **837KB** |
+| WXT 0.21.4 | Vite 8.1.2 | 2.29s | 2.45s | 810KB |
+| Extension.js 4.1.5 | Rspack 2.2.1 | 3.29s | 2.01s | 1.91MB |
+| Plasmo 0.90.5 | Parcel 2.9.3 | 3.98s | 2.90s | 1.37MB |
 
 <sub>在相同项目上进行的基准测试,结果可能因项目复杂度而异。测试方法与复现步骤见 [addfox/benchmark](https://github.com/addfox/benchmark)。</sub>
 
