@@ -35,10 +35,10 @@ The same extension project, built with each framework (lower is better):
 
 | Framework | Build tool | Dev startup | Production build | Output size |
 | --------- | ---------- | ----------- | ---------------- | ----------- |
-| **Addfox 0.2.9** | **Rsbuild 2.2.1** | **1.81s** | **1.58s** | **837KB** |
-| WXT 0.21.4 | Vite 8.1.2 | 2.29s | 2.45s | 810KB |
-| Extension.js 4.1.5 | Rspack 2.2.1 | 3.29s | 2.01s | 1.91MB |
-| Plasmo 0.90.5 | Parcel 2.9.3 | 3.98s | 2.90s | 1.37MB |
+| **Addfox 0.2.9** | **Rsbuild 2.2.1** | **1.56s** | **1.04s** | **837KB** |
+| WXT 0.21.4 | Vite 8.1.2 | 1.99s | 1.64s | 810KB |
+| Extension.js 4.1.5 | Rspack 2.2.1 | 2.86s | 1.61s | 1.91MB |
+| Plasmo 0.90.5 | Parcel 2.9.3 | 2.91s | 2.54s | 1.37MB |
 
 <sub>Benchmarked on identical projects; results may vary with project complexity. Methodology &amp; reproduction: [addfox/benchmark](https://github.com/addfox/benchmark).</sub>
 
